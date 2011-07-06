@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>virtualbox</groupId>
+	<artifactId>vbox</artifactId>
+	<version>1.0.0.SNAPSHOT</version>
+	<packaging>apk</packaging>
+	<name>vbox</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<artifactId>maven-android-plugin</artifactId>
+				<version>3.0.0-alpha-1</version>
+				<configuration>
+					<sdk>
+						<path>/usr/local/share/android-sdk-linux_x86</path>
+						<platform>10</platform>
+					</sdk>
+					<deleteConflictingFiles>true</deleteConflictingFiles>
+					<undeployBeforeDeploy>true</undeployBeforeDeploy>
+					<extractDuplicates>true</extractDuplicates> 
+				</configuration>
+				<executions>
+					<execution>
+						<id>update-version</id>
+						<goals>
+							<goal>version-update</goal>
+						</goals>
+						<configuration>
+							<versionNameUpdate>true</versionNameUpdate>
+							<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
+						</configuration>
+					</execution>				
+				</executions>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>				
+				<configuration><source>1.6</source><target>1.6</target></configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>2.3.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>virtualbox</groupId>
+			<artifactId>vboxjws</artifactId>
+			<version>4.0</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>codehaus</id>
+			<name>Codehaus</name>
+			<url>http://repository.codehaus.org</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>			
+		</repository>	
+		<repository>
+			<id>jboss</id>
+			<name>JBoss</name>
+			<url>http://repository.jboss.com</url>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>			
+		</repository>
+	</repositories>
+	
+</project>
