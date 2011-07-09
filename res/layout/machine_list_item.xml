@@ -3,10 +3,15 @@
  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="fill_parent"
      android:layout_height="wrap_content"
-     android:orientation="vertical"
+     android:orientation="horizontal"
      android:padding="5dp"
      >
 
+	<ImageView android:id="@+id/ostype"
+               android:layout_width="wrap_content"
+               android:layout_height="fill_parent"
+               android:layout_marginRight="10dp"
+               />
      <TextView  
          android:id="@+id/machine_name"
          android:textSize="16sp"
@@ -14,5 +19,11 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content" 
          />
+         
+         <ImageView android:id="@+id/state"
+               android:layout_width="wrap_content"
+               android:layout_height="fill_parent"
+               android:layout_marginRight="10dp"
+               />
 
  </LinearLayout>

@@ -53,6 +53,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+      		<groupId>com.google.code.ksoap2-android</groupId>
+      		<artifactId>ksoap2-android</artifactId>
+      		<version>2.5.7</version>
+    	</dependency>
+		<dependency>
 			<groupId>virtualbox</groupId>
 			<artifactId>vboxjws</artifactId>
 			<version>4.0</version>
@@ -60,6 +65,11 @@
 	</dependencies>
 
 	<repositories>
+		<repository>
+      		<id>googlecode-ksoap2-android</id>
+      		<name>googlecode-ksoap2-android</name>
+      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
+    	</repository>
 		<repository>
 			<id>codehaus</id>
 			<name>Codehaus</name>

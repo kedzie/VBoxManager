@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/classes" path="java"/>
 	<classpathentry kind="src" output="target/android-classes" path="gen">
 		<attributes>
 			<attribute name="optional" value="true"/>
