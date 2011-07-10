@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.kedzie.vbox"
-      android:versionCode="1"
-      android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="10" />
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kedzie.vbox" 
+	android:versionCode="1" android:versionName="1.0">
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false" android:permission="android.permission.INTERNET">
-        <activity android:name=".VBoxMonitorActivity"
-                  android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+    <uses-sdk android:minSdkVersion="10" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application >
+	<activity android:name=".ServersActivity" android:label="@string/app_name" android:icon="@drawable/icon" android:debuggable="true">
+		<intent-filter>
+                	<action android:name="android.intent.action.MAIN" />
+                	<category android:name="android.intent.category.LAUNCHER" />
+            	</intent-filter>
         </activity>
 
-	<activity android:name=".PreferencesActivity" android:label="PreferencesActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.SAMPLE_CODE" />
-            </intent-filter>
+	<activity android:name=".MachineListActivity"></activity>
+
+	<activity android:name=".MachineActivity"></activity>
+
+	<activity android:name=".PreferencesActivity">
         </activity>
 
     </application>
