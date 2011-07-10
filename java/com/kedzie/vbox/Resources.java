@@ -22,7 +22,7 @@ public class Resources {
 	
 	public static int get(String name) {
 		try {
-			String stateIcon = (String)R.drawable.class.getField(name).get(new R.drawable());
+			Integer stateIcon = (Integer)R.drawable.class.getField(name).get(new R.drawable());
 			Log.i(TAG, "Reflected Icon: " + stateIcon);
 		} catch (Exception e) {
 			Log.e(TAG, "Resource error", e);
