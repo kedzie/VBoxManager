@@ -1,0 +1,38 @@
+package com.kedzie.vbox;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.os.Bundle;
+
+
+public class BaseActivity extends Activity {
+	protected static final String TAG = BaseActivity.class.getSimpleName();
+	protected static final int DIALOG_PROGRESS = 1496;
+
+	@Override
+	protected Dialog onCreateDialog(int id, Bundle b) {
+		Dialog dialog = null;
+		switch(id) {
+		case DIALOG_PROGRESS:
+			dialog = new ProgressDialog(this);
+			((ProgressDialog)dialog).setIndeterminate(true);
+		}
+		return dialog;
+	}
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog, Bundle b) {
+		((ProgressDialog)dialog).setMessage(b.getString("msg"));
+	}
+
+	protected void showProgress(String msg) {
+		Bundle b = new Bundle();
+		b.putString("msg", msg);
+		showDialog(DIALOG_PROGRESS, b);
+	}
+	
+	protected void dismissProgress() {
+		dismissDialog(DIALOG_PROGRESS);
+	}
+}

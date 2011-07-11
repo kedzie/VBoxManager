@@ -7,24 +7,11 @@
     >
     
 <TextView
-		android:id="@+id/machine_name"
+		android:text="Server"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:padding="8dip"
 		/>
 	
-	<AbsoluteLayout
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		>
-		
-		<ListView
-			android:id="@+id/machine_list"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			/>
-
-	</AbsoluteLayout>
-    
 </LinearLayout>
