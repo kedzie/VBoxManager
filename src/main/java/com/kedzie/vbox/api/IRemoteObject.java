@@ -1,5 +1,6 @@
 package com.kedzie.vbox.api;
 
+
 public interface IRemoteObject {
 	
 	public String getId();

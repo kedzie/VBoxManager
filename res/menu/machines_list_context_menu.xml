@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/machines_context_menu_start"
-          android:title="Start"  />
-
-    <item android:id="@+id/machines_context_menu_poweroff"
-          android:title="Power Off" />
-
+    <item android:id="@+id/machines_context_menu_start" android:title="Start"  />
+    <item android:id="@+id/machines_context_menu_poweroff" android:title="Power Off" />
+	<item android:id="@+id/machines_context_menu_reset" android:title="Reset" />
+	<item android:id="@+id/machines_context_menu_pause" android:title="Pause" />
+	<item android:id="@+id/machines_context_menu_resume" android:title="Resume" />
+	<item android:id="@+id/machines_context_menu_acpi" android:title="ACPI" />
+	
 </menu>

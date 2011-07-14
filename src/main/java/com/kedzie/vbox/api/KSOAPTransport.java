@@ -17,9 +17,10 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Log;
 
-import com.kedzie.vbox.MachineListActivity;
+import com.kedzie.vbox.machine.MachineListActivity;
 
 public class KSOAPTransport {
+	private static final String TAG = KSOAPTransport.class.getName();
 	private HttpTransportSE transport;
 	
 	public KSOAPTransport(String url) {
@@ -74,19 +75,16 @@ public class KSOAPTransport {
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 			if(method.getName().equals("getId")) 
 				return this.id;
-			Log.i("SOAP", method.getName());
 			SoapObject object = new SoapObject(MachineListActivity.NAMESPACE, i+"_"+method.getName());
 			object.addProperty("_this", this.id);
 			if(method.getReturnType().equals(String.class)) 	
 				return callString(object);
-			else if(method.getReturnType().equals(IProgress.class))
-				return getProxy(IProgress.class, callString(object));
 			else if(IRemoteObject.class.isAssignableFrom(method.getReturnType())) {
-				Log.i("SOAP", "Creating generic proxy: " + method.getReturnType());
+				Log.i(TAG, "Creating generic proxy: " + method.getReturnType());
 				return getProxy(method.getReturnType(), callString(object));
 			}
-			Log.i("SOAP", "Return type: " + method.getReturnType().getComponentType());
-			Log.i("SOAP", "Generic Return type: " + method.getGenericReturnType());
+			Log.i(TAG, "Return type: " + method.getReturnType());
+			Log.i(TAG, "Generic Return type: " + method.getGenericReturnType().getClass());
 			return call(object);
 		}
 	}

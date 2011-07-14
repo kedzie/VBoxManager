@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_centerVertical="true"
-    >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_centerVertical="true"  >
     
-<TextView
-		android:text="Server"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		android:padding="8dip"
-		/>
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<TextView android:textSize="16sp" android:textStyle="bold"   android:text="@string/server_host" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
+		<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/server_host">
+	    	<requestFocus></requestFocus>
+		</EditText>
+    </LinearLayout>
+
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    	<TextView  android:textSize="16sp" android:textStyle="bold"  android:padding="8dip" android:text="@string/server_port" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+    	<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/server_port"  android:layout_weight="1"  android:inputType="number"></EditText>
+    </LinearLayout>
+    
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:gravity="center_horizontal">
+		<ImageButton android:src="@drawable/ic_menu_save" android:id="@+id/button_save" android:layout_width="wrap_content"  android:layout_weight="1"  android:layout_height="wrap_content"/>
+		<ImageButton android:src="@drawable/ic_menu_delete" android:id="@+id/button_delete" android:layout_width="wrap_content"  android:layout_weight="1"  android:layout_height="wrap_content" android:layout_gravity="right"/>
+    </LinearLayout>
 	
 </LinearLayout>

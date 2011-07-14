@@ -26,13 +26,17 @@ public class BaseActivity extends Activity {
 		((ProgressDialog)dialog).setMessage(b.getString("msg"));
 	}
 
-	protected void showProgress(String msg) {
+	public void showProgress(String msg) {
 		Bundle b = new Bundle();
 		b.putString("msg", msg);
 		showDialog(DIALOG_PROGRESS, b);
 	}
 	
-	protected void dismissProgress() {
+	public void dismissProgress() {
 		dismissDialog(DIALOG_PROGRESS);
+	}
+	
+	public VBoxApplication getVBoxApplication() {
+		return (VBoxApplication)getApplication();
 	}
 }

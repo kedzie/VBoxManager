@@ -6,15 +6,25 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.kedzie.vbox.MachineListActivity;
+import com.kedzie.vbox.machine.MachineListActivity;
 
 public class WebSessionManager {
 
+	private String url;
 	private IVirtualBox vbox;
 	private KSOAPTransport transport;
 	
-	public void logon(KSOAPTransport transport,  String username, String password) throws IOException, XmlPullParserException {
-		this.transport=transport;
+	public WebSessionManager() {}
+	
+	public WebSessionManager(String url, String id) {
+		this.url=url;
+		this.transport = new KSOAPTransport(url);
+		this.vbox = transport.getProxy(IVirtualBox.class, id);
+	}
+	
+	public void logon(String url,  String username, String password) throws IOException, XmlPullParserException {
+		this.url=url;
+		this.transport=new KSOAPTransport(url);
 		SoapObject request = new SoapObject(MachineListActivity.NAMESPACE, "IWebsessionManager_logon");
 		request.addProperty("username", username);
 		request.addProperty("password", password);
@@ -52,7 +62,26 @@ public class WebSessionManager {
 		transport = null;
 	}
 	
+	public String getOSType(IMachine m) throws IOException, XmlPullParserException {
+		SoapObject obj = new SoapObject(MachineListActivity.NAMESPACE, "IVirtualBox_getGuestOSType");
+		obj.addProperty("_this", vbox.getId ());
+		obj.addProperty("id", m.getOSTypeId());
+		SoapObject OSType = transport.callObject(obj);
+		return (String)OSType.getProperty("id");
+	}
+	
+//	public Map<String, String> getOSTypes(IMachine m) throws IOException, XmlPullParserException {
+//		SoapObject obj = new SoapObject(MachineListActivity.NAMESPACE, "IVirtualBox_getGuestOSTypes");
+//		obj.addProperty("_this", vbox.getId ());
+//		Vector<SoapObject> types = (Vector<SoapObject>)transport.call(obj);
+//		
+//	}
+	
 	public IVirtualBox getVBox() {
 		return this.vbox;
 	}
+	public KSOAPTransport getTransport() {
+		return this.transport;
+	}
+	public String getURL() { return this.url; }
 }
