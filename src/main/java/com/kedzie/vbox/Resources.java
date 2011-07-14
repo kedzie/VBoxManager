@@ -15,10 +15,10 @@ public class Resources {
 		r.put("state_stopping", R.drawable.ic_list_poweroff_small);
 		r.put("state_poweredoff", R.drawable.ic_list_poweroff_small);
 		r.put("state_paused", R.drawable.ic_list_pause_small);
-		r.put("state_saving", R.drawable.ic_list_state_save);
-		r.put("state_saved", R.drawable.ic_list_state_save);
+		r.put("state_saving", R.drawable.ic_list_save_small);
+		r.put("state_saved", R.drawable.ic_list_save_small);
 		r.put("state_aborted", R.drawable.ic_list_abort_small);
-		r.put("state_stuck", R.drawable.ic_list_state_stuck);
+		r.put("state_stuck", R.drawable.ic_list_stuck_small);
 		
 		r.put("os_ubuntu", R.drawable.ic_list_os_ubuntu);
 		r.put("os_ubuntu_64", R.drawable.ic_list_os_ubuntu_64);

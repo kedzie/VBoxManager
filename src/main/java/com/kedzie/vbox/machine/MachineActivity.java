@@ -56,13 +56,13 @@ public class MachineActivity extends BaseListActivity {
 		
 		if(state.equals("Running")) {
 			actions = new String[] { "Pause", "Reset", "Power Off" };
-			icons = new int[] { R.drawable.ic_list_pause, R.drawable.ic_list_vm_reset, R.drawable.ic_list_poweroff };
+			icons = new int[] { R.drawable.ic_list_pause, R.drawable.ic_list_reset, R.drawable.ic_list_poweroff };
 		} else if (state.equals("PoweredOff") || state.equals("Aborted")){
 			actions = new String[] { "Start"  };
 			icons = new int[] { R.drawable.ic_list_start };
 		} else if (state.equals("Paused")){
 			actions = new String[] { "Resume", "Reset", "Power Off" };
-			icons = new int[] { R.drawable.ic_list_start, R.drawable.ic_list_vm_reset, R.drawable.ic_list_poweroff };
+			icons = new int[] { R.drawable.ic_list_start, R.drawable.ic_list_reset, R.drawable.ic_list_poweroff };
 		}
 		setListAdapter(new MachineActionAdapter(this, R.layout.machine_action_item, R.id.action_item_text, R.id.action_item_icon, actions, icons));
 		
