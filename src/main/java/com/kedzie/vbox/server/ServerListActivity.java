@@ -28,18 +28,10 @@ public class ServerListActivity extends BaseListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         registerForContextMenu(getListView());
+        getVBoxApplication().getDB().insertOrUpdate(new Server(new Long(-1), "localhost", 18083, "Marek", "Mk0204$$"));
+        getVBoxApplication().getDB().insertOrUpdate(new Server(new Long(-1), "192.168.1.10", 18083, "Marek", "Mk0204$$"));
         new LoadServersTask().execute();
     }
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,6 +66,8 @@ public class ServerListActivity extends BaseListActivity {
 		intent.putExtra("id", s.getId());
 		intent.putExtra( "host", s.getHost() );
 		intent.putExtra("port", s.getPort() );
+		intent.putExtra("username", s.getUsername());
+		intent.putExtra("password", s.getPassword());
         startActivityForResult(intent, REQUEST_CODE_EDIT);
         return true;
 	  case R.id.server_list_context_menu_delete:
@@ -115,6 +109,8 @@ public class ServerListActivity extends BaseListActivity {
 					Server s = (Server)getListView().getAdapter().getItem(position);
 					Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
 					intent.putExtra("url", "http://"+s.getHost()+":"+s.getPort());
+					intent.putExtra("username", s.getUsername());
+					intent.putExtra("password", s.getPassword());
 			        startActivity(intent);
 				}
 			});

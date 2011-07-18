@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Virtual Box</string>
+    <string name="app_name">VirtualBox Manager</string>
     <string name="machine">Virtual Machine</string>
     <string name="machine_list">Virtual Machines</string>
     <string name="server_list">VBox Servers</string>
     <string name="server_edit">Edit Server</string>
     <string name="server_host">Host</string>
     <string name="server_port">Port</string>
+    <string name="server_username">Username</string>
+    <string name="server_password">Password</string>
     <string name="namespace">http://www.virtualbox.org</string>
 </resources>

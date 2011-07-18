@@ -1,11 +1,12 @@
 package com.kedzie.vbox.machine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
-import org.ksoap2.serialization.SoapPrimitive;
+import org.virtualbox_4_0.MachineState;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,38 +32,23 @@ import com.kedzie.vbox.task.ResumeTask;
 
 
 public class MachineListActivity extends BaseListActivity {
-	protected static final String TAG = MachineListActivity.class.getName();
-	public static final String NAMESPACE = "http://www.virtualbox.org/";
+	protected static final String TAG = "vbox."+MachineListActivity.class.getSimpleName();
 	
 	private WebSessionManager vmgr = new WebSessionManager();
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
        	super.onCreate(savedInstanceState);
-       	Log.i(TAG, "onCreate");
        	registerForContextMenu(getListView());
-       	new LogonTask().execute(getIntent().getStringExtra("url"),"","");
+       	new LogonTask().execute(getIntent().getStringExtra("url"),getIntent().getStringExtra("username"), getIntent().getStringExtra("password"));
     }
 	
 	@Override
 	protected void onDestroy() {
-		Log.i(TAG, "onDestroy");
-		try { vmgr.logoff(); } catch (Exception e) { Log.e(TAG, "error ", e); } 
+		try {  vmgr.logoff(); } catch (Exception e) { Log.e(TAG, "error ", e); } 
 		super.onDestroy();
 	}
 
-	@Override
-	protected void onStart() {
-		Log.i(TAG, "onStart");
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		Log.i(TAG, "onStop");
-		super.onStop();
-	}
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.machine_options_menu, menu);
@@ -85,74 +71,123 @@ public class MachineListActivity extends BaseListActivity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		getMenuInflater().inflate(R.menu.machines_list_context_menu, menu);
 		IMachine m = (IMachine)getListAdapter().getItem(((AdapterContextMenuInfo)menuInfo).position);
-		String state = m.getState();
-		boolean poweroff=false, start=false, pause=false, resume=false, reset=false,acpi=false;
-		if(state.equals("PoweredOff") || state.equals("Aborted")) {
-			start=true;
-		} else if(state.equals("Running")) {
-			reset=poweroff=pause=acpi=true;
-		} else if(state.equals("Paused")) {
-			reset=poweroff=resume=acpi=true;
-		}
-		menu.findItem(R.id.machines_context_menu_poweroff).setEnabled(poweroff);
-		menu.findItem(R.id.machines_context_menu_start).setEnabled(start);
-		menu.findItem(R.id.machines_context_menu_reset).setEnabled(reset);
-		menu.findItem(R.id.machines_context_menu_resume).setEnabled(resume);
-		menu.findItem(R.id.machines_context_menu_pause).setEnabled(pause);
-		menu.findItem(R.id.machines_context_menu_acpi).setEnabled(acpi);
+		List<String> actions = Arrays.asList(getVBoxApplication().getActions(m.getState()));
+		menu.findItem(R.id.machines_context_menu_start).setEnabled(actions.contains("Start"));
+		menu.findItem(R.id.machines_context_menu_poweroff).setEnabled(actions.contains("Power Off"));
+		menu.findItem(R.id.machines_context_menu_acpi).setEnabled(actions.contains("Power Button"));
+		menu.findItem(R.id.machines_context_menu_reset).setEnabled(actions.contains("Reset"));
+		menu.findItem(R.id.machines_context_menu_pause).setEnabled(actions.contains("Pause"));
+		menu.findItem(R.id.machines_context_menu_resume).setEnabled(actions.contains("Resume"));
 	}
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	  final IMachine m = (IMachine)getListAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
-	  switch (item.getItemId()) {
+	  switch (item. getItemId()) {
 	  case R.id.machines_context_menu_start:
-		  new LaunchVMProcessTask(this, vmgr).execute(m);
+		  new LaunchVMProcessTask(this, vmgr) {
+				@Override
+				protected void onPostExecute(MachineState result) {
+					updateState(result);
+					super.onPostExecute(result);
+				}
+			}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_poweroff:
-		  new PowerDownTask(this, vmgr).execute(m);
+		  new PowerDownTask(this, vmgr) {
+				@Override
+				protected void onPostExecute(MachineState result) {
+					updateState(result);
+					super.onPostExecute(result);
+				}
+			}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_reset:
-		  new ResetTask(this, vmgr).execute(m);
+		  new ResetTask(this, vmgr) {
+				@Override
+				protected void onPostExecute(MachineState result) {
+					updateState(result);
+					super.onPostExecute(result);
+				}
+			}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_pause:
-		  new PauseTask(this, vmgr).execute(m);
+		  new PauseTask(this, vmgr) {
+				@Override
+				protected void onPostExecute(MachineState result) {
+					updateState(result);
+					super.onPostExecute(result);
+				}
+		  }.execute(m);
 		  break;
 	  case R.id.machines_context_menu_resume:
-		  new ResumeTask(this, vmgr).execute(m);
+		  new ResumeTask(this, vmgr) {
+				@Override
+				protected void onPostExecute(MachineState result) {
+					updateState(result);
+					super.onPostExecute(result);
+				}
+			}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_acpi:
-		  new ACPITask(this, vmgr).execute(m);
+		  new ACPITask(this, vmgr) {
+				@Override
+				protected void onPostExecute(MachineState result) {
+					updateState(result);
+					super.onPostExecute(result);
+				}
+			}.execute(m);
 		  break;
 	  }
-	  updateState(m, m.getState());
 	  return true;
 	}
 	
-	private void updateState(IMachine m, String state) {
-		Log.i(TAG, "update state: " + state);
+	private void updateState(MachineState state) {
+		new LoadMachinesTask().execute();
 	}
 	
-	private class LogonTask extends AsyncTask<String, Void, String>	{
+	private class LogonTask extends AsyncTask<String, Object, String>	{
+		
+		private ProgressDialog pd;
+		
 		@Override
-		protected void onPreExecute()		{  showProgress("Connecting"); }
+		protected void onPreExecute()		{
+			pd = new ProgressDialog(MachineListActivity.this);
+			pd.setTitle("Connecting");
+			pd.setMessage("Logging in");
+			pd.setMax(2);
+			pd.setIndeterminate(false);
+			pd.show();
+		}
 
 		@Override
 		protected String doInBackground(String... params)	{
 			try	{
 				vmgr.logon(params[0], params[1], params[2]);
-				return vmgr.getVBox().getVersion();
+				publishProgress("Getting Version", new Integer(1));
+				String version = vmgr.getVBox().getVersion();
+				publishProgress("Done", new Integer(2));
+				return version;
 			} catch(Exception e)	{
-				Log.e(TAG, e.getMessage(), e);
+				showAlert(e);
 			}
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(String result)	{
-			Log.i(TAG, "Version: " + result);
-			dismissProgress();
-			new LoadMachinesTask().execute();
+		protected void onProgressUpdate(Object... values) {
+			pd.setMessage((String)values[0]);
+			int progress = (Integer)values[1];
+			pd.setProgress(progress);
+		}
+
+		@Override
+		protected void onPostExecute(String version)	{
+			pd.dismiss();
+			if(version!=null) {
+				Log.i(TAG, "Version: " + version);
+				new LoadMachinesTask().execute();
+			}
 		}
 	}
 	
@@ -161,17 +196,13 @@ public class MachineListActivity extends BaseListActivity {
 		protected void onPreExecute() { showProgress("Loading Machines"); }
 
 		@Override
-		@SuppressWarnings("unchecked")
 		protected List<IMachine> doInBackground(Void... params)	{
-			List<IMachine> machines = new ArrayList<IMachine>();
 			try	{
-				Object ret = vmgr.getVBox().getMachines();
-				for(SoapPrimitive p : (Vector<SoapPrimitive>)ret)
-					machines.add(vmgr.getTransport().getProxy(IMachine.class, p.toString()));
+				return vmgr.getVBox().getMachines();
 			} catch(Exception e)	{
-				Log.e(TAG, e.getMessage(), e);
+				showAlert(e);
 			}
-			return machines;
+			return new ArrayList<IMachine>();
 		}
 
 		@Override

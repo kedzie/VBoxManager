@@ -13,6 +13,16 @@
     	<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/server_port"  android:layout_weight="1"  android:inputType="number"></EditText>
     </LinearLayout>
     
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    	<TextView  android:textSize="16sp" android:textStyle="bold"  android:padding="8dip" android:text="@string/server_username" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+    	<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/server_username"  android:layout_weight="1"  ></EditText>
+    </LinearLayout>
+    
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    	<TextView  android:textSize="16sp" android:textStyle="bold"  android:padding="8dip" android:text="@string/server_password" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+    	<EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/server_password"  android:layout_weight="1"  ></EditText>
+    </LinearLayout>
+    
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:gravity="center_horizontal">
 		<ImageButton android:src="@drawable/ic_menu_save" android:id="@+id/button_save" android:layout_width="wrap_content"  android:layout_weight="1"  android:layout_height="wrap_content"/>
 		<ImageButton android:src="@drawable/ic_menu_delete" android:id="@+id/button_delete" android:layout_width="wrap_content"  android:layout_weight="1"  android:layout_height="wrap_content" android:layout_gravity="right"/>

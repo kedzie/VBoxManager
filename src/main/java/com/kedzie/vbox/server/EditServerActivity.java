@@ -25,6 +25,8 @@ public class EditServerActivity extends BaseActivity {
 		super.onStart();
         ((TextView)findViewById(R.id.server_host)).setText(getIntent().getStringExtra("host"));
         ((TextView)findViewById(R.id.server_port)).setText(""+getIntent().getIntExtra("port",18083));
+        ((TextView)findViewById(R.id.server_username)).setText(getIntent().getStringExtra("username"));
+        ((TextView)findViewById(R.id.server_password)).setText(getIntent().getStringExtra("password"));
         ((ImageButton)findViewById(R.id.button_save)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { save(); } });
         ((ImageButton)findViewById(R.id.button_delete)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { delete(); } });
 	}
@@ -53,7 +55,9 @@ public class EditServerActivity extends BaseActivity {
 		long id = getIntent().getLongExtra("id", -1);
 		String host =  ((TextView)findViewById(R.id.server_host)).getText().toString();
 		int port = Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString());
-		getVBoxApplication().getDB().insertOrUpdate(new Server(id, host, port));
+		String username = ((TextView)findViewById(R.id.server_username)).getText().toString();
+		String password = ((TextView)findViewById(R.id.server_password)).getText().toString();
+		getVBoxApplication().getDB().insertOrUpdate(new Server(id, host, port, username, password));
 		finish();
 	}
 	

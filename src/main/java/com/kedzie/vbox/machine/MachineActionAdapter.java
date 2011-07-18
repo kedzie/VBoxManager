@@ -1,5 +1,7 @@
 package com.kedzie.vbox.machine;
 
+import com.kedzie.vbox.VBoxApplication;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,22 +15,20 @@ public class MachineActionAdapter extends ArrayAdapter<String> {
 	private final int layoutId;
 	private final int textResourceId;
 	private final int iconResourceId;
-	private final int []icons;
 	
-	public MachineActionAdapter(Context context, int id, int textResourceId, int iconResourceId, String []strings, int[] icons) {
+	public MachineActionAdapter(Context context, int id, int textResourceId, int iconResourceId, String []strings) {
 		super(context, id, textResourceId, strings);
 		_layoutInflater = LayoutInflater.from(context);
 		this.layoutId=id;
 		this.textResourceId=textResourceId;
 		this.iconResourceId=iconResourceId;
-		this.icons = icons;
 	}
 
 	public View getView(int position, View view, ViewGroup parent) {
 		if (view == null) {
 			view = _layoutInflater.inflate(this.layoutId, parent, false);
 			((TextView)view.findViewById(textResourceId)).setText(getItem(position));
-			((ImageView)view.findViewById(iconResourceId)).setImageResource(icons[position]);
+			((ImageView)view.findViewById(iconResourceId)).setImageResource( VBoxApplication.get(getItem(position)));
 		}
 		return view;
 	}

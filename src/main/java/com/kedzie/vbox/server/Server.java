@@ -5,15 +5,16 @@ public class Server {
 	private Long id;
 	private Integer port;
 	private String host;
+	private String username;
+	private String password;
 
 	public Server() {}
-	public Server(Long id, String host, Integer port) {
+	public Server(Long id, String host, Integer port, String username, String password) {
 		this.id=id;
 		this.port = port;
 		this.host = host;
-	}
-	public Server(String host, Integer port) {
-		this(null, host, port);
+		this.username = username;
+		this.password=password;
 	}
 	public Long getId() {
 		return id;
@@ -32,6 +33,18 @@ public class Server {
 	}
 	public void setHost(String host) {
 		this.host = host;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	public String toString() {
 		return getHost() + ":" + getPort();

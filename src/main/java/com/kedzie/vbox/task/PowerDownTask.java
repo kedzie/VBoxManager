@@ -1,7 +1,10 @@
 package com.kedzie.vbox.task;
 
+import org.virtualbox_4_0.LockType;
+import org.virtualbox_4_0.MachineState;
+import org.virtualbox_4_0.SessionState;
+
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.api.IMachine;
@@ -9,9 +12,7 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.WebSessionManager;
 
-public class PowerDownTask extends AsyncTask<IMachine, Void, String> {
-		private final static String TAG = PowerDownTask.class.getName();
-		
+public class PowerDownTask extends AsyncTask<IMachine, Void, MachineState> {
 		private BaseListActivity activity;
 		private WebSessionManager vmgr;
 
@@ -26,22 +27,22 @@ public class PowerDownTask extends AsyncTask<IMachine, Void, String> {
 		}
 		
 		@Override
-		protected String doInBackground(IMachine... params)	{
+		protected MachineState doInBackground(IMachine... params)	{
 			try	{
 				ISession session = vmgr.getSession();
-				vmgr.lockMachine(params[0], session, "Shared");
+				SessionState state = session.getState();
+				if(state.equals(SessionState.Unlocked))
+					params[0].lockMachine(session, LockType.Shared);
 				IProgress p = session.getConsole().powerDown();
-				p.waitForCompletion();
-				session.unlockMachine();
-				return params[0].getState();
+				p.waitForCompletion(5000);
 			} catch(Exception e)	{
-				Log.e(TAG, e.getMessage(), e);
+				activity.showAlert(e.getMessage());
 			}
-			return "ret";
+			return params[0].getState();
 		}
 		
 		@Override
-		protected void onPostExecute(String result)	{
+		protected void onPostExecute(MachineState result)	{
 			activity.dismissProgress();
 		}
 }

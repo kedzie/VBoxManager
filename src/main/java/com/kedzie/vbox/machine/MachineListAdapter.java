@@ -2,6 +2,8 @@ package com.kedzie.vbox.machine;
 
 import java.util.List;
 
+import org.virtualbox_4_0.MachineState;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.Resources;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.ISnapshot;
 
 public class MachineListAdapter extends BaseAdapter {
-//	private final static String TAG = MachineListAdapter.class.getName();
-	
 	private List<IMachine> _machines;
 	private final LayoutInflater _layoutInflater;
 	
@@ -45,12 +46,15 @@ public class MachineListAdapter extends BaseAdapter {
 		IMachine m = getItem(position);
 		if (view == null) {
 			view = _layoutInflater.inflate(R.layout.machine_list_item, parent, false);
-			((ImageView)view.findViewById(R.id.machine_list_item_ostype)).setImageResource(Resources.get("os_"+m.getOSTypeId().toLowerCase()));
-			((TextView) view.findViewById(R.id.machine_list_item_name)).setText(m.getName());			
+			((ImageView)view.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+m.getOSTypeId().toLowerCase()));
+			((TextView) view.findViewById(R.id.machine_list_item_name)).setText(m.getName());
+			ISnapshot s = m.getCurrentSnapshot();
+			if(s!=null)  
+				((TextView) view.findViewById(R.id.machine_list_item_snapshot)).setText("("+m.getCurrentSnapshot().getName() + ")");			
 		}
-		String state = m.getState();
-		((ImageView)view.findViewById(R.id.machine_list_item_state)).setImageResource( Resources.get("state_"+state.toLowerCase()) );
-		((TextView)view.findViewById(R.id.machine_list_item_state_text)).setText(state);
+		MachineState state = m.getState();
+		((ImageView)view.findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(state) );
+		((TextView)view.findViewById(R.id.machine_list_item_state_text)).setText(state.name());
 		return view;
 	}
 }
