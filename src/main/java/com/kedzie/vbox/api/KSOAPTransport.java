@@ -6,10 +6,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.KvmSerializable;
+import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -26,7 +31,32 @@ public class KSOAPTransport {
 	public KSOAPTransport(String url) { this.transport = new HttpTransportSE(url);	}
 	
 	public Object call(SoapObject object) throws IOException, XmlPullParserException {
-		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11) {
+
+			@Override
+			public Object getResponse() throws SoapFault {
+				if (bodyIn instanceof SoapFault)
+					throw (SoapFault) bodyIn;
+				KvmSerializable ks = (KvmSerializable) bodyIn;
+				if(ks.getPropertyCount()==0)
+					return null;
+				else if(ks.getPropertyCount()==1)
+					return ks.getProperty(0).toString();
+				
+				Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+				for(int i=0;i<ks.getPropertyCount();i++){
+					PropertyInfo info = new PropertyInfo();
+					ks.getPropertyInfo(i, null, info);
+					if(!map.containsKey(info.getName()))
+						map.put(info.getName(), new ArrayList<Object>());
+					((ArrayList<Object>)map.get(info.getName())).add(ks.getProperty(i));
+				}
+				if(map.keySet().size()==1)
+					return (List<Object>)map.get(map.keySet().iterator().next());
+				return map;
+			}
+			
+		};
 		envelope.setOutputSoapObject(object);
 		transport.call(NAMESPACE+object.getName(), envelope);
 		return envelope.getResponse();
@@ -65,9 +95,9 @@ public class KSOAPTransport {
 				if(arg==null) continue;
 				if(method.getParameterTypes()[i].isArray()) {
 					for(Object o : (Object[])args[i]) 
-						request.addProperty(arg.value(), marshall(  method.getParameterTypes()[i].getComponentType(), o ) );
+						request.addProperty(arg.value(), marshall(  arg, method.getParameterTypes()[i].getComponentType(), o ) );
 				} else {
-					request.addProperty(arg.value(), marshall( method.getParameterTypes()[i], args[i]));
+					request.addProperty(arg.value(), marshall( arg, method.getParameterTypes()[i], args[i]));
 				}
 			}	
 			}
@@ -84,7 +114,9 @@ public class KSOAPTransport {
 			return unmarshall( method.getReturnType(), ret );
 		}
 		
-		private Object marshall(Class<?> clazz, Object obj) {
+		private Object marshall(KSOAP ksoap, Class<?> clazz, Object obj) {
+			if(!ksoap.type().equals(""))
+				return new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString());
 			if(IRemoteObject.class.isAssignableFrom(clazz)) {
 				 return ((IRemoteObject)obj).getId() ;
 			} else if(clazz.isEnum())
@@ -95,6 +127,10 @@ public class KSOAPTransport {
 	}
 	
 	private Object unmarshall(Class<?> returnType, Object ret) {
+		if(returnType.equals(Integer.class))
+			return Integer.valueOf(ret.toString());
+		if(returnType.equals(Boolean.class))
+			return Boolean.valueOf(ret.toString());
 		if(returnType.equals(String.class)) 
 			return ret.toString();
 		if(IRemoteObject.class.isAssignableFrom(returnType)) 

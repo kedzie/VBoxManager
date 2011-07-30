@@ -9,13 +9,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IEventListener;
 import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.api.WebSessionManager;
+import com.kedzie.vbox.event.IEvent;
 
 
 

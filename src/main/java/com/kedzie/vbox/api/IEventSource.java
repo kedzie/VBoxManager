@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.virtualbox_4_0.VBoxEventType;
 
+import com.kedzie.vbox.event.IEvent;
+
 public interface IEventSource extends IRemoteObject {
 	
 	public IEventListener createListener() throws IOException;

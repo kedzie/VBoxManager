@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KSOAP {
 	public String value();
+	public String namespace() default "";
+	public String type() default "";
 }

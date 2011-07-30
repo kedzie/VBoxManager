@@ -15,12 +15,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IEventListener;
 import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.WebSessionManager;
+import com.kedzie.vbox.event.IEvent;
 
 public class EventService extends Service {
 	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();

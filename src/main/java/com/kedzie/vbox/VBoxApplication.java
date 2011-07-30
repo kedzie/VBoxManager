@@ -5,9 +5,11 @@ import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.virtualbox_4_0.MachineState;
+import org.virtualbox_4_1.MachineState;
 
 import android.app.Application;
+
+import com.kedzie.vbox.server.ServerDB;
 
 public class VBoxApplication extends Application {
 
