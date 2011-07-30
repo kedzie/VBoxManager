@@ -83,7 +83,7 @@ public class VBoxApplication extends Application {
 		return null;
 	}
 	
-public String[] getActions(MachineState state) {
+public static String[] getActions(MachineState state) {
 		if(state.equals(MachineState.Running)) {
 			return new String[] { "Pause", "Reset", "Power Off" , "Save State", "Power Button", "Take Snapshot" };
 		} else if (state.equals(MachineState.PoweredOff) || state.equals(MachineState.Aborted)){
