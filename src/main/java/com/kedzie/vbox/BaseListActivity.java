@@ -25,7 +25,6 @@ public class BaseListActivity extends ListActivity {
 		_h = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
-				//showDialog(DIALOG_ALERT, msg.getData());
 				new AlertDialog.Builder(BaseListActivity.this)
 				.setMessage(msg.getData().getString("msg"))
 				.setPositiveButton("OK", new OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { 	finish();}})

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.event;
 
-import org.virtualbox_4_0.MachineState;
+import org.virtualbox_4_1.MachineState;
 
 import com.kedzie.vbox.api.IMachine;
 

@@ -4,38 +4,43 @@
     <string name="machine">Virtual Machine</string>
     <string name="machine_list">Virtual Machines</string>
     <string name="server_list">VBox Servers</string>
+    
     <string name="server_edit">Edit Server</string>
     <string name="server_host">Host</string>
     <string name="server_port">Port</string>
     <string name="server_username">Username</string>
     <string name="server_password">Password</string>
+    
     <string name="namespace">http://www.virtualbox.org</string>
+    
     <string name="metric_period_title">Period</string>
     <string name="metric_period_summary">Sample Rate</string>
-    <integer-array name="metric_period_entitites">
+    <integer-array name="metric_period_entities">
     	<item>1</item>
     	<item>2</item>
     	<item>3</item>
     	<item>4</item>
     </integer-array>
-    <string-array name="metric_period_entitites_values">
+    <string-array name="metric_period_entity_values">
     	<item>1 second</item>
     	<item>2 seconds</item>
     	<item>3 seconds</item>
     	<item>4 seconds</item>
     </string-array>
+    
     <string name="metric_count_title"># of Samples</string>
     <string name="metric_count_summary"># of Samples</string>
-    <integer-array name="metric_count_entitites">
+    <integer-array name="metric_count_entities">
     	<item>25</item>
     	<item>40</item>
     	<item>60</item>
     	<item>80</item>
     </integer-array>
-    <string-array name="metric_count_entitites_values">
+    <string-array name="metric_count_entity_values">
     	<item>25</item>
     	<item>40</item>
     	<item>60</item>
     	<item>80</item>
     </string-array>
+    
 </resources>

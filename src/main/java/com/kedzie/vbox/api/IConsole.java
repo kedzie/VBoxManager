@@ -2,6 +2,8 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
+import com.kedzie.vbox.event.IEventSource;
+
 public interface IConsole extends IRemoteObject {
 
 	public IProgress powerUp() throws IOException;

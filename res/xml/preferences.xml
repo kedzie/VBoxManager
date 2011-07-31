@@ -4,8 +4,8 @@
 
     <PreferenceCategory  android:title="Preferences">
 
-        <EditTextPreference
-                android:key="url"
+        <ListPreference
+                android:key="metric_Count"
                 android:title="Server URL"
                 android:summary="Server URL" />
     

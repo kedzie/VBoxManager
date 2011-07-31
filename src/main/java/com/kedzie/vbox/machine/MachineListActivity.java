@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.virtualbox_4_0.MachineState;
+import org.virtualbox_4_1.MachineState;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

@@ -2,8 +2,8 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.MachineState;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.MachineState;
 
 public interface IMachine extends IRemoteObject {
 

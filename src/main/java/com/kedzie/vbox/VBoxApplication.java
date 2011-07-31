@@ -8,6 +8,7 @@ import java.util.Map;
 import org.virtualbox_4_1.MachineState;
 
 import android.app.Application;
+import android.os.Bundle;
 
 import com.kedzie.vbox.server.ServerDB;
 
@@ -19,11 +20,6 @@ public class VBoxApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		_db = new ServerDB(this);
-	}
-
-	@Override
-	public void onTerminate() {
-		super.onTerminate();
 	}
 
 	public ServerDB getDB() { return _db;	}
@@ -78,29 +74,29 @@ public class VBoxApplication extends Application {
 	
 	@SuppressWarnings("unchecked")
 	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
-		for(Annotation at : a)
-			if(at.annotationType().equals(clazz)) return (T)at;
+		for(Annotation at : a) if(at.annotationType().equals(clazz)) return (T)at;
 		return null;
 	}
 	
 public static String[] getActions(MachineState state) {
-		if(state.equals(MachineState.Running)) {
+		if(state.equals(MachineState.Running))
 			return new String[] { "Pause", "Reset", "Power Off" , "Save State", "Power Button", "Take Snapshot" };
-		} else if (state.equals(MachineState.PoweredOff) || state.equals(MachineState.Aborted)){
-			return new String[] { "Start",  "Take Snapshot"  };
-		} else if (state.equals(MachineState.Paused)){
+		 else if (state.equals(MachineState.PoweredOff) || state.equals(MachineState.Aborted))
+			return new String[] { "Start",  "Take Snapshot" };
+		else if (state.equals(MachineState.Paused))
 			return new String[] { "Resume", "Reset", "Power Off" };
-		} else if (state.equals(MachineState.Saved)) {
+		 else if (state.equals(MachineState.Saved))
 			return new String[] { "Restore State", "Discard State" };
-		} 
 		return new String[] {};
 	}
-	
-	public static int get(String name) {
-		return r.containsKey(name) ? r.get(name) : R.drawable.ic_list_os_linux;
+
+	public static Bundle createBundle(String key, String value) {
+		Bundle b = new Bundle();
+		b.putString(key, value);
+		return b;
 	}
+
+	public static int get(String name) { return r.containsKey(name) ? r.get(name) : R.drawable.ic_list_os_linux; 	}
 	
-	public static int get(MachineState state) {
-		return s.containsKey(state)  ? s.get(state) : R.drawable.ic_list_start_small;
-	}
+	public static int get(MachineState state) { return s.containsKey(state)  ? s.get(state) : R.drawable.ic_list_start_small;	}
 }

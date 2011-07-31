@@ -8,6 +8,12 @@
 package com.kedzie.vbox;
 
 public final class R {
+    public static final class array {
+        public static final int metric_count_entities=0x7f060002;
+        public static final int metric_count_entity_values=0x7f060003;
+        public static final int metric_period_entities=0x7f060000;
+        public static final int metric_period_entity_values=0x7f060001;
+    }
     public static final class attr {
     }
     public static final class drawable {
@@ -60,56 +66,63 @@ public final class R {
         public static final int ic_menu_add=0x7f02002e;
         public static final int ic_menu_delete=0x7f02002f;
         public static final int ic_menu_edit=0x7f020030;
-        public static final int ic_menu_gallery=0x7f020031;
+        public static final int ic_menu_metric=0x7f020031;
         public static final int ic_menu_refresh=0x7f020032;
         public static final int ic_menu_save=0x7f020033;
         public static final int icon=0x7f020034;
     }
     public static final class id {
-        public static final int action_item_icon=0x7f070000;
-        public static final int action_item_text=0x7f070001;
-        public static final int button_delete=0x7f07000c;
-        public static final int button_save=0x7f07000b;
-        public static final int machine_list_item_name=0x7f070003;
-        public static final int machine_list_item_ostype=0x7f070002;
-        public static final int machine_list_item_snapshot=0x7f070004;
-        public static final int machine_list_item_state=0x7f070005;
-        public static final int machine_list_item_state_text=0x7f070006;
-        public static final int machine_option_menu_refresh=0x7f07000e;
-        public static final int machines_context_menu_acpi=0x7f070014;
-        public static final int machines_context_menu_pause=0x7f070012;
-        public static final int machines_context_menu_poweroff=0x7f070010;
-        public static final int machines_context_menu_reset=0x7f070011;
-        public static final int machines_context_menu_resume=0x7f070013;
-        public static final int machines_context_menu_start=0x7f07000f;
-        public static final int server_host=0x7f070007;
-        public static final int server_list_context_menu_delete=0x7f070016;
-        public static final int server_list_context_menu_edit=0x7f070015;
-        public static final int server_list_item_name=0x7f07000d;
-        public static final int server_list_option_menu_add=0x7f070017;
-        public static final int server_list_option_menu_delete=0x7f070019;
-        public static final int server_list_option_menu_save=0x7f070018;
-        public static final int server_password=0x7f07000a;
-        public static final int server_port=0x7f070008;
-        public static final int server_username=0x7f070009;
+        public static final int action_item_icon=0x7f080002;
+        public static final int action_item_text=0x7f080003;
+        public static final int button_delete=0x7f08000e;
+        public static final int button_save=0x7f08000d;
+        public static final int machine_list=0x7f080001;
+        public static final int machine_list_item_name=0x7f080005;
+        public static final int machine_list_item_ostype=0x7f080004;
+        public static final int machine_list_item_snapshot=0x7f080006;
+        public static final int machine_list_item_state=0x7f080007;
+        public static final int machine_list_item_state_text=0x7f080008;
+        public static final int machine_name=0x7f080000;
+        public static final int machine_option_menu_metrics=0x7f080010;
+        public static final int machine_option_menu_refresh=0x7f08000f;
+        public static final int machines_context_menu_acpi=0x7f080016;
+        public static final int machines_context_menu_pause=0x7f080014;
+        public static final int machines_context_menu_poweroff=0x7f080012;
+        public static final int machines_context_menu_reset=0x7f080013;
+        public static final int machines_context_menu_resume=0x7f080015;
+        public static final int machines_context_menu_start=0x7f080011;
+        public static final int server_host=0x7f080009;
+        public static final int server_list_context_menu_delete=0x7f080018;
+        public static final int server_list_context_menu_edit=0x7f080017;
+        public static final int server_list_option_menu_add=0x7f080019;
+        public static final int server_list_option_menu_delete=0x7f08001b;
+        public static final int server_list_option_menu_save=0x7f08001a;
+        public static final int server_password=0x7f08000c;
+        public static final int server_port=0x7f08000a;
+        public static final int server_username=0x7f08000b;
     }
     public static final class layout {
-        public static final int machine_action_item=0x7f030000;
-        public static final int machine_list_item=0x7f030001;
-        public static final int server=0x7f030002;
-        public static final int server_list_item=0x7f030003;
+        public static final int machine=0x7f030000;
+        public static final int machine_action_item=0x7f030001;
+        public static final int machine_list_item=0x7f030002;
+        public static final int server=0x7f030003;
     }
     public static final class menu {
-        public static final int machine_options_menu=0x7f060000;
-        public static final int machines_list_context_menu=0x7f060001;
-        public static final int server_list_context_menu=0x7f060002;
-        public static final int server_list_options_menu=0x7f060003;
-        public static final int server_options_menu=0x7f060004;
+        public static final int machine_list_options_menu=0x7f070000;
+        public static final int machine_options_menu=0x7f070001;
+        public static final int machines_list_context_menu=0x7f070002;
+        public static final int server_list_context_menu=0x7f070003;
+        public static final int server_list_options_menu=0x7f070004;
+        public static final int server_options_menu=0x7f070005;
     }
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int machine=0x7f050001;
         public static final int machine_list=0x7f050002;
+        public static final int metric_count_summary=0x7f05000d;
+        public static final int metric_count_title=0x7f05000c;
+        public static final int metric_period_summary=0x7f05000b;
+        public static final int metric_period_title=0x7f05000a;
         public static final int namespace=0x7f050009;
         public static final int server_edit=0x7f050004;
         public static final int server_host=0x7f050005;

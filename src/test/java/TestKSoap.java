@@ -1,21 +1,10 @@
-import java.util.List;
+import org.virtualbox_4_1.VBoxEventType;
 
-import org.virtualbox_4_0.IMachineStateChangedEvent;
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.SessionState;
-import org.virtualbox_4_0.VBoxEventType;
-
-import android.util.Log;
-import android.widget.Toast;
-
-import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IEventListener;
-import com.kedzie.vbox.api.IEventSource;
-import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.api.WebSessionManager;
 import com.kedzie.vbox.event.IEvent;
+import com.kedzie.vbox.event.IEventListener;
+import com.kedzie.vbox.event.IEventSource;
 
 
 

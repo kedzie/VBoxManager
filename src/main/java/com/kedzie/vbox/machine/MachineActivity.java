@@ -1,7 +1,7 @@
 package com.kedzie.vbox.machine;
 
-import org.virtualbox_4_0.MachineState;
-import org.virtualbox_4_0.SessionState;
+import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.SessionState;
 
 import android.content.Intent;
 import android.os.Bundle;

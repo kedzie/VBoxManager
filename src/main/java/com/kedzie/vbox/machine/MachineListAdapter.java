@@ -2,7 +2,7 @@ package com.kedzie.vbox.machine;
 
 import java.util.List;
 
-import org.virtualbox_4_0.MachineState;
+import org.virtualbox_4_1.MachineState;
 
 import android.view.LayoutInflater;
 import android.view.View;

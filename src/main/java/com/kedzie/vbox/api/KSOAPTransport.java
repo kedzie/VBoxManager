@@ -6,10 +6,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
@@ -21,41 +21,38 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.util.Log;
+
 import com.kedzie.vbox.VBoxApplication;
 
 public class KSOAPTransport {
 	private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
 	public static final String NAMESPACE = "http://www.virtualbox.org/";
 	private HttpTransportSE transport;
+	private Map<String, Object> _cache = new HashMap<String, Object>();
 	
 	public KSOAPTransport(String url) { this.transport = new HttpTransportSE(url);	}
 	
 	public Object call(SoapObject object) throws IOException, XmlPullParserException {
 		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11) {
-
 			@Override
 			public Object getResponse() throws SoapFault {
-				if (bodyIn instanceof SoapFault)
-					throw (SoapFault) bodyIn;
-				KvmSerializable ks = (KvmSerializable) bodyIn;
+				if (bodyIn instanceof SoapFault) throw (SoapFault)bodyIn;
+				KvmSerializable ks = (KvmSerializable)bodyIn;
 				if(ks.getPropertyCount()==0)
 					return null;
 				else if(ks.getPropertyCount()==1)
 					return ks.getProperty(0).toString();
-				
 				Map<String, List<Object>> map = new HashMap<String, List<Object>>();
 				for(int i=0;i<ks.getPropertyCount();i++){
 					PropertyInfo info = new PropertyInfo();
 					ks.getPropertyInfo(i, null, info);
-					if(!map.containsKey(info.getName()))
-						map.put(info.getName(), new ArrayList<Object>());
+					if(!map.containsKey(info.getName())) map.put(info.getName(), new ArrayList<Object>());
 					((ArrayList<Object>)map.get(info.getName())).add(ks.getProperty(i));
 				}
-				if(map.keySet().size()==1)
-					return (List<Object>)map.get(map.keySet().iterator().next());
+				if(map.keySet().size()==1) return (List<Object>)map.get(map.keySet().iterator().next());
 				return map;
 			}
-			
 		};
 		envelope.setOutputSoapObject(object);
 		transport.call(NAMESPACE+object.getName(), envelope);
@@ -66,9 +63,7 @@ public class KSOAPTransport {
 		return clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new SOAPInvocationHandler(id, clazz)));
 	}
 	
-	/**
-	 * Invokes SOAP methods
-	 */
+	/** Invokes SOAP methods */
 	private class  SOAPInvocationHandler implements InvocationHandler {
 		private String id;
 		private String clazz;
@@ -78,10 +73,21 @@ public class KSOAPTransport {
 			this.clazz = type.getSimpleName();
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
-			if(method.getName().equals("getId")) 
-				return this.id;
+			if(method.getName().equals("getId")) return this.id;
+			if(method.getName().equals("equals")) return id.equals( ((IRemoteObject)args[0]).getId());
+			if(method.getName().equals("hashCode")) return id.hashCode();
+			if(method.getName().equals("toString")) return id.toString();
+			if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
+			if(method.getName().startsWith("get")) {
+				if(_cache.containsKey(method.getName())) {
+					Object value = _cache.get(method.getName());
+					Log.d(TAG, "Returning cache value: " + method.getName() + value );
+					return value;
+				}
+			}
 			
 			String prefix = clazz;
 			KSOAP typeAnnotation = method.getAnnotation(KSOAP.class);
@@ -93,22 +99,21 @@ public class KSOAPTransport {
 			for(int i=0; i<args.length; i++) {
 				KSOAP arg = VBoxApplication.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]);
 				if(arg==null) continue;
-				if(method.getParameterTypes()[i].isArray()) {
-					for(Object o : (Object[])args[i]) 
-						request.addProperty(arg.value(), marshall(  arg, method.getParameterTypes()[i].getComponentType(), o ) );
-				} else {
+				if(method.getParameterTypes()[i].isArray()) 
+					for(Object o : (Object[])args[i]) request.addProperty(arg.value(), marshall(  arg, method.getParameterTypes()[i].getComponentType(), o ) );
+				if(Collection.class.isAssignableFrom(method.getParameterTypes()[i])) 
+					for(Object o : (Collection<Object>)args[i]) request.addProperty(arg.value(), marshall(  arg, method.getParameterTypes()[i].getComponentType(), o ) );
+				else
 					request.addProperty(arg.value(), marshall( arg, method.getParameterTypes()[i], args[i]));
-				}
-			}	
+				}	
 			}
 			Object ret = call(request);
 			if(ret==null  ||  ret.toString().equals("anyType{}")) return null;
 			
-			if( method.getGenericReturnType() instanceof ParameterizedType ) {
+			if( Collection.class.isAssignableFrom(method.getReturnType()) && method.getGenericReturnType() instanceof ParameterizedType ) {
 				Class<?> pClazz = (Class<?>)((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments()[0];
 				List<Object> list = new ArrayList<Object>();
-				for(Object sp : (Vector<Object>)ret)  
-					list.add(  unmarshall(pClazz, sp));
+				for(Object sp : (Collection<Object>)ret) list.add(  unmarshall(pClazz, sp));
 				return list;
 			}
 			return unmarshall( method.getReturnType(), ret );
@@ -117,9 +122,9 @@ public class KSOAPTransport {
 		private Object marshall(KSOAP ksoap, Class<?> clazz, Object obj) {
 			if(!ksoap.type().equals(""))
 				return new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString());
-			if(IRemoteObject.class.isAssignableFrom(clazz)) {
-				 return ((IRemoteObject)obj).getId() ;
-			} else if(clazz.isEnum())
+			if(IRemoteObject.class.isAssignableFrom(clazz))
+				 return ((IRemoteObject)obj).getId();
+			else if(clazz.isEnum())
 				return new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString()  );
 			else
 				return obj;	
@@ -135,10 +140,8 @@ public class KSOAPTransport {
 			return ret.toString();
 		if(IRemoteObject.class.isAssignableFrom(returnType)) 
 			return getProxy(returnType, ret.toString());
-		if(returnType.isEnum()) {
-			for( Object element : returnType.getEnumConstants())
-				if( element.toString().equals( ret.toString() ) ) return element;
-		}
+		if(returnType.isEnum())
+			for( Object element : returnType.getEnumConstants()) if( element.toString().equals( ret.toString() ) ) return element;
 		return ret;
 	}
 }

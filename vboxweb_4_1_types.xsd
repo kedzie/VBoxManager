@@ -1,0 +1,112 @@
+<schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema"    targetNamespace="http://www.virtualbox.org/"  xmlns:vbox="http://www.virtualbox.org/">
+
+	<complexType name="IPciAddress">
+        <sequence>
+          <element name="bus" type="short"/>
+          <element name="device" type="short"/>
+          <element name="devFunction" type="short"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="IPciDeviceAttachment">
+        <sequence>
+          <element name="name" type="string"/>
+          <element name="isPhysicalDevice" type="boolean"/>
+          <element name="hostAddress" type="int"/>
+          <element name="guestAddress" type="int"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="IVRDEServerInfo">
+        <sequence>
+          <element name="active" type="boolean"/>
+          <element name="port" type="int"/>
+          <element name="numberOfClients" type="unsignedInt"/>
+          <element name="beginTime" type="long"/>
+          <element name="endTime" type="long"/>
+          <element name="bytesSent" type="long"/>
+          <element name="bytesSentTotal" type="long"/>
+          <element name="bytesReceived" type="long"/>
+          <element name="bytesReceivedTotal" type="long"/>
+          <element name="user" type="string"/>
+          <element name="domain" type="string"/>
+          <element name="clientName" type="string"/>
+          <element name="clientIP" type="string"/>
+          <element name="clientVersion" type="unsignedInt"/>
+          <element name="encryptionStyle" type="unsignedInt"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="IGuestOSType">
+        <sequence>
+          <element name="familyId" type="string"/>
+          <element name="familyDescription" type="string"/>
+          <element name="id" type="string"/>
+          <element name="description" type="string"/>
+          <element name="is64Bit" type="boolean"/>
+          <element name="recommendedIOAPIC" type="boolean"/>
+          <element name="recommendedVirtEx" type="boolean"/>
+          <element name="recommendedRAM" type="unsignedInt"/>
+          <element name="recommendedVRAM" type="unsignedInt"/>
+          <element name="recommendedHDD" type="long"/>
+          <element name="adapterType" type="vbox:NetworkAdapterType"/>
+          <element name="recommendedPae" type="boolean"/>
+          <element name="recommendedDvdStorageController" type="vbox:StorageControllerType"/>
+          <element name="recommendedDvdStorageBus" type="vbox:StorageBus"/>
+          <element name="recommendedHdStorageController" type="vbox:StorageControllerType"/>
+          <element name="recommendedHdStorageBus" type="vbox:StorageBus"/>
+          <element name="recommendedFirmware" type="vbox:FirmwareType"/>
+          <element name="recommendedUsbHid" type="boolean"/>
+          <element name="recommendedHpet" type="boolean"/>
+          <element name="recommendedUsbTablet" type="boolean"/>
+          <element name="recommendedRtcUseUtc" type="boolean"/>
+          <element name="recommendedChipset" type="vbox:ChipsetType"/>
+          <element name="recommendedAudioController" type="vbox:AudioControllerType"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="IAdditionsFacility">
+        <sequence>
+          <element name="classType" type="vbox:AdditionsFacilityClass"/>
+          <element name="lastUpdated" type="long"/>
+          <element name="name" type="string"/>
+          <element name="status" type="vbox:AdditionsFacilityStatus"/>
+          <element name="type" type="vbox:AdditionsFacilityType"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="IGuestDirEntry">
+        <sequence>
+          <element name="nodeId" type="long"/>
+          <element name="name" type="string"/>
+          <element name="type" type="vbox:GuestDirEntryType"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="IMediumAttachment">
+        <sequence>
+          <element name="medium" type="string"/>
+          <element name="controller" type="string"/>
+          <element name="port" type="int"/>
+          <element name="device" type="int"/>
+          <element name="type" type="vbox:DeviceType"/>
+          <element name="passthrough" type="boolean"/>
+          <element name="temporaryEject" type="boolean"/>
+          <element name="isEjected" type="boolean"/>
+          <element name="nonRotational" type="boolean"/>
+          <element name="bandwidthGroup" type="string"/>
+        </sequence>
+      </complexType>
+      
+      <complexType name="ISharedFolder">
+        <sequence>
+          <element name="name" type="string"/>
+          <element name="hostPath" type="string"/>
+          <element name="accessible" type="boolean"/>
+          <element name="writable" type="boolean"/>
+          <element name="autoMount" type="boolean"/>
+          <element name="lastAccessError" type="string"/>
+        </sequence>
+      </complexType>
+      
+</schema>

@@ -1,8 +1,8 @@
 package com.kedzie.vbox.machine;
 
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.VBoxEventType;
-import org.virtualbox_4_0.SessionState;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VBoxEventType;
 
 import android.app.Service;
 import android.content.Intent;
@@ -15,12 +15,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IEventListener;
-import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.WebSessionManager;
 import com.kedzie.vbox.event.IEvent;
+import com.kedzie.vbox.event.IEventListener;
+import com.kedzie.vbox.event.IEventSource;
 
 public class EventService extends Service {
 	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();

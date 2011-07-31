@@ -1,6 +1,6 @@
 package com.kedzie.vbox.event;
 
-import org.virtualbox_4_0.VBoxEventType;
+import org.virtualbox_4_1.VBoxEventType;
 
 import com.kedzie.vbox.api.IRemoteObject;
 import com.kedzie.vbox.api.KSOAP;

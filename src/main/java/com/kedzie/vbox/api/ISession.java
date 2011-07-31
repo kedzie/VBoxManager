@@ -2,8 +2,8 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import org.virtualbox_4_0.SessionState;
-import org.virtualbox_4_0.SessionType;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.SessionType;
 
 public interface ISession extends IRemoteObject {
 

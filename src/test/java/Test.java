@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import org.virtualbox_4_0.IConsole;
-import org.virtualbox_4_0.IEvent;
-import org.virtualbox_4_0.IEventListener;
-import org.virtualbox_4_0.IEventSource;
-import org.virtualbox_4_0.IMachine;
-import org.virtualbox_4_0.ISession;
-import org.virtualbox_4_0.LockType;
-import org.virtualbox_4_0.VBoxEventType;
-import org.virtualbox_4_0.VirtualBoxManager;
+import org.virtualbox_4_1.IConsole;
+import org.virtualbox_4_1.IEvent;
+import org.virtualbox_4_1.IEventListener;
+import org.virtualbox_4_1.IEventSource;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.VBoxEventType;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 
 public class Test {

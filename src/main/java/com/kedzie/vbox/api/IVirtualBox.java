@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.virtualbox_4_1.IHost;
 
+import com.kedzie.vbox.event.IEventSource;
+
 public interface IVirtualBox extends IRemoteObject {
 
 	public List<IMachine> getMachines() throws IOException;

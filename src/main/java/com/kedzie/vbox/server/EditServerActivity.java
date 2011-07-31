@@ -8,7 +8,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.kedzie.vbox.BaseActivity;
 import com.kedzie.vbox.R;
 
 public class EditServerActivity extends BaseActivity {
