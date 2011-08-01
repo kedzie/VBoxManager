@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.WebSessionManager;
 import com.kedzie.vbox.event.IEvent;
 import com.kedzie.vbox.event.IEventListener;
@@ -41,14 +40,12 @@ public class EventService extends Service {
 			@Override
 			public void handleMessage(Message msg) {
 				try {
-					WebSessionManager _vmgr = new WebSessionManager(msg.getData().getString("url"), msg.getData().getString("vbox"));
+					WebSessionManager _vmgr = msg.getData().getParcelable("vmgr");
 					IMachine _machine = _vmgr.getTransport().getProxy(IMachine.class, msg.getData().getString("machine"));
-					ISession session = _vmgr.getSession();
-					if(session.getState().equals(SessionState.Unlocked))
-						_machine.lockMachine(session,LockType.Shared);
-					IConsole console = session.getConsole();
+					if(_vmgr.getSession().getState().equals(SessionState.Unlocked))
+						_machine.lockMachine(_vmgr.getSession(),LockType.Shared);
+					IConsole console = _vmgr.getSession().getConsole();
 					IEventSource evSource = console.getEventSource();
-//					IEventSource evSource = 
 					IEventListener listener = evSource.createListener();
 					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.Any }, true);
 					for(int i=0; i<10; i++) {
@@ -67,8 +64,7 @@ public class EventService extends Service {
 		};
 		Message msg = h.obtainMessage();
 		Bundle bundle = new Bundle();
-		bundle.putString("url", intent.getStringExtra("url"));
-		bundle.putString("vbox", intent.getStringExtra("vbox"));
+		bundle.putParcelable("vmgr", intent.getParcelableExtra("vmgr"));
 		bundle.putString("machine", intent.getStringExtra("machine"));
 		msg.setData(bundle);
 		h.sendMessage(msg);

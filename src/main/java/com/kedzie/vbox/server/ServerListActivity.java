@@ -23,6 +23,8 @@ public class ServerListActivity extends BaseListActivity {
 	protected static final String TAG = ServerListActivity.class.getName();
 	private static final int REQUEST_CODE_ADD = 9303;
 	private static final int REQUEST_CODE_EDIT = 9304;
+	static final int RESULT_CODE_SAVE = 1;
+	static final int RESULT_CODE_DELETE = 2;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class ServerListActivity extends BaseListActivity {
 	    switch (item.getItemId()) {
 	    case R.id.server_list_option_menu_add:
 	    	Intent intent = new Intent().setClass(this, EditServerActivity.class);
+	    	intent.putExtra("server", new Server(-1L, "", 18083, "", ""));
 	        startActivityForResult(intent, REQUEST_CODE_ADD);
 	        return true;
 	    default:
@@ -63,11 +66,7 @@ public class ServerListActivity extends BaseListActivity {
 	  switch (item.getItemId()) {
 	  case R.id.server_list_context_menu_edit:
 		Intent intent = new Intent().setClass(this, EditServerActivity.class);
-		intent.putExtra("id", s.getId());
-		intent.putExtra( "host", s.getHost() );
-		intent.putExtra("port", s.getPort() );
-		intent.putExtra("username", s.getUsername());
-		intent.putExtra("password", s.getPassword());
+		intent.putExtra("server", s);
         startActivityForResult(intent, REQUEST_CODE_EDIT);
         return true;
 	  case R.id.server_list_context_menu_delete:
@@ -81,14 +80,18 @@ public class ServerListActivity extends BaseListActivity {
 
  	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
-		case(REQUEST_CODE_ADD):
-		case(REQUEST_CODE_EDIT):
+ 		Server s = data.getParcelableExtra("server");
+        switch(resultCode) {
+		case(RESULT_CODE_SAVE):
+			getVBoxApplication().getDB().insertOrUpdate(s);
+			break;
+		case(RESULT_CODE_DELETE):
+			getVBoxApplication().getDB().delete(s.getId());
+			break;
 		default:
-			new LoadServersTask().execute();
 			return;
         }
+        new LoadServersTask().execute();
     }
 	
 	private class LoadServersTask extends AsyncTask<Void, Void, List<Server>>	{
@@ -102,7 +105,7 @@ public class ServerListActivity extends BaseListActivity {
 		}
 		@Override
 		protected void onPostExecute(List<Server> result)	{
-			setListAdapter( new ArrayAdapter<Server>(ServerListActivity.this, R.layout.server_list_item, R.id.server_list_item_name, result));
+			setListAdapter( new ArrayAdapter<Server>(ServerListActivity.this, android.R.layout.simple_list_item_1, result));
 			getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

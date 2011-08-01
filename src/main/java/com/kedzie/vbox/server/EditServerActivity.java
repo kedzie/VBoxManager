@@ -1,5 +1,6 @@
 package com.kedzie.vbox.server;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,7 +11,7 @@ import android.widget.TextView;
 
 import com.kedzie.vbox.R;
 
-public class EditServerActivity extends BaseActivity {
+public class EditServerActivity extends Activity {
 	protected static final String TAG = EditServerActivity.class.getSimpleName();
 	
 	@Override
@@ -22,10 +23,11 @@ public class EditServerActivity extends BaseActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-        ((TextView)findViewById(R.id.server_host)).setText(getIntent().getStringExtra("host"));
-        ((TextView)findViewById(R.id.server_port)).setText(""+getIntent().getIntExtra("port",18083));
-        ((TextView)findViewById(R.id.server_username)).setText(getIntent().getStringExtra("username"));
-        ((TextView)findViewById(R.id.server_password)).setText(getIntent().getStringExtra("password"));
+		Server s = getIntent().getParcelableExtra("server");
+        ((TextView)findViewById(R.id.server_host)).setText(s.getHost());
+        ((TextView)findViewById(R.id.server_port)).setText(""+s.getPort());
+        ((TextView)findViewById(R.id.server_username)).setText(s.getUsername());
+        ((TextView)findViewById(R.id.server_password)).setText(s.getPassword());
         ((ImageButton)findViewById(R.id.button_save)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { save(); } });
         ((ImageButton)findViewById(R.id.button_delete)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { delete(); } });
 	}
@@ -56,12 +58,14 @@ public class EditServerActivity extends BaseActivity {
 		int port = Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString());
 		String username = ((TextView)findViewById(R.id.server_username)).getText().toString();
 		String password = ((TextView)findViewById(R.id.server_password)).getText().toString();
-		getVBoxApplication().getDB().insertOrUpdate(new Server(id, host, port, username, password));
+		Server s = new Server(id, host, port, username, password);
+		getIntent().putExtra("server", s);
+		setResult(1, getIntent());
 		finish();
 	}
 	
 	private void delete() {
-		getVBoxApplication().getDB().delete(getIntent().getLongExtra("id", -1));
+		setResult(2, getIntent());
 		finish();
 	}
 }
