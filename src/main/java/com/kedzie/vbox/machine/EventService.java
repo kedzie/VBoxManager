@@ -41,10 +41,10 @@ public class EventService extends Service {
 			public void handleMessage(Message msg) {
 				try {
 					WebSessionManager _vmgr = msg.getData().getParcelable("vmgr");
-					IMachine _machine = _vmgr.getTransport().getProxy(IMachine.class, msg.getData().getString("machine"));
-					if(_vmgr.getSession().getState().equals(SessionState.Unlocked))
-						_machine.lockMachine(_vmgr.getSession(),LockType.Shared);
-					IConsole console = _vmgr.getSession().getConsole();
+					IMachine _machine = _vmgr.getProxy(IMachine.class, msg.getData().getString("machine"));
+					if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.Unlocked))
+						_machine.lockMachine(_vmgr.getVBox().getSessionObject(),LockType.Shared);
+					IConsole console = _vmgr.getVBox().getSessionObject().getConsole();
 					IEventSource evSource = console.getEventSource();
 					IEventListener listener = evSource.createListener();
 					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.Any }, true);

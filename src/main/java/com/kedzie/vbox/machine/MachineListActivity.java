@@ -2,13 +2,13 @@ package com.kedzie.vbox.machine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.virtualbox_4_1.MachineState;
 
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -19,20 +19,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.kedzie.vbox.BaseListActivity;
+import com.kedzie.vbox.BaseTask;
+import com.kedzie.vbox.MachineTask;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.api.WebSessionManager;
-import com.kedzie.vbox.task.ACPITask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
-import com.kedzie.vbox.task.PauseTask;
 import com.kedzie.vbox.task.PowerDownTask;
 import com.kedzie.vbox.task.ResetTask;
 import com.kedzie.vbox.task.ResumeTask;
@@ -47,26 +48,46 @@ public class MachineListActivity extends BaseListActivity {
     public void onCreate(Bundle savedInstanceState) {
        	super.onCreate(savedInstanceState);
        	registerForContextMenu(getListView());
-       	new LogonTask().execute(getIntent().getStringExtra("url"),getIntent().getStringExtra("username"), getIntent().getStringExtra("password"));
+       	new BaseTask<String, String>(this, vmgr, "Connecting", true) {
+			@Override
+			protected String work(String... params) throws Exception {
+				_vmgr.logon(params[0], params[1], params[2]);
+				return _vmgr.getVBox().getVersion();
+			}
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				Log.i(TAG, "Logged in " + result);
+				new LoadMachinesTask(MachineListActivity.this, vmgr).execute();
+			}
+       	}.execute(getIntent().getStringExtra("url"),getIntent().getStringExtra("username"), getIntent().getStringExtra("password"));
     }
 	
 	@Override
 	protected void onDestroy() {
-		try {  vmgr.logoff(); } catch (Exception e) { Log.e(TAG, "error ", e); } 
+		try {  if(vmgr.getVBox()!=null) vmgr.getVBox().logoff(); } catch (Exception e) { Log.e(TAG, "error ", e); } 
 		super.onDestroy();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.machine_options_menu, menu);
+		getMenuInflater().inflate(R.menu.machine_list_options_menu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.machine_option_menu_refresh:
-			new LoadMachinesTask().execute();
+		case R.id.machine_list_option_menu_refresh:
+			new LoadMachinesTask(this, vmgr).execute();
+			return true;
+		case R.id.machine_list_option_menu_metrics:
+			Intent intent = new Intent(this, MetricActivity.class);
+			intent.putExtra("vmgr", vmgr);
+			intent.putExtra("object", vmgr.getVBox().getHost().getId() );
+			intent.putExtra("cpuMetrics" , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } );
+			intent.putExtra("ramMetrics" , new String[] {  "RAM/Usage/Used" } );
+			startActivity(intent);
 			return true;
 		default:
 			return true;
@@ -91,74 +112,46 @@ public class MachineListActivity extends BaseListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 	  final IMachine m = (IMachine)getListAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
-	  case R.id.machines_context_menu_start:
-		  new LaunchVMProcessTask(this, vmgr).execute(m);
+	  case R.id.machines_context_menu_start:  new LaunchVMProcessTask(this, vmgr).execute(m);	  break;
+	  case R.id.machines_context_menu_poweroff:   new PowerDownTask(this, vmgr).execute(m);  break;
+	  case R.id.machines_context_menu_reset:	  new ResetTask(this, vmgr).execute(m);	  break;
+	  case R.id.machines_context_menu_resume:	  new ResumeTask(this, vmgr).execute(m);	  break;
+	  case R.id.machines_context_menu_pause:	  
+		  new MachineTask(this, vmgr, "Pausing") {	
+				@Override
+				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 
+					console.pause();
+				}}.execute(m);
 		  break;
-	  case R.id.machines_context_menu_poweroff:
-		  new PowerDownTask(this, vmgr).execute(m);
-		  break;
-	  case R.id.machines_context_menu_reset:
-		  new ResetTask(this, vmgr).execute(m);
-		  break;
-	  case R.id.machines_context_menu_pause:
-		  new PauseTask(this, vmgr).execute(m);
-		  break;
-	  case R.id.machines_context_menu_resume:
-		  new ResumeTask(this, vmgr).execute(m);
-		  break;
-	  case R.id.machines_context_menu_acpi:
-		  new ACPITask(this, vmgr).execute(m);
+	  case R.id.machines_context_menu_acpi:	  
+		  new MachineTask(this, vmgr, "ACPI Power Down") {
+				@Override
+				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {
+					console.powerButton();
+				}}.execute(m);
 		  break;
 	  }
 	  return true;
 	}
 	
-	private class LogonTask extends AsyncTask<String, Object, String>	{
+	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
 		
-		private ProgressDialog pd;
-		
-		@Override
-		protected void onPreExecute()		{
-			pd = new ProgressDialog(MachineListActivity.this);
-			pd.setTitle("Connecting");
-			pd.setMessage("Logging in");
-			pd.setIndeterminate(true);
-			pd.show();
+		public LoadMachinesTask(Context ctx, WebSessionManager vmgr) {
+			super( ctx, vmgr,  "Loading Machines", true);	
 		}
 
 		@Override
-		protected String doInBackground(String... params)	{
-			try	{
-				vmgr.logon(params[0], params[1], params[2]);
-				return vmgr.getVBox().getVersion();
-			} catch(Exception e)	{
-				showAlert(e);
+		protected List<IMachine> work(Void... params) throws Exception {
+			List<IMachine> machines = _vmgr.getVBox().getMachines();
+			Log.i(TAG, "Loading " + machines + " machines");
+			Collection<String> running = new ArrayList<String>();
+			running.add(_vmgr.getVBox().getHost().getId());
+			for(IMachine m : machines) 	{
+				Log.e(TAG, "Machine state: " + m.getState());
+				if(MachineState.Running.equals(m.getState()))	running.add(m.getId());
 			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String version)	{
-			pd.dismiss();
-			if(version!=null) {
-				Log.i(TAG, "Version: " + version);
-				new LoadMachinesTask().execute();
-			}
-		}
-	}
-	
-	private class LoadMachinesTask extends AsyncTask<Void, Void, List<IMachine>>	{
-		@Override
-		protected void onPreExecute() { showProgress("Loading Machines"); }
-
-		@Override
-		protected List<IMachine> doInBackground(Void... params)	{
-			try	{
-				return vmgr.getVBox().getMachines();
-			} catch(Exception e)	{
-				showAlert(e);
-			}
-			return new ArrayList<IMachine>();
+			_vmgr.setupMetrics(context, running.toArray(new String[running.size()]) );
+			return machines;
 		}
 
 		@Override
@@ -174,9 +167,10 @@ public class MachineListActivity extends BaseListActivity {
 					startActivity(intent);
 				}
 			});
-			dismissProgress();
+			super.onPostExecute(result);
 		}
 	}
+	
 	class MachineListAdapter extends ArrayAdapter<IMachine> {
 		private final LayoutInflater _layoutInflater;
 		
@@ -195,13 +189,13 @@ public class MachineListActivity extends BaseListActivity {
 				view = _layoutInflater.inflate(R.layout.machine_list_item, parent, false);
 				((ImageView)view.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+m.getOSTypeId().toLowerCase()));
 				((TextView) view.findViewById(R.id.machine_list_item_name)).setText(m.getName());
-				ISnapshot s = m.getCurrentSnapshot();
-				if(s!=null)  
-					((TextView) view.findViewById(R.id.machine_list_item_snapshot)).setText("("+m.getCurrentSnapshot().getName() + ")");			
 			}
 			MachineState state = m.getState();
 			((ImageView)view.findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(state) );
 			((TextView)view.findViewById(R.id.machine_list_item_state_text)).setText(state.name());
+			ISnapshot s = m.getCurrentSnapshot();
+			if(s!=null)  
+				((TextView) view.findViewById(R.id.machine_list_item_snapshot)).setText("("+m.getCurrentSnapshot().getName() + ")");		
 			return view;
 		}
 	}

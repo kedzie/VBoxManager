@@ -1,15 +1,16 @@
 package com.kedzie.vbox.task;
 
 import com.kedzie.vbox.BaseListActivity;
+import com.kedzie.vbox.MachineProgressTask;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.WebSessionManager;
 
-public class PowerDownTask extends MachineTask {
+public class PowerDownTask extends MachineProgressTask {
 
 		public PowerDownTask(BaseListActivity activity, WebSessionManager vmgr) {
-			super(activity, vmgr, "Powering Down", false);
+			super(activity, vmgr, "Powering Down");
 		}
 		
 		@Override

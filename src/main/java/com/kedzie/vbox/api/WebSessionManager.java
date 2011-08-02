@@ -1,17 +1,21 @@
 package com.kedzie.vbox.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ksoap2.serialization.SoapObject;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class WebSessionManager implements Parcelable {
 	private String _url;
 	private IVirtualBox _vbox;
-	private ISession _session;
 	private KSOAPTransport _transport;
 	
 	public WebSessionManager() {}
@@ -22,6 +26,15 @@ public class WebSessionManager implements Parcelable {
 		_vbox = _transport.getProxy(IVirtualBox.class, p.readString());
 	 }
 	
+	@Override
+	public void writeToParcel(Parcel dest, int flags) { dest.writeString(_url); dest.writeString(_vbox.getId()); }
+	@Override
+	public int describeContents() { return 0; }
+	 public static final Parcelable.Creator<WebSessionManager> CREATOR = new Parcelable.Creator<WebSessionManager>() {
+		 public WebSessionManager createFromParcel(Parcel in) {  return new WebSessionManager(in); }
+		 public WebSessionManager[] newArray(int size) {  return new WebSessionManager[size]; }
+	 };
+	
 	public void logon(String url,  String username, String password) throws IOException, XmlPullParserException {
 		_url=url;
 		_transport=new KSOAPTransport(url);
@@ -31,35 +44,39 @@ public class WebSessionManager implements Parcelable {
 		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
 	}
 	
-	public void logoff() throws IOException, XmlPullParserException {
-		if(_transport==null || _vbox==null) return;
-		SoapObject request = new SoapObject(KSOAPTransport.NAMESPACE, "IWebsessionManager_logoff");
-		request.addProperty("refIVirtualBox", _vbox.getId());
-		_transport.call(request);
-		_transport = null;
-		_session=null;
+	public void setupMetrics( Context context, String...objects) throws IOException {
+		setupMetrics( context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 50), objects);
 	}
 	
-	public ISession getSession() throws IOException, XmlPullParserException {
-		if(_transport==null || _vbox==null) throw new IllegalArgumentException("Not Logged On");
-		if(_session==null) {
-			SoapObject request = new SoapObject(KSOAPTransport.NAMESPACE, "IWebsessionManager_getSessionObject");
-			request.addProperty("refIVirtualBox", _vbox.getId());
-			_session = _transport.getProxy(ISession.class, _transport.call(request).toString());
+	public void setupMetrics( int period, int count, String... objects) throws IOException {
+		IPerformanceCollector pc = _vbox.getPerformanceCollector();
+		pc.setupMetrics(new String[] { "*:" }, objects, period, count);
+		pc.enableMetrics(new String[] { "*:" }, objects);
+	}
+	
+	public Map<String, Map<String,Object>> queryMetricsData(String []metrics, int count, int period, String...obj) throws IOException {
+		IPerformanceCollector pc = _vbox.getPerformanceCollector();
+		Map<String, List<String>> data= pc.queryMetricsData(metrics, obj);
+		
+		List<Integer> vals = new ArrayList<Integer>();
+		for(String s : (List<String>)data.get("returnval")) vals.add(Integer.valueOf(s));
+		
+		Map<String, Map<String,Object>> ret = new HashMap<String, Map<String, Object>>();
+		for(int i=0; i<((List<String>)data.get("returnMetricNames")).size(); i++) {
+			Map<String, Object> metric = new HashMap<String, Object>();
+			for(Map.Entry<String, List<String>> entry : data.entrySet())
+				metric.put(entry.getKey().substring(6), ((List<String>)entry.getValue()).get(i) );
+			
+			int start = Integer.valueOf((String)metric.remove("DataIndices"));
+			int length = Integer.valueOf((String)metric.remove("DataLengths"));
+			List<Integer> metricValues = new ArrayList<Integer>(count);
+			for(int t=0; t<count-length; t++)	metricValues.add(0);
+			metricValues.addAll( vals.subList(start, start+length) );
+			metric.put("val", metricValues);
+			ret.put(  metric.get("MetricNames").toString(), metric );
 		}
-		return _session;
+		return ret;
 	}
-	
+	public <T> T getProxy(Class<T> clazz, String id) { return _transport.getProxy(clazz, id); }
 	public IVirtualBox getVBox() { return _vbox;	}
-	public KSOAPTransport getTransport() { return _transport; }
-	public String getURL() { return _url; }
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) { dest.writeString(_url); dest.writeString(_vbox.getId()); }
-	@Override
-	public int describeContents() { return 0; }
-	 public static final Parcelable.Creator<WebSessionManager> CREATOR = new Parcelable.Creator<WebSessionManager>() {
-		 public WebSessionManager createFromParcel(Parcel in) {  return new WebSessionManager(in); }
-		 public WebSessionManager[] newArray(int size) {  return new WebSessionManager[size]; }
-	 };
 }

@@ -10,8 +10,9 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface KSOAP {
-	public String value();
+	public String value() default "";;
 	public String namespace() default SoapSerializationEnvelope.XSD;
 	public String type() default "";
 	public String prefix() default "";
+	public String thisReference() default "_this";
 }

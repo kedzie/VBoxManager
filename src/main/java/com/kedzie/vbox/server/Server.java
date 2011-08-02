@@ -7,8 +7,8 @@ import android.os.Parcelable;
 
 public class Server implements Parcelable {
 	
-	private Long id;
-	private Integer port;
+	private Long id=-1L;
+	private Integer port=18083;
 	private String host;
 	private String username;
 	private String password;

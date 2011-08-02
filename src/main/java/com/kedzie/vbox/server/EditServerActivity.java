@@ -53,19 +53,18 @@ public class EditServerActivity extends Activity {
 	}
 	
 	private void save() {
-		long id = getIntent().getLongExtra("id", -1);
-		String host =  ((TextView)findViewById(R.id.server_host)).getText().toString();
-		int port = Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString());
-		String username = ((TextView)findViewById(R.id.server_username)).getText().toString();
-		String password = ((TextView)findViewById(R.id.server_password)).getText().toString();
-		Server s = new Server(id, host, port, username, password);
+		Server s  = getIntent().getParcelableExtra("server");
+		s.setHost( ((TextView)findViewById(R.id.server_host)).getText().toString() );
+		s.setPort( Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString()) );
+		s.setUsername( ((TextView)findViewById(R.id.server_username)).getText().toString() );
+		s.setPassword(((TextView)findViewById(R.id.server_password)).getText().toString() );
 		getIntent().putExtra("server", s);
-		setResult(1, getIntent());
+		setResult(ServerListActivity.RESULT_CODE_SAVE, getIntent());
 		finish();
 	}
 	
 	private void delete() {
-		setResult(2, getIntent());
+		setResult(ServerListActivity.RESULT_CODE_DELETE, getIntent());
 		finish();
 	}
 }

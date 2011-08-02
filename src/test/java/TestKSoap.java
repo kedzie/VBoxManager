@@ -35,7 +35,7 @@ public class TestKSoap {
 		}
 		evSource.unregisterListener(listener);
 //		session.unlockMachine();
-		vmgr.logoff();
+		vmgr.getVBox().logoff();
 	}
 	
 }

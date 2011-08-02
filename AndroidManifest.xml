@@ -14,7 +14,7 @@
 		<activity android:name=".server.EditServerActivity"  android:label="@string/server_edit"></activity>
 		<activity android:name=".machine.MachineListActivity"  android:label="@string/machine_list"></activity>
 		<activity android:name=".machine.MachineActivity"  android:label="@string/machine"></activity>
-		<service  android:name="com.kedzie.vbox.machine.EventService">
-		</service>
+		<activity android:name=".machine.MetricActivity"  android:label="Metrics"></activity>
+		<activity android:name=".PreferencesActivity"  android:label="Preferences"></activity>
     </application>
 </manifest>

@@ -5,10 +5,18 @@
     <PreferenceCategory  android:title="Preferences">
 
         <ListPreference
-                android:key="metric_Count"
-                android:title="Server URL"
-                android:summary="Server URL" />
+                android:key="metric_count"
+                android:title="@string/metric_count_title"
+                android:summary="@string/metric_count_summary"
+                android:entries="@array/metric_count_entities"
+                android:entryValues="@array/metric_count_entity_values" />
     
+    <ListPreference
+                android:key="metric_period"
+                android:title="@string/metric_period_title"
+                android:summary="@string/metric_period_summary"
+                android:entries="@array/metric_period_entities"
+                android:entryValues="@array/metric_period_entity_values" />
     </PreferenceCategory>
     
 </PreferenceScreen>
