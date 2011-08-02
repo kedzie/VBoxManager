@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.MachineTask;
+import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IConsole;
@@ -34,7 +35,7 @@ import com.kedzie.vbox.task.ResumeTask;
 import com.kedzie.vbox.task.SaveStateTask;
 import com.kedzie.vbox.task.TakeSnapshotTask;
 
-public class MachineActivity extends BaseListActivity {
+public class MachineActivity extends BaseListActivity<String> {
 	protected static final String TAG = MachineActivity.class.getSimpleName();
 	
 	private WebSessionManager _vmgr;
@@ -49,6 +50,32 @@ public class MachineActivity extends BaseListActivity {
 		((ImageView)_headerView.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+_machine.getOSTypeId().toLowerCase()));
 		((TextView) _headerView.findViewById(R.id.machine_list_item_name)).setText(_machine.getName()); 
 		getListView().addHeaderView(_headerView);
+		
+		getListView().setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+				String action = (String)getListView().getAdapter().getItem(position);
+				if(action.equals("Start"))	new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
+				else if(action.equals("Power Off"))		new PowerDownTask(MachineActivity.this, _vmgr).execute(_machine);
+				else if(action.equals("Reset")) 	new ResetTask(MachineActivity.this, _vmgr).execute(_machine);
+				else if(action.equals("Pause")) 	
+					new MachineTask(MachineActivity.this, _vmgr, "Pausing") {	
+						@Override
+						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 
+							console.pause();
+						}}.execute(_machine);
+				else if(action.equals("Resume")) new ResumeTask(MachineActivity.this, _vmgr) .execute(_machine);
+				else if(action.equals("Power Button")) 	
+					new MachineTask(MachineActivity.this, _vmgr, "ACPI Power Down") {
+						@Override
+						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {
+							console.powerButton();
+						}}.execute(_machine);
+				else if(action.equals("Save State")) 	new SaveStateTask(MachineActivity.this, _vmgr) .execute(_machine);
+				else if(action.equals("Discard State")) 	new DiscardStateTask(MachineActivity.this, _vmgr) .execute(_machine);
+				else if(action.equals("Take Snapshot")) 	new TakeSnapshotTask(MachineActivity.this, _vmgr).execute(_machine);
+			}
+		});
     }
 	
 	@Override
@@ -81,32 +108,6 @@ public class MachineActivity extends BaseListActivity {
 		ISnapshot s = _machine.getCurrentSnapshot();
 		if(s!=null)  ((TextView) getListView().findViewById(R.id.machine_list_item_snapshot)).setText("("+s.getName() + ")");		
 		setListAdapter(new MachineActionAdapter(this, R.layout.machine_action_item, R.id.action_item_text, R.id.action_item_icon, VBoxApplication.getActions(state)));
-		
-		getListView().setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-				String action = (String)getListView().getAdapter().getItem(position);
-				if(action.equals("Start"))	new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
-				else if(action.equals("Power Off"))		new PowerDownTask(MachineActivity.this, _vmgr).execute(_machine);
-				else if(action.equals("Reset")) 	new ResetTask(MachineActivity.this, _vmgr).execute(_machine);
-				else if(action.equals("Pause")) 	
-					new MachineTask(MachineActivity.this, _vmgr, "Pausing") {	
-						@Override
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 
-							console.pause();
-						}}.execute(_machine);
-				else if(action.equals("Resume")) new ResumeTask(MachineActivity.this, _vmgr) .execute(_machine);
-				else if(action.equals("Power Button")) 	
-					new MachineTask(MachineActivity.this, _vmgr, "ACPI Power Down") {
-						@Override
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {
-							console.powerButton();
-						}}.execute(_machine);
-				else if(action.equals("Save State")) 	new SaveStateTask(MachineActivity.this, _vmgr) .execute(_machine);
-				else if(action.equals("Discard State")) 	new DiscardStateTask(MachineActivity.this, _vmgr) .execute(_machine);
-				else if(action.equals("Take Snapshot")) 	new TakeSnapshotTask(MachineActivity.this, _vmgr).execute(_machine);
-			}
-		});
 	}
 	
 	@Override
@@ -129,6 +130,10 @@ public class MachineActivity extends BaseListActivity {
 			intent.putExtra("ramMetrics" , new String[] {  "Guest/RAM/Usage/Used" } );
 			startActivity(intent);
 			return true;
+		case R.id.machine_option_menu_preferences:
+			Intent in = new Intent(this, PreferencesActivity.class);
+			startActivity(in);
+			return true;
 		default:
 			return true;
 		}
@@ -149,7 +154,7 @@ public class MachineActivity extends BaseListActivity {
 		}
 
 		public View getView(int position, View view, ViewGroup parent) {
-			if (view == null) {
+			if (view == null) { 
 				view = _layoutInflater.inflate(this.layoutId, parent, false);
 				((TextView)view.findViewById(textResourceId)).setText(getItem(position));
 				((ImageView)view.findViewById(iconResourceId)).setImageResource( VBoxApplication.get(getItem(position)));

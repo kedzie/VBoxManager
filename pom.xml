@@ -31,7 +31,7 @@
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>maven-android-plugin</artifactId>
-				<version>3.0.0-alpha-1</version>
+				<version>3.0.0-alpha-2</version>
 				<configuration>
 					<sdk>
 						<path>/usr/local/share/android-sdk-linux_x86</path>
@@ -69,8 +69,9 @@
 		</dependency>
 		<dependency>
       		<groupId>com.google.code.ksoap2-android</groupId>
-      		<artifactId>ksoap2-android</artifactId>
+      		<artifactId>ksoap2-android-assembly</artifactId>
       		<version>2.5.7</version>
+      		<classifier>jar-with-dependencies</classifier>
     	</dependency>
     	<dependency>
       		<groupId>virtualbox</groupId>
@@ -85,16 +86,16 @@
       		<name>googlecode-ksoap2-android</name>
       		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
     	</repository>
-		<repository>
-			<id>codehaus</id>
-			<name>Codehaus</name>
-			<url>http://repository.codehaus.org</url>
-		</repository>	
-		<repository>
-			<id>jboss</id>
-			<name>JBoss</name>
-			<url>http://repository.jboss.com</url>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>codehaus</id> -->
+<!-- 			<name>Codehaus</name> -->
+<!-- 			<url>http://repository.codehaus.org</url> -->
+<!-- 		</repository>	 -->
+<!-- 		<repository> -->
+<!-- 			<id>jboss</id> -->
+<!-- 			<name>JBoss</name> -->
+<!-- 			<url>http://repository.jboss.com</url> -->
+<!-- 		</repository> -->
 	</repositories>
 	
 </project>

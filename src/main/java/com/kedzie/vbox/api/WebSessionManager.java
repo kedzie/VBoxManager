@@ -44,14 +44,20 @@ public class WebSessionManager implements Parcelable {
 		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
 	}
 	
-	public void setupMetrics( Context context, String...objects) throws IOException {
-		setupMetrics( context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 50), objects);
+	public List<IPerformanceMetric> setupMetrics( Context context, String...objects) throws IOException {
+		return setupMetrics( context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 25), objects);
 	}
 	
-	public void setupMetrics( int period, int count, String... objects) throws IOException {
+	public List<IPerformanceMetric> setupMetrics( int period, int count, String... objects) throws IOException {
 		IPerformanceCollector pc = _vbox.getPerformanceCollector();
-		pc.setupMetrics(new String[] { "*:" }, objects, period, count);
-		pc.enableMetrics(new String[] { "*:" }, objects);
+		String []baseMetrics = new String [] { "*:" };
+		pc.setupMetrics(baseMetrics, objects, period, count);
+		return pc.enableMetrics(baseMetrics, objects);
+	}
+	
+	public void disableMetrics( String... objects) throws IOException {
+		String []baseMetrics = new String [] { "*:" };
+		_vbox.getPerformanceCollector().disableMetrics(baseMetrics, objects);
 	}
 	
 	public Map<String, Map<String,Object>> queryMetricsData(String []metrics, int count, int period, String...obj) throws IOException {

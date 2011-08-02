@@ -84,7 +84,7 @@ public class KSOAPTransport {
 			if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
 			if(method.getName().startsWith("get") && _cache.containsKey(method.getName())) {
 				Object value = _cache.get(method.getName());
-				Log.d(TAG, "Returning cache value: " + method.getName() + value );
+				Log.i(TAG, "Returning cache value: " + method.getName() + value );
 				return value;
 			}
 			
@@ -98,37 +98,9 @@ public class KSOAPTransport {
 							method.getParameterTypes()[i], 
 							method.getGenericParameterTypes()[i], 
 							args[i]);
-//					KSOAP pKsoap = VBoxApplication.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]);					
-//					if(pType.isArray()) { 
-//						for(Object o : (Object[])args[i]) 
-//							request.addProperty(pKsoap.value(), marshall(  pKsoap, pType.getComponentType(), o ) );
-//					} else if(Collection.class.isAssignableFrom(pType)) {
-//						Class<?> pClazz = (Class<?>) ((ParameterizedType)method.getGenericParameterTypes()[i]).getActualTypeArguments()[0];
-//						for(Object o : (Collection<Object>)args[i]) 
-//							request.addProperty(pKsoap.value(), marshall(  pKsoap,pClazz, o ) );
-//					} else
-//						request.addProperty(pKsoap.value(), marshall( pKsoap, pType, args[i]));
 				}	
 			}
-			Object ret = call(request);
-			if(ret==null) return null;
-
-//			if( Collection.class.isAssignableFrom(method.getReturnType()) && method.getGenericReturnType() instanceof ParameterizedType ) {
-//				Class<?> pClazz = (Class<?>)((ParameterizedType)method.getGenericReturnType()).getActualTypeArguments()[0];
-//				List<Object> list = new ArrayList<Object>();
-//				for(Object sp : (Collection<Object>)ret) 
-//					list.add(  unmarshall(pClazz, sp) );
-//				return list;
-//			}
-//			if( method.getReturnType().isArray()) {
-//				Class<?> pClazz = method.getReturnType().getComponentType();
-//				List<Object> retCollection = (List<Object>)ret;
-//				Object[] array = new Object[retCollection.size()];
-//				for(int k=0; k<retCollection.size(); k++) 
-//					array[k] = unmarshall(pClazz, retCollection.get(k)); 
-//				return array;
-//			}
-			return unmarshall( method.getReturnType(), method.getGenericReturnType(), ret );
+			return unmarshall( method.getReturnType(), method.getGenericReturnType(), call(request) );
 		}
 
 		private void marshall(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
@@ -154,7 +126,12 @@ public class KSOAPTransport {
 			else if( Collection.class.isAssignableFrom(returnType) && type instanceof ParameterizedType ) {
 				Class<?> pClazz = (Class<?>)((ParameterizedType)type).getActualTypeArguments()[0];
 				List<Object> list = new ArrayList<Object>();
-				for(Object sp : (Collection<?>)ret) list.add(  unmarshall(pClazz, type, sp) );
+				if(Collection.class.isAssignableFrom(ret.getClass())) {
+					for(Object sp : (Collection<?>)ret) 
+						list.add(  unmarshall(pClazz, type, sp) );
+				} else {
+					list.add( unmarshall(pClazz, type, ret) );
+				}
 				return list;
 			} else if( returnType.isArray()) {
 				Object[] array = new Object[((List<?>)ret).size()];
@@ -167,30 +144,6 @@ public class KSOAPTransport {
 				for( Object element : returnType.getEnumConstants()) 
 					if( element.toString().equals( ret.toString() ) ) 
 						return element;
-			return ret;
-		}
-		
-		private Object marshall(KSOAP ksoap, Class<?> clazz, Object obj) {
-			if(!ksoap.type().equals("")) 	
-				return new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString());
-			else if(IRemoteObject.class.isAssignableFrom(clazz))	 
-				return ((IRemoteObject)obj).getId();
-			else if(clazz.isEnum())	
-				return new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() );
-			else return obj;	
-		}
-		
-		private Object unmarshall(Class<?> returnType, Object ret) {
-			if(returnType.equals(Integer.class)) 
-				return Integer.valueOf(ret.toString());
-			if(returnType.equals(Boolean.class)) 	
-				return Boolean.valueOf(ret.toString());
-			if(returnType.equals(String.class)) 
-				return ret.toString();
-			if(IRemoteObject.class.isAssignableFrom(returnType)) 
-				return getProxy(returnType, ret.toString());
-			if(returnType.isEnum()) 
-				for( Object element : returnType.getEnumConstants()) if( element.toString().equals( ret.toString() ) ) return element;
 			return ret;
 		}
 	}

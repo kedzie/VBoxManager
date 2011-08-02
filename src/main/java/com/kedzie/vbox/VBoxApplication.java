@@ -10,20 +10,8 @@ import org.virtualbox_4_1.MachineState;
 import android.app.Application;
 import android.os.Bundle;
 
-import com.kedzie.vbox.server.ServerDB;
-
 public class VBoxApplication extends Application {
 
-	private ServerDB _db;
-	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		_db = new ServerDB(this);
-	}
-
-	public ServerDB getDB() { return _db;	}
-	
 	public static Map<String,Integer> r = new HashMap<String, Integer>();
 	public static Map<MachineState,Integer> s = new HashMap<MachineState, Integer>();
 	

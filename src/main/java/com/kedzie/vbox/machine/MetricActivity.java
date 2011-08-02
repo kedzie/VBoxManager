@@ -1,5 +1,7 @@
 package com.kedzie.vbox.machine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -7,17 +9,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.WebSessionManager;
 
 public class MetricActivity extends Activity {
 	private static final String TAG = "vbox."+MetricActivity.class.getSimpleName();
-
+	public static final String INTENT_OBJECT = "object";
+	public static final String INTENT_RAM_AVAILABLE = "ram_available";
+	
 	WebSessionManager vmgr;
 	MetricView cpuView;
 	MetricView ramView;
 	String object;
+	List<IPerformanceMetric> baseMetrics = new ArrayList<IPerformanceMetric>();
 	private String[] cpuMetrics;
 	private String[] ramMetrics;
 	private int count;
@@ -56,15 +63,28 @@ public class MetricActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.metric);
 		vmgr = getIntent().getParcelableExtra("vmgr");
-		object = getIntent().getStringExtra("object");
+		object = getIntent().getStringExtra(INTENT_OBJECT);
 		cpuMetrics = getIntent().getStringArrayExtra("cpuMetrics");
 		ramMetrics = getIntent().getStringArrayExtra("ramMetrics");
+		for(String bm : getIntent().getStringArrayExtra("baseMetrics")) baseMetrics.add( vmgr.getProxy(IPerformanceMetric.class, bm));
+		
 		this.period = getSharedPreferences(getPackageName(), 0).getInt("metric_period", 1);
-		this.count = getSharedPreferences(getPackageName(), 0).getInt("metric_count", 50);
+		this.count = getSharedPreferences(getPackageName(), 0).getInt("metric_count", 25);
+		
 		cpuView = (MetricView)findViewById(R.id.cpu_metrics);
+		
 		ramView = (MetricView)findViewById(R.id.ram_metrics);
-		cpuView.init(count, period, 100000, cpuMetrics);
-		ramView.init(count, period, 8000000, ramMetrics);
+		for(IPerformanceMetric pm : baseMetrics) {
+			if(pm.getMetricName().startsWith("CPU/Load")) {
+				TextView cpuText = (TextView)findViewById(R.id.cpu_metrics_title);
+				cpuText.setText(pm.getMetricName());
+				cpuView.init(count, period, 100000L, cpuMetrics, pm);
+			} else if(pm.getMetricName().startsWith("RAM/Usage")) {
+				TextView text = (TextView)findViewById(R.id.ram_metrics_title);
+				text.setText(pm.getMetricName());
+				ramView.init(count, period, getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0)*1000, ramMetrics, pm);
+			}
+		}
 		_thread = new MetricThread();
 		_thread._running = true;
 		_thread.start();

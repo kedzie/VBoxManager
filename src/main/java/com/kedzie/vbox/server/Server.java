@@ -1,12 +1,14 @@
 package com.kedzie.vbox.server;
 
-import com.kedzie.vbox.api.WebSessionManager;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Server implements Parcelable {
-	
+	 public static final Parcelable.Creator<Server> CREATOR = new Parcelable.Creator<Server>() {
+		 public Server createFromParcel(Parcel in) {  return new Server(in); }
+		 public Server[] newArray(int size) {  return new Server[size]; }
+	 };
+	 
 	private Long id=-1L;
 	private Integer port=18083;
 	private String host;
@@ -39,11 +41,9 @@ public class Server implements Parcelable {
 	}
 	
 	@Override
-	public int describeContents() { return 0; }
-	 public static final Parcelable.Creator<WebSessionManager> CREATOR = new Parcelable.Creator<WebSessionManager>() {
-		 public WebSessionManager createFromParcel(Parcel in) {  return new WebSessionManager(in); }
-		 public WebSessionManager[] newArray(int size) {  return new WebSessionManager[size]; }
-	 };
+	public int describeContents() { 
+		return 0; 
+	}
 	
 	public Long getId() {
 		return id;
@@ -77,5 +77,16 @@ public class Server implements Parcelable {
 	}
 	public String toString() {
 		return getHost() + ":" + getPort();
+	}
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null  || getClass() != obj.getClass()) return false;
+		Server other = (Server) obj;
+		return id.equals(other.id);
 	}
 }

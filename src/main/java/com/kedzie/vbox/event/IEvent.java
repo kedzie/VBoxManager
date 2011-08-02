@@ -7,7 +7,10 @@ import com.kedzie.vbox.api.KSOAP;
 
 public interface IEvent extends IRemoteObject {
 
+	@KSOAP(prefix="IEvent")
 	public VBoxEventType getType();
+	@KSOAP(prefix="IEvent")
 	public void setProcessed();
-	public Boolean waitProcessed(@KSOAP("timeout") int timeout);
+	@KSOAP(prefix="IEvent")
+	public Boolean waitProcessed(@KSOAP(type="unsignedInt", value="timeout") int timeout);
 }

@@ -10,9 +10,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 
-public class BaseListActivity extends ListActivity {
+public class BaseListActivity<T> extends ListActivity {
 	protected static final String TAG = BaseListActivity.class.getSimpleName();
 	protected static final int DIALOG_PROGRESS = 1496;
 	protected static final int DIALOG_ALERT = 1497;
@@ -31,6 +32,11 @@ public class BaseListActivity extends ListActivity {
 				.show();
 			}
        	};
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected ArrayAdapter<T> getAdapter() {
+		return (ArrayAdapter<T>)getListAdapter();
 	}
 	
 	public void showAlert(String msg) {
@@ -81,21 +87,9 @@ public class BaseListActivity extends ListActivity {
 		}
 	}
 
-	public void showProgress(String msg) {
-		showDialog(DIALOG_PROGRESS, createBundle("msg", msg));
-	}
-	
 	protected Bundle createBundle(String key, String value) {
 		Bundle b = new Bundle();
 		b.putString(key, value);
 		return b;
-	}
-	
-	public void dismissProgress() {
-		dismissDialog(DIALOG_PROGRESS);
-	}
-	
-	public VBoxApplication getVBoxApplication() {
-		return (VBoxApplication)getApplication();
 	}
 }

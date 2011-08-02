@@ -12,9 +12,9 @@ public interface IVirtualBox extends IRemoteObject {
 	public IEventSource getEventSource() throws IOException;
 	public IPerformanceCollector getPerformanceCollector() throws IOException;
 	public IHost getHost() ;
-	@KSOAP(prefix="IWebSessionManager", thisReference="refVirtualBox")
+	@KSOAP(prefix="IWebsessionManager", thisReference="refVirtualBox")
 	public void logoff() throws IOException;
-	@KSOAP(prefix="IWebSessionManager", thisReference="refVirtualBox")
+	@KSOAP(prefix="IWebsessionManager", thisReference="refVirtualBox")
 	public ISession getSessionObject() throws IOException;
 	
 }

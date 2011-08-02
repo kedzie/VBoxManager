@@ -1,5 +1,9 @@
 package com.kedzie.vbox.event;
 
-public interface IMachineEvent extends IEvent {
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.KSOAP;
 
+public interface IMachineEvent extends IEvent {
+	@KSOAP(prefix="IMachineEvent")
+	public IMachine getMachine();
 }
