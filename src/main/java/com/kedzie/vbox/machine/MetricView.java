@@ -12,7 +12,6 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.kedzie.vbox.api.IPerformanceMetric;
@@ -58,6 +57,7 @@ public class MetricView extends View {
 		metricPaint.setStrokeJoin(Join.BEVEL);
 		metricPaint.setStrokeCap(Cap.SQUARE);
 		metricPaint.setAntiAlias(true);
+		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
 		metricColor.put("CPU/Load/Kernel", 0xff0000ff);
 		metricColor.put("Guest/CPU/Load/Kernel", 0xff0000ff);
 		metricColor.put("CPU/Load/User", 0xff00ff00);
@@ -75,6 +75,13 @@ public class MetricView extends View {
 	}
 
 	public void setData(Map<String, Map<String, Object>> data) {
+		for(Map.Entry<String, Map<String, Object>> entry : data.entrySet()) {
+			System.out.println("Metric: " + entry.getKey() + "\n----------------------------");
+			for(Map.Entry<String, Object> e : entry.getValue().entrySet()) {
+				System.out.println(e.getKey() + " --> " + e.getValue());
+			}
+			System.out.println("------------------------------------\n");
+		}
 		this.data = data;
 	}
 
@@ -90,22 +97,25 @@ public class MetricView extends View {
 
 		textPaint.setTextSize(16.0f);
 		double vStepGrid = rect.height()/(double)count;
-		for(int i=1; i<count; i++) {
-			canvas.drawLine(i*hStep, rect.bottom, i*hStep, rect.top, gridPaint);
-			canvas.drawLine(rect.left, (int)(i*vStepGrid), rect.right, (int)(i*vStepGrid), gridPaint);
-			canvas.drawText(max*(double)i/(double)count+"", 20, (int)(i*vStepGrid), textPaint);
+		for(int i=1; i<count; i+=2) {
+			int horiz = rect.left+i*hStep;
+			int vert = rect.bottom-(int)(i*vStepGrid);
+			canvas.drawLine(horiz, rect.bottom, horiz, rect.top, gridPaint);
+			canvas.drawText(""+(count-i)*period, horiz, rect.bottom+20, textPaint);
+			canvas.drawLine(rect.left, vert, rect.right, vert, gridPaint);
+			canvas.drawText(max*(double)i/(double)count+"", rect.left+20, vert, textPaint);
 		}
 		
 		if(data==null) return;
 		for(String mName : metrics) {
-			Paint p = metricPaint.get(mName);
+			metricPaint.setColor(metricColor.get(mName));
 			Map<String, Object> metric = data.get(mName);
 			int x = rect.left, y = rect.bottom;
 			List<Integer> vals = (List<Integer>)metric.get("val");
 			for(Integer val : vals) {
 				int nX = x+hStep;
 				int nY = rect.bottom-(int)(val*vStep);
-				canvas.drawLine(x, y, nX, nY, p);
+				canvas.drawLine(x, y, nX, nY, metricPaint);
 				x = nX;
 				y = nY;
 			}

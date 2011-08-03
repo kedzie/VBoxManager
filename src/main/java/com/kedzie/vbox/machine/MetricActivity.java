@@ -66,7 +66,6 @@ public class MetricActivity extends Activity {
 		object = getIntent().getStringExtra(INTENT_OBJECT);
 		cpuMetrics = getIntent().getStringArrayExtra("cpuMetrics");
 		ramMetrics = getIntent().getStringArrayExtra("ramMetrics");
-		for(String bm : getIntent().getStringArrayExtra("baseMetrics")) baseMetrics.add( vmgr.getProxy(IPerformanceMetric.class, bm));
 		
 		this.period = getSharedPreferences(getPackageName(), 0).getInt("metric_period", 1);
 		this.count = getSharedPreferences(getPackageName(), 0).getInt("metric_count", 25);
@@ -75,11 +74,12 @@ public class MetricActivity extends Activity {
 		
 		ramView = (MetricView)findViewById(R.id.ram_metrics);
 		for(IPerformanceMetric pm : baseMetrics) {
-			if(pm.getMetricName().startsWith("CPU/Load")) {
+			Log.i(TAG, "Base Metric: " + pm.getMetricName());
+			if(pm.getMetricName().contains("CPU/Load")) {
 				TextView cpuText = (TextView)findViewById(R.id.cpu_metrics_title);
 				cpuText.setText(pm.getMetricName());
 				cpuView.init(count, period, 100000L, cpuMetrics, pm);
-			} else if(pm.getMetricName().startsWith("RAM/Usage")) {
+			} else if(pm.getMetricName().contains("RAM/Usage")) {
 				TextView text = (TextView)findViewById(R.id.ram_metrics_title);
 				text.setText(pm.getMetricName());
 				ramView.init(count, period, getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0)*1000, ramMetrics, pm);

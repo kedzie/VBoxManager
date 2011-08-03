@@ -44,15 +44,22 @@ public class WebSessionManager implements Parcelable {
 		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
 	}
 	
-	public List<IPerformanceMetric> setupMetrics( Context context, String...objects) throws IOException {
-		return setupMetrics( context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 25), objects);
+	public List<IPerformanceMetric> setupHostMetrics( Context context, String...objects) throws IOException {
+		return setupMetrics( new String [] { "*:" },  context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 25), objects);
+	}
+
+	public List<IPerformanceMetric> setupMachineMetrics( Context context, String...objects) throws IOException {
+		return setupMetrics(  new String [] { "Guest/*:" }, context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 25), objects);
 	}
 	
 	public List<IPerformanceMetric> setupMetrics( int period, int count, String... objects) throws IOException {
+		return setupMetrics( new String [] { "*:" }, period, count, objects);
+	}
+	
+	public List<IPerformanceMetric> setupMetrics( String[] metrics, int period, int count, String... objects) throws IOException {
 		IPerformanceCollector pc = _vbox.getPerformanceCollector();
-		String []baseMetrics = new String [] { "*:" };
-		pc.setupMetrics(baseMetrics, objects, period, count);
-		return pc.enableMetrics(baseMetrics, objects);
+		pc.setupMetrics(metrics, objects, period, count);
+		return pc.enableMetrics(metrics, objects);
 	}
 	
 	public void disableMetrics( String... objects) throws IOException {

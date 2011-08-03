@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.BaseTask;
+import com.kedzie.vbox.MachineProgressTask;
 import com.kedzie.vbox.MachineTask;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
@@ -35,14 +36,11 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IPerformanceMetric;
+import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.api.WebSessionManager;
 import com.kedzie.vbox.event.EventThread;
-import com.kedzie.vbox.event.IEvent;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
-import com.kedzie.vbox.task.PowerDownTask;
-import com.kedzie.vbox.task.ResetTask;
-import com.kedzie.vbox.task.ResumeTask;
 
 
 public class MachineListActivity extends BaseListActivity<IMachine> {
@@ -78,7 +76,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			@Override
 			protected String work(String... params) throws Exception {
 				_vmgr.logon(params[0], params[1], params[2]);
-				baseMetrics = _vmgr.setupMetrics(MachineListActivity.this, _vmgr.getVBox().getHost().getId());
+				baseMetrics = _vmgr.setupHostMetrics(MachineListActivity.this, _vmgr.getVBox().getHost().getId());
 				return _vmgr.getVBox().getVersion();
 			}
 			@Override
@@ -136,12 +134,12 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 		case R.id.machine_list_option_menu_metrics:
 			Intent intent = new Intent(this, MetricActivity.class);
 			intent.putExtra("vmgr", vmgr);
-			intent.putExtra("object", vmgr.getVBox().getHost().getId() );
+			intent.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getId() );
 			String []bMetrics = new String[baseMetrics.size()];
 			for(int i=0; i<baseMetrics.size(); i++) bMetrics[i] = baseMetrics.get(i).getId();
 			intent.putExtra("baseMetrics", bMetrics);
 			intent.putExtra("title", "Host Metrics");
-			intent.putExtra("ram_available", vmgr.getVBox().getHost().getMemorySize());
+			intent.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, vmgr.getVBox().getHost().getMemorySize());
 			intent.putExtra("cpuMetrics" , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } );
 			intent.putExtra("ramMetrics" , new String[] {  "RAM/Usage/Used" } );
 			startActivity(intent);
@@ -174,22 +172,30 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	  final IMachine m = (IMachine)getListAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
 	  case R.id.machines_context_menu_start:  new LaunchVMProcessTask(this, vmgr).execute(m);	  break;
-	  case R.id.machines_context_menu_poweroff:   new PowerDownTask(this, vmgr).execute(m);  break;
-	  case R.id.machines_context_menu_reset:	  new ResetTask(this, vmgr).execute(m);	  break;
-	  case R.id.machines_context_menu_resume:	  new ResumeTask(this, vmgr).execute(m);	  break;
+	  case R.id.machines_context_menu_poweroff:   
+		  new MachineProgressTask(this, vmgr, "Powering Off") {	
+				@Override
+				protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(m);
+		  break;
+	  case R.id.machines_context_menu_reset:	 
+	  new MachineTask(this, vmgr, "Resetting") {	
+			@Override
+			protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(m);
+	  break;
+	  case R.id.machines_context_menu_resume:	  
+	  new MachineTask(this, vmgr, "Resuming") {	
+			@Override
+			protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(m);
+	  break;
 	  case R.id.machines_context_menu_pause:	  
 		  new MachineTask(this, vmgr, "Pausing") {	
 				@Override
-				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 
-					console.pause();
-				}}.execute(m);
+				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {  console.pause();	}}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_acpi:	  
 		  new MachineTask(this, vmgr, "ACPI Power Down") {
 				@Override
-				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {
-					console.powerButton();
-				}}.execute(m);
+				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {	console.powerButton(); 	}}.execute(m);
 		  break;
 	  }
 	  return true;
@@ -203,7 +209,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			List<IMachine> machines = _vmgr.getVBox().getMachines();
 			Collection<String> running = new ArrayList<String>();
 			for(IMachine m : machines) if(MachineState.Running.equals(m.getState()))	running.add(m.getId());
-			_vmgr.setupMetrics(context, running.toArray(new String[running.size()]) );
+			_vmgr.setupMachineMetrics(context, running.toArray(new String[running.size()]) );
 			return machines;
 		}
 

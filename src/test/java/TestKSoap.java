@@ -17,7 +17,7 @@ public class TestKSoap {
 		vmgr.logon("http://localhost:18083", "test", "test");
 		IVirtualBox vbox = vmgr.getVBox();
 		List<IMachine> machines =  vbox.getMachines();
-		IMachine m = machines.get(2);
+		IMachine m = machines.get(0);
 
 		IHost host = vbox.getHost();
 		IPerformanceCollector pc = vbox.getPerformanceCollector();
@@ -29,6 +29,10 @@ public class TestKSoap {
 		
 		System.out.println("----------------------\nHost Metrics\n---------------------");
 		for(IPerformanceMetric metric : pc.getMetrics( new String[] { "RAM/Usage/*:", "CPU/Load/*:" }, new String[] { host.getId() })) 
+			System.out.println(metric.getMetricName() + " " + metric.getUnit() + " " + metric.getMaximumValue());
+		
+		System.out.println("----------------------\nMachine Metrics\n---------------------");
+		for(IPerformanceMetric metric : pc.getMetrics( new String[] { "Guest/*:",  }, new String[] { m.getId() })) 
 			System.out.println(metric.getMetricName() + " " + metric.getUnit() + " " + metric.getMaximumValue());
 		
 		Thread.sleep(5000);

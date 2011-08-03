@@ -49,7 +49,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			Log.e(TAG, e.getMessage(), e);
 			Message m = _handler.obtainMessage();
 			m.setData(VBoxApplication.createBundle("msg", e.getMessage()));
-			m.sendToTarget();
+			_handler.dispatchMessage(m);
 		}
 		
 		@Override

@@ -20,7 +20,7 @@ public class LaunchVMProcessTask extends MachineProgressTask {
 				publishProgress(p);
 				Thread.sleep(500);
 			}
-			vmgr.setupMetrics( context,  m.getId());
+			vmgr.setupMachineMetrics( context,  m.getId());
 			return null;
 	}
 }
