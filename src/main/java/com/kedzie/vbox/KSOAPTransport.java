@@ -1,4 +1,4 @@
-package com.kedzie.vbox.api;
+package com.kedzie.vbox;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -24,7 +24,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Log;
 
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.api.IRemoteObject;
 
 public class KSOAPTransport {
 	private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();

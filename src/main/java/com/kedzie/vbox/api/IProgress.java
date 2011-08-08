@@ -2,6 +2,8 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
+import com.kedzie.vbox.KSOAP;
+
 public interface IProgress extends IRemoteObject {
 
 	public void waitForCompletion(@KSOAP(type="unsignedInt", value="timeout") int millseconds) throws IOException;

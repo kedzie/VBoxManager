@@ -12,6 +12,7 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.kedzie.vbox.api.IPerformanceMetric;
@@ -66,21 +67,16 @@ public class MetricView extends View {
 		metricColor.put("Guest/RAM/Usage/Used", 0xffff0000);
 	}
 	
-	public void init( int count, int period, long max, String []metrics, IPerformanceMetric baseMetric) {
+	public void init( int count, int period, long max, String []metrics) {
 		this.max=max;
 		this.count=count;
 		this.metrics=metrics;
 		this.period=period;
-		this.baseMetric = baseMetric;
 	}
 
 	public void setData(Map<String, Map<String, Object>> data) {
 		for(Map.Entry<String, Map<String, Object>> entry : data.entrySet()) {
-			System.out.println("Metric: " + entry.getKey() + "\n----------------------------");
-			for(Map.Entry<String, Object> e : entry.getValue().entrySet()) {
-				System.out.println(e.getKey() + " --> " + e.getValue());
-			}
-			System.out.println("------------------------------------\n");
+			Log.i(TAG, "Metric: " + entry.getKey());
 		}
 		this.data = data;
 	}

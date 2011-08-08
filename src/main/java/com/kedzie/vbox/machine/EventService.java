@@ -6,7 +6,6 @@ import org.virtualbox_4_1.VBoxEventType;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -14,12 +13,12 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.kedzie.vbox.WebSessionManager;
 import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IEventListener;
+import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.WebSessionManager;
-import com.kedzie.vbox.event.IEvent;
-import com.kedzie.vbox.event.IEventListener;
-import com.kedzie.vbox.event.IEventSource;
 
 public class EventService extends Service {
 	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();
@@ -63,10 +62,7 @@ public class EventService extends Service {
 			}
 		};
 		Message msg = h.obtainMessage();
-		Bundle bundle = new Bundle();
-		bundle.putParcelable("vmgr", intent.getParcelableExtra("vmgr"));
-		bundle.putString("machine", intent.getStringExtra("machine"));
-		msg.setData(bundle);
+		msg.setData(intent.getExtras());
 		h.sendMessage(msg);
 	}
 	

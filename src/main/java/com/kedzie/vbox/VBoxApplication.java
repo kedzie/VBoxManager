@@ -1,6 +1,7 @@
 package com.kedzie.vbox;
 
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,9 @@ import org.virtualbox_4_1.MachineState;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Parcelable;
 
 public class VBoxApplication extends Application {
 
@@ -87,4 +91,33 @@ public static String[] getActions(MachineState state) {
 	public static int get(String name) { return r.containsKey(name) ? r.get(name) : R.drawable.ic_list_os_linux; 	}
 	
 	public static int get(MachineState state) { return s.containsKey(state)  ? s.get(state) : R.drawable.ic_list_start_small;	}
+	
+	public static class BundleBuilder {
+		private Bundle b = new Bundle();
+		
+		public Bundle create() {
+			return b;
+		}
+		public BundleBuilder putString(String key, String value) {
+			b.putString(key, value);
+			return this;
+		}
+		public BundleBuilder putInt(String key, int value) {
+			b.putInt(key, value);
+			return this;
+		}
+		public BundleBuilder putParcelable(String key, Parcelable value) {
+			b.putParcelable(key, value);
+			return this;
+		}
+		public BundleBuilder putSerializable(String key, Serializable value) {
+			b.putSerializable(key, value);
+			return this;
+		}
+		public void sendMessage(Handler h, int what) {
+			Message msg = h.obtainMessage(what);
+			msg.setData(b);
+			h.sendMessage(msg);
+		}
+	}
 }

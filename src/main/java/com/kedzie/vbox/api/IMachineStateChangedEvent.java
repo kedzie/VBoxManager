@@ -1,8 +1,8 @@
-package com.kedzie.vbox.event;
+package com.kedzie.vbox.api;
 
 import org.virtualbox_4_1.MachineState;
 
-import com.kedzie.vbox.api.KSOAP;
+import com.kedzie.vbox.KSOAP;
 
 public interface IMachineStateChangedEvent extends IMachineEvent {
 	@KSOAP(prefix="IMachineStateChangedEvent")

@@ -1,11 +1,10 @@
 package com.kedzie.vbox.task;
 
 import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.MachineProgressTask;
+import com.kedzie.vbox.WebSessionManager;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
-import com.kedzie.vbox.api.WebSessionManager;
 
 public class LaunchVMProcessTask extends MachineProgressTask {
 	
@@ -20,7 +19,7 @@ public class LaunchVMProcessTask extends MachineProgressTask {
 				publishProgress(p);
 				Thread.sleep(500);
 			}
-			vmgr.setupMachineMetrics( context,  m.getId());
+			vmgr.setupMetrics( context,  m.getId(), "*:");
 			return null;
 	}
 }

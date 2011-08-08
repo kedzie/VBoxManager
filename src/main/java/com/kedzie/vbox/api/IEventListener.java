@@ -1,9 +1,8 @@
-package com.kedzie.vbox.event;
+package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import com.kedzie.vbox.api.IRemoteObject;
-import com.kedzie.vbox.api.KSOAP;
+import com.kedzie.vbox.KSOAP;
 
 public interface IEventListener extends IRemoteObject {
 

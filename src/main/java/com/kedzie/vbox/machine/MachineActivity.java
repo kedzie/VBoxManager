@@ -1,11 +1,9 @@
 package com.kedzie.vbox.machine;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.SessionState;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,29 +16,27 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.MachineProgressTask;
-import com.kedzie.vbox.MachineTask;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.WebSessionManager;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
-import com.kedzie.vbox.api.WebSessionManager;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
-import com.kedzie.vbox.task.TakeSnapshotTask;
+import com.kedzie.vbox.task.MachineProgressTask;
+import com.kedzie.vbox.task.MachineTask;
 
 public class MachineActivity extends BaseListActivity<String> {
 	protected static final String TAG = MachineActivity.class.getSimpleName();
 	
 	private WebSessionManager _vmgr;
-	private List<IPerformanceMetric> baseMetrics;
 	private IMachine _machine;
 	
 	@Override
@@ -57,45 +53,45 @@ public class MachineActivity extends BaseListActivity<String> {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
 				String action = (String)getListView().getAdapter().getItem(position);
-				if(action.equals("Start"))	new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
+				if(action.equals("Start"))	
+					new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
 				else if(action.equals("Power Off"))	
 					new MachineProgressTask(MachineActivity.this, _vmgr, "Powering Off") {	
-					@Override
-					protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(_machine);
+						protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(_machine);
 				else if(action.equals("Reset"))
-				new MachineTask(MachineActivity.this, _vmgr, "Resetting") {
-					@Override
-					protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Resetting") {
+						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(_machine);
 				else if(action.equals("Pause")) 	
 					new MachineTask(MachineActivity.this, _vmgr, "Pausing") {	
-						@Override
 						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { console.pause(); }}.execute(_machine);
 				else if(action.equals("Resume")) 
 					new MachineTask(MachineActivity.this, _vmgr, "Resuming") {	
-					@Override
-					protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(_machine);
+						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(_machine);
 				else if(action.equals("Power Button")) 	
 					new MachineTask(MachineActivity.this, _vmgr, "ACPI Power Down") {
-						@Override
 						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { console.powerButton(); }}.execute(_machine);
 				else if(action.equals("Save State")) 	
 					new MachineProgressTask(MachineActivity.this, _vmgr, "Saving State") {	
-					@Override
-					protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.saveState(); }}.execute(_machine);
+						protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.saveState(); }}.execute(_machine);
 				else if(action.equals("Discard State")) 	
 					new MachineTask(MachineActivity.this, _vmgr, "Discarding State") {	
-					@Override
-					protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.discardSavedState(true); }}.execute(_machine);
-				else if(action.equals("Take Snapshot")) 	
-					new TakeSnapshotTask(MachineActivity.this, _vmgr).execute(_machine);
+						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.discardSavedState(true); }}.execute(_machine);
+				else if(action.equals("Take Snapshot")) 	{
+					final Dialog dialog = new Dialog(MachineActivity.this);
+					dialog.setContentView(R.layout.snapshot_dialog);
+					final TextView nameText = (TextView)dialog.findViewById(R.id.snapshot_name);
+					final TextView descriptionText = (TextView)dialog.findViewById(R.id.snapshot_description);
+					((Button)dialog.findViewById(R.id.button_save)).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							new MachineProgressTask(MachineActivity.this, _vmgr, "Taking Snapshot") {	
+								protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.takeSnapshot(nameText.getText().toString(), descriptionText.getText().toString()); }}.execute(_machine);							
+						}
+					});
+					((Button)dialog.findViewById(R.id.button_cancel)).setOnClickListener(new View.OnClickListener() { public void onClick(View v) { dialog.dismiss(); } });
+				}
 			}
 		});
-		
-		try {
-			baseMetrics = _vmgr.setupMachineMetrics(this, _machine.getId());
-		} catch (IOException e) {
-			Log.e(TAG, "Error setting up metrics", e);
-		}
     }
 	
 	@Override
@@ -112,10 +108,10 @@ public class MachineActivity extends BaseListActivity<String> {
 	@Override
 	protected void onStop() {
 		try {
-			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.Locked)) _vmgr.getVBox().getSessionObject().unlockMachine();
+			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.Locked)) 
+				_vmgr.getVBox().getSessionObject().unlockMachine();
 		} catch (Exception e) {
-			Log.e(TAG, "Error unlock session", e);
-			showAlert(e.toString());
+			showAlert(e);
 		}
 		super.onStop();
 	}
@@ -147,9 +143,6 @@ public class MachineActivity extends BaseListActivity<String> {
 			intent.putExtra("vmgr", _vmgr);
 			intent.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize());
 			intent.putExtra(MetricActivity.INTENT_OBJECT, _machine.getId() );
-			String []bMetrics = new String[baseMetrics.size()];
-			for(int i=0; i<baseMetrics.size(); i++) bMetrics[i] = baseMetrics.get(i).getId();
-			intent.putExtra("baseMetrics", bMetrics);
 			intent.putExtra("title", _machine.getName() + " Metrics");
 			intent.putExtra("cpuMetrics" , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } );
 			intent.putExtra("ramMetrics" , new String[] {  "Guest/RAM/Usage/Used" } );

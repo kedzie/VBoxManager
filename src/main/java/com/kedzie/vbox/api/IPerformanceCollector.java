@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.kedzie.vbox.KSOAP;
+
 public interface IPerformanceCollector extends IRemoteObject {
 
 	public List<IPerformanceMetric> getMetrics(@KSOAP("metricNames")String []metrics, @KSOAP("objects")String []objects) throws IOException;

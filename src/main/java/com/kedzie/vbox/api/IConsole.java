@@ -2,7 +2,8 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import com.kedzie.vbox.event.IEventSource;
+import com.kedzie.vbox.KSOAP;
+
 
 public interface IConsole extends IRemoteObject {
 

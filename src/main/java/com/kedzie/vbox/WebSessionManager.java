@@ -1,4 +1,4 @@
-package com.kedzie.vbox.api;
+package com.kedzie.vbox;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,11 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.ksoap2.serialization.SoapObject;
+import org.virtualbox_4_1.VBoxEventType;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
+import com.kedzie.vbox.api.IPerformanceMetric;
+import com.kedzie.vbox.api.IVirtualBox;
 
 public class WebSessionManager implements Parcelable {
 	private String _url;
@@ -35,42 +41,30 @@ public class WebSessionManager implements Parcelable {
 		 public WebSessionManager[] newArray(int size) {  return new WebSessionManager[size]; }
 	 };
 	
-	public void logon(String url,  String username, String password) throws IOException, XmlPullParserException {
+	public IVirtualBox logon(String url,  String username, String password) throws IOException, XmlPullParserException {
 		_url=url;
 		_transport=new KSOAPTransport(url);
 		SoapObject request = new SoapObject(KSOAPTransport.NAMESPACE, "IWebsessionManager_logon");
 		request.addProperty("username", username);
 		request.addProperty("password", password);
 		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
+		return _vbox;
 	}
 	
-	public List<IPerformanceMetric> setupHostMetrics( Context context, String...objects) throws IOException {
-		return setupMetrics( new String [] { "*:" },  context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 25), objects);
-	}
-
-	public List<IPerformanceMetric> setupMachineMetrics( Context context, String...objects) throws IOException {
-		return setupMetrics(  new String [] { "Guest/*:" }, context.getSharedPreferences(context.getPackageName(), 0).getInt("period", 1),context.getSharedPreferences(context.getPackageName(), 0).getInt("count", 25), objects);
+	public List<IPerformanceMetric> setupMetrics( Context ctx, String object, String...metrics) throws IOException {
+		return setupMetrics(ctx, new String [] {object}, metrics);
 	}
 	
-	public List<IPerformanceMetric> setupMetrics( int period, int count, String... objects) throws IOException {
-		return setupMetrics( new String [] { "*:" }, period, count, objects);
+	public List<IPerformanceMetric> setupMetrics( Context ctx, String [] objects, String...metrics) throws IOException {
+		return _vbox.getPerformanceCollector().setupMetrics(metrics, objects, ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1),ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25));
 	}
 	
-	public List<IPerformanceMetric> setupMetrics( String[] metrics, int period, int count, String... objects) throws IOException {
-		IPerformanceCollector pc = _vbox.getPerformanceCollector();
-		pc.setupMetrics(metrics, objects, period, count);
-		return pc.enableMetrics(metrics, objects);
+	public Map<String, Map<String,Object>> queryMetricsData(Context ctx, String object, String...metrics) throws IOException {
+		return queryMetricsData(object, ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1),ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25), metrics);
 	}
 	
-	public void disableMetrics( String... objects) throws IOException {
-		String []baseMetrics = new String [] { "*:" };
-		_vbox.getPerformanceCollector().disableMetrics(baseMetrics, objects);
-	}
-	
-	public Map<String, Map<String,Object>> queryMetricsData(String []metrics, int count, int period, String...obj) throws IOException {
-		IPerformanceCollector pc = _vbox.getPerformanceCollector();
-		Map<String, List<String>> data= pc.queryMetricsData(metrics, obj);
-		
+	public Map<String, Map<String,Object>> queryMetricsData(String object, int count, int period, String...metrics) throws IOException {
+		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
 		List<Integer> vals = new ArrayList<Integer>();
 		for(String s : (List<String>)data.get("returnval")) vals.add(Integer.valueOf(s));
 		
@@ -79,7 +73,6 @@ public class WebSessionManager implements Parcelable {
 			Map<String, Object> metric = new HashMap<String, Object>();
 			for(Map.Entry<String, List<String>> entry : data.entrySet())
 				metric.put(entry.getKey().substring(6), ((List<String>)entry.getValue()).get(i) );
-			
 			int start = Integer.valueOf((String)metric.remove("DataIndices"));
 			int length = Integer.valueOf((String)metric.remove("DataLengths"));
 			List<Integer> metricValues = new ArrayList<Integer>(count);
@@ -91,5 +84,15 @@ public class WebSessionManager implements Parcelable {
 		return ret;
 	}
 	public <T> T getProxy(Class<T> clazz, String id) { return _transport.getProxy(clazz, id); }
+	
 	public IVirtualBox getVBox() { return _vbox;	}
+	
+	public IEvent getEventProxy(String id) {
+		IEvent event = getProxy(IEvent.class, id);
+		if(event.getType().equals(VBoxEventType.OnMachineStateChanged))
+			return getProxy( IMachineStateChangedEvent.class, event.getId() );
+		else if(event.getType().equals(VBoxEventType.OnSessionStateChanged))
+			return getProxy( IEvent.class, event.getId() );
+		return event;
+	}
 }

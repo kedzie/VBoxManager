@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.task;
 
 import java.io.IOException;
 
@@ -13,15 +13,30 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.kedzie.vbox.BaseListActivity;
+import com.kedzie.vbox.VBoxApplication.BundleBuilder;
+import com.kedzie.vbox.WebSessionManager;
 import com.kedzie.vbox.api.IProgress;
-import com.kedzie.vbox.api.WebSessionManager;
 
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 		private static final String TAG = "vbox."+BaseTask.class.getSimpleName();
 		protected Context context;
 		protected ProgressDialog pDialog;
-		protected Handler _handler;
 		protected WebSessionManager _vmgr;
+		protected Handler _handler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				new AlertDialog.Builder(context)
+					.setMessage(msg.getData().getString("msg"))
+					.setPositiveButton("OK", new OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { 	dialog.dismiss();}})
+					.show();
+			}
+		};
+		
+		public BaseTask(final Context ctx, WebSessionManager vmgr, String msg, boolean indeterminate, Handler h) {
+			this(ctx, vmgr, msg, indeterminate);
+			this._handler=h;
+		}
 
 		public BaseTask(final Context ctx, WebSessionManager vmgr, String msg, boolean indeterminate) {
 			this.context= ctx;
@@ -33,36 +48,25 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		}
 		
 		@Override
-		protected void onProgressUpdate(IProgress... values) {
-			IProgress p = values[0];
+		protected void onProgressUpdate(IProgress... p) {
 			try {
-				pDialog.setMessage(p.getOperationDescription());
-				pDialog.setSecondaryProgress(p.getOperationPercent());
-				pDialog.setProgress(p.getPercent());
-				pDialog.setTitle(p.getDescription());
+				pDialog.setMessage(p[0].getOperationDescription());
+				pDialog.setSecondaryProgress(p[0].getOperationPercent());
+				pDialog.setProgress(p[0].getPercent());
+				pDialog.setTitle(p[0].getDescription());
 			} catch (IOException e) {
 				showAlert(e);
 			}
 		}
 		
-		protected void showAlert(Exception e) {
+		protected void showAlert(Throwable e) {
 			Log.e(TAG, e.getMessage(), e);
-			Message m = _handler.obtainMessage();
-			m.setData(VBoxApplication.createBundle("msg", e.getMessage()));
-			_handler.dispatchMessage(m);
+			while(e.getCause()!=null) e = e.getCause();
+			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseListActivity.WHAT_ERROR);
 		}
 		
 		@Override
 		protected void onPreExecute()		{
-			_handler = new Handler() {
-				@Override
-				public void handleMessage(Message msg) {
-					new AlertDialog.Builder(context)
-						.setMessage(msg.getData().getString("msg"))
-						.setPositiveButton("OK", new OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { 	dialog.dismiss();}})
-						.show();
-				}
-			};
 			pDialog.show();
 		}
 		

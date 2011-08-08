@@ -3,7 +3,8 @@ package com.kedzie.vbox.api;
 import java.io.IOException;
 import java.util.List;
 
-import com.kedzie.vbox.event.IEventSource;
+import com.kedzie.vbox.KSOAP;
+
 
 public interface IVirtualBox extends IRemoteObject {
 

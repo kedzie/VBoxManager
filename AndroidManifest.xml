@@ -4,7 +4,7 @@
     <uses-sdk android:minSdkVersion="8" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <application android:label="@string/app_name" android:icon="@drawable/icon"  android:name="com.kedzie.vbox.VBoxApplication" android:debuggable="false">
+    <application android:label="@string/app_name" android:icon="@drawable/icon"  android:name=".VBoxApplication" android:debuggable="false">
 		<activity android:name=".server.ServerListActivity" android:label="@string/app_name" >
 			<intent-filter>
                 	<action android:name="android.intent.action.MAIN" />

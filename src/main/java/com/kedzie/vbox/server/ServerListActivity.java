@@ -1,11 +1,17 @@
 package com.kedzie.vbox.server;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -17,9 +23,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.BaseTask;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.machine.MachineListActivity;
+import com.kedzie.vbox.task.BaseTask;
 
 
 public class ServerListActivity extends BaseListActivity<Server> {
@@ -45,9 +51,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Server s = (Server)getListView().getAdapter().getItem(position);
 				Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
-				intent.putExtra("url", "http://"+s.getHost()+":"+s.getPort());
-				intent.putExtra("username", s.getUsername());
-				intent.putExtra("password", s.getPassword());
+				intent.putExtra("server", s);
 		        startActivity(intent);
 			}
 		});
@@ -76,7 +80,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 	        startActivityForResult(intent, REQUEST_CODE_ADD);
 	        return true;
 	    default:
-	        return super.onOptionsItemSelected(item);
+	        return true;
 	    }
 	}
 	
@@ -94,7 +98,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 		  getAdapter().remove(s);
 	    return true;
 	  default:
-	    return super.onContextItemSelected(item);
+	    return true;
 	  }
 	}
 	
@@ -120,8 +124,9 @@ public class ServerListActivity extends BaseListActivity<Server> {
     }
 	
 	class LoadServersTask extends BaseTask<Void, List<Server>>	{
-		public LoadServersTask(Context ctx) { super(ctx, null, "Loading Servers", true);	}
-		
+		public LoadServersTask(Context ctx) { 
+			super(ctx, null, "Loading Servers", true);	
+		}
 		@Override
 		protected List<Server> work(Void... params) throws Exception {
 			return _db.getServers();
@@ -131,5 +136,50 @@ public class ServerListActivity extends BaseListActivity<Server> {
 			super.onPostExecute(result);
 			setListAdapter( new ArrayAdapter<Server>(ServerListActivity.this, android.R.layout.simple_list_item_1, result));
 		}
+	}
+	
+	class ServerDB extends SQLiteOpenHelper {
+
+		public ServerDB(Context context) { 
+	    	super(context, "vbox.db", null, 2);  
+	    }
+
+	    @Override
+	    public void onCreate(SQLiteDatabase db) { 
+	    	db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, HOST TEXT, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
+	    }
+
+	    @Override
+	    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	        Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+	        db.execSQL("DROP TABLE IF EXISTS SERVERS");
+	        onCreate(db);
+	    }
+	    
+	    public void insertOrUpdate(Server s) {
+	    	ContentValues c = new ContentValues();
+	    	c.put("HOST", s.getHost());
+	    	c.put("PORT", s.getPort());
+	    	c.put("USERNAME", s.getUsername());
+	    	c.put("PASSWORD", s.getPassword());
+	    	if(s.getId()==-1) {
+				s.setId(getWritableDatabase().insert("SERVERS", null, c));
+			} else {
+				c.put("ID", s.getId());
+				getWritableDatabase().update("SERVERS", c, "ID  =  ?", new String[] {s.getId().toString()} );
+			}
+	    }
+	    
+	    public void delete(Long id) {
+	    	getWritableDatabase().delete("SERVERS", "ID =  ?", new String[] {id.toString()} );
+	    }
+	    
+	    public List<Server> getServers() {
+	    	Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "HOST", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
+	    	List<Server> ret = new ArrayList<Server>();
+	    	for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+	    		ret.add(new Server(c.getLong(c.getColumnIndex("ID")),  c.getString(c.getColumnIndex("HOST")),c.getInt(c.getColumnIndex("PORT")),c.getString(c.getColumnIndex("USERNAME")),c.getString(c.getColumnIndex("PASSWORD"))));
+	    	return ret;
+	    }
 	}
 }

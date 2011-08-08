@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
 
+import com.kedzie.vbox.KSOAP;
+
 public interface IMachine extends IRemoteObject {
 
 	public String getName() ;

@@ -119,127 +119,108 @@
       <xsd:element name="IVirtualBox_getPackageTypeResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getAPIVersion">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getAPIVersionResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getHomeFolder">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getHomeFolderResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getSettingsFilePath">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getSettingsFilePathResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getHost">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getHostResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getSystemProperties">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getSystemPropertiesResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getMachines">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getMachinesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getHardDisks">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getHardDisksResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getDVDImages">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getDVDImagesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getFloppyImages">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getFloppyImagesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getProgressOperations">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getProgressOperationsResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getGuestOSTypes">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getGuestOSTypesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="vbox:IGuestOSType"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getSharedFolders">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getSharedFoldersResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="vbox:ISharedFolder"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getPerformanceCollector">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getPerformanceCollectorResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getDHCPServers">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getDHCPServersResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getEventSource">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getEventSourceResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
-      
       <xsd:element name="IVirtualBox_getInternalNetworks">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getInternalNetworksResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_getGenericNetworkDrivers">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IVirtualBox_getGenericNetworkDriversResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IVirtualBox_composeMachineFilename">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="name" type="xsd:string"/>
@@ -915,9 +896,7 @@
             <xsd:element name="keyboardHidType" type="vbox:KeyboardHidType"/>
 	</xsd:element>
       <xsd:element name="IMachine_setKeyboardHidTypeResponse">
-
       </xsd:element>
-      
       <xsd:element name="IMachine_getHpetEnabled">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -929,9 +908,7 @@
             <xsd:element name="hpetEnabled" type="xsd:boolean"/>
 	</xsd:element>
       <xsd:element name="IMachine_setHpetEnabledResponse">
-
       </xsd:element>
-      
       <xsd:element name="IMachine_getChipsetType">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2155,77 +2132,66 @@
       <xsd:element name="IHost_getUSBDeviceFiltersResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getNetworkInterfaces">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getNetworkInterfacesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getProcessorCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorOnlineCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getProcessorOnlineCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorCoreCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getProcessorCoreCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getMemorySize">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getMemorySizeResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getMemoryAvailable">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getMemoryAvailableResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getOperatingSystem">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getOperatingSystemResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getOSVersion">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getOSVersionResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getUTCTime">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getUTCTimeResponse">
 	<xsd:element name="returnval" type="xsd:long"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getAcceleration3DAvailable">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getAcceleration3DAvailableResponse">
 	<xsd:element name="returnval" type="xsd:boolean"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorSpeed">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="cpuId" type="xsd:unsignedInt"/>
@@ -2233,7 +2199,6 @@
       <xsd:element name="IHost_getProcessorSpeedResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorFeature">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="feature" type="vbox:ProcessorFeature"/>
@@ -2241,7 +2206,6 @@
       <xsd:element name="IHost_getProcessorFeatureResponse">
 	<xsd:element name="returnval" type="xsd:boolean"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorDescription">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="cpuId" type="xsd:unsignedInt"/>
@@ -2249,7 +2213,6 @@
       <xsd:element name="IHost_getProcessorDescriptionResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getProcessorCPUIDLeaf">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="cpuId" type="xsd:unsignedInt"/>
@@ -2262,7 +2225,6 @@
             <xsd:element name="valEcx" type="xsd:unsignedInt"/>
             <xsd:element name="valEdx" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_createHostOnlyNetworkInterface">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2352,7 +2314,6 @@
       <xsd:element name="IHost_findUSBDeviceByAddressResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_generateMACAddress">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2367,42 +2328,36 @@
       <xsd:element name="ISystemProperties_getMinGuestRAMResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxGuestRAM">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMaxGuestRAMResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMinGuestVRAM">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMinGuestVRAMResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxGuestVRAM">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMaxGuestVRAMResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMinGuestCPUCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMinGuestCPUCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxGuestCPUCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMaxGuestCPUCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxGuestMonitors">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>

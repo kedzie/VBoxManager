@@ -25,36 +25,49 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.BaseTask;
-import com.kedzie.vbox.MachineProgressTask;
-import com.kedzie.vbox.MachineTask;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.WebSessionManager;
 import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IPerformanceMetric;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
-import com.kedzie.vbox.api.WebSessionManager;
-import com.kedzie.vbox.event.EventThread;
+import com.kedzie.vbox.server.Server;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
+import com.kedzie.vbox.task.MachineProgressTask;
+import com.kedzie.vbox.task.MachineTask;
 
 
 public class MachineListActivity extends BaseListActivity<IMachine> {
 	protected static final String TAG = "vbox."+MachineListActivity.class.getSimpleName();
 	
 	private WebSessionManager vmgr = new WebSessionManager();
-	private List<IPerformanceMetric> baseMetrics;
 	private EventThread eventThread;
+	
 	private Handler _eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Log.i(TAG, "EVENT HANDLER REcieved message");
-//			IEvent event = vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
-//			Log.i(TAG, "EVENT HANDLER REcieved message: " + event.getType());
+			switch(msg.what){
+			case EventThread.WHAT_EVENT:
+				IEvent event = vmgr.getEventProxy(msg.getData().getString("evt"));
+				Log.i(TAG, "EVENT HANDLER REcieved message: " + event.getType());
+				if(event instanceof IMachineStateChangedEvent) {
+					IMachineStateChangedEvent mEvent = (IMachineStateChangedEvent)event;
+					
+				}
+				Toast.makeText(MachineListActivity.this, "Event: " + event.getType().toString(), Toast.LENGTH_SHORT);
+				break;
+			case EventThread.WHAT_ERROR:
+				showAlert(msg.getData().getString("exception"));
+				break;
+			}
 		}
 	};
 	
@@ -72,27 +85,28 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 				startActivity(intent);
 			}
 		});
-       	new BaseTask<String, String>(this, vmgr, "Connecting", true) {
+       	new BaseTask<Server, String>(this, vmgr, "Connecting", true) {
 			@Override
-			protected String work(String... params) throws Exception {
-				_vmgr.logon(params[0], params[1], params[2]);
-				baseMetrics = _vmgr.setupHostMetrics(MachineListActivity.this, _vmgr.getVBox().getHost().getId());
+			protected String work(Server... params) throws Exception {
+				_vmgr.logon("http://"+params[0].getHost()+":"+params[0].getPort(), params[0].getUsername(), params[0].getPassword());
+				_vmgr.setupMetrics(MachineListActivity.this, _vmgr.getVBox().getHost().getId(), "*:");
 				return _vmgr.getVBox().getVersion();
 			}
 			@Override
-			protected void onPostExecute(String result) {
-				super.onPostExecute(result);
-				Log.i(TAG, "Logged in " + result);
+			protected void onPostExecute(String version) {
+				super.onPostExecute(version);
+				MachineListActivity.this.setTitle("VirtualBox v." + version);
+				Toast.makeText(MachineListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG);
+				eventThread = new EventThread( _eventHandler, vmgr);
+				eventThread.start();
 				new LoadMachinesTask(MachineListActivity.this, vmgr).execute();
 			}
-       	}.execute(getIntent().getStringExtra("url"),getIntent().getStringExtra("username"), getIntent().getStringExtra("password"));
+       	}.execute((Server)getIntent().getParcelableExtra("server"));
     }
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		eventThread = new EventThread(this, _eventHandler);
-		eventThread.start();
 	}
 
 	@Override
@@ -135,9 +149,6 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			Intent intent = new Intent(this, MetricActivity.class);
 			intent.putExtra("vmgr", vmgr);
 			intent.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getId() );
-			String []bMetrics = new String[baseMetrics.size()];
-			for(int i=0; i<baseMetrics.size(); i++) bMetrics[i] = baseMetrics.get(i).getId();
-			intent.putExtra("baseMetrics", bMetrics);
 			intent.putExtra("title", "Host Metrics");
 			intent.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, vmgr.getVBox().getHost().getMemorySize());
 			intent.putExtra("cpuMetrics" , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } );
@@ -171,7 +182,8 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	public boolean onContextItemSelected(MenuItem item) {
 	  final IMachine m = (IMachine)getListAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
-	  case R.id.machines_context_menu_start:  new LaunchVMProcessTask(this, vmgr).execute(m);	  break;
+	  case R.id.machines_context_menu_start:  
+		  new LaunchVMProcessTask(this, vmgr).execute(m);	  break;
 	  case R.id.machines_context_menu_poweroff:   
 		  new MachineProgressTask(this, vmgr, "Powering Off") {	
 				@Override
@@ -201,6 +213,9 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	  return true;
 	}
 	
+	/**
+	 * Load the Machines
+	 */
 	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
 		public LoadMachinesTask(Context ctx, WebSessionManager vmgr) { super( ctx, vmgr,  "Loading Machines", true); 	}
 
@@ -209,7 +224,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			List<IMachine> machines = _vmgr.getVBox().getMachines();
 			Collection<String> running = new ArrayList<String>();
 			for(IMachine m : machines) if(MachineState.Running.equals(m.getState()))	running.add(m.getId());
-			_vmgr.setupMachineMetrics(context, running.toArray(new String[running.size()]) );
+			_vmgr.setupMetrics(context, running.toArray(new String[running.size()]), "*:" );
 			return machines;
 		}
 
@@ -220,6 +235,9 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 		}
 	}
 	
+	/**
+	 * Machine List Adapter
+	 */
 	class MachineListAdapter extends ArrayAdapter<IMachine> {
 		private final LayoutInflater _layoutInflater;
 		
