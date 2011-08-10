@@ -1,8 +1,6 @@
 package com.kedzie.vbox.task;
 
 import java.io.IOException;
-
-import android.R;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.VBoxSvc;
