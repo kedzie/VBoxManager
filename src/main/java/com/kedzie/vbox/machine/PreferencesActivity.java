@@ -1,5 +1,7 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.machine;
 
+import com.kedzie.vbox.R;
+import com.kedzie.vbox.R.xml;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 

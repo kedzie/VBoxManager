@@ -21,7 +21,7 @@ public class MetricView extends View {
 	private static final String TAG = "vbox."+MetricView.class.getSimpleName();
 	
 	private long max;
-	private String[] metrics;
+	String[] metrics;
 	private int count;
 	private int period;
     IPerformanceMetric baseMetric;
@@ -64,7 +64,10 @@ public class MetricView extends View {
 		metricColor.put("CPU/Load/User", 0xff00ff00);
 		metricColor.put("Guest/CPU/Load/User", 0xff00ff00);
 		metricColor.put("RAM/Usage/Used", 0xffff0000);
-		metricColor.put("Guest/RAM/Usage/Used", 0xffff0000);
+		metricColor.put("Guest/RAM/Usage/Shared", 0xffff0000);
+		metricColor.put("Guest/RAM/Usage/Free", 0xffff00ff);
+		metricColor.put("Guest/RAM/Usage/Cache", 0xffffff00);
+		metricColor.put("Guest/RAM/Usage/Total", 0xff00ffff);
 	}
 	
 	public void init( int count, int period, long max, String []metrics) {

@@ -4,5 +4,5 @@ import com.kedzie.vbox.KSOAP;
 
 public interface IMachineEvent extends IEvent {
 	@KSOAP(prefix="IMachineEvent")
-	public IMachine getMachine();
+	public String getMachineId();
 }

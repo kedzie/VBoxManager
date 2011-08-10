@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.WebSessionManager;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricActivity extends Activity {
@@ -26,12 +26,12 @@ public class MetricActivity extends Activity {
 	
 	class MetricThread extends Thread {
 		boolean _running=true;
-		private WebSessionManager _vmgr;
+		private VBoxSvc _vmgr;
 		private Handler _handler;
 		private MetricView []_views;
 		private IPerformanceMetric _metric;
 		
-		public MetricThread(WebSessionManager vmgr, Handler h, IPerformanceMetric metric, MetricView...views){
+		public MetricThread(VBoxSvc vmgr, Handler h, IPerformanceMetric metric, MetricView...views){
 			_vmgr=vmgr;
 			_handler=h;
 			_views=views;
@@ -61,7 +61,7 @@ public class MetricActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.metric);
-		WebSessionManager vmgr = getIntent().getParcelableExtra("vmgr");
+		VBoxSvc vmgr = getIntent().getParcelableExtra("vmgr");
 		object = getIntent().getStringExtra(INTENT_OBJECT);
 		String []cpuMetrics = getIntent().getStringArrayExtra("cpuMetrics");
 		String []ramMetrics = getIntent().getStringArrayExtra("ramMetrics");

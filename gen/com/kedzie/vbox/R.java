@@ -50,27 +50,15 @@ public final class R {
         public static final int ic_list_save_small=0x7f02001e;
         public static final int ic_list_start=0x7f02001f;
         public static final int ic_list_start_small=0x7f020020;
-        public static final int ic_list_state_aborted=0x7f020021;
-        public static final int ic_list_state_paused=0x7f020022;
-        public static final int ic_list_state_poweredoff=0x7f020023;
-        public static final int ic_list_state_running=0x7f020024;
-        public static final int ic_list_state_save=0x7f020025;
-        public static final int ic_list_state_stuck=0x7f020026;
-        public static final int ic_list_stuck_small=0x7f020027;
-        public static final int ic_list_vm_acpi=0x7f020028;
-        public static final int ic_list_vm_pause=0x7f020029;
-        public static final int ic_list_vm_poweroff=0x7f02002a;
-        public static final int ic_list_vm_reset=0x7f02002b;
-        public static final int ic_list_vm_save=0x7f02002c;
-        public static final int ic_list_vm_start=0x7f02002d;
-        public static final int ic_menu_add=0x7f02002e;
-        public static final int ic_menu_delete=0x7f02002f;
-        public static final int ic_menu_edit=0x7f020030;
-        public static final int ic_menu_metric=0x7f020031;
-        public static final int ic_menu_preferences=0x7f020032;
-        public static final int ic_menu_refresh=0x7f020033;
-        public static final int ic_menu_save=0x7f020034;
-        public static final int icon=0x7f020035;
+        public static final int ic_list_stuck_small=0x7f020021;
+        public static final int ic_menu_add=0x7f020022;
+        public static final int ic_menu_delete=0x7f020023;
+        public static final int ic_menu_edit=0x7f020024;
+        public static final int ic_menu_metric=0x7f020025;
+        public static final int ic_menu_preferences=0x7f020026;
+        public static final int ic_menu_refresh=0x7f020027;
+        public static final int ic_menu_save=0x7f020028;
+        public static final int icon=0x7f020029;
     }
     public static final class id {
         public static final int action_item_icon=0x7f080002;

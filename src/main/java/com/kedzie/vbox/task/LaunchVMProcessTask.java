@@ -1,25 +1,24 @@
 package com.kedzie.vbox.task;
 
-import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.WebSessionManager;
-import com.kedzie.vbox.api.IConsole;
+import android.content.Context;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IProgress;
 
-public class LaunchVMProcessTask extends MachineProgressTask {
+public class LaunchVMProcessTask extends BaseTask<IMachine, IMachine> {
 	
-	public LaunchVMProcessTask(BaseListActivity activity, WebSessionManager vmgr) {
-		super(activity, vmgr, "Launching Machine");
+	public LaunchVMProcessTask(Context activity, VBoxSvc vmgr) {
+		super(activity, vmgr, "Launching Machine", false);
 	}
 	
-	@Override
-	protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console)	throws Exception{
-			IProgress p= m.launchVMInstance(vmgr.getVBox().getSessionObject(), "headless");
-			while(p.getCompleted()) {
-				publishProgress(p);
-				Thread.sleep(500);
-			}
-			vmgr.setupMetrics( context,  m.getId(), "*:");
-			return null;
+//	@Override
+//	protected IProgress workWithProgress(IMachine m, VBoxSvc vmgr, IConsole console)	throws Exception {
+//			_vmgr.getVBox().getSessionObject().clearCache();
+//			if( _vmgr.getVBox().getSessionObject().getState().equals(SessionState.Locked)) _vmgr.getVBox().getSessionObject().unlockMachine();
+//	}
+
+	@Override protected IMachine work(IMachine... params) throws Exception {
+		handleProgress( params[0].launchVMProcess(_vmgr.getVBox().getSessionObject(), IMachine.LaunchMode.headless.toString()) );
+		_vmgr.setupMetrics( context,  params[0].getIdRef(), "*:");
+		return null;
 	}
 }

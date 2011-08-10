@@ -2,7 +2,6 @@ package com.kedzie.vbox.server;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -21,9 +20,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.task.BaseTask;
 
@@ -37,6 +37,8 @@ public class ServerListActivity extends BaseListActivity<Server> {
 	
 	private ServerDB _db;
 	
+	VBoxSvc vmgr = new VBoxSvc();
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,13 +51,28 @@ public class ServerListActivity extends BaseListActivity<Server> {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Server s = (Server)getListView().getAdapter().getItem(position);
-				Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
-				intent.putExtra("server", s);
-		        startActivity(intent);
+				final Server s = (Server)getListView().getAdapter().getItem(position);
+		       	new BaseTask<Server, String>(ServerListActivity.this, vmgr, "Connecting", true) {
+					@Override
+					protected String work(Server... params) throws Exception {
+						_vmgr.logon("http://"+params[0].getHost()+":"+params[0].getPort(), params[0].getUsername(), params[0].getPassword());
+						_vmgr.setupMetrics(ServerListActivity.this, _vmgr.getVBox().getHost().getIdRef(), "*:");
+						return _vmgr.getVBox().getVersion();
+					}
+					@Override
+					protected void onPostExecute(String version) {
+						super.onPostExecute(version);
+						Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG).show();
+						Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
+						intent.putExtra("server", s);
+						intent.putExtra("vmgr", vmgr);
+				        startActivity(intent);
+					}
+		       	}.execute(s);
 			}
 		});
         _db.insertOrUpdate(new Server(new Long(-1), "192.168.1.10", 18083, "Marek", "Mk0204$$"));
+        _db.insertOrUpdate(new Server(new Long(-1), "localhost", 18083, "Marek", "Mk0204$$"));
         new LoadServersTask(this).execute();
     }
 	

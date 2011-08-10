@@ -15,14 +15,23 @@ import android.util.Log;
 
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
-import com.kedzie.vbox.WebSessionManager;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IProgress;
 
+/**
+ * VirtualBox API Asynchronous task with progress & error handling
+ * @param <Input>  Operation input argument 
+ * @param <Output> Operation output
+ * @author Marek Kedzierski
+ * @Aug 8, 2011
+ */
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 		private static final String TAG = "vbox."+BaseTask.class.getSimpleName();
+		protected final static int PROGRESS_INTERVAL = 500;
+		
 		protected Context context;
 		protected ProgressDialog pDialog;
-		protected WebSessionManager _vmgr;
+		protected VBoxSvc _vmgr;
 		protected Handler _handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -32,28 +41,41 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 					.show();
 			}
 		};
-		
-		public BaseTask(final Context ctx, WebSessionManager vmgr, String msg, boolean indeterminate, Handler h) {
-			this(ctx, vmgr, msg, indeterminate);
-			this._handler=h;
-		}
 
-		public BaseTask(final Context ctx, WebSessionManager vmgr, String msg, boolean indeterminate) {
+		/**
+		 * @param ctx Android <code>Context</code>
+		 * @param vmgr VirtualBox API service
+		 * @param msg <code>ProgressDialog</code> operation description
+		 * @param indeterminate <code>ProgressDialog.setIndeterminate()</code> true if indeterminate progress, false if progress is determinate
+		 */
+		public BaseTask(Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate) {
 			this.context= ctx;
 			_vmgr=vmgr;
 			pDialog = new ProgressDialog(ctx);
 			pDialog.setMessage(msg);
 			pDialog.setIndeterminate(indeterminate);
-			if(!indeterminate) pDialog.setProgressStyle(R.style.Widget_ProgressBar_Horizontal);
+			pDialog.setProgressStyle(indeterminate ? ProgressDialog.STYLE_SPINNER : ProgressDialog.STYLE_HORIZONTAL);
 		}
 		
+		/**
+		 * @param ctx Android <code>Context</code>
+		 * @param vmgr VirtualBox API service
+		 * @param msg <code>ProgressDialog</code> operation description
+		 * @param indeterminate <code>ProgressDialog.setIndeterminate()</code> true if indeterminate progress, false if progress is determinate
+		 * @param handler		<code>android.os.handler</code> for error handling.  <code>msg</code> parameter contains error message
+		 */
+		public BaseTask(final Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate, Handler h) {
+			this(ctx, vmgr, msg, indeterminate);
+			this._handler=h;
+		}
+
 		@Override
 		protected void onProgressUpdate(IProgress... p) {
 			try {
-				pDialog.setMessage(p[0].getOperationDescription());
-				pDialog.setSecondaryProgress(p[0].getOperationPercent());
-				pDialog.setProgress(p[0].getPercent());
 				pDialog.setTitle(p[0].getDescription());
+				pDialog.setMessage(p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription());
+				pDialog.setProgress(p[0].getPercent());
+				pDialog.setSecondaryProgress(p[0].getOperationPercent());
 			} catch (IOException e) {
 				showAlert(e);
 			}
@@ -63,6 +85,15 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			Log.e(TAG, e.getMessage(), e);
 			while(e.getCause()!=null) e = e.getCause();
 			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseListActivity.WHAT_ERROR);
+		}
+		
+		protected IProgress handleProgress(IProgress p)  throws IOException {
+			if(p==null) return null;
+			while(!p.getCompleted()) {
+				publishProgress(p);
+				try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
+			}
+			return p;
 		}
 		
 		@Override

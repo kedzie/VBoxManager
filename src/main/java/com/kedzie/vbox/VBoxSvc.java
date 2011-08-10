@@ -5,40 +5,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.ksoap2.serialization.SoapObject;
 import org.virtualbox_4_1.VBoxEventType;
 import org.xmlpull.v1.XmlPullParserException;
-
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IPerformanceMetric;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.machine.PreferencesActivity;
 
-public class WebSessionManager implements Parcelable {
+public class VBoxSvc implements Parcelable {
 	private String _url;
 	private IVirtualBox _vbox;
 	private KSOAPTransport _transport;
 	
-	public WebSessionManager() {}
+	public VBoxSvc() {}
 	
-	public WebSessionManager(Parcel p) {
+	public VBoxSvc(Parcel p) {
 		_url = p.readString();
 		_transport = new KSOAPTransport(_url);
 		_vbox = _transport.getProxy(IVirtualBox.class, p.readString());
 	 }
 	
 	@Override
-	public void writeToParcel(Parcel dest, int flags) { dest.writeString(_url); dest.writeString(_vbox.getId()); }
+	public void writeToParcel(Parcel dest, int flags) { 
+		dest.writeString(_url); 
+		dest.writeString(_vbox.getIdRef()); 
+	}
+	
 	@Override
-	public int describeContents() { return 0; }
-	 public static final Parcelable.Creator<WebSessionManager> CREATOR = new Parcelable.Creator<WebSessionManager>() {
-		 public WebSessionManager createFromParcel(Parcel in) {  return new WebSessionManager(in); }
-		 public WebSessionManager[] newArray(int size) {  return new WebSessionManager[size]; }
+	public int describeContents() { 
+		return 0; 
+	}
+	 public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
+		 public VBoxSvc createFromParcel(Parcel in) {
+			 return new VBoxSvc(in); 
+		}
+		 public VBoxSvc[] newArray(int size) {  return new VBoxSvc[size]; }
 	 };
 	
 	public IVirtualBox logon(String url,  String username, String password) throws IOException, XmlPullParserException {
@@ -90,9 +97,9 @@ public class WebSessionManager implements Parcelable {
 	public IEvent getEventProxy(String id) {
 		IEvent event = getProxy(IEvent.class, id);
 		if(event.getType().equals(VBoxEventType.OnMachineStateChanged))
-			return getProxy( IMachineStateChangedEvent.class, event.getId() );
+			return getProxy( IMachineStateChangedEvent.class, event.getIdRef() );
 		else if(event.getType().equals(VBoxEventType.OnSessionStateChanged))
-			return getProxy( IEvent.class, event.getId() );
+			return getProxy( ISessionStateChangedEvent.class, event.getIdRef() );
 		return event;
 	}
 }

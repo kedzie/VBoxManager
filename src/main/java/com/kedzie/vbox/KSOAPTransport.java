@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.KvmSerializable;
@@ -21,18 +20,16 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
-
-import android.util.Log;
-
 import com.kedzie.vbox.api.IRemoteObject;
 
 public class KSOAPTransport {
 	private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
 	public static final String NAMESPACE = "http://www.virtualbox.org/";
 	private HttpTransportSE transport;
-	private Map<String, Object> _cache = new HashMap<String, Object>();
 	
-	public KSOAPTransport(String url) { this.transport = new HttpTransportSE(url);	}
+	public KSOAPTransport(String url) { 
+		this.transport = new HttpTransportSE(url);	
+	}
 	
 	public synchronized Object call(SoapObject object) throws IOException, XmlPullParserException {
 		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11) {
@@ -69,6 +66,7 @@ public class KSOAPTransport {
 	private class  SOAPInvocationHandler implements InvocationHandler {
 		private String id;
 		private String clazz;
+		private Map<String, Object> _cache = new HashMap<String, Object>();
 		
 		public SOAPInvocationHandler(String id, Class<?> type) {
 			this.id=id;
@@ -77,30 +75,31 @@ public class KSOAPTransport {
 		
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
-			if(method.getName().equals("getId")) return this.id;
-			if(method.getName().equals("equals")) return id.equals( ((IRemoteObject)args[0]).getId());
+			if(method.getName().equals("getIdRef")) return this.id;
+			if(method.getName().equals("equals")) return id.equals( ((IRemoteObject)args[0]).getIdRef());
 			if(method.getName().equals("hashCode")) return id.hashCode();
 			if(method.getName().equals("toString")) return id.toString();
 			if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
-			if(method.getName().startsWith("get") && _cache.containsKey(method.getName())) {
-				Object value = _cache.get(method.getName());
-				Log.i(TAG, "Returning cache value: " + method.getName() + value );
-				return value;
-			}
+//			if(method.getName().startsWith("get") && _cache.containsKey(method.getName())) {
+//					Object value = _cache.get(method.getName());
+//					Log.i(TAG, "Returning cache value: " + method.getName() + value );
+//					return value;
+//			} 
 			
 			SoapObject request = new SoapObject(NAMESPACE, (method.getAnnotation(KSOAP.class)==null ? clazz : method.getAnnotation(KSOAP.class).prefix())+"_"+method.getName());
-			request.addProperty((method.getAnnotation(KSOAP.class)==null) ? "_this" : method.getAnnotation(KSOAP.class).thisReference(), this.id);
+			KSOAP methodKSOAP = method.getAnnotation(KSOAP.class);
+			if(methodKSOAP==null) 
+				request.addProperty("_this", this.id);	
+			else if ( !"".equals(methodKSOAP.thisReference()))  
+				request.addProperty(methodKSOAP.thisReference(), this.id);
 
 			if(args!=null) {
-				for(int i=0; i<args.length; i++) {
-					marshall(request, 
-							VBoxApplication.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]), 
-							method.getParameterTypes()[i], 
-							method.getGenericParameterTypes()[i], 
-							args[i]);
-				}	
+				for(int i=0; i<args.length; i++) marshall(request, VBoxApplication.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
 			}
-			return unmarshall( method.getReturnType(), method.getGenericReturnType(), call(request) );
+			Object ret = unmarshall( method.getReturnType(), method.getGenericReturnType(), call(request) );
+//			if(method.getName().startsWith("get"))
+//				_cache.put(method.getName(), ret);
+			return ret;
 		}
 
 		private void marshall(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
@@ -114,12 +113,13 @@ public class KSOAPTransport {
 			} else if(!ksoap.type().equals("")) 	
 				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
 			else if(IRemoteObject.class.isAssignableFrom(clazz))	 
-				request.addProperty(ksoap.value(),  ((IRemoteObject)obj).getId() );
+				request.addProperty(ksoap.value(),  ((IRemoteObject)obj).getIdRef() );
 			else if(clazz.isEnum())	
 				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
 			else request.addProperty(ksoap.value(), obj);	
 		}
 		
+		@SuppressWarnings("unchecked") 
 		private Object unmarshall(Class<?> returnType, Type type, Object ret) {
 			if(ret==null) return null;
 			if(returnType.equals(Integer.class)) 	return Integer.valueOf(ret.toString());
@@ -141,6 +141,7 @@ public class KSOAPTransport {
 			else if(returnType.equals(String.class))	return ret.toString();
 			else if(IRemoteObject.class.isAssignableFrom(returnType))	return getProxy(returnType, ret.toString());
 			else if(returnType.isEnum()) 
+//				return Enum.valueOf((Class<? extends Enum>)returnType, ret.toString());
 				for( Object element : returnType.getEnumConstants()) 
 					if( element.toString().equals( ret.toString() ) ) 
 						return element;

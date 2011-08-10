@@ -1,12 +1,14 @@
 package com.kedzie.vbox.machine;
 
+import java.io.IOException;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.SessionState;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,25 +21,45 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.WebSessionManager;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
-import com.kedzie.vbox.task.MachineProgressTask;
 import com.kedzie.vbox.task.MachineTask;
 
 public class MachineActivity extends BaseListActivity<String> {
 	protected static final String TAG = MachineActivity.class.getSimpleName();
 	
-	private WebSessionManager _vmgr;
+	private VBoxSvc _vmgr;
 	private IMachine _machine;
+	private EventThread eventThread;
+	
+	private Handler _eventHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what){
+			case EventThread.WHAT_EVENT:
+					IEvent event = _vmgr.getEventProxy(msg.getData().getString("evt"));
+					Log.i(TAG, "EVENT HANDLER REcieved message: " + event.getType());
+					if(event instanceof IMachineStateChangedEvent) {
+						updateState(_machine);
+					} else if(event instanceof ISessionStateChangedEvent) {
+						ISessionStateChangedEvent sEvent = (ISessionStateChangedEvent)event;
+						Toast.makeText(MachineActivity.this, "SessionStateChangedEvent : " + sEvent.getState(), Toast.LENGTH_SHORT).show();
+					}
+				break;
+			}
+		}
+	};
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,26 +78,26 @@ public class MachineActivity extends BaseListActivity<String> {
 				if(action.equals("Start"))	
 					new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
 				else if(action.equals("Power Off"))	
-					new MachineProgressTask(MachineActivity.this, _vmgr, "Powering Off") {	
-						protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Powering Off", false) {	
+						protected IProgress workWithProgress(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(_machine);
 				else if(action.equals("Reset"))
-					new MachineTask(MachineActivity.this, _vmgr, "Resetting") {
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Resetting", true) {
+						protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(_machine);
 				else if(action.equals("Pause")) 	
-					new MachineTask(MachineActivity.this, _vmgr, "Pausing") {	
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { console.pause(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Pausing", true) {	
+						protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { console.pause(); }}.execute(_machine);
 				else if(action.equals("Resume")) 
-					new MachineTask(MachineActivity.this, _vmgr, "Resuming") {	
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Resuming", true) {	
+						protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(_machine);
 				else if(action.equals("Power Button")) 	
-					new MachineTask(MachineActivity.this, _vmgr, "ACPI Power Down") {
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { console.powerButton(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "ACPI Power Down", true) {
+						protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { console.powerButton(); }}.execute(_machine);
 				else if(action.equals("Save State")) 	
-					new MachineProgressTask(MachineActivity.this, _vmgr, "Saving State") {	
-						protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.saveState(); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Saving State", false) {	
+						protected IProgress workWithProgress(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	return console.saveState(); }}.execute(_machine);
 				else if(action.equals("Discard State")) 	
-					new MachineTask(MachineActivity.this, _vmgr, "Discarding State") {	
-						protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.discardSavedState(true); }}.execute(_machine);
+					new MachineTask(MachineActivity.this, _vmgr, "Discarding State", true) {	
+						protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	console.discardSavedState(true); }}.execute(_machine);
 				else if(action.equals("Take Snapshot")) 	{
 					final Dialog dialog = new Dialog(MachineActivity.this);
 					dialog.setContentView(R.layout.snapshot_dialog);
@@ -84,8 +106,8 @@ public class MachineActivity extends BaseListActivity<String> {
 					((Button)dialog.findViewById(R.id.button_save)).setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							new MachineProgressTask(MachineActivity.this, _vmgr, "Taking Snapshot") {	
-								protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.takeSnapshot(nameText.getText().toString(), descriptionText.getText().toString()); }}.execute(_machine);							
+							new MachineTask(MachineActivity.this, _vmgr, "Taking Snapshot", false) {	
+								protected IProgress workWithProgress(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	return console.takeSnapshot(nameText.getText().toString(), descriptionText.getText().toString()); }}.execute(_machine);							
 						}
 					});
 					((Button)dialog.findViewById(R.id.button_cancel)).setOnClickListener(new View.OnClickListener() { public void onClick(View v) { dialog.dismiss(); } });
@@ -103,10 +125,20 @@ public class MachineActivity extends BaseListActivity<String> {
 	protected void onStart() {
 		super.onStart();
 		updateState(_machine);
+		eventThread = new EventThread( _eventHandler, _vmgr);
+		eventThread.start();
 	}
 	
 	@Override
 	protected void onStop() {
+		boolean retry = true;
+        eventThread.postStop();
+        while (retry) {
+            try {
+                eventThread.join();
+                retry = false;
+            } catch (InterruptedException e) { }
+        }
 		try {
 			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.Locked)) 
 				_vmgr.getVBox().getSessionObject().unlockMachine();
@@ -142,10 +174,10 @@ public class MachineActivity extends BaseListActivity<String> {
 			Intent intent = new Intent(this, MetricActivity.class);
 			intent.putExtra("vmgr", _vmgr);
 			intent.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize());
-			intent.putExtra(MetricActivity.INTENT_OBJECT, _machine.getId() );
+			intent.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() );
 			intent.putExtra("title", _machine.getName() + " Metrics");
 			intent.putExtra("cpuMetrics" , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } );
-			intent.putExtra("ramMetrics" , new String[] {  "Guest/RAM/Usage/Used" } );
+			intent.putExtra("ramMetrics" , new String[] {  "Guest/RAM/Usage/Shared", "Guest/RAM/Usage/Cache" } );
 			startActivity(intent);
 			return true;
 		case R.id.machine_option_menu_preferences:

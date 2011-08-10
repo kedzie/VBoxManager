@@ -15,6 +15,7 @@
 		<activity android:name=".machine.MachineListActivity"  android:label="@string/machine_list"></activity>
 		<activity android:name=".machine.MachineActivity"  android:label="@string/machine"></activity>
 		<activity android:name=".machine.MetricActivity"  android:label="Metrics"></activity>
-		<activity android:name=".PreferencesActivity"  android:label="Preferences"></activity>
+		<activity android:name=".machine.PreferencesActivity"  android:label="Preferences"></activity>
+		<service android:name=".machine.EventService"/>
     </application>
 </manifest>

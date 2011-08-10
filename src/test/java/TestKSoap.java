@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.Map;
 
-import com.kedzie.vbox.WebSessionManager;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IPerformanceCollector;
@@ -13,7 +13,7 @@ import com.kedzie.vbox.api.IVirtualBox;
 public class TestKSoap {
 
 	public static void main(String[] args) throws Exception {
-		WebSessionManager vmgr = new WebSessionManager();
+		VBoxSvc vmgr = new VBoxSvc();
 		vmgr.logon("http://localhost:18083", "test", "test");
 		IVirtualBox vbox = vmgr.getVBox();
 		List<IMachine> machines =  vbox.getMachines();
@@ -21,22 +21,22 @@ public class TestKSoap {
 
 		IHost host = vbox.getHost();
 		IPerformanceCollector pc = vbox.getPerformanceCollector();
-		vmgr.disableMetrics(host.getId());
+		pc.disableMetrics(new String [] { "*:" }, new String [] { host.getIdRef() });
 		
 		System.out.println("Setup Metrics\n---------------------");
-		for(IPerformanceMetric metric : vmgr.setupMetrics(1, 50, host.getId())) 
+		for(IPerformanceMetric metric : pc.setupMetrics(new String [] { "*:" }, new String [] { host.getIdRef() }, 1, 50 )) 
 			System.out.println(metric.getMetricName() + " " + metric.getUnit());
 		
 		System.out.println("----------------------\nHost Metrics\n---------------------");
-		for(IPerformanceMetric metric : pc.getMetrics( new String[] { "RAM/Usage/*:", "CPU/Load/*:" }, new String[] { host.getId() })) 
+		for(IPerformanceMetric metric : pc.getMetrics( new String[] { "RAM/Usage/*:", "CPU/Load/*:" }, new String[] { host.getIdRef() })) 
 			System.out.println(metric.getMetricName() + " " + metric.getUnit() + " " + metric.getMaximumValue());
 		
 		System.out.println("----------------------\nMachine Metrics\n---------------------");
-		for(IPerformanceMetric metric : pc.getMetrics( new String[] { "Guest/*:",  }, new String[] { m.getId() })) 
+		for(IPerformanceMetric metric : pc.getMetrics( new String[] { "Guest/*:",  }, new String[] { m.getIdRef() })) 
 			System.out.println(metric.getMetricName() + " " + metric.getUnit() + " " + metric.getMaximumValue());
 		
 		Thread.sleep(5000);
-		Map<String, Map<String, Object>> data = vmgr.queryMetricsData(new String[] { "RAM/Usage/*:", "CPU/Load/*:" }, 50, 1, host.getId());
+		Map<String, Map<String, Object>> data = vmgr.queryMetricsData( host.getIdRef(), 50, 1, "RAM/Usage/*:", "CPU/Load/*:" );
 		
 		for(Map.Entry<String, Map<String, Object>> entry : data.entrySet()) {
 			System.out.println("Metric: " + entry.getKey() + "\n----------------------------");

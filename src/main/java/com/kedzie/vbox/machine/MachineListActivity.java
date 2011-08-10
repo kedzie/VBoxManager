@@ -1,17 +1,17 @@
 package com.kedzie.vbox.machine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import org.virtualbox_4_1.MachineState;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -26,43 +26,52 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.kedzie.vbox.BaseListActivity;
-import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.WebSessionManager;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.ISnapshot;
-import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
-import com.kedzie.vbox.task.MachineProgressTask;
 import com.kedzie.vbox.task.MachineTask;
 
 
 public class MachineListActivity extends BaseListActivity<IMachine> {
 	protected static final String TAG = "vbox."+MachineListActivity.class.getSimpleName();
 	
-	private WebSessionManager vmgr = new WebSessionManager();
+	private VBoxSvc vmgr = new VBoxSvc();
 	private EventThread eventThread;
+	private Messenger eventServiceMessenger;
 	
 	private Handler _eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch(msg.what){
 			case EventThread.WHAT_EVENT:
-				IEvent event = vmgr.getEventProxy(msg.getData().getString("evt"));
-				Log.i(TAG, "EVENT HANDLER REcieved message: " + event.getType());
-				if(event instanceof IMachineStateChangedEvent) {
-					IMachineStateChangedEvent mEvent = (IMachineStateChangedEvent)event;
-					
+				try {
+					IEvent event = vmgr.getEventProxy(msg.getData().getString("evt"));
+					Log.i(TAG, "EVENT HANDLER REcieved message: " + event.getType());
+					if(event instanceof IMachineStateChangedEvent) {
+						IMachineStateChangedEvent mEvent = (IMachineStateChangedEvent)event;
+						IMachine eventMachine = vmgr.getVBox().findMachine(mEvent.getMachineId());
+						Log.i(TAG, "MAchine event: " + eventMachine.getName());
+						int pos = getAdapter().getPosition(eventMachine);
+						getAdapter().remove(eventMachine);
+						getAdapter().insert(eventMachine, pos);
+						Toast.makeText(MachineListActivity.this, "MachineStateChangedEvent : " + mEvent.getState(), Toast.LENGTH_SHORT).show();
+					} else if(event instanceof ISessionStateChangedEvent) {
+						ISessionStateChangedEvent sEvent = (ISessionStateChangedEvent)event;
+						Toast.makeText(MachineListActivity.this, "SessionStateChangedEvent : " + sEvent.getState(), Toast.LENGTH_SHORT).show();
+					}
+				} catch (IOException e) {
+					Log.e(TAG, e.getMessage(), e);
 				}
-				Toast.makeText(MachineListActivity.this, "Event: " + event.getType().toString(), Toast.LENGTH_SHORT);
 				break;
 			case EventThread.WHAT_ERROR:
 				showAlert(msg.getData().getString("exception"));
@@ -81,36 +90,44 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 				IMachine m = (IMachine)getListView().getAdapter().getItem(position);
 				Intent intent = new Intent().setClass(MachineListActivity.this, MachineActivity.class);
 				intent.putExtra("vmgr", vmgr);
-				intent.putExtra("machine", m.getId());
+				intent.putExtra("machine", m.getIdRef());
 				startActivity(intent);
 			}
 		});
-       	new BaseTask<Server, String>(this, vmgr, "Connecting", true) {
-			@Override
-			protected String work(Server... params) throws Exception {
-				_vmgr.logon("http://"+params[0].getHost()+":"+params[0].getPort(), params[0].getUsername(), params[0].getPassword());
-				_vmgr.setupMetrics(MachineListActivity.this, _vmgr.getVBox().getHost().getId(), "*:");
-				return _vmgr.getVBox().getVersion();
-			}
-			@Override
-			protected void onPostExecute(String version) {
-				super.onPostExecute(version);
-				MachineListActivity.this.setTitle("VirtualBox v." + version);
-				Toast.makeText(MachineListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG);
-				eventThread = new EventThread( _eventHandler, vmgr);
-				eventThread.start();
-				new LoadMachinesTask(MachineListActivity.this, vmgr).execute();
-			}
-       	}.execute((Server)getIntent().getParcelableExtra("server"));
+       	vmgr = getIntent().getParcelableExtra("vmgr");
+       	try {
+			setTitle("VirtualBox v." + vmgr.getVBox().getVersion());
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		new LoadMachinesTask(MachineListActivity.this, vmgr).execute();
     }
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
+//		Intent intent = new Intent(this, EventService.class);
+//		bindService(intent, new ServiceConnection() {
+//			@Override public void onServiceConnected(ComponentName name, IBinder service) {
+//				eventServiceMessenger = new Messenger(service);
+//				try {
+//					eventServiceMessenger.send(new Message());
+//				} catch (RemoteException e) {
+//					Log.e(TAG, e.getMessage(), e);
+//				}
+//			}
+//			@Override public void onServiceDisconnected(ComponentName name) {
+//				eventServiceMessenger = null;
+//			}
+//		}, 0);
+		Log.i(TAG, "Start");
+		eventThread = new EventThread( _eventHandler, vmgr);
+		eventThread.start();
 	}
 
 	@Override
 	protected void onStop() {
+		Log.i(TAG, "Stop");
 		boolean retry = true;
         eventThread.postStop();
         while (retry) {
@@ -148,7 +165,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 		case R.id.machine_list_option_menu_metrics:
 			Intent intent = new Intent(this, MetricActivity.class);
 			intent.putExtra("vmgr", vmgr);
-			intent.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getId() );
+			intent.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getIdRef() );
 			intent.putExtra("title", "Host Metrics");
 			intent.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, vmgr.getVBox().getHost().getMemorySize());
 			intent.putExtra("cpuMetrics" , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } );
@@ -185,29 +202,29 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	  case R.id.machines_context_menu_start:  
 		  new LaunchVMProcessTask(this, vmgr).execute(m);	  break;
 	  case R.id.machines_context_menu_poweroff:   
-		  new MachineProgressTask(this, vmgr, "Powering Off") {	
+		  new MachineTask(this, vmgr, "Powering Off", false) {	
 				@Override
-				protected IProgress work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(m);
+				protected IProgress workWithProgress(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_reset:	 
-	  new MachineTask(this, vmgr, "Resetting") {	
+	  new MachineTask(this, vmgr, "Resetting", true) {	
 			@Override
-			protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(m);
+			protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	console.reset(); }}.execute(m);
 	  break;
 	  case R.id.machines_context_menu_resume:	  
-	  new MachineTask(this, vmgr, "Resuming") {	
+	  new MachineTask(this, vmgr, "Resuming", true) {	
 			@Override
-			protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(m);
+			protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception { 	console.resume(); }}.execute(m);
 	  break;
 	  case R.id.machines_context_menu_pause:	  
-		  new MachineTask(this, vmgr, "Pausing") {	
+		  new MachineTask(this, vmgr, "Pausing", true) {	
 				@Override
-				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {  console.pause();	}}.execute(m);
+				protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception {  console.pause();	}}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_acpi:	  
-		  new MachineTask(this, vmgr, "ACPI Power Down") {
+		  new MachineTask(this, vmgr, "ACPI Power Down", true) {
 				@Override
-				protected void work(IMachine m, WebSessionManager vmgr, IConsole console) throws Exception {	console.powerButton(); 	}}.execute(m);
+				protected void work(IMachine m, VBoxSvc vmgr, IConsole console) throws Exception {	console.powerButton(); 	}}.execute(m);
 		  break;
 	  }
 	  return true;
@@ -217,13 +234,13 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	 * Load the Machines
 	 */
 	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
-		public LoadMachinesTask(Context ctx, WebSessionManager vmgr) { super( ctx, vmgr,  "Loading Machines", true); 	}
+		public LoadMachinesTask(Context ctx, VBoxSvc vmgr) { super( ctx, vmgr,  "Loading Machines", true); 	}
 
 		@Override
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines = _vmgr.getVBox().getMachines();
 			Collection<String> running = new ArrayList<String>();
-			for(IMachine m : machines) if(MachineState.Running.equals(m.getState()))	running.add(m.getId());
+			for(IMachine m : machines) if(MachineState.Running.equals(m.getState()))	running.add(m.getIdRef());
 			_vmgr.setupMetrics(context, running.toArray(new String[running.size()]), "*:" );
 			return machines;
 		}
@@ -249,14 +266,23 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 		public long getItemId(int position) {
 			return position;
 		}
+		
+		public int getPosition(IMachine m) {
+			for(int i=0; i<getCount(); i++) 
+				if(m.getIdRef().equals(getItem(i).getIdRef())) 
+					return i;
+			return -1;
+		}
 
 		public View getView(int position, View view, ViewGroup parent) {
 			IMachine m = getItem(position);
 			if (view == null) {
+				Log.i(TAG, "Creating view: " + m.getName());
 				view = _layoutInflater.inflate(R.layout.machine_list_item, parent, false);
 				((ImageView)view.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+m.getOSTypeId().toLowerCase()));
 				((TextView) view.findViewById(R.id.machine_list_item_name)).setText(m.getName());
 			}
+			Log.i(TAG, "Updating view: " + m.getName());
 			MachineState state = m.getState();
 			((ImageView)view.findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(state) );
 			((TextView)view.findViewById(R.id.machine_list_item_state_text)).setText(state.name());

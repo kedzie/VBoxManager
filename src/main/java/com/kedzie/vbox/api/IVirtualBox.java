@@ -9,6 +9,7 @@ import com.kedzie.vbox.KSOAP;
 public interface IVirtualBox extends IRemoteObject {
 
 	public List<IMachine> getMachines() throws IOException;
+	public IMachine findMachine(@KSOAP("nameOrId") String nameOrId) throws IOException;
 	public String getVersion() throws IOException;
 	public IEventSource getEventSource() throws IOException;
 	public IPerformanceCollector getPerformanceCollector() throws IOException;
