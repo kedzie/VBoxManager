@@ -3,7 +3,7 @@
 	
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 	<packaging>apk</packaging>
 	<name>VirtualBox Manager</name>
 
