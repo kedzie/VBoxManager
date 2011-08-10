@@ -62,20 +62,31 @@ public class ServerListActivity extends BaseListActivity<Server> {
 					@Override
 					protected void onPostExecute(String version) {
 						super.onPostExecute(version);
-						Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG).show();
-						Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
-						intent.putExtra("server", s);
-						intent.putExtra("vmgr", vmgr);
-				        startActivity(intent);
+						if(version!=null) {
+							Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG).show();
+							Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
+							intent.putExtra("server", s);
+							intent.putExtra("vmgr", vmgr);
+					        startActivity(intent);
+						}
 					}
 		       	}.execute(s);
 			}
 		});
         _db.insertOrUpdate(new Server(new Long(-1), "192.168.1.10", 18083, "Marek", "Mk0204$$"));
-        _db.insertOrUpdate(new Server(new Long(-1), "localhost", 18083, "Marek", "Mk0204$$"));
         new LoadServersTask(this).execute();
     }
 	
+	
+	
+	/* @see android.app.ListActivity#onDestroy() */
+	@Override protected void onDestroy() {
+		super.onDestroy();
+		_db.close();
+	}
+
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    getMenuInflater().inflate(R.menu.server_list_options_menu, menu);

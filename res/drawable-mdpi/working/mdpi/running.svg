@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="running.svg"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/res/drawable-ldpi/ic_list_running_small.png"
-   inkscape:export-xdpi="33.75"
-   inkscape:export-ydpi="33.75"
+   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-mdpi/ic_list_start_small.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45"
    enable-background="new">
   <defs
      id="defs4">
@@ -69,8 +69,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16.150801"
-     inkscape:cx="16.253213"
-     inkscape:cy="18.081579"
+     inkscape:cx="8.4827006"
+     inkscape:cy="18.824576"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -98,7 +98,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -107,7 +107,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1020.3622)"
-     style="opacity:1">
+     style="display:none">
     <rect
        style="fill:#000000;fill-opacity:1"
        id="rect3866"

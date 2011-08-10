@@ -6,12 +6,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.virtualbox_4_1.MachineState;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -47,11 +51,12 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	
 	private VBoxSvc vmgr = new VBoxSvc();
 	private EventThread eventThread;
-	private Messenger eventServiceMessenger;
+//	private Messenger eventServiceMessenger;
 	
 	private Handler _eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
+			Log.i(TAG, "Received message");
 			switch(msg.what){
 			case EventThread.WHAT_EVENT:
 				try {
@@ -79,6 +84,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			}
 		}
 	};
+//	private Messenger _messenger = new Messenger(_eventHandler);
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,10 +94,9 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				IMachine m = (IMachine)getListView().getAdapter().getItem(position);
-				Intent intent = new Intent().setClass(MachineListActivity.this, MachineActivity.class);
-				intent.putExtra("vmgr", vmgr);
-				intent.putExtra("machine", m.getIdRef());
-				startActivity(intent);
+				startActivity(new Intent().setClass(MachineListActivity.this, MachineActivity.class)
+						.putExtra("vmgr", vmgr)
+						.putExtra("machine", m.getIdRef()));
 			}
 		});
        	vmgr = getIntent().getParcelableExtra("vmgr");
@@ -106,28 +111,29 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	@Override
 	protected void onStart() {
 		super.onStart();
-//		Intent intent = new Intent(this, EventService.class);
-//		bindService(intent, new ServiceConnection() {
-//			@Override public void onServiceConnected(ComponentName name, IBinder service) {
-//				eventServiceMessenger = new Messenger(service);
-//				try {
-//					eventServiceMessenger.send(new Message());
-//				} catch (RemoteException e) {
-//					Log.e(TAG, e.getMessage(), e);
-//				}
-//			}
-//			@Override public void onServiceDisconnected(ComponentName name) {
-//				eventServiceMessenger = null;
-//			}
-//		}, 0);
-		Log.i(TAG, "Start");
+//		bindService(new Intent(this, EventService.class), 
+//				new ServiceConnection() {
+//					@Override public void onServiceConnected(ComponentName name, IBinder service) {
+//						eventServiceMessenger = new Messenger(service);
+//						try {
+//							Message msg = new Message();
+//							msg.what=1;
+//							msg.replyTo = _messenger;
+//							eventServiceMessenger.send(msg);
+//						} catch (RemoteException e) {
+//							Log.e(TAG, e.getMessage(), e);
+//						}
+//					}
+//					@Override public void onServiceDisconnected(ComponentName name) {
+//						eventServiceMessenger = null;
+//					}
+//				}, Context.BIND_AUTO_CREATE);
 		eventThread = new EventThread( _eventHandler, vmgr);
 		eventThread.start();
 	}
 
 	@Override
 	protected void onStop() {
-		Log.i(TAG, "Stop");
 		boolean retry = true;
         eventThread.postStop();
         while (retry) {
@@ -163,18 +169,16 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			new LoadMachinesTask(this, vmgr).execute();
 			return true;
 		case R.id.machine_list_option_menu_metrics:
-			Intent intent = new Intent(this, MetricActivity.class);
-			intent.putExtra("vmgr", vmgr);
-			intent.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getIdRef() );
-			intent.putExtra("title", "Host Metrics");
-			intent.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, vmgr.getVBox().getHost().getMemorySize());
-			intent.putExtra("cpuMetrics" , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } );
-			intent.putExtra("ramMetrics" , new String[] {  "RAM/Usage/Used" } );
-			startActivity(intent);
+			startActivity(new Intent(this, MetricActivity.class)
+				.putExtra("vmgr", vmgr)
+				.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getIdRef() )
+				.putExtra("title", "Host Metrics")
+				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, vmgr.getVBox().getHost().getMemorySize())
+				.putExtra("cpuMetrics" , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
+			.	putExtra("ramMetrics" , new String[] {  "RAM/Usage/Used" } ));
 			return true;
 		case R.id.machine_list_option_menu_preferences:
-			Intent in = new Intent(this, PreferencesActivity.class);
-			startActivity(in);
+			startActivity(new Intent(this, PreferencesActivity.class));
 			return true;
 		default:
 			return true;
@@ -267,12 +271,12 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			return position;
 		}
 		
-		public int getPosition(IMachine m) {
-			for(int i=0; i<getCount(); i++) 
-				if(m.getIdRef().equals(getItem(i).getIdRef())) 
-					return i;
-			return -1;
-		}
+//		public int getPosition(IMachine m) {
+//			for(int i=0; i<getCount(); i++) 
+//				if(m.getIdRef().equals(getItem(i).getIdRef())) 
+//					return i;
+//			return -1;
+//		}
 
 		public View getView(int position, View view, ViewGroup parent) {
 			IMachine m = getItem(position);

@@ -1,36 +1,34 @@
 package com.kedzie.vbox.machine;
 
-import java.io.FileDescriptor;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.SessionState;
-import org.virtualbox_4_1.VBoxEventType;
-
+import java.util.ArrayList;
+import java.util.List;
+import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.IInterface;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.kedzie.vbox.VBoxSvc;
-import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IEvent;
-import com.kedzie.vbox.api.IEventListener;
-import com.kedzie.vbox.api.IEventSource;
-import com.kedzie.vbox.api.IMachine;
 
 public class EventService extends Service{
 	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();
 
+	private List<Messenger> listeners = new ArrayList<Messenger>();
+	
 	Messenger m = new Messenger(new Handler() {
 		public void handleMessage(Message msg) {
 			Log.i(TAG, "Got Message");
+			listeners.add(msg.replyTo);
+			Message m = new Message();
+			msg.what = EventThread.WHAT_ERROR;
+			msg.setData(new BundleBuilder().putString("exception", "Back from service").create());
+			try {
+				msg.replyTo.send(m);
+			} catch (RemoteException e) {
+				Log.e(TAG, e.getMessage(), e);
+			}
 		}
 	});
 	

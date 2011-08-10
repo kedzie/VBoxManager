@@ -15,8 +15,11 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="pause-l.svg"
-   enable-background="new">
+   sodipodi:docname="pause.svg"
+   enable-background="new"
+   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-mdpi/ic_list_pause.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <linearGradient
@@ -57,8 +60,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="14.888899"
-     inkscape:cy="18.352251"
+     inkscape:cx="4.6353403"
+     inkscape:cy="19.332671"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="true"
@@ -93,7 +96,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1020.3622)"
-     style="display:inline">
+     style="display:none">
     <path
        inkscape:connector-curvature="0"
        style="fill:#ffcc00;fill-opacity:1;fill-rule:evenodd;stroke:none"

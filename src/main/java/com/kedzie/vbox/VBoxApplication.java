@@ -65,6 +65,14 @@ public class VBoxApplication  extends Application {
 		resources.put("os_windowsxp", R.drawable.ic_list_os_winxp);
 		resources.put("os_windows7_64", R.drawable.ic_list_os_win7_64);
 		resources.put("os_windows7", R.drawable.ic_list_os_win7);
+		resources.put("os_winvista", R.drawable.ic_list_os_winvista);
+		resources.put("os_winvista_64", R.drawable.ic_list_os_winvista_64);
+		resources.put("os_fedora", R.drawable.ic_list_os_fedora);
+		resources.put("os_fedora_64", R.drawable.ic_list_os_fedora_64);
+		resources.put("os_opensuse", R.drawable.ic_list_os_opensuse);
+		resources.put("os_opensuse_64", R.drawable.ic_list_os_opensuse_64);
+		resources.put("os_oracle", R.drawable.ic_list_os_oracle);
+		resources.put("os_oracle_64", R.drawable.ic_list_os_oracle_64);
 	}
 	
 	@SuppressWarnings("unchecked")

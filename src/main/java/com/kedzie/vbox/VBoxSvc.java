@@ -25,6 +25,12 @@ public class VBoxSvc implements Parcelable {
 	
 	public VBoxSvc() {}
 	
+	public VBoxSvc(VBoxSvc in) {
+		_url = in._url;
+		_transport = new KSOAPTransport(_url);
+		_vbox = _transport.getProxy(IVirtualBox.class, in._vbox.getIdRef());
+	}
+	
 	public VBoxSvc(Parcel p) {
 		_url = p.readString();
 		_transport = new KSOAPTransport(_url);
@@ -93,6 +99,7 @@ public class VBoxSvc implements Parcelable {
 	public <T> T getProxy(Class<T> clazz, String id) { return _transport.getProxy(clazz, id); }
 	
 	public IVirtualBox getVBox() { return _vbox;	}
+	public String getURL() { return _url; }
 	
 	public IEvent getEventProxy(String id) {
 		IEvent event = getProxy(IEvent.class, id);

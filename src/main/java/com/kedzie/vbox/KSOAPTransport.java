@@ -31,7 +31,7 @@ public class KSOAPTransport {
 		this.transport = new HttpTransportSE(url);	
 	}
 	
-	public synchronized Object call(SoapObject object) throws IOException, XmlPullParserException {
+	public Object call(SoapObject object) throws IOException, XmlPullParserException {
 		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11) {
 			@Override
 			public Object getResponse() throws SoapFault {

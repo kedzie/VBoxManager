@@ -15,10 +15,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="stuck-h.svg"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/res/drawable-hdpi/ic_list_state_aborted.png"
-   inkscape:export-xdpi="67.5"
-   inkscape:export-ydpi="67.5"
+   sodipodi:docname="stuck.svg"
+   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-hdpi/ic_list_aborted_small.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45"
    style="enable-background:new">
   <defs
      id="defs4">
@@ -124,8 +124,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="24.255968"
-     inkscape:cy="24.134473"
+     inkscape:cx="14.002409"
+     inkscape:cy="25.114893"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
      showgrid="true"
@@ -154,7 +154,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -163,7 +163,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1004.3622)"
-     style="display:inline">
+     style="display:none">
     <path
        inkscape:connector-curvature="0"
        style="fill:#cc0000;fill-opacity:1;stroke:none;display:inline"

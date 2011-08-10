@@ -16,12 +16,13 @@ public class EventThread extends Thread {
 	public static final int WHAT_EVENT = 1;
 	public static final int WHAT_ERROR = 2;
 	private boolean _running=false;
+	private boolean _stopped=false;
 	private VBoxSvc _vmgr;
 	private Handler _h;
 	
 	public EventThread(Handler h, VBoxSvc vmgr) {
 		_h=h;
-		_vmgr=vmgr;
+		_vmgr=new VBoxSvc(vmgr);
 	}
 
 	@Override
@@ -41,10 +42,15 @@ public class EventThread extends Thread {
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 			new BundleBuilder().putString("exception", e.getMessage()).sendMessage(_h, WHAT_ERROR);
+		} finally {
+			_stopped=true;
 		}
 	}
 	
 	public void postStop() {
 		_running=false;
 	}
+	
+	public boolean isStopped() { return _stopped; }
+	public boolean isRunning() { return _running; }
 }

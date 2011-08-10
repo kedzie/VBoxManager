@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="abort-h.svg"
+   sodipodi:docname="abort.svg"
    enable-background="new"
    inkscape:export-filename="/home/kedzie/workspace/vbox/res/drawable-mdpi/working/abort_shadow.png"
    inkscape:export-xdpi="90"
@@ -112,15 +112,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="18.371793"
-     inkscape:cy="22.113776"
+     inkscape:cx="8.1182343"
+     inkscape:cy="23.094196"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1319"
      inkscape:window-height="851"
-     inkscape:window-x="147"
-     inkscape:window-y="50"
+     inkscape:window-x="163"
+     inkscape:window-y="65"
      inkscape:window-maximized="0"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
@@ -142,7 +142,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -151,7 +151,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1004.3622)"
-     style="display:inline">
+     style="display:none">
     <path
        inkscape:connector-curvature="0"
        style="fill:#ff6600;fill-opacity:1;stroke:none"
