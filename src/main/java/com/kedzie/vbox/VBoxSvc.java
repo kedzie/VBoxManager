@@ -2,10 +2,10 @@ package com.kedzie.vbox;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.ksoap2.serialization.SoapObject;
 import org.virtualbox_4_1.VBoxEventType;
 import org.xmlpull.v1.XmlPullParserException;
 import android.content.Context;
@@ -23,19 +23,19 @@ public class VBoxSvc implements Parcelable {
 	private IVirtualBox _vbox;
 	private KSOAPTransport _transport;
 	
-	public VBoxSvc() {}
-	
-	public VBoxSvc(VBoxSvc in) {
-		_url = in._url;
+	public VBoxSvc(String url) { 
+		_url=url; 
 		_transport = new KSOAPTransport(_url);
-		_vbox = _transport.getProxy(IVirtualBox.class, in._vbox.getIdRef());
 	}
 	
-	public VBoxSvc(Parcel p) {
-		_url = p.readString();
-		_transport = new KSOAPTransport(_url);
-		_vbox = _transport.getProxy(IVirtualBox.class, p.readString());
-	 }
+	public VBoxSvc(String url, String vboxID) { 
+		this(url);
+		_vbox = _transport.getProxy(IVirtualBox.class, vboxID);
+	}
+	
+	public VBoxSvc(VBoxSvc in) {
+		this(in._url, in._vbox.getIdRef());
+	}
 	
 	@Override
 	public void writeToParcel(Parcel dest, int flags) { 
@@ -47,28 +47,26 @@ public class VBoxSvc implements Parcelable {
 	public int describeContents() { 
 		return 0; 
 	}
+	
 	 public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
-		 public VBoxSvc createFromParcel(Parcel in) {
-			 return new VBoxSvc(in); 
-		}
+		 public VBoxSvc createFromParcel(Parcel in) { return new VBoxSvc(in.readString(), in.readString()); }
 		 public VBoxSvc[] newArray(int size) {  return new VBoxSvc[size]; }
 	 };
 	
-	public IVirtualBox logon(String url,  String username, String password) throws IOException, XmlPullParserException {
-		_url=url;
-		_transport=new KSOAPTransport(url);
-		SoapObject request = new SoapObject(KSOAPTransport.NAMESPACE, "IWebsessionManager_logon");
-		request.addProperty("username", username);
-		request.addProperty("password", password);
-		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
+	public IVirtualBox logon(String username, String password) throws IOException, XmlPullParserException {
+		_vbox = _transport.getProxy(IVirtualBox.class, null).logon(username, password);
+//		SoapObject request = new SoapObject(KSOAPTransport.NAMESPACE, "IWebsessionManager_logon");
+//		request.addProperty("username", username);
+//		request.addProperty("password", password);
+//		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
 		return _vbox;
 	}
 	
-	public List<IPerformanceMetric> setupMetrics( Context ctx, String object, String...metrics) throws IOException {
-		return setupMetrics(ctx, new String [] {object}, metrics);
-	}
+	public List<IPerformanceMetric> setupMetrics( Context ctx, String object, String...metrics) throws IOException { return setupMetrics(ctx, new String [] {object}, metrics); }
 	
-	public List<IPerformanceMetric> setupMetrics( Context ctx, String [] objects, String...metrics) throws IOException {
+	public List<IPerformanceMetric> setupMetrics( Context ctx, Collection<String> objects, String...metrics) throws IOException {	return setupMetrics(ctx, objects.toArray(new String[objects.size()]), metrics); }
+	
+	public List<IPerformanceMetric> setupMetrics( Context ctx, String[] objects, String...metrics) throws IOException {
 		return _vbox.getPerformanceCollector().setupMetrics(metrics, objects, ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1),ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25));
 	}
 	
@@ -96,6 +94,7 @@ public class VBoxSvc implements Parcelable {
 		}
 		return ret;
 	}
+	
 	public <T> T getProxy(Class<T> clazz, String id) { return _transport.getProxy(clazz, id); }
 	
 	public IVirtualBox getVBox() { return _vbox;	}
@@ -103,10 +102,13 @@ public class VBoxSvc implements Parcelable {
 	
 	public IEvent getEventProxy(String id) {
 		IEvent event = getProxy(IEvent.class, id);
-		if(event.getType().equals(VBoxEventType.OnMachineStateChanged))
-			return getProxy( IMachineStateChangedEvent.class, event.getIdRef() );
-		else if(event.getType().equals(VBoxEventType.OnSessionStateChanged))
-			return getProxy( ISessionStateChangedEvent.class, event.getIdRef() );
+		if(event.getType().equals(VBoxEventType.OnMachineStateChanged)) return getProxy( IMachineStateChangedEvent.class, id );
+		else if(event.getType().equals(VBoxEventType.OnSessionStateChanged))	return getProxy( ISessionStateChangedEvent.class, id );
 		return event;
+	}
+	
+	public IEvent getEventProxy(IEvent event) {
+		if(event==null) return null;
+		return getEventProxy(event.getIdRef());
 	}
 }

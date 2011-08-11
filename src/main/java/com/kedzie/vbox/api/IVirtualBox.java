@@ -8,15 +8,21 @@ import com.kedzie.vbox.KSOAP;
 
 public interface IVirtualBox extends IRemoteObject {
 
+	@KSOAP(cache=false)
 	public List<IMachine> getMachines() throws IOException;
 	public IMachine findMachine(@KSOAP("nameOrId") String nameOrId) throws IOException;
-	public String getVersion() throws IOException;
-	public IEventSource getEventSource() throws IOException;
-	public IPerformanceCollector getPerformanceCollector() throws IOException;
-	public IHost getHost() ;
-	@KSOAP(prefix="IWebsessionManager", thisReference="refIVirtualBox")
+	@KSOAP(cache=true) public String getVersion();
+	@KSOAP(cache=true) public IEventSource getEventSource() ;
+	@KSOAP(cache=true) public IPerformanceCollector getPerformanceCollector();
+	@KSOAP(cache=true) public IHost getHost() ;
+	
+	@KSOAP(cache=false, prefix="IWebsessionManager", thisReference="")
+	public IVirtualBox logon(@KSOAP("username") String username, @KSOAP("password") String password) throws IOException;
+	
+	@KSOAP(cache=false, prefix="IWebsessionManager", thisReference="refIVirtualBox")
 	public void logoff() throws IOException;
-	@KSOAP(prefix="IWebsessionManager", thisReference="refIVirtualBox")
+	
+	@KSOAP(cache=true, prefix="IWebsessionManager", thisReference="refIVirtualBox")
 	public ISession getSessionObject() throws IOException;
 	
 }

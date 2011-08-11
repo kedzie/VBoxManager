@@ -5,6 +5,6 @@ import org.virtualbox_4_1.MachineState;
 import com.kedzie.vbox.KSOAP;
 
 public interface IMachineStateChangedEvent extends IMachineEvent {
-	@KSOAP(prefix="IMachineStateChangedEvent")
+	@KSOAP(cache=true, prefix="IMachineStateChangedEvent")
 	public MachineState getState();
 }

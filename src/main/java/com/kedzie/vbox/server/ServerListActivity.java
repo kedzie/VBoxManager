@@ -10,15 +10,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.kedzie.vbox.BaseListActivity;
@@ -30,32 +34,42 @@ import com.kedzie.vbox.task.BaseTask;
 
 public class ServerListActivity extends BaseListActivity<Server> {
 	protected static final String TAG = ServerListActivity.class.getName();
-	private static final int REQUEST_CODE_ADD = 9303;
-	private static final int REQUEST_CODE_EDIT = 9304;
-	static final int RESULT_CODE_SAVE = 1;
-	static final int RESULT_CODE_DELETE = 2;
+	static final int REQUEST_CODE_ADD = 9303,REQUEST_CODE_EDIT = 9304, RESULT_CODE_SAVE = 1,RESULT_CODE_DELETE = 2;
 	
 	private ServerDB _db;
-	
-	VBoxSvc vmgr = new VBoxSvc();
+	private VBoxSvc vmgr;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         registerForContextMenu(getListView());
+
+//        Button addButton = new Button(this, null);
+//        addButton.setText("Add Server");
+//        LayoutParams lp = new LayoutParams(this, null);
+//        lp.width=LayoutParams.FILL_PARENT;
+//        lp.height=LayoutParams.WRAP_CONTENT;
+//        addButton.setLayoutParams(lp);
+//        addButton.setOnClickListener(new OnClickListener() {
+//			@Override public void onClick(View v) {
+//				 startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra("server", new Server(-1L, "", 18083, "", "")), REQUEST_CODE_ADD);
+//			}
+//        });
+//        getListView().addFooterView(addButton);
+        
         TextView emptyView = new TextView(this);
 		emptyView.setText("Click 'Menu' to add Server");
-		emptyView.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
 		getListView().setEmptyView(emptyView);
+		
         _db = new ServerDB(this);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				final Server s = (Server)getListView().getAdapter().getItem(position);
 		       	new BaseTask<Server, String>(ServerListActivity.this, vmgr, "Connecting", true) {
 					@Override
 					protected String work(Server... params) throws Exception {
-						_vmgr.logon("http://"+params[0].getHost()+":"+params[0].getPort(), params[0].getUsername(), params[0].getPassword());
+						_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
+						_vmgr.logon(params[0].getUsername(), params[0].getPassword());
 						_vmgr.setupMetrics(ServerListActivity.this, _vmgr.getVBox().getHost().getIdRef(), "*:");
 						return _vmgr.getVBox().getVersion();
 					}
@@ -64,28 +78,27 @@ public class ServerListActivity extends BaseListActivity<Server> {
 						super.onPostExecute(version);
 						if(version!=null) {
 							Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG).show();
-							Intent intent = new Intent().setClass(ServerListActivity.this, MachineListActivity.class);
-							intent.putExtra("server", s);
-							intent.putExtra("vmgr", vmgr);
-					        startActivity(intent);
+							startActivity(new Intent().setClass(ServerListActivity.this, MachineListActivity.class).putExtra("vmgr", _vmgr));
 						}
 					}
-		       	}.execute(s);
+		       	}.execute(getAdapter().getItem(position));
 			}
 		});
         _db.insertOrUpdate(new Server(new Long(-1), "192.168.1.10", 18083, "Marek", "Mk0204$$"));
-        new LoadServersTask(this).execute();
+        new BaseTask<Void, List<Server>>(this,  null, "Loading Servers", true)	{
+    		@Override protected List<Server> work(Void... params) throws Exception { return _db.getServers(); }
+    		@Override protected void onPostExecute(List<Server> result)	{
+    			super.onPostExecute(result);
+    			setListAdapter( new ArrayAdapter<Server>(ServerListActivity.this, android.R.layout.simple_list_item_1, result));
+    		}
+    	}.execute();
     }
 	
 	
-	
-	/* @see android.app.ListActivity#onDestroy() */
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		_db.close();
 	}
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,9 +116,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.server_list_option_menu_add:
-	    	Intent intent = new Intent().setClass(this, EditServerActivity.class);
-	    	intent.putExtra("server", new Server(-1L, "", 18083, "", ""));
-	        startActivityForResult(intent, REQUEST_CODE_ADD);
+	        startActivityForResult(new Intent().setClass(this, EditServerActivity.class).putExtra("server", new Server(-1L, "", 18083, "", "")), REQUEST_CODE_ADD);
 	        return true;
 	    default:
 	        return true;
@@ -117,9 +128,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 	  Server s = (Server)getListAdapter().getItem(((AdapterContextMenuInfo)item.getMenuInfo()).position);
 	  switch (item.getItemId()) {
 	  case R.id.server_list_context_menu_edit:
-		Intent intent = new Intent().setClass(this, EditServerActivity.class);
-		intent.putExtra("server", s);
-        startActivityForResult(intent, REQUEST_CODE_EDIT);
+        startActivityForResult(new Intent().setClass(this, EditServerActivity.class).putExtra("server", s), REQUEST_CODE_EDIT);
         return true;
 	  case R.id.server_list_context_menu_delete:
 		  _db.delete(s.getId());
@@ -150,24 +159,8 @@ public class ServerListActivity extends BaseListActivity<Server> {
 			break;
         }
     }
-	
-	class LoadServersTask extends BaseTask<Void, List<Server>>	{
-		public LoadServersTask(Context ctx) { 
-			super(ctx, null, "Loading Servers", true);	
-		}
-		@Override
-		protected List<Server> work(Void... params) throws Exception {
-			return _db.getServers();
-		}
-		@Override
-		protected void onPostExecute(List<Server> result)	{
-			super.onPostExecute(result);
-			setListAdapter( new ArrayAdapter<Server>(ServerListActivity.this, android.R.layout.simple_list_item_1, result));
-		}
-	}
-	
-	class ServerDB extends SQLiteOpenHelper {
 
+	class ServerDB extends SQLiteOpenHelper {
 		public ServerDB(Context context) { 
 	    	super(context, "vbox.db", null, 2);  
 	    }

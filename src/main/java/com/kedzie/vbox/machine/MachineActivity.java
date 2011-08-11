@@ -1,6 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import java.io.IOException;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.SessionState;
 import android.app.Dialog;

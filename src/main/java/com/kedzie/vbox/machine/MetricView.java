@@ -78,9 +78,9 @@ public class MetricView extends View {
 	}
 
 	public void setData(Map<String, Map<String, Object>> data) {
-		for(Map.Entry<String, Map<String, Object>> entry : data.entrySet()) {
-			Log.i(TAG, "Metric: " + entry.getKey());
-		}
+//		for(Map.Entry<String, Map<String, Object>> entry : data.entrySet()) {
+//			Log.i(TAG, "Metric: " + entry.getKey());
+//		}
 		this.data = data;
 	}
 
@@ -100,7 +100,7 @@ public class MetricView extends View {
 			int horiz = rect.left+i*hStep;
 			int vert = rect.bottom-(int)(i*vStepGrid);
 			canvas.drawLine(horiz, rect.bottom, horiz, rect.top, gridPaint);
-			canvas.drawText(""+(count-i)*period, horiz, rect.bottom+20, textPaint);
+			canvas.drawText(""+(count-i)*period, horiz, rect.bottom-20, textPaint);
 			canvas.drawLine(rect.left, vert, rect.right, vert, gridPaint);
 			canvas.drawText(max*(double)i/(double)count+"", rect.left+20, vert, textPaint);
 		}
