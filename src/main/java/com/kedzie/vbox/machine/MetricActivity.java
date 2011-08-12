@@ -8,8 +8,8 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
-import com.kedzie.vbox.server.PreferencesActivity;
 
 public class MetricActivity extends Activity {
 	private static final String TAG = "vbox."+MetricActivity.class.getSimpleName();
@@ -44,9 +44,7 @@ public class MetricActivity extends Activity {
 			while(_running) {
 				try {
 					Map<String, Map<String, Object>> data = _vmgr.queryMetricsData(_object, _count, _period, "*:");
-					for(MetricView v : _views) {
-						v.setData(data);
-					}
+					for(MetricView v : _views) 	v.setData(data);
 					_handler.sendEmptyMessage(1);
 					Thread.sleep(_period*1000);
 				} catch (Exception e) {
@@ -65,8 +63,8 @@ public class MetricActivity extends Activity {
 		((TextView)findViewById(R.id.cpu_metrics_title)).setText("CPU Load");
 		((TextView)findViewById(R.id.ram_metrics_title)).setText("Memory Usage");
 
-		int count =getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25);
-		int period = getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1);
+		int count =getApp().getCount();
+		int period = getApp().getPeriod();
 		cpuView = (MetricView)findViewById(R.id.cpu_metrics);
 		cpuView.init(count, period, 100000L, getIntent().getStringArrayExtra("cpuMetrics"));
 		ramView = (MetricView)findViewById(R.id.ram_metrics);
@@ -89,6 +87,8 @@ public class MetricActivity extends Activity {
 		super.onDestroy();
 	}
 	
-	
+	public VBoxApplication getApp() { 
+		return (VBoxApplication)getApplication(); 
+	}
 
 }

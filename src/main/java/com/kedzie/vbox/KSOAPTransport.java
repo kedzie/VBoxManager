@@ -27,7 +27,7 @@ public class KSOAPTransport {
 	private HttpTransportSE transport;
 	
 	public KSOAPTransport(String url) { 
-		this.transport = new HttpTransportSE(url);	
+		this.transport = new HttpTransportSE(url, 60000);	
 	}
 	
 	public Object call(SoapObject object) throws IOException, XmlPullParserException {

@@ -2,7 +2,6 @@ package com.kedzie.vbox;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,16 +57,12 @@ public class VBoxSvc implements Parcelable {
 		return _vbox;
 	}
 	
-	public List<IPerformanceMetric> setupMetrics( Context ctx, String object, String...metrics) throws IOException { return setupMetrics(ctx, new String [] {object}, metrics); }
-	
-	public List<IPerformanceMetric> setupMetrics( Context ctx, Collection<String> objects, String...metrics) throws IOException {	return setupMetrics(ctx, objects.toArray(new String[objects.size()]), metrics); }
+	public List<IPerformanceMetric> setupMetrics( Context ctx, String object, String...metrics) throws IOException { 
+		return setupMetrics(ctx, new String [] {object}, metrics); 
+	}
 	
 	public List<IPerformanceMetric> setupMetrics( Context ctx, String[] objects, String...metrics) throws IOException {
 		return _vbox.getPerformanceCollector().setupMetrics(metrics, objects, ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1),ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25));
-	}
-	
-	public Map<String, Map<String,Object>> queryMetricsData(Context ctx, String object, String...metrics) throws IOException {
-		return queryMetricsData(object, ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1),ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25), metrics);
 	}
 	
 	public Map<String, Map<String,Object>> queryMetricsData(String object, int count, int period, String...metrics) throws IOException {

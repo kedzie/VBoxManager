@@ -24,7 +24,7 @@ import com.kedzie.vbox.api.IProgress;
  */
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 		private static final String TAG = "vbox."+BaseTask.class.getSimpleName();
-		protected final static int PROGRESS_INTERVAL = 500;
+		protected final static int PROGRESS_INTERVAL = 200;
 		
 		protected Context context;
 		protected VBoxSvc _vmgr;
@@ -68,6 +68,9 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 				publishProgress(p);
 				try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
 			}
+			p.clearCache();
+			p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
+			publishProgress(p);
 			return p;
 		}
 		

@@ -196,7 +196,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 				m.getName();  m.getOSTypeId(); m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName(); //cache the values
 				if(MachineState.Running.equals(m.getState()))	running.add(m.getIdRef());
 			}
-			_vmgr.setupMetrics(context, running, "*:" );
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics( running.toArray(new String[running.size()]), new String [] { "*:" }, getApp().getPeriod(), getApp().getCount()  );
 			return machines;
 		}
 
