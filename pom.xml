@@ -3,11 +3,11 @@
 	
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox</artifactId>
-	<version>1.5</version>
+	<version>1.6</version>
 	<packaging>apk</packaging>
 	<name>VirtualBox Manager</name>
 
-	<description>Virtual Box Manager/Monitor</description>
+	<description>VirtualBox Manager/Monitor</description>
 	<build>
 		<plugins>
 			<plugin>
@@ -33,10 +33,8 @@
 				<artifactId>maven-android-plugin</artifactId>
 				<version>3.0.0-alpha-2</version>
 				<configuration>
-					<sdk>
-						<path>/usr/local/share/android-sdk-linux_x86</path>
-						<platform>8</platform>
-					</sdk>
+					<sdk><platform>8</platform></sdk>
+<!-- 					<path>/usr/local/share/android-sdk-linux_x86</path> -->
 					<sign><debug>false</debug></sign>
 					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>false</undeployBeforeDeploy>
@@ -44,10 +42,11 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>update-version</id>
-						<goals><goal>version-update</goal></goals>
-						<configuration><versionNameUpdate>true</versionNameUpdate><versionCodeAutoIncrement>true</versionCodeAutoIncrement>
-						</configuration>
+					<id>update-version</id><goals><goal>version-update</goal></goals>
+					<configuration>
+						<versionNameUpdate>true</versionNameUpdate>
+						<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
+					</configuration>
 					</execution>				
 				</executions>
 				<extensions>true</extensions>
@@ -85,16 +84,6 @@
       		<name>googlecode-ksoap2-android</name>
       		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
     	</repository>
-<!-- 		<repository> -->
-<!-- 			<id>codehaus</id> -->
-<!-- 			<name>Codehaus</name> -->
-<!-- 			<url>http://repository.codehaus.org</url> -->
-<!-- 		</repository>	 -->
-<!-- 		<repository> -->
-<!-- 			<id>jboss</id> -->
-<!-- 			<name>JBoss</name> -->
-<!-- 			<url>http://repository.jboss.com</url> -->
-<!-- 		</repository> -->
 	</repositories>
 	
 </project>

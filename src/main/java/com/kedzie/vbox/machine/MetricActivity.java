@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.TextView;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.server.PreferencesActivity;
 
 public class MetricActivity extends Activity {
 	private static final String TAG = "vbox."+MetricActivity.class.getSimpleName();
@@ -20,14 +21,18 @@ public class MetricActivity extends Activity {
 	class MetricThread extends Thread {
 		boolean _running=true;
 		private VBoxSvc _vmgr;
-		private Handler _handler;
 		private MetricView []_views;
 		private String _object;
 		private int _count, _period;
+		private Handler _handler =new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				for(MetricView v : _views) 	v.invalidate();
+			}
+		};
 		
-		public MetricThread(VBoxSvc vmgr, Handler h, String object, int count, int period, MetricView...views){
+		public MetricThread(VBoxSvc vmgr, String object, int count, int period, MetricView...views){
 			_vmgr=vmgr;
-			_handler=h;
 			_object=object;
 			_period=period;
 			_count=count;
@@ -67,13 +72,7 @@ public class MetricActivity extends Activity {
 		ramView = (MetricView)findViewById(R.id.ram_metrics);
 		ramView.init(count, period, getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0)*1000, getIntent().getStringArrayExtra("ramMetrics"));
 		
-		_thread = new MetricThread(vmgr,  new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				cpuView.invalidate();
-				ramView.invalidate();
-			}
-		}, getIntent().getStringExtra(INTENT_OBJECT), count, period, cpuView, ramView);
+		_thread = new MetricThread(vmgr, getIntent().getStringExtra(INTENT_OBJECT), count, period, cpuView, ramView);
 		_thread.start();
 	}
 
@@ -89,5 +88,7 @@ public class MetricActivity extends Activity {
         }
 		super.onDestroy();
 	}
+	
+	
 
 }

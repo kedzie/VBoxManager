@@ -1708,7 +1708,7 @@
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IMachine_readLog">
-	<xsd:element name="_this" type="xsd:string"/>
+			<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="idx" type="xsd:unsignedInt"/>
             <xsd:element name="offset" type="xsd:long"/>
             <xsd:element name="size" type="xsd:long"/>

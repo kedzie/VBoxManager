@@ -19,25 +19,12 @@ import com.kedzie.vbox.api.IMachineEvent;
 
 public class EventService extends Service{
 	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();
-
-	private Handler _handler;
-	private HandlerThread _ht= new HandlerThread("Event Handler", HandlerThread.MIN_PRIORITY);
+	public static final int WHAT_EVENT = 1;
+	private static final int INTERVAL = 500;
+	private HandlerThread _ht= new HandlerThread(TAG, HandlerThread.MIN_PRIORITY);
 	private boolean _running=true;
-	IEventSource evSource = null;
-	IEventListener listener = null;
+	private Messenger _messenger;
 	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.i(TAG, "onCreate");
-	}
-
-	@Override
-	public void onDestroy() {
-		Log.i(TAG, "onDestroy");
-		super.onDestroy();
-	}
-
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.i(TAG, "onBind");
@@ -45,9 +32,9 @@ public class EventService extends Service{
 		Handler h = new Handler(_ht.getLooper()) {
 			@Override public void handleMessage(Message msg) {
 				VBoxSvc _vmgr = msg.getData().getParcelable("vmgr");
-				Messenger messenger = msg.getData().getParcelable("listener"); 
-				evSource = _vmgr.getVBox().getEventSource();
-				listener = evSource.createListener();
+				_messenger = msg.getData().getParcelable("listener"); 
+				IEventSource evSource = _vmgr.getVBox().getEventSource();
+				IEventListener listener = evSource.createListener();
 				IEvent event = null;
 				try {
 					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.MachineEvent }, false);
@@ -55,20 +42,15 @@ public class EventService extends Service{
 							if((event=_vmgr.getEventProxy(evSource.getEvent(listener, 0)))!=null) {
 								BundleBuilder b = new BundleBuilder().putString("evt", event.getIdRef());
 								if(event instanceof IMachineEvent) b.putString("machine",  _vmgr.getVBox().findMachine(((IMachineEvent)event).getMachineId()).getIdRef());
-								Message m = obtainMessage(EventThread.WHAT_EVENT);
-								m.what = EventThread.WHAT_EVENT;
-								m.setData(b.create());
 								synchronized(EventService.class) {
-									if(messenger!=null && _running) messenger.send(m);
+									if(_messenger!=null && _running)  b.sendMessage(_messenger, WHAT_EVENT);
 								}
 								evSource.eventProcessed(listener, event); 
 							} else
-								Thread.sleep(500);
+								Thread.sleep(INTERVAL);
 					}
-					if(listener!=null && evSource!=null)  
-						evSource.unregisterListener(listener);
-				} catch (Throwable e) {
-				} 
+					if(listener!=null && evSource!=null) evSource.unregisterListener(listener);
+				} catch (Throwable e) {} 
 			}
 		};
 		new BundleBuilder().putAll(intent.getExtras()).sendMessage(h, 0);
@@ -79,14 +61,13 @@ public class EventService extends Service{
 	public boolean onUnbind(Intent intent) {
 		Log.i(TAG, "onUnbind");
 		_running=false;
+		_ht.quit();
 		return super.onUnbind(intent);
 	}
 	
-//	public void setHandler(Handler h) {
-//		synchronized (EventService.class) {
-//			this._handler = h;
-//		}
-//	}
+	public synchronized void setMessenger(Messenger m) {
+		_messenger = m;
+	}
 	
 	public  class LocalBinder extends Binder {
 		public EventService getLocalBinder() { return EventService.this; }

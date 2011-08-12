@@ -1,4 +1,4 @@
-package com.kedzie.vbox.machine;
+package com.kedzie.vbox.server;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

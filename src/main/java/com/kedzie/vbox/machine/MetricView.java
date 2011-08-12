@@ -3,7 +3,6 @@ package com.kedzie.vbox.machine;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,42 +13,37 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-
 import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricView extends View {
 	private static final String TAG = "vbox."+MetricView.class.getSimpleName();
 	
 	private long max;
-	String[] metrics;
 	private int count;
 	private int period;
-    IPerformanceMetric baseMetric;
+	private String[] metrics;
+	private IPerformanceMetric baseMetric;
 	private Map<String, Map<String, Object>> data;
-	
-	private Paint textPaint = new Paint();
-	private Paint bgPaint = new Paint();
-	private Paint borderPaint = new Paint();
-	private Paint metricPaint = new Paint();
-	private Map<String,Integer> metricColor = new HashMap<String, Integer>();
-	private Paint gridPaint = new Paint();
+	private int hStep;
+	private double vStep;
+	private double vStepGrid;
+	private Rect bounds;
+	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint();
+	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
 	
 	public MetricView(Context context, AttributeSet as) {
 		super(context, as);
 		bgPaint.setARGB(255, 255, 255, 255);
 		bgPaint.setStyle(Style.FILL);
-		
 		borderPaint = new Paint();
 		borderPaint.setStyle(Style.STROKE);
 		borderPaint.setARGB(1, 0, 0, 255);
 		borderPaint.setAntiAlias(true);
 		borderPaint.setStrokeWidth(2.0f);
-		
 		textPaint.setARGB(255, 0, 0, 0);
 		textPaint.setAntiAlias(true);
 		textPaint.setDither(true);
 		textPaint.setTextSize(16.0f);
-		
 		gridPaint.setAntiAlias(true);
 		gridPaint.setStrokeWidth(1.5f);
 		gridPaint.setARGB(100, 0,0,0);
@@ -75,48 +69,37 @@ public class MetricView extends View {
 		this.count=count;
 		this.metrics=metrics;
 		this.period=period;
+		Log.i(TAG, "Steps: " + hStep + ", " + vStep);
 	}
 
 	public void setData(Map<String, Map<String, Object>> data) {
-//		for(Map.Entry<String, Map<String, Object>> entry : data.entrySet()) {
-//			Log.i(TAG, "Metric: " + entry.getKey());
-//		}
 		this.data = data;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void onDraw(Canvas canvas) {
-		Rect rect = canvas.getClipBounds();
-		canvas.drawRect(rect, bgPaint);
-		canvas.drawRect(rect, borderPaint);
-	
-		int hStep = rect.width()/count;
-		double vStep = rect.height()/(double)max;
-
-		textPaint.setTextSize(16.0f);
-		double vStepGrid = rect.height()/(double)count;
+		bounds = canvas.getClipBounds();
+		canvas.drawRect(bounds, bgPaint);
+		canvas.drawRect(bounds, borderPaint);
+		hStep = bounds.width()/count;
+		vStep = bounds.height()/(double)max;
+		vStepGrid = bounds.height()/(double)count;
 		for(int i=1; i<count; i+=2) {
-			int horiz = rect.left+i*hStep;
-			int vert = rect.bottom-(int)(i*vStepGrid);
-			canvas.drawLine(horiz, rect.bottom, horiz, rect.top, gridPaint);
-			canvas.drawText(""+(count-i)*period, horiz, rect.bottom-20, textPaint);
-			canvas.drawLine(rect.left, vert, rect.right, vert, gridPaint);
-			canvas.drawText(max*(double)i/(double)count+"", rect.left+20, vert, textPaint);
+			int horiz = bounds.left+i*hStep, vert = bounds.bottom-(int)(i*vStepGrid);
+			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
+			canvas.drawText(""+(count-i)*period, horiz, bounds.bottom-20, textPaint);
+			canvas.drawLine(bounds.left, vert, bounds.right, vert, gridPaint);
+			canvas.drawText(max*(double)i/(double)count+"", bounds.left+20, vert, textPaint);
 		}
-		
 		if(data==null) return;
 		for(String mName : metrics) {
 			metricPaint.setColor(metricColor.get(mName));
-			Map<String, Object> metric = data.get(mName);
-			int x = rect.left, y = rect.bottom;
-			List<Integer> vals = (List<Integer>)metric.get("val");
-			for(Integer val : vals) {
-				int nX = x+hStep;
-				int nY = rect.bottom-(int)(val*vStep);
-				canvas.drawLine(x, y, nX, nY, metricPaint);
-				x = nX;
-				y = nY;
+			int x = bounds.left, y = bounds.bottom;
+			for(Integer val : ((List<Integer>)data.get(mName).get("val"))) {
+				int nY = bounds.bottom-(int)(val*vStep);
+				canvas.drawLine(x, y, x+hStep, nY, metricPaint);
+				x+=hStep; y = nY;
 			}
 		}
 	}

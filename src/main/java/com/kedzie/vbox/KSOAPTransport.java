@@ -39,7 +39,7 @@ public class KSOAPTransport {
 				
 				if(ks.getPropertyCount()==0 || (ks.getPropertyCount()==1 && ks.getProperty(0).toString().equals("anyType{}"))) return null;
 				else if(ks.getPropertyCount()==1)	
-					return ks.getProperty(0).toString();
+					return ks.getProperty(0);
 				
 				Map<String, List<String>> map = new HashMap<String, List<String>>();
 				for(int i=0;i<ks.getPropertyCount();i++){
@@ -65,13 +65,11 @@ public class KSOAPTransport {
 	private class  SOAPInvocationHandler implements InvocationHandler {
 		private String id;
 		private Class<?> type;
-		private String clazz;
 		private Map<String, Object> _cache = new HashMap<String, Object>();
 		
 		public SOAPInvocationHandler(String id, Class<?> type) {
 			this.id=id;
 			this.type=type;
-			this.clazz = type.getSimpleName();
 		}
 		
 		@Override
@@ -84,7 +82,7 @@ public class KSOAPTransport {
 			KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 			if(methodKSOAP!=null && methodKSOAP.cache() && method.getName().startsWith("get") && _cache.containsKey(method.getName()))	return _cache.get(method.getName());
 			
-			SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? clazz : methodKSOAP.prefix())+"_"+method.getName());
+			SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
 			
 			if(methodKSOAP==null) 
 				request.addProperty("_this", this.id);	

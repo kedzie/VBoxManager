@@ -11,8 +11,11 @@ import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Messenger;
 import android.os.Parcelable;
+import android.os.RemoteException;
 import android.util.SparseArray;
+import com.kedzie.vbox.server.PreferencesActivity;
 
 public class VBoxApplication  extends Application {
 
@@ -87,6 +90,14 @@ public class VBoxApplication  extends Application {
 		else if (state.equals(MachineState.Paused))	return new String[] { "Resume", "Reset", "Power Off" };
 		 else if (state.equals(MachineState.Saved))	return new String[] { "Restore State", "Discard State" };
 		return new String[] {};
+	}
+	
+	public int getPeriod() {
+		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1);
+	}
+	
+	public int getCount() {
+		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25);
 	}
 
 	/**
@@ -272,6 +283,12 @@ public class VBoxApplication  extends Application {
 			Message msg = h.obtainMessage(what);
 			msg.setData(b);
 			msg.sendToTarget();
+		}
+		public void sendMessage(Messenger m, int what) throws RemoteException {
+			Message msg = new Message();
+			msg.what = what;
+			msg.setData(b);
+			m.send(msg);
 		}
 	}
 }

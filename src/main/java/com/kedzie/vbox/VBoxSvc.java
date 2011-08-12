@@ -16,7 +16,7 @@ import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.IVirtualBox;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.server.PreferencesActivity;
 
 public class VBoxSvc implements Parcelable {
 	private String _url;
@@ -55,10 +55,6 @@ public class VBoxSvc implements Parcelable {
 	
 	public IVirtualBox logon(String username, String password) throws IOException, XmlPullParserException {
 		_vbox = _transport.getProxy(IVirtualBox.class, null).logon(username, password);
-//		SoapObject request = new SoapObject(KSOAPTransport.NAMESPACE, "IWebsessionManager_logon");
-//		request.addProperty("username", username);
-//		request.addProperty("password", password);
-//		_vbox = _transport.getProxy(IVirtualBox.class, _transport.call(request).toString());
 		return _vbox;
 	}
 	

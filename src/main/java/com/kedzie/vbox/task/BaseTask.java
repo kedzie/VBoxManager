@@ -27,8 +27,8 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		protected final static int PROGRESS_INTERVAL = 500;
 		
 		protected Context context;
-		protected ProgressDialog pDialog;
 		protected VBoxSvc _vmgr;
+		protected ProgressDialog pDialog;
 		protected Handler _handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -54,18 +54,23 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			pDialog.setProgressStyle(indeterminate ? ProgressDialog.STYLE_SPINNER : ProgressDialog.STYLE_HORIZONTAL);
 		}
 		
-		/**
-		 * @param ctx Android <code>Context</code>
-		 * @param vmgr VirtualBox API service
-		 * @param msg <code>ProgressDialog</code> operation description
-		 * @param indeterminate <code>ProgressDialog.setIndeterminate()</code> true if indeterminate progress, false if progress is determinate
-		 * @param handler		<code>android.os.handler</code> for error handling.  <code>msg</code> parameter contains error message
-		 */
-		public BaseTask(final Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate, Handler h) {
-			this(ctx, vmgr, msg, indeterminate);
-			this._handler=h;
+		protected void showAlert(Throwable e) {
+			Log.e(TAG, e.getMessage(), e);
+			while(e.getCause()!=null) e = e.getCause();
+			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseListActivity.WHAT_ERROR);
 		}
-
+		
+		protected IProgress handleProgress(IProgress p)  throws IOException {
+			if(p==null) return null;
+			while(!p.getCompleted()) {
+				p.clearCache();
+				p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
+				publishProgress(p);
+				try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
+			}
+			return p;
+		}
+		
 		@Override
 		protected void onProgressUpdate(IProgress... p) {
 			try {
@@ -78,21 +83,6 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			}
 		}
 		
-		protected void showAlert(Throwable e) {
-			Log.e(TAG, e.getMessage(), e);
-			while(e.getCause()!=null) e = e.getCause();
-			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseListActivity.WHAT_ERROR);
-		}
-		
-		protected IProgress handleProgress(IProgress p)  throws IOException {
-			if(p==null) return null;
-			while(!p.getCompleted()) {
-				publishProgress(p);
-				try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
-			}
-			return p;
-		}
-		
 		@Override
 		protected void onPreExecute()		{
 			pDialog.show();
@@ -102,7 +92,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		protected Output doInBackground(Input... params)	{
 			try	{
 				return work(params);
-			} catch(Exception e)	{
+			} catch(Throwable e)	{
 				showAlert(e);
 			}
 			return null;

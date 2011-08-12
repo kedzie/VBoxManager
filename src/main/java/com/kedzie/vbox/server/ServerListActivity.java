@@ -8,21 +8,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.kedzie.vbox.BaseListActivity;
@@ -43,19 +38,8 @@ public class ServerListActivity extends BaseListActivity<Server> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         registerForContextMenu(getListView());
-
-//        Button addButton = new Button(this, null);
-//        addButton.setText("Add Server");
-//        LayoutParams lp = new LayoutParams(this, null);
-//        lp.width=LayoutParams.FILL_PARENT;
-//        lp.height=LayoutParams.WRAP_CONTENT;
-//        addButton.setLayoutParams(lp);
-//        addButton.setOnClickListener(new OnClickListener() {
-//			@Override public void onClick(View v) {
-//				 startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra("server", new Server(-1L, "", 18083, "", "")), REQUEST_CODE_ADD);
-//			}
-//        });
-//        getListView().addFooterView(addButton);
+        
+        getListView().setDividerHeight(2);
         
         TextView emptyView = new TextView(this);
 		emptyView.setText("Click 'Menu' to add Server");
@@ -164,19 +148,16 @@ public class ServerListActivity extends BaseListActivity<Server> {
 		public ServerDB(Context context) { 
 	    	super(context, "vbox.db", null, 2);  
 	    }
-
 	    @Override
 	    public void onCreate(SQLiteDatabase db) { 
 	    	db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, HOST TEXT, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
 	    }
-
 	    @Override
 	    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	        Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 	        db.execSQL("DROP TABLE IF EXISTS SERVERS");
 	        onCreate(db);
 	    }
-	    
 	    public void insertOrUpdate(Server s) {
 	    	ContentValues c = new ContentValues();
 	    	c.put("HOST", s.getHost());
@@ -190,11 +171,9 @@ public class ServerListActivity extends BaseListActivity<Server> {
 				getWritableDatabase().update("SERVERS", c, "ID  =  ?", new String[] {s.getId().toString()} );
 			}
 	    }
-	    
 	    public void delete(Long id) {
 	    	getWritableDatabase().delete("SERVERS", "ID =  ?", new String[] {id.toString()} );
 	    }
-	    
 	    public List<Server> getServers() {
 	    	Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "HOST", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
 	    	List<Server> ret = new ArrayList<Server>();

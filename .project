@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>vbox-1.4</name>
+	<name>vbox-1.6</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -25,10 +25,16 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+<!-- 		<buildCommand> -->
+<!-- 			<name>org.eclipse.iam.jdt.core.mavenIncrementalBuilder</name> -->
+<!-- 			<arguments> -->
+<!-- 			</arguments> -->
+<!-- 		</buildCommand> -->
 	</buildSpec>
 	<natures>
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
+<!-- 		<nature>org.eclipse.iam.jdt.core.mavenNature</nature> -->
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
