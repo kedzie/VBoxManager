@@ -23,6 +23,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.kedzie.vbox.api.IRemoteObject;
 
 public class KSOAPTransport {
+	private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
 	public static final String NAMESPACE = "http://www.virtualbox.org/";
 	private HttpTransportSE transport;
 	
@@ -39,7 +40,7 @@ public class KSOAPTransport {
 				
 				if(ks.getPropertyCount()==0 || (ks.getPropertyCount()==1 && ks.getProperty(0).toString().equals("anyType{}"))) return null;
 				else if(ks.getPropertyCount()==1)	
-					return ks.getProperty(0);
+					return ks.getProperty(0).toString();
 				
 				Map<String, List<String>> map = new HashMap<String, List<String>>();
 				for(int i=0;i<ks.getPropertyCount();i++){
@@ -109,9 +110,9 @@ public class KSOAPTransport {
 			else request.addProperty(ksoap.value(), obj);	
 		}
 		
-		private Object unmarshall(Class<?> returnType, Type type, Object ret) {
+		private <T> Object unmarshall(Class<T> returnType, Type type, Object ret) {
 			if(ret==null) return null;
-			if(returnType.equals(Integer.class)) 	return Integer.valueOf(ret.toString());
+			if(returnType.equals(Integer.class)) 	return (T)Integer.valueOf(ret.toString());
 			else if( Collection.class.isAssignableFrom(returnType) && type instanceof ParameterizedType ) {
 				Class<?> pClazz = (Class<?>)((ParameterizedType)type).getActualTypeArguments()[0];
 				List<Object> list = new ArrayList<Object>();
@@ -125,10 +126,11 @@ public class KSOAPTransport {
 			} 	else if(returnType.equals(Boolean.class)) 	return Boolean.valueOf(ret.toString());
 			else if(returnType.equals(String.class))	return ret.toString();
 			else if(IRemoteObject.class.isAssignableFrom(returnType))	return getProxy(returnType, ret.toString());
-			else if(returnType.isEnum()) 
+			else if(returnType.isEnum()) {
 				for( Object element : returnType.getEnumConstants()) 
 					if( element.toString().equals( ret.toString() ) ) 
 						return element;
+			}
 			return ret;
 		}
 	}

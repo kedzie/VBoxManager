@@ -3,7 +3,7 @@
 	
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox</artifactId>
-	<version>1.6</version>
+	<version>1.8</version>
 	<packaging>apk</packaging>
 	<name>VirtualBox Manager</name>
 
@@ -71,19 +71,29 @@
       		<artifactId>ksoap2-android</artifactId>
       		<version>2.5.7</version>
     	</dependency>
-    	<dependency>
-      		<groupId>virtualbox</groupId>
-      		<artifactId>jws</artifactId>
-      		<version>4.1</version>
-    	</dependency>
+<!--     	<dependency> -->
+<!--       		<groupId>com.sun.xml.bind</groupId> -->
+<!--       		<artifactId>jaxb-xjc</artifactId> -->
+<!--       		<version>2.2.4-1</version> -->
+<!--     	</dependency> -->
+<!--     	<dependency> -->
+<!--       		<groupId>virtualbox</groupId> -->
+<!--       		<artifactId>jws</artifactId> -->
+<!--       		<version>4.1</version> -->
+<!--     	</dependency> -->
 	</dependencies>
 
 	<repositories>
 		<repository>
-      		<id>googlecode-ksoap2-android</id>
-      		<name>googlecode-ksoap2-android</name>
-      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
-    	</repository>
+	      		<id>googlecode-ksoap2-android</id>
+	      		<name>googlecode-ksoap2-android</name>
+	      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
+	    	</repository>
+		<repository>
+	      		<id>codehause</id>
+	      		<name>codehaus</name>
+	      		<url>http://repository.codehaus.org</url>
+	    	</repository>
 	</repositories>
 	
 </project>

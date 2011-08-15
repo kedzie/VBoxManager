@@ -1,6 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import org.virtualbox_4_1.VBoxEventType;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -16,6 +15,7 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IEventListener;
 import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachineEvent;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 
 public class EventService extends Service{
 	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();
@@ -37,7 +37,7 @@ public class EventService extends Service{
 				IEventListener listener = evSource.createListener();
 				IEvent event = null;
 				try {
-					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.MachineEvent }, false);
+					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.MACHINE_EVENT }, false);
 					while(_running) {
 							if((event=_vmgr.getEventProxy(evSource.getEvent(listener, 0)))!=null) {
 								BundleBuilder b = new BundleBuilder().putString("evt", event.getIdRef());

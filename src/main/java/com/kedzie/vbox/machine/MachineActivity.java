@@ -1,8 +1,6 @@
 package com.kedzie.vbox.machine;
 
 import java.io.IOException;
-import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.SessionState;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,6 +31,8 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.jaxb.MachineState;
+import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.server.PreferencesActivity;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
@@ -43,6 +43,7 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 	private VBoxSvc _vmgr;
 	private IMachine _machine;
 	private EventService eventService;
+	private MachineView _headerView;
 	private Messenger _messenger = new Messenger( new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -55,7 +56,6 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 			}
 		}
 	});
-	
 	private ServiceConnection localConnection = new ServiceConnection() {
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
 			eventService=((EventService.LocalBinder)service).getLocalBinder();
@@ -72,9 +72,10 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
         _vmgr =getIntent().getParcelableExtra("vmgr");
 		_machine = _vmgr.getProxy(IMachine.class, getIntent().getStringExtra("machine"));
 		
-		View _headerView = getLayoutInflater().inflate(R.layout.machine_list_item, getListView(), false);
-		((ImageView)_headerView.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+_machine.getOSTypeId().toLowerCase()));
-		((TextView) _headerView.findViewById(R.id.machine_list_item_name)).setText(_machine.getName()); 
+		_headerView = new MachineView(this);
+//		View _headerView = getLayoutInflater().inflate(R.layout.machine_list_item, getListView(), false);
+//		((ImageView)_headerView.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+_machine.getOSTypeId().toLowerCase()));
+//		((TextView) _headerView.findViewById(R.id.machine_list_item_name)).setText(_machine.getName()); 
 		getListView().addHeaderView(_headerView);
 		
 		getListView().setOnItemClickListener(this);
@@ -127,7 +128,7 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 		eventService.setMessenger(null);
 		unbindService(localConnection);
 		try {
-			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.Locked)) 
+			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
 				_vmgr.getVBox().getSessionObject().unlockMachine();
 		} catch (IOException e) {
 			showAlert(e);
@@ -139,9 +140,10 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 		_machine.clearCache();
 		MachineState state = _machine.getState();
 		Log.i(TAG, "Update state: " + state);
-		((ImageView)getListView().findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(state) );
-		((TextView)getListView().findViewById(R.id.machine_list_item_state_text)).setText(state.name());
-		if(_machine.getCurrentSnapshot()!=null)  ((TextView) getListView().findViewById(R.id.machine_list_item_snapshot)).setText("("+_machine.getCurrentSnapshot().getName() + ")");		
+		_headerView.update(_machine);
+//		((ImageView)getListView().findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(state) );
+//		((TextView)getListView().findViewById(R.id.machine_list_item_state_text)).setText(state.name());
+//		if(_machine.getCurrentSnapshot()!=null)  ((TextView) getListView().findViewById(R.id.machine_list_item_snapshot)).setText("("+_machine.getCurrentSnapshot().getName() + ")");		
 		setListAdapter(new MachineActionAdapter(this, VBoxApplication.getActions(state)));
 	}
 	

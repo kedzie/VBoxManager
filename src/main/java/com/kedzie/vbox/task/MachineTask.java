@@ -1,13 +1,13 @@
 package com.kedzie.vbox.task;
 
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.SessionState;
 import android.content.Context;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISession;
+import com.kedzie.vbox.api.jaxb.LockType;
+import com.kedzie.vbox.api.jaxb.SessionState;
 
 /**
  * Machine operation without VirtualBox progress handling
@@ -23,14 +23,14 @@ public abstract class MachineTask extends BaseTask<IMachine, IMachine> {
 		@Override
 		protected IMachine work(IMachine... params) throws Exception {
 			ISession session = _vmgr.getVBox().getSessionObject();
-			if( session.getState().equals(SessionState.Unlocked)) params[0].lockMachine(session, LockType.Shared);
+			if( session.getState().equals(SessionState.UNLOCKED)) params[0].lockMachine(session, LockType.SHARED);
 			
 			if(pDialog.isIndeterminate())
 				work(params[0], _vmgr.getVBox().getSessionObject().getConsole() );
 			else
 				handleProgress( workWithProgress(params[0], _vmgr.getVBox().getSessionObject().getConsole()) );
 			
-			if(session.getState().equals(SessionState.Locked)) session.unlockMachine();
+			if(session.getState().equals(SessionState.LOCKED)) session.unlockMachine();
 			return params[0];
 		}
 

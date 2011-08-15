@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_centerVertical="true"  >
+    
+
+
+<!-- <android.gesture.GestureOverlayView  -->
+<!--  	android:id="@+id/gestures" -->
+<!--     android:layout_width="fill_parent"  -->
+<!--     android:layout_height="0dip" -->
+<!--     android:layout_weight="1.0" -->
+<!--     android:eventsInterceptionEnabled="true"  -->
+<!--     android:orientation="vertical"> -->
+
+<ViewFlipper android:id="@+id/viewflipper" android:layout_width="fill_parent" android:layout_height="fill_parent">
+<TextView android:layout_width="fill_parent"  android:layout_height="fill_parent"  android:text="First View"/>
+<!--  <TextView android:layout_width="fill_parent"  android:layout_height="fill_parent"  android:text="Second View"/> -->
+</ViewFlipper>
+
+<!-- </android.gesture.GestureOverlayView> -->
+	
+</LinearLayout>

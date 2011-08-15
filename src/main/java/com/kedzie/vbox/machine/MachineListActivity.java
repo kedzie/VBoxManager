@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.virtualbox_4_1.MachineState;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.os.Messenger;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,8 +23,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.kedzie.vbox.BaseListActivity;
 import com.kedzie.vbox.R;
@@ -37,6 +33,7 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.server.PreferencesActivity;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
@@ -47,7 +44,7 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	protected static final String TAG = "vbox."+MachineListActivity.class.getSimpleName();
 	
 	private VBoxSvc vmgr;
-	
+	private List<IMachine> _machines;
 	private Handler _eventHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -57,9 +54,11 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 					if(event instanceof IMachineStateChangedEvent) {
 						IMachineStateChangedEvent mEvent = (IMachineStateChangedEvent)event;
 						IMachine eventMachine = vmgr.getProxy(IMachine.class, msg.getData().getString("machine"));
+						getAdapter().setNotifyOnChange(false);
 						int pos = getAdapter().getPosition(eventMachine);
 						getAdapter().remove(eventMachine);
 						getAdapter().insert(eventMachine, pos);
+						getAdapter().notifyDataSetChanged();
 						Toast.makeText(MachineListActivity.this, "MachineStateChangedEvent : " + mEvent.getState(), Toast.LENGTH_SHORT).show();
 					} 
 				break;
@@ -69,8 +68,17 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			}
 		}
 	};
+	private Messenger _messenger = new Messenger(_eventHandler);
+	private EventService eventService;
+	private ServiceConnection localConnection = new ServiceConnection() {
+		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
+			eventService=((EventService.LocalBinder)service).getLocalBinder();
+			eventService.setMessenger(_messenger);
+		}
+		@Override public void onServiceDisconnected(ComponentName name) { eventService=null;	}
+	};
 	
-	@Override
+	@SuppressWarnings("unchecked") @Override
     public void onCreate(Bundle savedInstanceState) {
        	super.onCreate(savedInstanceState);
        	registerForContextMenu(getListView());
@@ -82,18 +90,18 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 		});
        	vmgr = getIntent().getParcelableExtra("vmgr");
 		setTitle("VirtualBox v." + vmgr.getVBox().getVersion());
-		new LoadMachinesTask(MachineListActivity.this, vmgr).execute();
+		if(getLastNonConfigurationInstance()==null)
+			new LoadMachinesTask(MachineListActivity.this, vmgr).execute();
+		else {
+			_machines = (List<IMachine>)getLastNonConfigurationInstance();
+			setListAdapter(new MachineListAdapter(MachineListActivity.this, _machines));
+		}
     }
 	
-	private Messenger _messenger = new Messenger(_eventHandler);
-	private EventService eventService;
-	ServiceConnection localConnection = new ServiceConnection() {
-		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
-			eventService=((EventService.LocalBinder)service).getLocalBinder();
-			eventService.setMessenger(_messenger);
-		}
-		@Override public void onServiceDisconnected(ComponentName name) { eventService=null;	}
-	};
+	/* @see android.app.Activity#onRetainNonConfigurationInstance() */
+	@Override public Object onRetainNonConfigurationInstance() {
+		return _machines;
+	}
 	
 	@Override
 	protected void onStart() {
@@ -191,10 +199,11 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 		@Override
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
+			if(machines==null || machines.size()==0) return new ArrayList<IMachine>();
 			Collection<String> running = new ArrayList<String>();
 			for(IMachine m :  machines) {
 				m.getName();  m.getOSTypeId(); m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName(); //cache the values
-				if(MachineState.Running.equals(m.getState()))	running.add(m.getIdRef());
+				if(MachineState.RUNNING.equals(m.getState()))	running.add(m.getIdRef());
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics( running.toArray(new String[running.size()]), new String [] { "*:" }, getApp().getPeriod(), getApp().getCount()  );
 			return machines;
@@ -202,31 +211,21 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 
 		@Override
 		protected void onPostExecute(List<IMachine> result)	{
-			setListAdapter(new MachineListAdapter(MachineListActivity.this, result));
 			super.onPostExecute(result);
+			_machines = result;
+			setListAdapter(new MachineListAdapter(MachineListActivity.this, result));
 		}
 	}
 	
 	class MachineListAdapter extends ArrayAdapter<IMachine> {
-		private final LayoutInflater _layoutInflater;
 		
 		public MachineListAdapter(MachineListActivity context, List<IMachine> machines) {
 			super(context, 0, machines);
-			_layoutInflater = LayoutInflater.from(context);
 		}
 
-		public long getItemId(int position) { return position;	}
-		
 		public View getView(int position, View view, ViewGroup parent) {
-			IMachine m = getItem(position);
-			if (view == null) {
-				view = _layoutInflater.inflate(R.layout.machine_list_item, parent, false);
-			}
-			((ImageView)view.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+m.getOSTypeId().toLowerCase()));
-			((TextView) view.findViewById(R.id.machine_list_item_name)).setText(m.getName());
-			((ImageView)view.findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(m.getState()) );
-			((TextView)view.findViewById(R.id.machine_list_item_state_text)).setText(m.getState().name());
-			if(m.getCurrentSnapshot()!=null)  ((TextView) view.findViewById(R.id.machine_list_item_snapshot)).setText("("+m.getCurrentSnapshot().getName() + ")");		
+			if (view == null)	view = new MachineView(MachineListActivity.this);
+			((MachineView)view).update(getItem(position));
 			return view;
 		}
 	}

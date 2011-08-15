@@ -6,17 +6,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.GestureDetector.OnGestureListener;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
 
-public class MetricActivity extends Activity {
+public class MetricActivity extends Activity  implements OnGestureListener   {
 	private static final String TAG = "vbox."+MetricActivity.class.getSimpleName();
 	public static final String INTENT_OBJECT = "object",  INTENT_RAM_AVAILABLE = "ram_available";
 	
 	private MetricView cpuView, ramView;
 	private MetricThread _thread;
+	private GestureDetector detector;
+	ViewFlipper vf;
 	
 	class MetricThread extends Thread {
 		boolean _running=true;
@@ -57,7 +63,16 @@ public class MetricActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.metric);
+//		setContentView(R.layout.flipper);
+//        vf = (ViewFlipper)findViewById(R.id.viewflipper);
+//        getLayoutInflater().inflate(R.layout.metric, vf, true);
+//        vf.setAnimateFirstView(true);
+//        vf.setInAnimation(this, android.R.anim.slide_in_left);
+//        vf.setOutAnimation(this, android.R.anim.slide_out_right);
+        detector = new GestureDetector(this, this);
+		
 		VBoxSvc vmgr = getIntent().getParcelableExtra("vmgr");
 		setTitle(getIntent().getStringExtra("title"));
 		((TextView)findViewById(R.id.cpu_metrics_title)).setText("CPU Load");
@@ -87,8 +102,25 @@ public class MetricActivity extends Activity {
 		super.onDestroy();
 	}
 	
-	public VBoxApplication getApp() { 
-		return (VBoxApplication)getApplication(); 
+	@Override 
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		if( e1.getX() > e2.getX() ) { //left fling
+			Log.i(TAG, "Left Fling");
+//			vf.showPrevious();
+		} else { //right fling
+			Log.i(TAG, "Right Fling");
+//			vf.showNext();
+		}
+		return true;
 	}
+	
+	@Override public boolean onTouchEvent(MotionEvent event) { return detector.onTouchEvent(event); }
+	@Override public boolean onDown(MotionEvent e) { return false; }
+	@Override public void onShowPress(MotionEvent e) {}
+	@Override public boolean onSingleTapUp(MotionEvent e) { return false; }
+	@Override public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) { return false; }
+	@Override public void onLongPress(MotionEvent e) {}
+	
+	public VBoxApplication getApp() {  return (VBoxApplication)getApplication();  }
 
 }

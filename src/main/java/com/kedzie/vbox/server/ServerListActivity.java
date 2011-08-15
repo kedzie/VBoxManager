@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.kedzie.vbox.BaseListActivity;
@@ -42,6 +43,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
         getListView().setDividerHeight(2);
         
         TextView emptyView = new TextView(this);
+        emptyView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
 		emptyView.setText("Click 'Menu' to add Server");
 		getListView().setEmptyView(emptyView);
 		
@@ -68,7 +70,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 		       	}.execute(getAdapter().getItem(position));
 			}
 		});
-        _db.insertOrUpdate(new Server(new Long(-1), "192.168.1.10", 18083, "Marek", "Mk0204$$"));
+//        _db.insertOrUpdate(new Server(new Long(-1), "192.168.1.10", 18083, "Marek", "Mk0204$$"));
         new BaseTask<Void, List<Server>>(this,  null, "Loading Servers", true)	{
     		@Override protected List<Server> work(Void... params) throws Exception { return _db.getServers(); }
     		@Override protected void onPostExecute(List<Server> result)	{
@@ -77,6 +79,8 @@ public class ServerListActivity extends BaseListActivity<Server> {
     		}
     	}.execute();
     }
+	
+	
 	
 	
 	@Override protected void onDestroy() {
@@ -125,6 +129,7 @@ public class ServerListActivity extends BaseListActivity<Server> {
 	
  	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+ 		if(data == null) return;
  		Server s = data.getParcelableExtra("server");
         switch(resultCode) {
 		case(RESULT_CODE_SAVE):

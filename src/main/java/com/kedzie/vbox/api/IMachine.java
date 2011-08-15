@@ -3,9 +3,9 @@ package com.kedzie.vbox.api;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.MachineState;
 import com.kedzie.vbox.KSOAP;
+import com.kedzie.vbox.api.jaxb.LockType;
+import com.kedzie.vbox.api.jaxb.MachineState;
 
 public interface IMachine extends IRemoteObject {
 	public static enum LaunchMode { headless, gui; }

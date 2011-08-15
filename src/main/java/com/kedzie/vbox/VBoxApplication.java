@@ -6,7 +6,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.virtualbox_4_1.MachineState;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +14,7 @@ import android.os.Messenger;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.SparseArray;
+import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.server.PreferencesActivity;
 
 public class VBoxApplication  extends Application {
@@ -23,21 +23,21 @@ public class VBoxApplication  extends Application {
 	public static Map<MachineState,Integer> states;
 	static {
 		states = new HashMap<MachineState, Integer>();
-		states.put(MachineState.Running, R.drawable.ic_list_start_small);
-		states.put(MachineState.Starting, R.drawable.ic_list_start_small);
-		states.put(MachineState.Stopping, R.drawable.ic_list_poweroff_small);
-		states.put(MachineState.PoweredOff, R.drawable.ic_list_poweroff_small);
-		states.put(MachineState.Paused, R.drawable.ic_list_pause_small);
-		states.put(MachineState.LiveSnapshotting, R.drawable.ic_list_save_small);
-		states.put(MachineState.DeletingSnapshot, R.drawable.ic_list_save_small);
-		states.put(MachineState.DeletingSnapshotOnline, R.drawable.ic_list_save_small);
-		states.put(MachineState.DeletingSnapshotPaused, R.drawable.ic_list_save_small);
-		states.put(MachineState.RestoringSnapshot, R.drawable.ic_list_save_small);
-		states.put(MachineState.Saving, R.drawable.ic_list_save_small);
-		states.put(MachineState.Saved, R.drawable.ic_list_save_small);
-		states.put(MachineState.Restoring, R.drawable.ic_list_start_small);
-		states.put(MachineState.Aborted, R.drawable.ic_list_abort_small);
-		states.put(MachineState.Stuck, R.drawable.ic_list_stuck_small);
+		states.put(MachineState.RUNNING, R.drawable.ic_list_start_small);
+		states.put(MachineState.STARTING, R.drawable.ic_list_start_small);
+		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_small);
+		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_small);
+		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_small);
+		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_save_small);
+		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_save_small);
+		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_save_small);
+		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_save_small);
+		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_save_small);
+		states.put(MachineState.SAVING, R.drawable.ic_list_save_small);
+		states.put(MachineState.SAVED, R.drawable.ic_list_save_small);
+		states.put(MachineState.RESTORING, R.drawable.ic_list_start_small);
+		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_small);
+		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_small);
 		
 		resources = new HashMap<String, Integer>();
 		resources.put( "Start", R.drawable.ic_list_start );
@@ -85,10 +85,10 @@ public class VBoxApplication  extends Application {
 	}
 	
 	public static String[] getActions(MachineState state) {
-		if(state.equals(MachineState.Running)) return new String[] { "Pause", "Reset", "Power Off" , "Save State", "Power Button", "Take Snapshot" };
-		 else if (state.equals(MachineState.PoweredOff) || state.equals(MachineState.Aborted))	return new String[] { "Start",  "Take Snapshot" };
-		else if (state.equals(MachineState.Paused))	return new String[] { "Resume", "Reset", "Power Off" };
-		 else if (state.equals(MachineState.Saved))	return new String[] { "Restore State", "Discard State" };
+		if(state.equals(MachineState.RUNNING)) return new String[] { "Pause", "Reset", "Power Off" , "Save State", "Power Button", "Take Snapshot" };
+		 else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new String[] { "Start",  "Take Snapshot" };
+		else if (state.equals(MachineState.PAUSED))	return new String[] { "Resume", "Reset", "Power Off" };
+		 else if (state.equals(MachineState.SAVED))	return new String[] { "Restore State", "Discard State" };
 		return new String[] {};
 	}
 	

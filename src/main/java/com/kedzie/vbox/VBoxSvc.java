@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.virtualbox_4_1.VBoxEventType;
 import org.xmlpull.v1.XmlPullParserException;
 import android.content.Context;
 import android.os.Parcel;
@@ -15,6 +14,7 @@ import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.server.PreferencesActivity;
 
 public class VBoxSvc implements Parcelable {
@@ -93,8 +93,8 @@ public class VBoxSvc implements Parcelable {
 	
 	public IEvent getEventProxy(String id) {
 		IEvent event = getProxy(IEvent.class, id);
-		if(event.getType().equals(VBoxEventType.OnMachineStateChanged)) return getProxy( IMachineStateChangedEvent.class, id );
-		else if(event.getType().equals(VBoxEventType.OnSessionStateChanged))	return getProxy( ISessionStateChangedEvent.class, id );
+		if(event.getType().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) return getProxy( IMachineStateChangedEvent.class, id );
+		else if(event.getType().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))	return getProxy( ISessionStateChangedEvent.class, id );
 		return event;
 	}
 	

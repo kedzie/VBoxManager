@@ -31,7 +31,7 @@ public class MachineView extends LinearLayout {
 		osIcon.setImageResource(VBoxApplication.get("os_"+m.getOSTypeId().toLowerCase()));
 		nameText.setText(m.getName());
 		stateIcon.setImageResource( VBoxApplication.get(m.getState()) );
-		stateText.setText(m.getState().name());
+		stateText.setText(m.getState().value());
 		if(m.getCurrentSnapshot()!=null)  snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")");
 	}
 
