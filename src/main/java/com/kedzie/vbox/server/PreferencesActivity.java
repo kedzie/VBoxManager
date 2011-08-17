@@ -5,8 +5,8 @@ import android.preference.PreferenceActivity;
 import com.kedzie.vbox.R;
 
 public class PreferencesActivity extends PreferenceActivity {
-	public static final String PERIOD = "metric_period";
-	public static final String COUNT = "metric_count";
+	public static final String PERIOD = "metric_period", COUNT = "metric_count";
+	public static final int PERIOD_DEFAULT = 1, COUNT_DEFAULT = 25;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

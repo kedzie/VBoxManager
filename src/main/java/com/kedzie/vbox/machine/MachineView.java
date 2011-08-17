@@ -11,11 +11,11 @@ import com.kedzie.vbox.api.IMachine;
 
 public class MachineView extends LinearLayout {
 
-	ImageView osIcon;
-	ImageView stateIcon;
-	TextView stateText;
-	TextView nameText;
-	TextView snapshotText;
+	private ImageView osIcon;
+	private ImageView stateIcon;
+	private TextView stateText;
+	private TextView nameText;
+	private TextView snapshotText;
 
 	public MachineView(Context context) {
 		super(context);
@@ -32,7 +32,10 @@ public class MachineView extends LinearLayout {
 		nameText.setText(m.getName());
 		stateIcon.setImageResource( VBoxApplication.get(m.getState()) );
 		stateText.setText(m.getState().value());
-		if(m.getCurrentSnapshot()!=null)  snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")");
+		if(m.getCurrentSnapshot()!=null)  
+			snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")");
+		else 
+			snapshotText.setText("(No Snapshots)");
 	}
 
 }

@@ -11,18 +11,16 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricView extends View {
-	private static final String TAG = "vbox."+MetricView.class.getSimpleName();
+//	private static final String TAG = "vbox."+MetricView.class.getSimpleName();
 	
 	private long max;
 	private int count;
 	private int period;
 	private String[] metrics;
-	private IPerformanceMetric baseMetric;
+//	private IPerformanceMetric baseMetric;
 	private Map<String, Map<String, Object>> data;
 	private int hStep;
 	private double vStep;
@@ -35,7 +33,6 @@ public class MetricView extends View {
 		super(context, as);
 		bgPaint.setARGB(255, 255, 255, 255);
 		bgPaint.setStyle(Style.FILL);
-		borderPaint = new Paint();
 		borderPaint.setStyle(Style.STROKE);
 		borderPaint.setARGB(1, 0, 0, 255);
 		borderPaint.setAntiAlias(true);
@@ -64,12 +61,16 @@ public class MetricView extends View {
 		metricColor.put("Guest/RAM/Usage/Total", 0xff00ffff);
 	}
 	
+	public int getColor(String name) {
+		if(!metricColor.containsKey(name)) 	metricColor.put(name, getResources().getColor(getResources().getIdentifier(name, "color", getContext().getPackageName())) );
+		return metricColor.get(name);
+	}
+	
 	public void init( int count, int period, long max, String []metrics) {
 		this.max=max;
 		this.count=count;
 		this.metrics=metrics;
 		this.period=period;
-		Log.i(TAG, "Steps: " + hStep + ", " + vStep);
 	}
 
 	public void setData(Map<String, Map<String, Object>> data) {
@@ -94,7 +95,7 @@ public class MetricView extends View {
 		}
 		if(data==null) return;
 		for(String mName : metrics) {
-			metricPaint.setColor(metricColor.get(mName));
+			metricPaint.setColor(getColor(mName));
 			int x = bounds.left, y = bounds.bottom;
 			for(Integer val : ((List<Integer>)data.get(mName).get("val"))) {
 				int nY = bounds.bottom-(int)(val*vStep);

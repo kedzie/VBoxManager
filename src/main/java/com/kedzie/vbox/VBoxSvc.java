@@ -6,18 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.xmlpull.v1.XmlPullParserException;
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
-import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
-import com.kedzie.vbox.server.PreferencesActivity;
 
 public class VBoxSvc implements Parcelable {
+	public static final String[] METRICS_HOST =  { "*:" };
+	public static final String[] METRICS_MACHINE =  { "*:" };
 	private String _url;
 	private IVirtualBox _vbox;
 	private KSOAPTransport _transport;
@@ -57,28 +56,22 @@ public class VBoxSvc implements Parcelable {
 		return _vbox;
 	}
 	
-	public List<IPerformanceMetric> setupMetrics( Context ctx, String object, String...metrics) throws IOException { 
-		return setupMetrics(ctx, new String [] {object}, metrics); 
-	}
-	
-	public List<IPerformanceMetric> setupMetrics( Context ctx, String[] objects, String...metrics) throws IOException {
-		return _vbox.getPerformanceCollector().setupMetrics(metrics, objects, ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1),ctx.getSharedPreferences(ctx.getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25));
-	}
-	
 	public Map<String, Map<String,Object>> queryMetricsData(String object, int count, int period, String...metrics) throws IOException {
 		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
-		List<Integer> vals = new ArrayList<Integer>();
-		for(String s : (List<String>)data.get("returnval")) vals.add(Integer.valueOf(s));
+		List<Integer> vals = new ArrayList<Integer>(data.get("returnval").size());
+		for(String s : data.get("returnval")) 
+			vals.add(Integer.valueOf(s));
 		
 		Map<String, Map<String,Object>> ret = new HashMap<String, Map<String, Object>>();
-		for(int i=0; i<((List<String>)data.get("returnMetricNames")).size(); i++) {
+		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
 			Map<String, Object> metric = new HashMap<String, Object>();
 			for(Map.Entry<String, List<String>> entry : data.entrySet())
-				metric.put(entry.getKey().substring(6), ((List<String>)entry.getValue()).get(i) );
-			int start = Integer.valueOf((String)metric.remove("DataIndices"));
-			int length = Integer.valueOf((String)metric.remove("DataLengths"));
+				metric.put(entry.getKey().substring(6), entry.getValue().get(i) );
+			int start = Integer.valueOf(metric.remove("DataIndices").toString());
+			int length = Integer.valueOf(metric.remove("DataLengths").toString());
 			List<Integer> metricValues = new ArrayList<Integer>(count);
-			for(int t=0; t<count-length; t++)	metricValues.add(0);
+			for(int t=0; t<count-length; t++)	
+				metricValues.add(0);
 			metricValues.addAll( vals.subList(start, start+length) );
 			metric.put("val", metricValues);
 			ret.put(  metric.get("MetricNames").toString(), metric );
@@ -91,6 +84,7 @@ public class VBoxSvc implements Parcelable {
 	public IVirtualBox getVBox() { return _vbox;	}
 	public String getURL() { return _url; }
 	
+	/** @deprecated */
 	public IEvent getEventProxy(String id) {
 		IEvent event = getProxy(IEvent.class, id);
 		if(event.getType().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) return getProxy( IMachineStateChangedEvent.class, id );
@@ -98,6 +92,7 @@ public class VBoxSvc implements Parcelable {
 		return event;
 	}
 	
+	/** @deprecated */
 	public IEvent getEventProxy(IEvent event) {
 		if(event==null) return null;
 		return getEventProxy(event.getIdRef());

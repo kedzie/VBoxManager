@@ -49,7 +49,7 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 		public void handleMessage(Message msg) {
 			switch(msg.what){
 			case EventService.WHAT_EVENT:
-					IEvent event = _vmgr.getEventProxy(msg.getData().getString("evt"));
+					IEvent event = _vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
 					if(event instanceof IMachineStateChangedEvent)
 						updateState();
 				break;

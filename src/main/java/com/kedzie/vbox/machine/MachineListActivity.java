@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -45,37 +47,29 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 	
 	private VBoxSvc vmgr;
 	private List<IMachine> _machines;
-	private Handler _eventHandler = new Handler() {
+	private Messenger _messenger = new Messenger(new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch(msg.what){
-			case EventService.WHAT_EVENT:
-					IEvent event = vmgr.getEventProxy(msg.getData().getString("evt"));
-					if(event instanceof IMachineStateChangedEvent) {
-						IMachineStateChangedEvent mEvent = (IMachineStateChangedEvent)event;
-						IMachine eventMachine = vmgr.getProxy(IMachine.class, msg.getData().getString("machine"));
-						getAdapter().setNotifyOnChange(false);
-						int pos = getAdapter().getPosition(eventMachine);
-						getAdapter().remove(eventMachine);
-						getAdapter().insert(eventMachine, pos);
-						getAdapter().notifyDataSetChanged();
-						Toast.makeText(MachineListActivity.this, "MachineStateChangedEvent : " + mEvent.getState(), Toast.LENGTH_SHORT).show();
-					} 
-				break;
-			case WHAT_ERROR:
-				showAlert(msg.getData().getString("exception"));
-				break;
-			}
-		}
-	};
-	private Messenger _messenger = new Messenger(_eventHandler);
-	private EventService eventService;
+			IEvent event = vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
+			if(event instanceof IMachineStateChangedEvent) {
+				IMachine eventMachine = vmgr.getProxy(IMachine.class, msg.getData().getString("machine"));
+				int pos = getAdapter().getPosition(eventMachine);
+				getAdapter().setNotifyOnChange(false);
+				getAdapter().remove(eventMachine);
+				getAdapter().insert(eventMachine, pos);
+				getAdapter().notifyDataSetChanged();
+				Toast.makeText(MachineListActivity.this, eventMachine.getName() + " StateChangedEvent: " + eventMachine.getState(), Toast.LENGTH_LONG).show();
+			} 
+		} });
+	private EventService _eventService;
 	private ServiceConnection localConnection = new ServiceConnection() {
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
-			eventService=((EventService.LocalBinder)service).getLocalBinder();
-			eventService.setMessenger(_messenger);
+			_eventService = ((EventService.LocalBinder)service).getLocalBinder();
+			_eventService.setMessenger(_messenger );
 		}
-		@Override public void onServiceDisconnected(ComponentName name) { eventService=null;	}
+		@Override public void onServiceDisconnected(ComponentName name) { 
+			_eventService.setMessenger(null);
+		}
 	};
 	
 	@SuppressWarnings("unchecked") @Override
@@ -96,28 +90,30 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			_machines = (List<IMachine>)getLastNonConfigurationInstance();
 			setListAdapter(new MachineListAdapter(MachineListActivity.this, _machines));
 		}
+		bindService(new Intent(this, EventService.class).putExtra("vmgr", vmgr).putExtra("listener", _messenger), localConnection, Context.BIND_AUTO_CREATE);
     }
 	
-	/* @see android.app.Activity#onRetainNonConfigurationInstance() */
-	@Override public Object onRetainNonConfigurationInstance() {
+	@Override 
+	public Object onRetainNonConfigurationInstance() {
 		return _machines;
 	}
 	
 	@Override
-	protected void onStart() {
+	protected void onResume() {
 		super.onStart();
-		bindService(new Intent(this, EventService.class).putExtra("vmgr", vmgr).putExtra("listener", _messenger), localConnection, Context.BIND_AUTO_CREATE);
+		if(_eventService!=null)_eventService.setMessenger(_messenger);
 	}
 
 	@Override
 	protected void onStop() {
-		unbindService(localConnection);
+		_eventService.setMessenger(null);
         super.onStop();
 	}
 
 	@Override
 	protected void onDestroy() {
 		try {  
+			unbindService(localConnection);
 			if(vmgr.getVBox()!=null)  vmgr.getVBox().logoff(); 
 		} catch (Exception e) { 
 			Log.e(TAG, "error ", e); 
@@ -198,14 +194,12 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 
 		@Override
 		protected List<IMachine> work(Void... params) throws Exception {
+			_vmgr.getVBox().getHost();
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
 			if(machines==null || machines.size()==0) return new ArrayList<IMachine>();
-			Collection<String> running = new ArrayList<String>();
 			for(IMachine m :  machines) {
 				m.getName();  m.getOSTypeId(); m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName(); //cache the values
-				if(MachineState.RUNNING.equals(m.getState()))	running.add(m.getIdRef());
 			}
-			_vmgr.getVBox().getPerformanceCollector().setupMetrics( running.toArray(new String[running.size()]), new String [] { "*:" }, getApp().getPeriod(), getApp().getCount()  );
 			return machines;
 		}
 
@@ -214,11 +208,28 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			super.onPostExecute(result);
 			_machines = result;
 			setListAdapter(new MachineListAdapter(MachineListActivity.this, result));
+			new SetupMetricsTask().execute();
+		}
+	}
+	
+	class SetupMetricsTask extends AsyncTask<Void, Void, Void> {
+		@Override 
+		protected Void doInBackground(Void... params) {
+			try {
+				Collection<String> running = new ArrayList<String>();
+				running.add(vmgr.getVBox().getHost().getIdRef());
+				for(IMachine m :  _machines)
+					if(MachineState.RUNNING.equals(m.getState()))	
+						running.add(m.getIdRef());
+				vmgr.getVBox().getPerformanceCollector().setupMetrics( VBoxSvc.METRICS_MACHINE, running, getApp().getPeriod(), getApp().getCount()  );
+			} catch (IOException e) {
+				showAlert(e);
+			}
+			return null;
 		}
 	}
 	
 	class MachineListAdapter extends ArrayAdapter<IMachine> {
-		
 		public MachineListAdapter(MachineListActivity context, List<IMachine> machines) {
 			super(context, 0, machines);
 		}
@@ -229,5 +240,4 @@ public class MachineListActivity extends BaseListActivity<IMachine> {
 			return view;
 		}
 	}
-	
 }

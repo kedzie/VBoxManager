@@ -93,11 +93,11 @@ public class VBoxApplication  extends Application {
 	}
 	
 	public int getPeriod() {
-		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.PERIOD, 1);
+		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.PERIOD, PreferencesActivity.PERIOD_DEFAULT);
 	}
 	
 	public int getCount() {
-		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.COUNT, 25);
+		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.COUNT, PreferencesActivity.COUNT_DEFAULT);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class VBoxApplication  extends Application {
 	 * @return address of resource
 	 */
 	public static int get(String name) {
-		return resources.containsKey(name) ? resources.get(name) : R.drawable.ic_list_os_linux; 	
+		return resources.containsKey(name) ? resources.get(name) : R.drawable.ic_list_os_other; 	
 	}
 	
 	/**

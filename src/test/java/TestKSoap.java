@@ -15,15 +15,15 @@ public class TestKSoap {
 		vmgr.logon( "test", "test");
 		IVirtualBox vbox = vmgr.getVBox();
 		List<IMachine> machines =  vbox.getMachines();
-		IMachine m = machines.get(2);
+		IMachine m = machines.get(0);
 
 		m.lockMachine(vbox.getSessionObject(), LockType.SHARED);
-		System.out.println("log file name:"+m.queryLogFilename(0));
-		System.out.println("saved Thumbnail size:"+m.querySavedThumbnailSize(0));
-		System.out.println("saved screenshot png size:"+m.querySavedScreenshotPNGSize(0));
+		
+		String log = new String(m.readLog(0, 0, 3000));
+		System.out.println("Log\n"+ log);
 		IConsole console = vbox.getSessionObject().getConsole();
 		IDisplay display = console.getDisplay();
-		System.out.println("DIsplay: " + display);
+		System.out.println("DIsplay: " + display.getScreenResolution(0));
 		vbox.getSessionObject().unlockMachine();
 		
 //		IPerformanceCollector pc = vbox.getPerformanceCollector();

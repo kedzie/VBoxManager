@@ -1,6 +1,5 @@
 package com.kedzie.vbox;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -12,57 +11,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.KvmSerializable;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import org.xmlpull.v1.XmlPullParserException;
+import android.util.Log;
+import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IRemoteObject;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 
 public class KSOAPTransport {
-	private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
-	public static final String NAMESPACE = "http://www.virtualbox.org/";
+		private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
+	private static final int TIMEOUT = 60000;
+	private static final String NAMESPACE = "http://www.virtualbox.org/";
 	private HttpTransportSE transport;
 	
 	public KSOAPTransport(String url) { 
-		this.transport = new HttpTransportSE(url, 60000);	
+		this.transport = new HttpTransportSE(url, TIMEOUT);	
 	}
 	
-	public Object call(SoapObject object) throws IOException, XmlPullParserException {
-		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11) {
-			@Override
-			public Object getResponse() throws SoapFault {
-				if (bodyIn instanceof SoapFault) throw (SoapFault)bodyIn;
-				KvmSerializable ks = (KvmSerializable)bodyIn;
-				
-				if(ks.getPropertyCount()==0 || (ks.getPropertyCount()==1 && ks.getProperty(0).toString().equals("anyType{}"))) return null;
-				else if(ks.getPropertyCount()==1)	
-					return ks.getProperty(0).toString();
-				
-				Map<String, List<String>> map = new HashMap<String, List<String>>();
-				for(int i=0;i<ks.getPropertyCount();i++){
-					PropertyInfo info = new PropertyInfo();
-					ks.getPropertyInfo(i, null, info);
-					if(!map.containsKey(info.getName())) map.put(info.getName(), new ArrayList<String>());
-					((ArrayList<String>)map.get(info.getName())).add(ks.getProperty(i).toString());
-				}
-				if(map.keySet().size()==1) return (List<String>)map.get(map.keySet().iterator().next());
-				return map;
-			}
-		};
-		envelope.setOutputSoapObject(object);
-		transport.call(NAMESPACE+object.getName(), envelope);
-		return envelope.getResponse();
-	}
-
 	public <T> T getProxy(Class<T> clazz, String id) {
-		return clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new SOAPInvocationHandler(id, clazz)));
+		T proxy = clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new SOAPInvocationHandler(id, clazz)));
+		if(IEvent.class.equals(clazz)) {
+			VBoxEventType type = ((IEvent)proxy).getType();
+			Log.i(TAG, "Creating Event proxy: " + type);
+			if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) 
+				return clazz.cast(getProxy( IMachineStateChangedEvent.class, id ));
+			else if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))	
+				return clazz.cast(getProxy( ISessionStateChangedEvent.class, id ));
+		}
+		return proxy;
 	}
 	
-	/** Invokes SOAP methods */
+	/** 
+	 * Invokes SOAP methods 
+	 */
 	private class  SOAPInvocationHandler implements InvocationHandler {
 		private String id;
 		private Class<?> type;
@@ -91,47 +76,112 @@ public class KSOAPTransport {
 				request.addProperty(methodKSOAP.thisReference(), this.id);
 
 			if(args!=null) {
-				for(int i=0; i<args.length; i++) marshall(request, VBoxApplication.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
+				for(int i=0; i<args.length; i++) 
+					marshal(request, VBoxApplication.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
 			}
-			Object ret = unmarshall( method.getReturnType(), method.getGenericReturnType(), call(request) );
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11); 
+			envelope.setOutputSoapObject(request);
+			transport.call(NAMESPACE+request.getName(), envelope);
+			Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
+			ret = buildProxies( method.getReturnType(), method.getGenericReturnType(), ret );
 			if(methodKSOAP!=null && methodKSOAP.cache() && method.getName().startsWith("get")) _cache.put(method.getName(), ret);
 			return ret;
 		}
 
-		private void marshall(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
+		/**
+		 * Add an argument to a SOAP request
+		 * @param request  SOAP request
+		 * @param ksoap   parameter annotation with marshalling configuration
+		 * @param clazz     <code>Class</code> of parameter
+		 * @param gType   Generic type of parameter
+		 * @param obj  object to marshall
+		 */
+		private void marshal(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
 			if(clazz.isArray()) { 
-				for(Object o : (Object[])obj)  marshall( request, ksoap, clazz.getComponentType(), gType,  o );
+				for(Object o : (Object[])obj)  
+					marshal( request, ksoap, clazz.getComponentType(), gType,  o );
 			} else if(Collection.class.isAssignableFrom(clazz)) {
 				Class<?> pClazz = (Class<?>) ((ParameterizedType)gType).getActualTypeArguments()[0];
-				for(Object o : (List<?>)obj)  marshall(request, ksoap,pClazz, gType,  o );
-			} else if(!ksoap.type().equals("")) request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
-			else if(IRemoteObject.class.isAssignableFrom(clazz))	request.addProperty(ksoap.value(),  ((IRemoteObject)obj).getIdRef() );
-			else if(clazz.isEnum())	request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
-			else request.addProperty(ksoap.value(), obj);	
+				for(Object o : (List<?>)obj)  
+					marshal(request, ksoap,pClazz, gType,  o );
+			} else if(!ksoap.type().equals("")) 
+				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
+			else if(IRemoteObject.class.isAssignableFrom(clazz))	
+				request.addProperty(ksoap.value(),  ((IRemoteObject)obj).getIdRef() );
+			else if(clazz.isEnum())	
+				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
+			else 
+				request.addProperty(ksoap.value(), obj);	
 		}
 		
-		private <T> Object unmarshall(Class<T> returnType, Type type, Object ret) {
+		/**
+		 * Convert String ids to remote proxies
+		 * @param returnType  desired type to create
+		 * @param pClazz generic type variable
+		 * @param ret  object to unmarshal
+		 * @return   unmarshaled object
+		 */
+		private Object buildProxies(Class<?> returnType, Type genericType, Object ret) {
 			if(ret==null) return null;
-			if(returnType.equals(Integer.class)) 	return (T)Integer.valueOf(ret.toString());
-			else if( Collection.class.isAssignableFrom(returnType) && type instanceof ParameterizedType ) {
-				Class<?> pClazz = (Class<?>)((ParameterizedType)type).getActualTypeArguments()[0];
+			if( Collection.class.isAssignableFrom(returnType) && genericType instanceof ParameterizedType) {
+				 Class<?> pClazz = (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
+				 if(IRemoteObject.class.isAssignableFrom(pClazz)) {
+					List<Object> list = new ArrayList<Object>();
+					for(Object sp : (Collection<?>)ret)  
+						list.add(  buildProxies(pClazz, pClazz, sp) );
+					return list;
+				} 
+			} else if( returnType.isArray() && IRemoteObject.class.isAssignableFrom(returnType.getComponentType())) {
+				List<?> list = (List<?>)ret;
+				Object[] array = new Object[list.size()];
+				for(int k=0; k<list.size(); k++)	
+					array[k] = buildProxies(returnType.getComponentType(), genericType, list.get(k));
+				 return array;
+			}
+			if(IRemoteObject.class.isAssignableFrom(returnType))	
+				return getProxy(returnType, ret.toString());
+			return ret;
+		}
+		
+		/**
+		 * Unmarshal SOAP response
+		 * @param returnType  desired type to create
+		 * @param pClazz generic type variable
+		 * @param ret  object to unmarshal
+		 * @return   unmarshaled object
+		 * @deprecated
+		 */
+		@SuppressWarnings("unchecked") 
+		private <T> Object unmarshal(Class<T> returnType, Type genericType, Object ret) {
+			if(ret==null) return null;
+			if( Collection.class.isAssignableFrom(returnType) && genericType instanceof ParameterizedType) {
+				 Class<?> pClazz = (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
 				List<Object> list = new ArrayList<Object>();
-				if(Collection.class.isAssignableFrom(ret.getClass()))  for(Object sp : (Collection<?>)ret)  list.add(  unmarshall(pClazz, type, sp) );
-				else list.add( unmarshall(pClazz, type, ret) );
+				for(Object sp : (Collection<?>)ret)  
+					list.add(  unmarshal(pClazz, pClazz, sp) ); //multiple elements
 				return list;
 			} else if( returnType.isArray()) {
-				Object[] array = new Object[((List<?>)ret).size()];
-				for(int k=0; k<((List<?>)ret).size(); k++)	array[k] = unmarshall(returnType.getComponentType(), type, ((List<?>)ret).get(k)); 
-				return array;
-			} 	else if(returnType.equals(Boolean.class)) 	return Boolean.valueOf(ret.toString());
-			else if(returnType.equals(String.class))	return ret.toString();
-			else if(IRemoteObject.class.isAssignableFrom(returnType))	return getProxy(returnType, ret.toString());
+				List<?> list = (List<?>)ret;
+				Object[] array = new Object[list.size()];
+				for(int k=0; k<list.size(); k++)	
+					array[k] = unmarshal(returnType.getComponentType(), genericType, list.get(k));
+				 return array;
+			} else if(returnType.equals(Boolean.class)) 	
+				return (T)Boolean.valueOf(ret.toString());
+			else if(returnType.equals(Integer.class)) 	
+				return (T)Integer.valueOf(ret.toString());
+			else if(returnType.equals(Long.class)) 	
+				return (T)Long.valueOf(ret.toString());
+			else if(returnType.equals(String.class))	
+				return (T)ret.toString();
+			else if(IRemoteObject.class.isAssignableFrom(returnType))	
+				return (T)getProxy(returnType, ret.toString());
 			else if(returnType.isEnum()) {
 				for( Object element : returnType.getEnumConstants()) 
 					if( element.toString().equals( ret.toString() ) ) 
-						return element;
+						return (T)element;
 			}
-			return ret;
+			return (T)ret;
 		}
 	}
 }

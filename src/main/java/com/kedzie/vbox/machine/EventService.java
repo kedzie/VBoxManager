@@ -8,7 +8,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.util.Log;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IEvent;
@@ -24,42 +23,47 @@ public class EventService extends Service{
 	private HandlerThread _ht= new HandlerThread(TAG, HandlerThread.MIN_PRIORITY);
 	private boolean _running=true;
 	private Messenger _messenger;
+	private VBoxSvc _vmgr;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.i(TAG, "onBind");
+		_messenger = intent.getParcelableExtra("listener"); 
+		_vmgr = intent.getParcelableExtra("vmgr");
 		_ht.start();
 		Handler h = new Handler(_ht.getLooper()) {
-			@Override public void handleMessage(Message msg) {
-				VBoxSvc _vmgr = msg.getData().getParcelable("vmgr");
-				_messenger = msg.getData().getParcelable("listener"); 
+			@Override 
+			public void handleMessage(Message msg) {
 				IEventSource evSource = _vmgr.getVBox().getEventSource();
 				IEventListener listener = evSource.createListener();
 				IEvent event = null;
 				try {
 					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.MACHINE_EVENT }, false);
 					while(_running) {
-							if((event=_vmgr.getEventProxy(evSource.getEvent(listener, 0)))!=null) {
+							if((event=evSource.getEvent(listener, 0))!=null) {
 								BundleBuilder b = new BundleBuilder().putString("evt", event.getIdRef());
 								if(event instanceof IMachineEvent) b.putString("machine",  _vmgr.getVBox().findMachine(((IMachineEvent)event).getMachineId()).getIdRef());
 								synchronized(EventService.class) {
-									if(_messenger!=null && _running)  b.sendMessage(_messenger, WHAT_EVENT);
+									if(_messenger!=null && _running)  
+										b.sendMessage(_messenger, WHAT_EVENT);
 								}
 								evSource.eventProcessed(listener, event); 
 							} else
 								Thread.sleep(INTERVAL);
 					}
-					if(listener!=null && evSource!=null) evSource.unregisterListener(listener);
 				} catch (Throwable e) {} 
+				finally {
+					try {
+						if(listener!=null && evSource!=null)  evSource.unregisterListener(listener);
+					} catch (Throwable e) {}
+				}
 			}
 		};
-		new BundleBuilder().putAll(intent.getExtras()).sendMessage(h, 0);
+		h.sendEmptyMessage(0);
 		return new LocalBinder();
 	}
 	
 	@Override
 	public boolean onUnbind(Intent intent) {
-		Log.i(TAG, "onUnbind");
 		_running=false;
 		_ht.quit();
 		return super.onUnbind(intent);

@@ -22,43 +22,7 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 	private MetricView cpuView, ramView;
 	private MetricThread _thread;
 	private GestureDetector detector;
-	ViewFlipper vf;
-	
-	class MetricThread extends Thread {
-		boolean _running=true;
-		private VBoxSvc _vmgr;
-		private MetricView []_views;
-		private String _object;
-		private int _count, _period;
-		private Handler _handler =new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
-				for(MetricView v : _views) 	v.invalidate();
-			}
-		};
-		
-		public MetricThread(VBoxSvc vmgr, String object, int count, int period, MetricView...views){
-			_vmgr=vmgr;
-			_object=object;
-			_period=period;
-			_count=count;
-			_views=views;
-		}
-		
-		@Override
-		public void run() {
-			while(_running) {
-				try {
-					Map<String, Map<String, Object>> data = _vmgr.queryMetricsData(_object, _count, _period, "*:");
-					for(MetricView v : _views) 	v.setData(data);
-					_handler.sendEmptyMessage(1);
-					Thread.sleep(_period*1000);
-				} catch (Exception e) {
-					Log.e(TAG, "", e);
-				}
-			}
-		}
-	};
+	private ViewFlipper vf;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,4 +87,45 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 	
 	public VBoxApplication getApp() {  return (VBoxApplication)getApplication();  }
 
+	/**
+	 * 
+	 * @author Marek Kedzierski
+	 * @Aug 16, 2011
+	 */
+	class MetricThread extends Thread {
+		boolean _running=true;
+		private VBoxSvc _vmgr;
+		private MetricView []_views;
+		private String _object;
+		private int _count, _period;
+		private Handler _handler =new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				for(MetricView v : _views) 	v.invalidate();
+			}
+		};
+		
+		public MetricThread(VBoxSvc vmgr, String object, int count, int period, MetricView...views){
+			_vmgr=vmgr;
+			_object=object;
+			_period=period;
+			_count=count;
+			_views=views;
+		}
+		
+		@Override
+		public void run() {
+			while(_running) {
+				try {
+					Map<String, Map<String, Object>> data = _vmgr.queryMetricsData(_object, _count, _period, "*:");
+					for(MetricView v : _views) 	
+						v.setData(data);
+					_handler.sendEmptyMessage(1);
+					Thread.sleep(_period*1000);
+				} catch (Exception e) {
+					Log.e(TAG, "", e);
+				}
+			}
+		}
+	};
 }

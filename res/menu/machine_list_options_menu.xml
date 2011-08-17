@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/machine_list_option_menu_refresh" android:icon="@drawable/ic_menu_refresh"/>
-    <item android:icon="@drawable/ic_menu_metric" android:id="@+id/machine_list_option_menu_metrics"/>
-    <item android:icon="@drawable/ic_menu_preferences" android:id="@+id/machine_list_option_menu_preferences"/>
+    <item android:id="@+id/machine_list_option_menu_refresh" android:icon="@drawable/ic_menu_refresh" android:title="Refresh"/>
+    <item android:icon="@drawable/ic_menu_metric" android:id="@+id/machine_list_option_menu_metrics"  android:title="Metrics"/>
+    <item android:icon="@drawable/ic_menu_preferences" android:id="@+id/machine_list_option_menu_preferences"  android:title="Settings"/>
 </menu>

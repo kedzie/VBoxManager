@@ -19,7 +19,7 @@ public interface IMachine extends IRemoteObject {
 	public Integer getMemoryBalloonSize();
 	public Integer getVRAMSize();
 	
-	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") String type) throws IOException;
+	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") LaunchMode type) throws IOException;
 	public void lockMachine(@KSOAP("session")ISession s, @KSOAP("lockType")LockType lockType) throws IOException;
 	
 	@KSOAP(cache=true) public ISnapshot getCurrentSnapshot();
@@ -29,5 +29,5 @@ public interface IMachine extends IRemoteObject {
 	public Map<String, List<String>> querySavedScreenshotPNGSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	public Map<String, List<String>> readSavedScreenshotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	public String queryLogFilename(@KSOAP(type="unsignedInt", value="idx") int idx);
-	public String readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size);
+	public byte[] readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size);
 }
