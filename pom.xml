@@ -33,7 +33,7 @@
 				<artifactId>maven-android-plugin</artifactId>
 				<version>3.0.0-alpha-2</version>
 				<configuration>
-					<sdk><platform>8</platform></sdk>
+					<sdk><platform>10</platform></sdk>
 					<sign><debug>false</debug></sign>
 					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>false</undeployBeforeDeploy>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>2.2.1</version>
+			<version>2.3.3</version>
 			<scope>provided</scope>
 		</dependency>
 <!-- 		<dependency> -->
@@ -83,11 +83,11 @@
 	</dependencies>
 
 	<repositories>
-		<repository>
-	      		<id>googlecode-ksoap2-android</id>
-	      		<name>googlecode-ksoap2-android</name>
-	      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
-	    	</repository>
+<!-- 		<repository> -->
+<!-- 	      		<id>googlecode-ksoap2-android</id> -->
+<!-- 	      		<name>googlecode-ksoap2-android</name> -->
+<!-- 	      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url> -->
+<!-- 	    	</repository> -->
 		<repository>
 	      		<id>codehause</id>
 	      		<name>codehaus</name>

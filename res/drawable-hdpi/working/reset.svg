@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="reset.svg"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-hdpi/ic_list_reset_blue.png"
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_reset_c.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    style="enable-background:new"
@@ -66,8 +66,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="13.32"
-     inkscape:cx="22.603866"
-     inkscape:cy="24.474564"
+     inkscape:cx="9.7660282"
+     inkscape:cy="25.375465"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="true"
@@ -118,7 +118,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Overlay"
-     style="display:inline;filter:url(#filter2995);opacity:0.37117904">
+     style="opacity:0.25;display:inline;filter:url(#filter2995)">
     <path
        transform="translate(0,16)"
        id="path2992"

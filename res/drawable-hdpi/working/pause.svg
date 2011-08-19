@@ -17,9 +17,10 @@
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="pause.svg"
    style="enable-background:new"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/res/drawable-hdpi/ic_list_pause_small.png"
-   inkscape:export-xdpi="45"
-   inkscape:export-ydpi="45">
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_pause_c.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   enable-background="new">
   <defs
      id="defs4">
     <linearGradient
@@ -43,6 +44,15 @@
        y2="1051.3622"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.5333333,0,0,1.5333333,-0.53333333,-1581.0887)" />
+    <filter
+       inkscape:collect="always"
+       id="filter3764">
+      <feBlend
+         inkscape:collect="always"
+         mode="lighten"
+         in2="BackgroundImage"
+         id="feBlend3766" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -52,8 +62,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="15.499435"
-     inkscape:cy="25.107507"
+     inkscape:cx="17.71075"
+     inkscape:cy="26.087927"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="true"
@@ -90,7 +100,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1004.3622)"
-     style="display:none">
+     style="display:inline">
     <path
        inkscape:connector-curvature="0"
        style="fill:#ffcc00;fill-opacity:1;fill-rule:evenodd;stroke:none"
@@ -101,13 +111,25 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Overlay"
-     style="display:inline"
+     style="display:inline;filter:url(#filter3764);opacity:0.8"
      transform="translate(0,16)">
     <path
        id="path3780"
        d="M 4.30625,-15 C 2.4657394,-15 1,-13.632267 1,-11.933333 L 1,27.933333 C 1,29.632267 2.4657394,31 4.30625,31 l 13.320833,0 c 1.840511,0 3.30625,-1.367733 3.30625,-3.066667 l 0,-39.866666 C 20.933333,-13.632267 19.467594,-15 17.627083,-15 L 4.30625,-15 z m 27.647917,0 C 30.100785,-15 28.6,-13.632267 28.6,-11.933333 l 0,39.866666 C 28.6,29.632267 30.100785,31 31.954167,31 l 11.691666,0 C 45.499219,31 47,29.632267 47,27.933333 l 0,-39.866666 C 47,-13.632267 45.499219,-15 43.645833,-15 l -11.691666,0 z"
        style="fill:url(#linearGradient3806);fill-opacity:1;fill-rule:evenodd;stroke:none"
        inkscape:connector-curvature="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Gray"
+     style="display:none">
+    <path
+       transform="translate(0,16)"
+       inkscape:connector-curvature="0"
+       style="fill:url(#linearGradient3806);fill-opacity:1;fill-rule:evenodd;stroke:none;display:inline;enable-background:new"
+       d="M 4.30625,-15 C 2.4657394,-15 1,-13.632267 1,-11.933333 L 1,27.933333 C 1,29.632267 2.4657394,31 4.30625,31 l 13.320833,0 c 1.840511,0 3.30625,-1.367733 3.30625,-3.066667 l 0,-39.866666 C 20.933333,-13.632267 19.467594,-15 17.627083,-15 L 4.30625,-15 z m 27.647917,0 C 30.100785,-15 28.6,-13.632267 28.6,-11.933333 l 0,39.866666 C 28.6,29.632267 30.100785,31 31.954167,31 l 11.691666,0 C 45.499219,31 47,29.632267 47,27.933333 l 0,-39.866666 C 47,-13.632267 45.499219,-15 43.645833,-15 l -11.691666,0 z"
+       id="path3761" />
   </g>
   <g
      inkscape:groupmode="layer"

@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="running.svg"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-mdpi/ic_list_start_small.png"
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-mdpi/ic_list_start_small_c.png"
    inkscape:export-xdpi="45"
    inkscape:export-ydpi="45"
    enable-background="new">
@@ -69,18 +69,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16.150801"
-     inkscape:cx="8.4827006"
-     inkscape:cy="18.824576"
+     inkscape:cx="17.762859"
+     inkscape:cy="16"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer4"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
-     inkscape:window-width="1454"
-     inkscape:window-height="788"
-     inkscape:window-x="121"
-     inkscape:window-y="47"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1906"
+     inkscape:window-height="951"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
      inkscape:snap-nodes="true">
     <inkscape:grid
        type="xygrid"
@@ -107,7 +107,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1020.3622)"
-     style="display:none">
+     style="display:inline">
     <rect
        style="fill:#000000;fill-opacity:1"
        id="rect3866"
@@ -129,7 +129,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Overlay"
-     style="display:inline;filter:url(#filter3806)">
+     style="display:inline;filter:url(#filter3806);opacity:0.65065502">
     <path
        transform="translate(0,-1020.3622)"
        sodipodi:nodetypes="cccccccccc"

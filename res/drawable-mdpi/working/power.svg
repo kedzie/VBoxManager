@@ -17,9 +17,9 @@
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="power.svg"
    enable-background="new"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-mdpi/ic_list_power.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-mdpi/ic_list_acpi_small_c.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -56,6 +56,15 @@
        y2="31"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.000813,0,0,0.99514565,-7.931708e-4,0.00485435)" />
+    <filter
+       inkscape:collect="always"
+       id="filter3767">
+      <feBlend
+         inkscape:collect="always"
+         mode="lighten"
+         in2="BackgroundImage"
+         id="feBlend3769" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -65,10 +74,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="14.276023"
-     inkscape:cx="0.3466285"
-     inkscape:cy="14.472244"
+     inkscape:cx="17.048309"
+     inkscape:cy="16.153384"
      inkscape:document-units="px"
-     inkscape:current-layer="layer6"
+     inkscape:current-layer="layer3"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
@@ -106,7 +115,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Shape"
-     style="display:none">
+     style="display:inline">
     <path
        inkscape:connector-curvature="0"
        style="fill:#3366cc;fill-opacity:1;stroke:none"
@@ -117,12 +126,23 @@
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="Overlay"
-     style="display:inline">
+     style="display:inline;filter:url(#filter3767);opacity:0.25">
     <path
        id="path6359"
        d="M 15.987805,1.1456311 C 7.6967988,1.1456311 0.97560985,7.8287594 0.97560985,16.072815 0.97560985,24.316872 7.6967988,31 15.987805,31 24.278811,31 31,24.316872 31,16.072815 31,7.8287594 24.278811,1.1456311 15.987805,1.1456311 z m 0,4.9757282 c 0.55445,0 1.000813,0.88767 1.000813,1.9902913 l 0,5.9708734 c 0,1.102621 -0.446363,1.990291 -1.000813,1.990291 -0.55445,0 -1.000813,-0.88767 -1.000813,-1.990291 l 0,-5.9708734 c 0,-1.1026213 0.446363,-1.9902913 1.000813,-1.9902913 z M 10.57716,10.226335 a 1.0009131,0.99524516 0 0 1 0.09383,0 1.0009131,0.99524516 0 0 1 0.719334,1.772603 c -2.5488532,2.53442 -2.5488532,6.60848 0,9.1429 2.548854,2.53442 6.646116,2.53442 9.19497,0 2.548853,-2.53442 2.548853,-6.60848 0,-9.1429 a 1.0009131,0.99524516 0 1 1 1.407393,-1.399424 c 3.313773,3.295008 3.313773,8.64674 0,11.941748 -1.656887,1.647504 -3.825674,2.487864 -6.004878,2.487864 -2.179204,0 -4.347991,-0.84036 -6.0048779,-2.487864 -3.3137731,-3.295008 -3.3137731,-8.64674 0,-11.941748 A 1.0009131,0.99524516 0 0 1 10.57716,10.226335 z"
        style="fill:url(#linearGradient3768);fill-opacity:1;stroke:none"
        inkscape:connector-curvature="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Gray"
+     style="display:none">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:url(#linearGradient3768);fill-opacity:1;stroke:none;display:inline"
+       d="M 15.987805,1.1456311 C 7.6967988,1.1456311 0.97560985,7.8287594 0.97560985,16.072815 0.97560985,24.316872 7.6967988,31 15.987805,31 24.278811,31 31,24.316872 31,16.072815 31,7.8287594 24.278811,1.1456311 15.987805,1.1456311 z m 0,4.9757282 c 0.55445,0 1.000813,0.88767 1.000813,1.9902913 l 0,5.9708734 c 0,1.102621 -0.446363,1.990291 -1.000813,1.990291 -0.55445,0 -1.000813,-0.88767 -1.000813,-1.990291 l 0,-5.9708734 c 0,-1.1026213 0.446363,-1.9902913 1.000813,-1.9902913 z M 10.57716,10.226335 a 1.0009131,0.99524516 0 0 1 0.09383,0 1.0009131,0.99524516 0 0 1 0.719334,1.772603 c -2.5488532,2.53442 -2.5488532,6.60848 0,9.1429 2.548854,2.53442 6.646116,2.53442 9.19497,0 2.548853,-2.53442 2.548853,-6.60848 0,-9.1429 a 1.0009131,0.99524516 0 1 1 1.407393,-1.399424 c 3.313773,3.295008 3.313773,8.64674 0,11.941748 -1.656887,1.647504 -3.825674,2.487864 -6.004878,2.487864 -2.179204,0 -4.347991,-0.84036 -6.0048779,-2.487864 -3.3137731,-3.295008 -3.3137731,-8.64674 0,-11.941748 A 1.0009131,0.99524516 0 0 1 10.57716,10.226335 z"
+       id="path3764" />
   </g>
   <g
      inkscape:label="Inner Shadow"

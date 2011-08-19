@@ -7,8 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import com.kedzie.vbox.R;
@@ -28,13 +28,11 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.metric);
-//		setContentView(R.layout.flipper);
-//        vf = (ViewFlipper)findViewById(R.id.viewflipper);
-//        getLayoutInflater().inflate(R.layout.metric, vf, true);
-//        vf.setAnimateFirstView(true);
-//        vf.setInAnimation(this, android.R.anim.slide_in_left);
-//        vf.setOutAnimation(this, android.R.anim.slide_out_right);
+//		setContentView(R.layout.metric);
+		setContentView(R.layout.flipper);
+        vf = (ViewFlipper)findViewById(R.id.viewflipper);
+        getLayoutInflater().inflate(R.layout.metric, vf, true);
+        vf.setAnimateFirstView(true);
         detector = new GestureDetector(this, this);
 		
 		VBoxSvc vmgr = getIntent().getParcelableExtra("vmgr");
@@ -70,10 +68,14 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		if( e1.getX() > e2.getX() ) { //left fling
 			Log.i(TAG, "Left Fling");
-//			vf.showPrevious();
+			vf.setInAnimation(this, R.anim.slide_in_right);
+			vf.setOutAnimation(this, R.anim.slide_out_left);
+			vf.showPrevious();
 		} else { //right fling
 			Log.i(TAG, "Right Fling");
-//			vf.showNext();
+			vf.setInAnimation(this, R.anim.slide_in_left);
+			vf.setOutAnimation(this, R.anim.slide_out_right);
+			vf.showNext();
 		}
 		return true;
 	}
