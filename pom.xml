@@ -3,7 +3,7 @@
 	
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android</artifactId>
-	<version>1.9</version>
+	<version>1.9.1</version>
 	<packaging>apk</packaging>
 	<name>VirtualBox Manager</name>
 
@@ -65,11 +65,6 @@
 			<version>2.3.3</version>
 			<scope>provided</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!--       		<groupId>com.google.code.ksoap2-android</groupId> -->
-<!--       		<artifactId>ksoap2-android</artifactId> -->
-<!--       		<version>2.5.7</version> -->
-<!--     	</dependency> -->
 <!--     	<dependency> -->
 <!--       		<groupId>com.sun.xml.bind</groupId> -->
 <!--       		<artifactId>jaxb-xjc</artifactId> -->

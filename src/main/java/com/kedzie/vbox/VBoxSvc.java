@@ -83,18 +83,4 @@ public class VBoxSvc implements Parcelable {
 	
 	public IVirtualBox getVBox() { return _vbox;	}
 	public String getURL() { return _url; }
-	
-	/** @deprecated */
-	public IEvent getEventProxy(String id) {
-		IEvent event = getProxy(IEvent.class, id);
-		if(event.getType().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) return getProxy( IMachineStateChangedEvent.class, id );
-		else if(event.getType().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))	return getProxy( ISessionStateChangedEvent.class, id );
-		return event;
-	}
-	
-	/** @deprecated */
-	public IEvent getEventProxy(IEvent event) {
-		if(event==null) return null;
-		return getEventProxy(event.getIdRef());
-	}
 }

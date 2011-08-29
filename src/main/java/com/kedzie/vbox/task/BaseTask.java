@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import com.kedzie.vbox.BaseListActivity;
+import com.kedzie.vbox.BaseActivity;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IProgress;
@@ -24,7 +24,7 @@ import com.kedzie.vbox.api.IProgress;
  */
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 		private static final String TAG = "vbox."+BaseTask.class.getSimpleName();
-		protected final static int PROGRESS_INTERVAL = 200;
+		protected final static int PROGRESS_INTERVAL = 100;
 		
 		protected Context context;
 		protected VBoxSvc _vmgr;
@@ -57,7 +57,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		protected void showAlert(Throwable e) {
 			Log.e(TAG, e.getMessage(), e);
 			while(e.getCause()!=null) e = e.getCause();
-			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseListActivity.WHAT_ERROR);
+			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseActivity.WHAT_ERROR);
 		}
 		
 		protected IProgress handleProgress(IProgress p)  throws IOException {
@@ -77,10 +77,11 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		@Override
 		protected void onProgressUpdate(IProgress... p) {
 			try {
+				pDialog.setCancelable(p[0].getCancelable());
 				pDialog.setTitle(p[0].getDescription());
 				pDialog.setMessage(p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription());
-				pDialog.setProgress(p[0].getPercent());
-				pDialog.setSecondaryProgress(p[0].getOperationPercent());
+				pDialog.setProgress(p[0].getOperationPercent());
+				pDialog.setSecondaryProgress(p[0].getPercent());
 			} catch (IOException e) {
 				showAlert(e);
 			}
@@ -88,7 +89,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		
 		@Override
 		protected void onPreExecute()		{
-			pDialog.show();
+				pDialog.show();
 		}
 		
 		@Override

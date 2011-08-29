@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine;
 
 import java.io.IOException;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,8 +22,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import com.kedzie.vbox.BaseListActivity;
+import com.kedzie.vbox.BaseActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
@@ -37,18 +39,20 @@ import com.kedzie.vbox.server.PreferencesActivity;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
-public class MachineActivity extends BaseListActivity<String>  implements AdapterView.OnItemClickListener {
+public class MachineActivity extends BaseActivity  implements AdapterView.OnItemClickListener {
 	protected static final String TAG = MachineActivity.class.getSimpleName();
 	
 	private VBoxSvc _vmgr;
 	private IMachine _machine;
 	private EventService eventService;
 	private MachineView _headerView;
+	private ListView _listView;
 	private Messenger _messenger = new Messenger( new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch(msg.what){
 			case EventService.WHAT_EVENT:
+				Log.d(TAG, "Got Event");
 					IEvent event = _vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
 					if(event instanceof IMachineStateChangedEvent)
 						updateState();
@@ -71,19 +75,16 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
         super.onCreate(savedInstanceState);
         _vmgr =getIntent().getParcelableExtra("vmgr");
 		_machine = _vmgr.getProxy(IMachine.class, getIntent().getStringExtra("machine"));
-		
-		_headerView = new MachineView(this);
-//		View _headerView = getLayoutInflater().inflate(R.layout.machine_list_item, getListView(), false);
-//		((ImageView)_headerView.findViewById(R.id.machine_list_item_ostype)).setImageResource(VBoxApplication.get("os_"+_machine.getOSTypeId().toLowerCase()));
-//		((TextView) _headerView.findViewById(R.id.machine_list_item_name)).setText(_machine.getName()); 
-		getListView().addHeaderView(_headerView);
-		
-		getListView().setOnItemClickListener(this);
+		setContentView(R.layout.server_list);
+		_headerView = new MachineView(getApp(), this);
+		_listView = (ListView)findViewById(R.id.list);
+		_listView.addHeaderView(_headerView);
+		_listView.setOnItemClickListener(this);
     }
 	
 	@Override 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		String action = (String)getListView().getAdapter().getItem(position);
+		String action = (String)_listView.getAdapter().getItem(position);
 		if(action.equals("Start"))	
 			new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
 		else if(action.equals("Power Off"))	
@@ -106,26 +107,29 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 			((Button)dialog.findViewById(R.id.button_save)).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					dialog.dismiss();
 					new MachineTask(MachineActivity.this, _vmgr, "Taking Snapshot", false) {	
 						protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { 	
 							return console.takeSnapshot( ((TextView)dialog.findViewById(R.id.snapshot_name)).getText().toString(),  ((TextView)dialog.findViewById(R.id.snapshot_description)).getText().toString()); 
-						}}.execute(_machine);							
+						}
+					}.execute(_machine);							
 				}
 			});
 			((Button)dialog.findViewById(R.id.button_cancel)).setOnClickListener(new View.OnClickListener() { public void onClick(View v) { dialog.dismiss(); } });
+			dialog.show();
 		}
 	}
 	
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onResume() {
+		super.onResume();
 		updateState();
 		bindService(new Intent(this, EventService.class), localConnection, Context.BIND_AUTO_CREATE);
 	}
 	
 	@Override
-	protected void onStop() {
-		eventService.setMessenger(null);
+	protected void onPause() {
+		if(eventService!=null) eventService.setMessenger(null);
 		unbindService(localConnection);
 		try {
 			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
@@ -133,23 +137,24 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 		} catch (IOException e) {
 			showAlert(e);
 		}
-		super.onStop();
+		super.onPause();
 	}
 	
 	private void updateState() {
 		_machine.clearCache();
-		MachineState state = _machine.getState();
-		Log.i(TAG, "Update state: " + state);
 		_headerView.update(_machine);
-//		((ImageView)getListView().findViewById(R.id.machine_list_item_state)).setImageResource( VBoxApplication.get(state) );
-//		((TextView)getListView().findViewById(R.id.machine_list_item_state_text)).setText(state.name());
-//		if(_machine.getCurrentSnapshot()!=null)  ((TextView) getListView().findViewById(R.id.machine_list_item_snapshot)).setText("("+_machine.getCurrentSnapshot().getName() + ")");		
-		setListAdapter(new MachineActionAdapter(this, VBoxApplication.getActions(state)));
+		_listView.setAdapter(new MachineActionAdapter(this, getApp().getActions(_machine.getState())));
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.machine_options_menu, menu);
+		return true;
+	}
+	
+	@Override 
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.findItem(R.id.machine_option_menu_metrics).setEnabled(_machine.getState().equals(MachineState.RUNNING));
 		return true;
 	}
 
@@ -159,13 +164,18 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 		case R.id.machine_option_menu_refresh:
 			updateState();
 			return true;
+		case R.id.machine_option_menu_info:
+			startActivity(new Intent(this, MachineInfoActivity.class).putExtra("vmgr", _vmgr).putExtra("machine", _machine.getIdRef()));
+			return true;
+		case R.id.machine_option_menu_snapshots:
+			startActivity(new Intent(this, SnapshotActivity.class).putExtra("vmgr", _vmgr).putExtra("machine", _machine.getIdRef()));
+			return true;
 		case R.id.machine_option_menu_metrics:
-			startActivity(new Intent(this, MetricActivity.class).putExtra("vmgr", _vmgr)
+			startActivity(new Intent(this, MetricActivity.class).putExtra("vmgr", _vmgr).putExtra("title", _machine.getName() + " Metrics")
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize())
 				.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
-				.putExtra("title", _machine.getName() + " Metrics")
-				.putExtra("cpuMetrics" , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
-				.putExtra("ramMetrics" , new String[] {  "Guest/RAM/Usage/Shared", "Guest/RAM/Usage/Cache" } ) );
+				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
+				.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "Guest/RAM/Usage/Shared", "Guest/RAM/Usage/Cache" } ) );
 			return true;
 		case R.id.machine_option_menu_preferences:
 			startActivity(new Intent(this, PreferencesActivity.class));
@@ -187,7 +197,7 @@ public class MachineActivity extends BaseListActivity<String>  implements Adapte
 			if (view == null) { 
 				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
 				((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position));
-				((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( VBoxApplication.get(getItem(position)));
+				((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().get(getItem(position)));
 			}
 			return view;
 		}

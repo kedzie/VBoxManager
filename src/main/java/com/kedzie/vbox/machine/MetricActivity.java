@@ -1,5 +1,7 @@
 package com.kedzie.vbox.machine;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,15 +11,19 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricActivity extends Activity  implements OnGestureListener   {
 	private static final String TAG = "vbox."+MetricActivity.class.getSimpleName();
-	public static final String INTENT_OBJECT = "object",  INTENT_RAM_AVAILABLE = "ram_available";
+	public static final String INTENT_OBJECT = "object",  INTENT_RAM_AVAILABLE = "ram_available", INTENT_RAM_METRICS="ram_metrics", INTENT_CPU_METRICS="cpu_metrics";
 	
 	private MetricView cpuView, ramView;
 	private MetricThread _thread;
@@ -28,11 +34,26 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-//		setContentView(R.layout.metric);
 		setContentView(R.layout.flipper);
-        vf = (ViewFlipper)findViewById(R.id.viewflipper);
-        getLayoutInflater().inflate(R.layout.metric, vf, true);
-        vf.setAnimateFirstView(true);
+		vf = (ViewFlipper)findViewById(R.id.viewflipper);
+	    vf.setAnimateFirstView(true);
+		((ImageButton)findViewById(R.id.left_button)).setOnClickListener(new OnClickListener() {
+			@Override 
+			public void onClick(View v) {
+				vf.setInAnimation(MetricActivity.this, R.anim.slide_in_right);
+				vf.setOutAnimation(MetricActivity.this, R.anim.slide_out_left);
+				vf.showPrevious();
+			}
+		});
+		((ImageButton)findViewById(R.id.right_button)).setOnClickListener(new OnClickListener() {
+			@Override 
+			public void onClick(View v) {
+				vf.setInAnimation(MetricActivity.this, R.anim.slide_in_left);
+				vf.setOutAnimation(MetricActivity.this, R.anim.slide_out_right);
+				vf.showNext();
+			}
+		});
+		
         detector = new GestureDetector(this, this);
 		
 		VBoxSvc vmgr = getIntent().getParcelableExtra("vmgr");
@@ -43,10 +64,18 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 		int count =getApp().getCount();
 		int period = getApp().getPeriod();
 		cpuView = (MetricView)findViewById(R.id.cpu_metrics);
-		cpuView.init(count, period, 100000L, getIntent().getStringArrayExtra("cpuMetrics"));
-		ramView = (MetricView)findViewById(R.id.ram_metrics);
-		ramView.init(count, period, getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0)*1000, getIntent().getStringArrayExtra("ramMetrics"));
-		
+		String []cpuMetrics = getIntent().getStringArrayExtra(INTENT_CPU_METRICS);
+		String [] ramMetrics = getIntent().getStringArrayExtra(INTENT_RAM_METRICS);
+		String object = getIntent().getStringExtra(INTENT_OBJECT);
+		try {
+			List<IPerformanceMetric> cpumetrics = vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, new String [] { object });
+			cpuView.init(count, period, 100000L, cpuMetrics, cpumetrics.get(0));
+			List<IPerformanceMetric> rammetrics = vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, new String [] { object });
+			ramView = (MetricView)findViewById(R.id.ram_metrics);
+			ramView.init(count, period, getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0)*1000, ramMetrics, rammetrics.get(0));
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
 		_thread = new MetricThread(vmgr, getIntent().getStringExtra(INTENT_OBJECT), count, period, cpuView, ramView);
 		_thread.start();
 	}
@@ -67,12 +96,10 @@ public class MetricActivity extends Activity  implements OnGestureListener   {
 	@Override 
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		if( e1.getX() > e2.getX() ) { //left fling
-			Log.i(TAG, "Left Fling");
 			vf.setInAnimation(this, R.anim.slide_in_right);
 			vf.setOutAnimation(this, R.anim.slide_out_left);
 			vf.showPrevious();
 		} else { //right fling
-			Log.i(TAG, "Right Fling");
 			vf.setInAnimation(this, R.anim.slide_in_left);
 			vf.setOutAnimation(this, R.anim.slide_out_right);
 			vf.showNext();

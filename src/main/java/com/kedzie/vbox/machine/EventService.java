@@ -8,6 +8,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.util.Log;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IEvent;
@@ -40,11 +41,14 @@ public class EventService extends Service{
 					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.MACHINE_EVENT }, false);
 					while(_running) {
 							if((event=evSource.getEvent(listener, 0))!=null) {
+								Log.d(TAG, "Get Event: " + event.getType());
 								BundleBuilder b = new BundleBuilder().putString("evt", event.getIdRef());
 								if(event instanceof IMachineEvent) b.putString("machine",  _vmgr.getVBox().findMachine(((IMachineEvent)event).getMachineId()).getIdRef());
 								synchronized(EventService.class) {
-									if(_messenger!=null && _running)  
+									if(_messenger!=null && _running)  {
+										Log.d(TAG, "Sending Message");
 										b.sendMessage(_messenger, WHAT_EVENT);
+									}
 								}
 								evSource.eventProcessed(listener, event); 
 							} else
@@ -64,12 +68,14 @@ public class EventService extends Service{
 	
 	@Override
 	public boolean onUnbind(Intent intent) {
+		Log.i(TAG, "Destroying Event Service");
 		_running=false;
 		_ht.quit();
 		return super.onUnbind(intent);
 	}
 	
 	public synchronized void setMessenger(Messenger m) {
+		Log.i(TAG, "Setting event listener: " + m);
 		_messenger = m;
 	}
 	

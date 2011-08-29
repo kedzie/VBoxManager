@@ -15,7 +15,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import android.util.Log;
+import android.os.Parcel;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IRemoteObject;
@@ -23,24 +23,33 @@ import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 
 public class KSOAPTransport {
-		private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
+//	private static final String TAG = "vbox."+KSOAPTransport.class.getSimpleName();
 	private static final int TIMEOUT = 60000;
 	private static final String NAMESPACE = "http://www.virtualbox.org/";
 	private HttpTransportSE transport;
+	private String _url;
 	
-	public KSOAPTransport(String url) { 
+	public KSOAPTransport(String url) {
+		_url=url;
 		this.transport = new HttpTransportSE(url, TIMEOUT);	
 	}
 	
 	public <T> T getProxy(Class<T> clazz, String id) {
-		T proxy = clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new SOAPInvocationHandler(id, clazz)));
+		return getJavaProxy(clazz, id, null);
+	}
+	
+	public <T> T getProxy(Class<T> clazz, String id, Map<String, Object> cache) {
+		return getJavaProxy(clazz, id, cache);
+	}
+	
+	private <T> T getJavaProxy(Class<T> clazz, String id, Map<String, Object> cache) {
+		T proxy = clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new SOAPInvocationHandler(id, clazz, cache)));
 		if(IEvent.class.equals(clazz)) {
 			VBoxEventType type = ((IEvent)proxy).getType();
-			Log.i(TAG, "Creating Event proxy: " + type);
 			if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) 
-				return clazz.cast(getProxy( IMachineStateChangedEvent.class, id ));
+				return clazz.cast(getJavaProxy( IMachineStateChangedEvent.class, id, cache ));
 			else if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))	
-				return clazz.cast(getProxy( ISessionStateChangedEvent.class, id ));
+				return clazz.cast(getJavaProxy( ISessionStateChangedEvent.class, id, cache ));
 		}
 		return proxy;
 	}
@@ -53,18 +62,28 @@ public class KSOAPTransport {
 		private Class<?> type;
 		private Map<String, Object> _cache = new HashMap<String, Object>();
 		
-		public SOAPInvocationHandler(String id, Class<?> type) {
+		public SOAPInvocationHandler(String id, Class<?> type, Map<String,Object> cache) {
 			this.id=id;
 			this.type=type;
+			if(cache!=null) _cache=cache;
 		}
 		
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+			synchronized( KSOAPTransport.class ) {
 			if(method.getName().equals("getIdRef")) return this.id;
 			if(method.getName().equals("equals")) return id.equals( ((IRemoteObject)args[0]).getIdRef());
 			if(method.getName().equals("hashCode")) return id.hashCode();
 			if(method.getName().equals("toString")) return id.toString();
 			if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
+			if(method.getName().equals("describeContents")) { return 0; }
+			if(method.getName().equals("writeToParcel")) {
+				Parcel out = (Parcel)args[0];
+				out.writeString(id);
+				out.writeString(_url);
+				out.writeMap(_cache);
+				return null; 
+			}
 			KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 			if(methodKSOAP!=null && methodKSOAP.cache() && method.getName().startsWith("get") && _cache.containsKey(method.getName()))	return _cache.get(method.getName());
 			
@@ -86,6 +105,7 @@ public class KSOAPTransport {
 			ret = buildProxies( method.getReturnType(), method.getGenericReturnType(), ret );
 			if(methodKSOAP!=null && methodKSOAP.cache() && method.getName().startsWith("get")) _cache.put(method.getName(), ret);
 			return ret;
+			}
 		}
 
 		/**
@@ -141,47 +161,6 @@ public class KSOAPTransport {
 			if(IRemoteObject.class.isAssignableFrom(returnType))	
 				return getProxy(returnType, ret.toString());
 			return ret;
-		}
-		
-		/**
-		 * Unmarshal SOAP response
-		 * @param returnType  desired type to create
-		 * @param pClazz generic type variable
-		 * @param ret  object to unmarshal
-		 * @return   unmarshaled object
-		 * @deprecated
-		 */
-		@SuppressWarnings("unchecked") 
-		private <T> Object unmarshal(Class<T> returnType, Type genericType, Object ret) {
-			if(ret==null) return null;
-			if( Collection.class.isAssignableFrom(returnType) && genericType instanceof ParameterizedType) {
-				 Class<?> pClazz = (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
-				List<Object> list = new ArrayList<Object>();
-				for(Object sp : (Collection<?>)ret)  
-					list.add(  unmarshal(pClazz, pClazz, sp) ); //multiple elements
-				return list;
-			} else if( returnType.isArray()) {
-				List<?> list = (List<?>)ret;
-				Object[] array = new Object[list.size()];
-				for(int k=0; k<list.size(); k++)	
-					array[k] = unmarshal(returnType.getComponentType(), genericType, list.get(k));
-				 return array;
-			} else if(returnType.equals(Boolean.class)) 	
-				return (T)Boolean.valueOf(ret.toString());
-			else if(returnType.equals(Integer.class)) 	
-				return (T)Integer.valueOf(ret.toString());
-			else if(returnType.equals(Long.class)) 	
-				return (T)Long.valueOf(ret.toString());
-			else if(returnType.equals(String.class))	
-				return (T)ret.toString();
-			else if(IRemoteObject.class.isAssignableFrom(returnType))	
-				return (T)getProxy(returnType, ret.toString());
-			else if(returnType.isEnum()) {
-				for( Object element : returnType.getEnumConstants()) 
-					if( element.toString().equals( ret.toString() ) ) 
-						return (T)element;
-			}
-			return (T)ret;
 		}
 	}
 }

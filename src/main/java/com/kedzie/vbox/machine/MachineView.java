@@ -16,9 +16,11 @@ public class MachineView extends LinearLayout {
 	private TextView stateText;
 	private TextView nameText;
 	private TextView snapshotText;
-
-	public MachineView(Context context) {
+	private VBoxApplication _app;
+	
+	public MachineView(VBoxApplication app, Context context) {
 		super(context);
+		this._app=app;
 		LayoutInflater.from(context).inflate(R.layout.machine_list_item, this, true);
 		osIcon = (ImageView)findViewById(R.id.machine_list_item_ostype);
 		nameText =(TextView)findViewById(R.id.machine_list_item_name);
@@ -28,9 +30,9 @@ public class MachineView extends LinearLayout {
 	}
 	
 	public void update(IMachine m) {
-		osIcon.setImageResource(VBoxApplication.get("os_"+m.getOSTypeId().toLowerCase()));
+		osIcon.setImageResource(_app.get("ic_list_os_"+m.getOSTypeId().toLowerCase()));
 		nameText.setText(m.getName());
-		stateIcon.setImageResource( VBoxApplication.get(m.getState()) );
+		stateIcon.setImageResource( _app.get(m.getState()) );
 		stateText.setText(m.getState().value());
 		if(m.getCurrentSnapshot()!=null)  
 			snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")");

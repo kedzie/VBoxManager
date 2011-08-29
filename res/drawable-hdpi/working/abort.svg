@@ -17,9 +17,9 @@
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="abort.svg"
    enable-background="new"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/res/drawable-mdpi/working/abort_shadow.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_abort_small_c.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -112,8 +112,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="8.1182343"
-     inkscape:cy="23.094196"
+     inkscape:cx="24.514532"
+     inkscape:cy="24.074616"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -142,7 +142,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -151,7 +151,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1004.3622)"
-     style="display:none">
+     style="display:inline">
     <path
        inkscape:connector-curvature="0"
        style="fill:#ff6600;fill-opacity:1;stroke:none"
@@ -162,7 +162,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Overlay"
-     style="display:inline;filter:url(#filter3887)">
+     style="display:inline;filter:url(#filter3887);opacity:0.45">
     <path
        transform="translate(0,-1004.3622)"
        id="path3114"

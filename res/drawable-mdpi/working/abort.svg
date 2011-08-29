@@ -17,9 +17,9 @@
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="abort.svg"
    enable-background="new"
-   inkscape:export-filename="/home/kedzie/workspace/vbox/VBoxManager/res/drawable-mdpi/ic_list_abort.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-mdpi/ic_list_abort_small_c.png"
+   inkscape:export-xdpi="45"
+   inkscape:export-ydpi="45">
   <defs
      id="defs4">
     <linearGradient
@@ -91,8 +91,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="8.4368263"
-     inkscape:cy="17.350484"
+     inkscape:cx="-1.8167324"
+     inkscape:cy="18.330904"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
      showgrid="true"
@@ -130,7 +130,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1020.3622)"
-     style="display:none">
+     style="display:inline">
     <path
        inkscape:connector-curvature="0"
        style="fill:#ff6600;fill-opacity:1;stroke:none"
@@ -146,7 +146,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Overlay"
-     style="display:inline;filter:url(#filter4441)">
+     style="display:inline;filter:url(#filter4441);opacity:0.47">
     <path
        transform="translate(0,-1020.3622)"
        id="path4418"

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api;
 
-public interface IRemoteObject {
+import android.os.Parcelable;
+
+public interface IRemoteObject extends Parcelable {
 	public String getIdRef();
 	public void setIdRef(String id);
 	public void clearCache();

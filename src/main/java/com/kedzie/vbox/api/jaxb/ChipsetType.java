@@ -48,6 +48,8 @@ public enum ChipsetType {
     public String value() {
         return value;
     }
+    
+    public String toString() { return value; }
 
     public static ChipsetType fromValue(String v) {
         for (ChipsetType c: ChipsetType.values()) {

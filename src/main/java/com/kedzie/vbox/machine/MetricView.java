@@ -11,16 +11,18 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricView extends View {
-//	private static final String TAG = "vbox."+MetricView.class.getSimpleName();
+	private static final String TAG = "vbox."+MetricView.class.getSimpleName();
 	
 	private long max;
 	private int count;
 	private int period;
 	private String[] metrics;
-//	private IPerformanceMetric baseMetric;
+	private IPerformanceMetric baseMetric;
 	private Map<String, Map<String, Object>> data;
 	private int hStep;
 	private double vStep;
@@ -50,27 +52,26 @@ public class MetricView extends View {
 		metricPaint.setStrokeCap(Cap.SQUARE);
 		metricPaint.setAntiAlias(true);
 		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
-		metricColor.put("CPU/Load/Kernel", 0xff0000ff);
-		metricColor.put("Guest/CPU/Load/Kernel", 0xff0000ff);
-		metricColor.put("CPU/Load/User", 0xff00ff00);
-		metricColor.put("Guest/CPU/Load/User", 0xff00ff00);
-		metricColor.put("RAM/Usage/Used", 0xffff0000);
-		metricColor.put("Guest/RAM/Usage/Shared", 0xffff0000);
-		metricColor.put("Guest/RAM/Usage/Free", 0xffff00ff);
-		metricColor.put("Guest/RAM/Usage/Cache", 0xffffff00);
-		metricColor.put("Guest/RAM/Usage/Total", 0xff00ffff);
 	}
 	
+	/* @see android.view.View#onSizeChanged(int, int, int, int) */
+	@Override 
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		Log.i(TAG, "OnSizeChanged("+w+"," + h + ", " + oldw + ", " + oldh + ")");
+		super.onSizeChanged(w, h, oldw, oldh);
+	}
+
 	public int getColor(String name) {
-		if(!metricColor.containsKey(name)) 	metricColor.put(name, getResources().getColor(getResources().getIdentifier(name, "color", getContext().getPackageName())) );
+		if(!metricColor.containsKey(name)) 	metricColor.put(name, getResources().getColor(getResources().getIdentifier(name.replace("/", "_"), "color", getContext().getPackageName())) );
 		return metricColor.get(name);
 	}
 	
-	public void init( int count, int period, long max, String []metrics) {
+	public void init( int count, int period, long max, String []metrics, IPerformanceMetric pm) {
 		this.max=max;
 		this.count=count;
 		this.metrics=metrics;
 		this.period=period;
+		this.baseMetric=pm;
 	}
 
 	public void setData(Map<String, Map<String, Object>> data) {
@@ -86,12 +87,12 @@ public class MetricView extends View {
 		hStep = bounds.width()/count;
 		vStep = bounds.height()/(double)max;
 		vStepGrid = bounds.height()/(double)count;
-		for(int i=1; i<count; i+=2) {
+		for(int i=1; i<count; i+=4) {
 			int horiz = bounds.left+i*hStep, vert = bounds.bottom-(int)(i*vStepGrid);
 			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 			canvas.drawText(""+(count-i)*period, horiz, bounds.bottom-20, textPaint);
 			canvas.drawLine(bounds.left, vert, bounds.right, vert, gridPaint);
-			canvas.drawText(max*(double)i/(double)count+"", bounds.left+20, vert, textPaint);
+			canvas.drawText(max*(double)i/(double)count+""+baseMetric.getUnit(), bounds.left+20, vert, textPaint);
 		}
 		if(data==null) return;
 		for(String mName : metrics) {

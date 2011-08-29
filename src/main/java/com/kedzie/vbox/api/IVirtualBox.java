@@ -24,5 +24,5 @@ public interface IVirtualBox extends IRemoteObject {
 	
 	@KSOAP(cache=true, prefix="IWebsessionManager", thisReference="refIVirtualBox")
 	public ISession getSessionObject() throws IOException;
-	
+	@KSOAP(cache=true)  ISystemProperties getSystemProperties();
 }

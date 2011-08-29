@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kedzie.vbox"  android:versionCode="10" android:versionName="1.9">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kedzie.vbox"  android:versionCode="11" android:versionName="1.9.1">
 
     <uses-sdk android:minSdkVersion="8"  android:targetSdkVersion="8"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application android:label="@string/app_name" android:icon="@drawable/icon"  android:name=".VBoxApplication" android:debuggable="false">
-		<activity android:name=".server.ServerListActivity" android:label="@string/app_name" >
+		<activity android:name=".server.ServerListActivity" android:label="@string/app_name"  >
 			<intent-filter>
                 	<action android:name="android.intent.action.MAIN" />
                 	<category android:name="android.intent.category.LAUNCHER" />
             	</intent-filter>
         </activity>
 		<activity android:name=".server.EditServerActivity"  android:label="@string/server_edit"></activity>
-		<activity android:name=".machine.MachineListActivity"  android:label="@string/machine_list"></activity>
-		<activity android:name=".machine.MachineActivity"  android:label="@string/machine"></activity>
-		<activity android:name=".machine.MetricActivity"  android:label="Metrics"></activity>
+		<activity android:name=".machine.MachineListActivity"  android:label="@string/machine_list" android:configChanges="orientation" ></activity>
+		<activity android:name=".machine.MachineInfoActivity"  android:label="Machine Info"></activity>
+		<activity android:name=".machine.SnapshotActivity"  android:label="Snapshots"></activity>
+		<activity android:name=".machine.MachineActivity"  android:label="@string/machine"  android:configChanges="orientation"></activity>
+		<activity android:name=".machine.MetricActivity"  android:label="Metrics" android:configChanges="orientation" ></activity>
 		<activity android:name=".server.PreferencesActivity"  android:label="Preferences"></activity>
 		<service android:name=".machine.EventService"/>
     </application>

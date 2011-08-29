@@ -19,63 +19,60 @@ import com.kedzie.vbox.server.PreferencesActivity;
 
 public class VBoxApplication  extends Application {
 
-	public static Map<String,Integer> resources;
-	public static Map<MachineState,Integer> states;
-	static {
-		states = new HashMap<MachineState, Integer>();
-		states.put(MachineState.RUNNING, R.drawable.ic_list_start_small);
-		states.put(MachineState.STARTING, R.drawable.ic_list_start_small);
-		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_small);
-		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_small);
-		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_small);
-		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_save_small);
-		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_save_small);
-		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_save_small);
-		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_save_small);
-		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_save_small);
-		states.put(MachineState.SAVING, R.drawable.ic_list_save_small);
-		states.put(MachineState.SAVED, R.drawable.ic_list_save_small);
-		states.put(MachineState.RESTORING, R.drawable.ic_list_start_small);
-		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_small);
-		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_small);
+	public Map<String,Integer> resources = new HashMap<String, Integer>();
+	public Map<MachineState,Integer> states = new HashMap<MachineState, Integer>();
+	{
+//		states.put(MachineState.RUNNING, R.drawable.ic_list_start_small);
+//		states.put(MachineState.STARTING, R.drawable.ic_list_start_small);
+//		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_small);
+//		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_small);
+//		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_small);
+//		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot_small);
+//		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_small);
+//		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_small);
+//		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_small);
+//		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_save_small);
+//		states.put(MachineState.SAVING, R.drawable.ic_list_save_small);
+//		states.put(MachineState.SAVED, R.drawable.ic_list_save_small);
+//		states.put(MachineState.RESTORING, R.drawable.ic_list_start_small);
+//		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_small);
+//		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_small);
+//		resources.put( "Start", R.drawable.ic_list_start );
+//		resources.put("Power Off", R.drawable.ic_list_poweroff);
+//		resources.put("Pause", R.drawable.ic_list_pause);
+//		resources.put("Resume", R.drawable.ic_list_start);
+//		resources.put("Reset", R.drawable.ic_list_reset);
+//		resources.put("Power Button", R.drawable.ic_list_acpi );
+//		resources.put("Save State", R.drawable.ic_list_save);
+//		resources.put("Discard State", R.drawable.ic_list_save);
+//		resources.put("Take Snapshot", R.drawable.ic_list_snapshot);
+//		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot);
 		
-		resources = new HashMap<String, Integer>();
-		resources.put( "Start", R.drawable.ic_list_start );
-		resources.put("Power Off", R.drawable.ic_list_poweroff);
-		resources.put("Pause", R.drawable.ic_list_pause);
-		resources.put("Resume", R.drawable.ic_list_start);
-		resources.put("Reset", R.drawable.ic_list_reset);
-		resources.put("Power Button", R.drawable.ic_list_acpi );
-		resources.put("Save State", R.drawable.ic_list_save);
-		resources.put("Discard State", R.drawable.ic_list_save);
-		resources.put("Take Snapshot", R.drawable.ic_list_save);
-		resources.put("Restore Snapshot", R.drawable.ic_list_save);
-				
-		resources.put("os_ubuntu", R.drawable.ic_list_os_ubuntu);
-		resources.put("os_ubuntu_64", R.drawable.ic_list_os_ubuntu_64);
-		resources.put("os_macos", R.drawable.ic_list_os_macos);
-		resources.put("os_macos_64", R.drawable.ic_list_os_macos_64);
-		resources.put("os_linux", R.drawable.ic_list_os_linux);
-		resources.put("os_linux24_64", R.drawable.ic_list_os_linux24_64);
-		resources.put("os_linux24", R.drawable.ic_list_os_linux24);
-		resources.put("os_linux26_64", R.drawable.ic_list_os_linux26_64);
-		resources.put("os_linux26", R.drawable.ic_list_os_linux26);
-		resources.put("os_redhat_64", R.drawable.ic_list_os_redhat_64);
-		resources.put("os_redhat", R.drawable.ic_list_os_redhat);
-		resources.put("os_debian_64", R.drawable.ic_list_os_debian_64);
-		resources.put("os_debian", R.drawable.ic_list_os_debian);
-		resources.put("os_windowsxp_64", R.drawable.ic_list_os_winxp_64);
-		resources.put("os_windowsxp", R.drawable.ic_list_os_winxp);
-		resources.put("os_windows7_64", R.drawable.ic_list_os_win7_64);
-		resources.put("os_windows7", R.drawable.ic_list_os_win7);
-		resources.put("os_winvista", R.drawable.ic_list_os_winvista);
-		resources.put("os_winvista_64", R.drawable.ic_list_os_winvista_64);
-		resources.put("os_fedora", R.drawable.ic_list_os_fedora);
-		resources.put("os_fedora_64", R.drawable.ic_list_os_fedora_64);
-		resources.put("os_opensuse", R.drawable.ic_list_os_opensuse);
-		resources.put("os_opensuse_64", R.drawable.ic_list_os_opensuse_64);
-		resources.put("os_oracle", R.drawable.ic_list_os_oracle);
-		resources.put("os_oracle_64", R.drawable.ic_list_os_oracle_64);
+		states.put(MachineState.RUNNING, R.drawable.ic_list_start_small_c);
+		states.put(MachineState.STARTING, R.drawable.ic_list_start_small_c);
+		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_small_c);
+		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_small_c);
+		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_small_c);
+		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot_small_c);
+		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_small_c);
+		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_small_c);
+		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_small_c);
+		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_save_small_c);
+		states.put(MachineState.SAVING, R.drawable.ic_list_save_small_c);
+		states.put(MachineState.SAVED, R.drawable.ic_list_save_small_c);
+		states.put(MachineState.RESTORING, R.drawable.ic_list_start_small_c);
+		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_small_c);
+		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_small_c);
+		resources.put( "Start", R.drawable.ic_list_start_c );
+		resources.put("Power Off", R.drawable.ic_list_poweroff_c);
+		resources.put("Pause", R.drawable.ic_list_pause_c);
+		resources.put("Resume", R.drawable.ic_list_start_c);
+		resources.put("Reset", R.drawable.ic_list_reset_c);
+		resources.put("Power Button", R.drawable.ic_list_acpi_c );
+		resources.put("Save State", R.drawable.ic_list_save_c);
+		resources.put("Discard State", R.drawable.ic_list_save_c);
+		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_c);
+		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -84,7 +81,7 @@ public class VBoxApplication  extends Application {
 		return null;
 	}
 	
-	public static String[] getActions(MachineState state) {
+	public String[] getActions(MachineState state) {
 		if(state.equals(MachineState.RUNNING)) return new String[] { "Pause", "Reset", "Power Off" , "Save State", "Power Button", "Take Snapshot" };
 		 else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new String[] { "Start",  "Take Snapshot" };
 		else if (state.equals(MachineState.PAUSED))	return new String[] { "Resume", "Reset", "Power Off" };
@@ -105,8 +102,17 @@ public class VBoxApplication  extends Application {
 	 * @param name name of resource
 	 * @return address of resource
 	 */
-	public static int get(String name) {
-		return resources.containsKey(name) ? resources.get(name) : R.drawable.ic_list_os_other; 	
+	public  int get(String name) {
+		if(resources.containsKey(name)) {
+			return resources.get(name);
+		} else {
+			int id = getResources().getIdentifier(name, "drawable", getPackageName());
+			if(id!=0) {
+				resources.put(name, id);
+				return id;
+			}
+		}
+		return R.drawable.ic_list_os_other; 	
 	}
 	
 	/**
@@ -114,7 +120,7 @@ public class VBoxApplication  extends Application {
 	 * @param state name of resource
 	 * @return address of resource
 	 */
-	public static int get(MachineState state) {
+	public int get(MachineState state) {
 		return states.containsKey(state)  ? states.get(state) : R.drawable.ic_list_start_small;	
 	}
 	

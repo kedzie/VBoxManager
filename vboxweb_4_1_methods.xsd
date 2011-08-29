@@ -1980,9 +1980,6 @@
       <xsd:element name="IConsole_teleportResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-
-
-      
       <xsd:element name="IHostNetworkInterface_getName">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2001,107 +1998,89 @@
       <xsd:element name="IHostNetworkInterface_getNetworkNameResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getDhcpEnabled">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getDhcpEnabledResponse">
 	<xsd:element name="returnval" type="xsd:boolean"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getIPAddress">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getIPAddressResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getNetworkMask">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getNetworkMaskResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getIPV6Supported">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getIPV6SupportedResponse">
 	<xsd:element name="returnval" type="xsd:boolean"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getIPV6Address">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getIPV6AddressResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getIPV6NetworkMaskPrefixLength">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getIPV6NetworkMaskPrefixLengthResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getHardwareAddress">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getHardwareAddressResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getMediumType">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getMediumTypeResponse">
 	<xsd:element name="returnval" type="vbox:HostNetworkInterfaceMediumType"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getStatus">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getStatusResponse">
 	<xsd:element name="returnval" type="vbox:HostNetworkInterfaceStatus"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_getInterfaceType">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_getInterfaceTypeResponse">
 	<xsd:element name="returnval" type="vbox:HostNetworkInterfaceType"/>
 	</xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_enableStaticIpConfig">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="IPAddress" type="xsd:string"/>
             <xsd:element name="networkMask" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_enableStaticIpConfigResponse">
-
       </xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_enableStaticIpConfigV6">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="IPV6Address" type="xsd:string"/>
             <xsd:element name="IPV6NetworkMaskPrefixLength" type="xsd:unsignedInt"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_enableStaticIpConfigV6Response">
-
       </xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_enableDynamicIpConfig">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_enableDynamicIpConfigResponse">
-
       </xsd:element>
-      
       <xsd:element name="IHostNetworkInterface_dhcpRediscover">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHostNetworkInterface_dhcpRediscoverResponse">
-
       </xsd:element>
       
       
@@ -2111,21 +2090,18 @@
       <xsd:element name="IHost_getDVDDrivesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getFloppyDrives">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getFloppyDrivesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getUSBDevices">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="IHost_getUSBDevicesResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_getUSBDeviceFilters">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2266,7 +2242,6 @@
       <xsd:element name="IHost_findHostDVDDriveResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_findHostFloppyDrive">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="name" type="xsd:string"/>
@@ -2274,7 +2249,6 @@
       <xsd:element name="IHost_findHostFloppyDriveResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_findHostNetworkInterfaceByName">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="name" type="xsd:string"/>
@@ -2282,7 +2256,6 @@
       <xsd:element name="IHost_findHostNetworkInterfaceByNameResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_findHostNetworkInterfaceById">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="id" type="xsd:string"/>
@@ -2290,7 +2263,6 @@
       <xsd:element name="IHost_findHostNetworkInterfaceByIdResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_findHostNetworkInterfacesOfType">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="type" type="vbox:HostNetworkInterfaceType"/>
@@ -2298,7 +2270,6 @@
       <xsd:element name="IHost_findHostNetworkInterfacesOfTypeResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_findUSBDeviceById">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="id" type="xsd:string"/>
@@ -2306,7 +2277,6 @@
       <xsd:element name="IHost_findUSBDeviceByIdResponse">
 	<xsd:element name="returnval" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="IHost_findUSBDeviceByAddress">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="name" type="xsd:string"/>
@@ -2364,35 +2334,30 @@
       <xsd:element name="ISystemProperties_getMaxGuestMonitorsResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getInfoVDSize">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getInfoVDSizeResponse">
 	<xsd:element name="returnval" type="xsd:long"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getSerialPortCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getSerialPortCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getParallelPortCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getParallelPortCountResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxBootPosition">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMaxBootPositionResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getDefaultMachineFolder">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2404,16 +2369,13 @@
             <xsd:element name="defaultMachineFolder" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setDefaultMachineFolderResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getMediumFormats">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getMediumFormatsResponse">
 	<xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getDefaultHardDiskFormat">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2425,9 +2387,7 @@
             <xsd:element name="defaultHardDiskFormat" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setDefaultHardDiskFormatResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getFreeDiskSpaceWarning">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2439,9 +2399,7 @@
             <xsd:element name="freeDiskSpaceWarning" type="xsd:long"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setFreeDiskSpaceWarningResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getFreeDiskSpacePercentWarning">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2453,9 +2411,7 @@
             <xsd:element name="freeDiskSpacePercentWarning" type="xsd:unsignedInt"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setFreeDiskSpacePercentWarningResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getFreeDiskSpaceError">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2467,9 +2423,7 @@
             <xsd:element name="freeDiskSpaceError" type="xsd:long"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setFreeDiskSpaceErrorResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getFreeDiskSpacePercentError">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2481,9 +2435,7 @@
             <xsd:element name="freeDiskSpacePercentError" type="xsd:unsignedInt"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setFreeDiskSpacePercentErrorResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getVRDEAuthLibrary">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2495,9 +2447,7 @@
             <xsd:element name="VRDEAuthLibrary" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setVRDEAuthLibraryResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getWebServiceAuthLibrary">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2509,9 +2459,7 @@
             <xsd:element name="webServiceAuthLibrary" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setWebServiceAuthLibraryResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getDefaultVRDEExtPack">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2523,9 +2471,7 @@
             <xsd:element name="defaultVRDEExtPack" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setDefaultVRDEExtPackResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getLogHistoryCount">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
@@ -2537,16 +2483,13 @@
             <xsd:element name="logHistoryCount" type="xsd:unsignedInt"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_setLogHistoryCountResponse">
-
       </xsd:element>
-      
       <xsd:element name="ISystemProperties_getDefaultAudioDriver">
 	<xsd:element name="_this" type="xsd:string"/>
 	</xsd:element>
       <xsd:element name="ISystemProperties_getDefaultAudioDriverResponse">
 	<xsd:element name="returnval" type="vbox:AudioDriverType"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxNetworkAdapters">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="chipset" type="vbox:ChipsetType"/>
@@ -2554,7 +2497,6 @@
       <xsd:element name="ISystemProperties_getMaxNetworkAdaptersResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxNetworkAdaptersOfType">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="chipset" type="vbox:ChipsetType"/>
@@ -2563,7 +2505,6 @@
       <xsd:element name="ISystemProperties_getMaxNetworkAdaptersOfTypeResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxDevicesPerPortForStorageBus">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="bus" type="vbox:StorageBus"/>
@@ -2571,7 +2512,6 @@
       <xsd:element name="ISystemProperties_getMaxDevicesPerPortForStorageBusResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMinPortCountForStorageBus">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="bus" type="vbox:StorageBus"/>
@@ -2579,7 +2519,6 @@
       <xsd:element name="ISystemProperties_getMinPortCountForStorageBusResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxPortCountForStorageBus">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="bus" type="vbox:StorageBus"/>
@@ -2587,7 +2526,6 @@
       <xsd:element name="ISystemProperties_getMaxPortCountForStorageBusResponse">
 	<xsd:element name="returnval" type="xsd:unsignedInt"/>
 	</xsd:element>
-      
       <xsd:element name="ISystemProperties_getMaxInstancesOfStorageBus">
 	<xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="chipset" type="vbox:ChipsetType"/>

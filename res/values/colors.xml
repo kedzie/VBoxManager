@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <color name="opaque_red">#f00</color>
-   <color name="translucent_red">#80ff0000</color>
+   <color name="CPU_Load_Kernel">#ff0000ff</color>
+   <color name="CPU_Load_User">#ff00ff00</color>
+   <color name="Guest_CPU_Load_Kernel">#ff0000ff</color>
+   <color name="Guest_CPU_Load_User">#ff00ff00</color>
+   <color name="RAM_Usage_Used">#ffff0000</color>
+   <color name="Guest_RAM_Usage_Free">#ffff00ff</color>
+   <color name="Guest_RAM_Usage_Shared">#ffff0000</color>
+   <color name="Guest_RAM_Usage_Cache">#ffffff00</color>
+    <color name="Guest_RAM_Usage_Total">#ff00ffff</color>
 </resources>

@@ -1,8 +1,8 @@
 package com.kedzie.vbox.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -17,23 +17,21 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.kedzie.vbox.BaseActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.task.BaseTask;
 
 
-public class ServerListActivity extends Activity implements AdapterView.OnItemClickListener {
+public class ServerListActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 	protected static final String TAG = ServerListActivity.class.getName();
 	static final int REQUEST_CODE_ADD = 9303,REQUEST_CODE_EDIT = 9304, RESULT_CODE_SAVE = 1,RESULT_CODE_DELETE = 2;
 	
@@ -76,37 +74,10 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-       	new BaseTask<Server, String>(this, null, "Connecting", true) {
-			@Override
-			protected String work(Server... params) throws Exception {
-				_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
-				_vmgr.logon(params[0].getUsername(), params[0].getPassword());
-				return _vmgr.getVBox().getVersion();
-			}
-			@Override
-			protected void onPostExecute(String version) {
-				super.onPostExecute(version);
-				if(version!=null) {
-					Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG).show();
-					startActivity(new Intent().setClass(ServerListActivity.this, MachineListActivity.class).putExtra("vmgr", _vmgr));
-				}
-			}
-       	}.execute(getAdapter().getItem(position));
+		new LogonTask(this, null).execute(getAdapter().getItem(position));
 	}
 	
-	@Override public 
-	void onConfigurationChanged(Configuration newConfig) {
-		switch(newConfig.orientation) {
-		case Configuration.ORIENTATION_LANDSCAPE:
-			Toast.makeText(this, "Landscape", Toast.LENGTH_SHORT).show();
-			break;
-		case Configuration.ORIENTATION_PORTRAIT:
-			Toast.makeText(this, "Portrait", Toast.LENGTH_SHORT).show();
-			break;
-		}
-	}
-
-	@Override
+		@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    getMenuInflater().inflate(R.menu.server_list_options_menu, menu);
 	    return true;
@@ -170,6 +141,29 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 			break;
         }
     }
+ 	
+ 	class LogonTask extends BaseTask<Server, String>	{
+		public LogonTask(Context ctx, VBoxSvc vmgr) { super( ctx, vmgr, "Connecting", true); 	}
+
+		@Override
+		protected String work(Server... params) throws Exception {
+			try {
+				_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
+				_vmgr.logon(params[0].getUsername(), params[0].getPassword());
+				return _vmgr.getVBox().getVersion();
+			} catch(IOException e) {
+				ServerListActivity.this.showAlert(e);
+			}
+			return null;
+		}
+		protected void onPostExecute(String version) {
+			super.onPostExecute(version);
+			if(version!=null) {
+				Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + version, Toast.LENGTH_LONG).show();
+				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra("vmgr", _vmgr));
+			}
+		}
+	}
 
 	class ServerDB extends SQLiteOpenHelper {
 		public ServerDB(Context context) { 
