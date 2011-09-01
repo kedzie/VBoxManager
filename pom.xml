@@ -3,7 +3,7 @@
 	
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android</artifactId>
-	<version>1.9.1</version>
+	<version>1.9.2</version>
 	<packaging>apk</packaging>
 	<name>VirtualBox Manager</name>
 
@@ -33,21 +33,12 @@
 				<artifactId>maven-android-plugin</artifactId>
 				<version>3.0.0-alpha-2</version>
 				<configuration>
-					<sdk><platform>10</platform></sdk>
+					<sdk><platform>8</platform></sdk>
 					<sign><debug>false</debug></sign>
-					<deleteConflictingFiles>true</deleteConflictingFiles>
-					<undeployBeforeDeploy>false</undeployBeforeDeploy>
-					<extractDuplicates>true</extractDuplicates> 
+<!-- 					<deleteConflictingFiles>true</deleteConflictingFiles> -->
+<!-- 					<undeployBeforeDeploy>false</undeployBeforeDeploy> -->
+<!-- 					<extractDuplicates>true</extractDuplicates>  -->
 				</configuration>
-				<executions>
-					<execution>
-					<id>update-version</id><goals><goal>version-update</goal></goals>
-					<configuration>
-						<versionNameUpdate>true</versionNameUpdate>
-						<versionCodeAutoIncrement>true</versionCodeAutoIncrement>
-					</configuration>
-					</execution>				
-				</executions>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
@@ -62,7 +53,7 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>2.3.3</version>
+			<version>2.2.1</version>
 			<scope>provided</scope>
 		</dependency>
 <!--     	<dependency> -->
@@ -79,15 +70,10 @@
 
 	<repositories>
 <!-- 		<repository> -->
-<!-- 	      		<id>googlecode-ksoap2-android</id> -->
-<!-- 	      		<name>googlecode-ksoap2-android</name> -->
-<!-- 	      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url> -->
+<!-- 	      		<id>codehause</id> -->
+<!-- 	      		<name>codehaus</name> -->
+<!-- 	      		<url>http://repository.codehaus.org</url> -->
 <!-- 	    	</repository> -->
-		<repository>
-	      		<id>codehause</id>
-	      		<name>codehaus</name>
-	      		<url>http://repository.codehaus.org</url>
-	    	</repository>
 	</repositories>
 	
 </project>

@@ -82,8 +82,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="17.634307"
-     inkscape:cy="24.838692"
+     inkscape:cx="3.826726"
+     inkscape:cy="29.087178"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
      showgrid="true"
@@ -121,7 +121,7 @@
      transform="translate(0,-1020.3622)"
      style="display:inline">
     <path
-       style="fill:#ff6600;fill-opacity:1;stroke:none"
+       style="fill:#ffcc00;fill-opacity:1;stroke:none"
        d="m 0.97294825,1021.3622 0,10.9829 0,18.9706 30.02705175,0 0,-18.9706 0,-4.8674 -6.881199,-6.1155 -2.126917,0 0,10.9829 -16.014427,0 0,-10.9829 -5.00450875,0 z m 12.01082075,0.9985 0,7.9875 6.00541,0 0,-7.9875 -6.00541,0 z m -7.006312,12.9798 20.018035,0 0,12.9798 -20.018035,0 0,-12.9798 z m 2.0018035,2.9953 0,1.9969 16.0144275,0 0,-1.9969 -16.0144275,0 z m 0,4.9923 0,1.9969 16.0144275,0 0,-1.9969 -16.0144275,0 z"
        id="rect3054-1"
        inkscape:connector-curvature="0" />
@@ -149,7 +149,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Overlay"
-     style="opacity:0.5;display:inline;filter:url(#filter3763)"
+     style="opacity:0.15;display:inline;filter:url(#filter3763)"
      transform="translate(0,-16)">
     <path
        inkscape:connector-curvature="0"
@@ -161,7 +161,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Shadow"
-     style="opacity:0.56999966"
+     style="opacity:0.56999966;display:inline"
      transform="translate(0,-16)">
     <path
        style="fill:#000000;fill-opacity:1;stroke:none"

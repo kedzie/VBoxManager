@@ -93,8 +93,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="13.323711"
-     inkscape:cx="31.815923"
-     inkscape:cy="23.890414"
+     inkscape:cx="19.131769"
+     inkscape:cy="24.791064"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
      showgrid="true"
@@ -127,7 +127,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -142,13 +142,13 @@
        inkscape:connector-curvature="0"
        id="path3785"
        d="m 32,31 -15.999999,-14 7,-9.0000003 L 14.000001,-12 32,-15 38,6.9999995 27.000001,18 z"
-       style="fill:#ffcc00;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
+       style="fill:#ff9900;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Overlay"
-     style="display:inline;filter:url(#filter3774);opacity:0.5">
+     style="opacity:0.25;display:inline;filter:url(#filter3774)">
     <path
        sodipodi:nodetypes="cccccccc"
        inkscape:connector-curvature="0"
@@ -175,7 +175,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0.5,-1004.8622)"
-     style="opacity:0.57;display:inline">
+     style="opacity:0.56999978;display:inline">
     <rect
        style="fill:#000000;fill-opacity:1"
        id="rect3866"
@@ -187,9 +187,10 @@
        rx="7.5"
        ry="2.7713852" />
     <path
-       style="enable-background:new;display:inline;fill:#000000;fill-opacity:1;stroke:none"
-       d="M 32 1 L 14 4 L 23 24 L 16 33 L 16.53125 33.4375 L 23.53125 24.4375 L 14.53125 4.4375 L 32.125 1.5 L 32 1 z "
+       style="fill:#000000;fill-opacity:1;stroke:none;display:inline;enable-background:new"
+       d="m 32,1 -18,3 9,20 -7,9 0.53125,0.4375 7,-9 -9,-20 L 32.125,1.5 32,1 z"
        id="rect3787"
-       transform="translate(-0.5,1004.8622)" />
+       transform="translate(-0.5,1004.8622)"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

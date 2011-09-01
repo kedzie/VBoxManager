@@ -102,11 +102,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="13.323711"
-     inkscape:cx="31.815923"
-     inkscape:cy="24.791064"
+     inkscape:zoom="21.639106"
+     inkscape:cx="19.12816"
+     inkscape:cy="16.444341"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
@@ -137,7 +137,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -151,13 +151,13 @@
        inkscape:connector-curvature="0"
        id="path3785"
        d="M 19.869564,31 9.434783,21.869565 14,16 8.1304347,2.9565217 19.869564,1 l 3.913044,14.347826 -7.173912,7.173913 z"
-       style="fill:#ffcc00;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
+       style="fill:#ff9900;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Overlay"
-     style="opacity:0.5;display:inline;filter:url(#filter3774)"
+     style="opacity:0.25;display:inline;filter:url(#filter3774)"
      transform="translate(0,-16)">
     <path
        sodipodi:nodetypes="cccccccc"

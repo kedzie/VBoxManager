@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.1 r9760"
    sodipodi:docname="save.svg"
-   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_save_small_c.png"
-   inkscape:export-xdpi="45"
-   inkscape:export-ydpi="45"
+   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_save_c.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
    enable-background="new">
   <defs
      id="defs4">
@@ -61,10 +61,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.239653"
-     inkscape:cx="17.634307"
-     inkscape:cy="25.513129"
+     inkscape:cx="3.826726"
+     inkscape:cy="26.493549"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1408"
      inkscape:window-height="778"
@@ -100,7 +100,7 @@
      transform="translate(0,-1004.3622)"
      style="display:inline">
     <path
-       style="fill:#ff6600;fill-opacity:1;stroke:none"
+       style="fill:#ffcc00;fill-opacity:1;stroke:none"
        d="m 0.97294825,1005.3622 0,16.8405 0,29.0882 46.02705175,0 0,-29.0882 0,-7.4634 -10.547866,-9.3771 -3.26025,0 0,16.8405 -24.5477603,0 0,-16.8405 -7.67117545,0 z m 18.41082075,1.531 0,12.2476 9.20541,0 0,-12.2476 -9.20541,0 z m -10.7396453,19.9024 30.6847013,0 0,19.9024 -30.6847013,0 0,-19.9024 z m 3.0684703,4.5928 0,3.0619 24.547761,0 0,-3.0619 -24.547761,0 z m 0,7.6548 0,3.0619 24.547761,0 0,-3.0619 -24.547761,0 z"
        id="rect3054-1"
        inkscape:connector-curvature="0" />
@@ -127,7 +127,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Overlay"
-     style="opacity:0.5;display:inline;filter:url(#filter3763)">
+     style="opacity:0.15;display:inline;filter:url(#filter3763)">
     <path
        transform="translate(0,-1004.3622)"
        inkscape:connector-curvature="0"
