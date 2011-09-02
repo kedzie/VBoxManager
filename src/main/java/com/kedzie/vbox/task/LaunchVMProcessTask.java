@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.server.PreferencesActivity;
+import com.kedzie.vbox.common.PreferencesActivity;
 
 public class LaunchVMProcessTask extends BaseTask<IMachine, IMachine> {
 	

@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.kedzie.vbox.BaseActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxSvc;
-import com.kedzie.vbox.machine.MachineListActivity;
+import com.kedzie.vbox.host.MachineListActivity;
 import com.kedzie.vbox.task.BaseTask;
 
 

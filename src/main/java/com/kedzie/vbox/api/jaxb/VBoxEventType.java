@@ -183,14 +183,15 @@ public enum VBoxEventType {
     public String value() {
         return value;
     }
-    public String toString() { return value; }
+    
+    public String toString() { 
+    	return value; 
+    }
+    
     public static VBoxEventType fromValue(String v) {
-        for (VBoxEventType c: VBoxEventType.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
+        for (VBoxEventType c: VBoxEventType.values())
+            if (c.value.equals(v)) 
+            	return c;
         throw new IllegalArgumentException(v);
     }
-
 }

@@ -1,4 +1,4 @@
-package com.kedzie.vbox.machine;
+package com.kedzie.vbox.common;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.kedzie.vbox.machine;
+package com.kedzie.vbox.host;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +37,11 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.MachineState;
-import com.kedzie.vbox.server.PreferencesActivity;
+import com.kedzie.vbox.common.EventService;
+import com.kedzie.vbox.common.MachineView;
+import com.kedzie.vbox.common.MetricActivity;
+import com.kedzie.vbox.common.PreferencesActivity;
+import com.kedzie.vbox.machine.MachineActivity;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;

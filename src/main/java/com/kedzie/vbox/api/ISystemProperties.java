@@ -1,13 +1,12 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.KSOAP;
+import com.kedzie.vbox.Cacheable;
 
 public interface ISystemProperties extends IRemoteObject {
-	@KSOAP(cache=true) public Integer getMinGuestRAM();
-	@KSOAP(cache=true) public Integer getMaxGuestRam();
-	@KSOAP(cache=true) public Integer getMinGuestCPUCount();
-	@KSOAP(cache=true) public Integer getMaxGuestCPUCount();
-	@KSOAP(cache=true) public Integer getMinGuestMonitors();
-	@KSOAP(cache=true) public Integer getMaxGuestMonitors();
-	
+	@Cacheable public Integer getMinGuestRAM();
+	@Cacheable public Integer getMaxGuestRam();
+	@Cacheable public Integer getMinGuestCPUCount();
+	@Cacheable public Integer getMaxGuestCPUCount();
+	@Cacheable public Integer getMinGuestMonitors();
+	@Cacheable public Integer getMaxGuestMonitors();
 }

@@ -12,12 +12,13 @@
             	</intent-filter>
         </activity>
 		<activity android:label="@string/server_edit" android:name=".server.EditServerActivity"/>
-		<activity android:configChanges="orientation" android:label="@string/machine_list" android:name=".machine.MachineListActivity"/>
+		<activity android:configChanges="orientation" android:label="@string/machine_list" android:name=".host.MachineListActivity"/>
+		<activity android:label="Machine"   android:name=".machine.MachineTabActivity" android:theme="@android:style/Theme.NoTitleBar"/>
 		<activity android:label="Machine Info" android:name=".machine.MachineInfoActivity"/>
 		<activity android:label="Snapshots" android:name=".machine.SnapshotActivity"/>
 		<activity android:configChanges="orientation" android:label="@string/machine" android:name=".machine.MachineActivity"/>
-		<activity android:configChanges="orientation" android:label="Metrics" android:name=".machine.MetricActivity"/>
-		<activity android:label="Preferences" android:name=".server.PreferencesActivity"/>
-		<service android:name=".machine.EventService"/>
+		<activity android:configChanges="orientation" android:label="Metrics" android:name=".widget.MetricActivity"/>
+		<activity android:label="Preferences" android:name=".common.PreferencesActivity"/>
+		<service android:name=".common.EventService"/>
     </application>
 </manifest>

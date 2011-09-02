@@ -35,7 +35,10 @@ import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
-import com.kedzie.vbox.server.PreferencesActivity;
+import com.kedzie.vbox.common.EventService;
+import com.kedzie.vbox.common.MachineView;
+import com.kedzie.vbox.common.MetricActivity;
+import com.kedzie.vbox.common.PreferencesActivity;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 

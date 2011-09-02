@@ -15,54 +15,59 @@ import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.SparseArray;
 import com.kedzie.vbox.api.jaxb.MachineState;
-import com.kedzie.vbox.server.PreferencesActivity;
+import com.kedzie.vbox.common.PreferencesActivity;
 
 public class VBoxApplication  extends Application {
 
+	/** Colored Resources */
 	public Map<String,Integer> resources = new HashMap<String, Integer>();
 	public Map<MachineState,Integer> states = new HashMap<MachineState, Integer>();
+	/** GreyScale Resources */
+	public Map<String,Integer> resources_c = new HashMap<String, Integer>();
+	public Map<MachineState,Integer> states_c = new HashMap<MachineState, Integer>();
 	{
-//		states.put(MachineState.RUNNING, R.drawable.ic_list_start_small);
-//		states.put(MachineState.STARTING, R.drawable.ic_list_start_small);
-//		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_small);
-//		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_small);
-//		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_small);
-//		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot_small);
-//		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_small);
-//		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_small);
-//		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_small);
-//		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_save_small);
-//		states.put(MachineState.SAVING, R.drawable.ic_list_save_small);
-//		states.put(MachineState.SAVED, R.drawable.ic_list_save_small);
-//		states.put(MachineState.RESTORING, R.drawable.ic_list_start_small);
-//		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_small);
-//		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_small);
-//		resources.put( "Start", R.drawable.ic_list_start );
-//		resources.put("Power Off", R.drawable.ic_list_poweroff);
-//		resources.put("Pause", R.drawable.ic_list_pause);
-//		resources.put("Resume", R.drawable.ic_list_start);
-//		resources.put("Reset", R.drawable.ic_list_reset);
-//		resources.put("Power Button", R.drawable.ic_list_acpi );
-//		resources.put("Save State", R.drawable.ic_list_save);
-//		resources.put("Discard State", R.drawable.ic_list_save);
-//		resources.put("Take Snapshot", R.drawable.ic_list_snapshot);
-//		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot);
+		states_c.put(MachineState.RUNNING, R.drawable.ic_list_start);
+		states_c.put(MachineState.STARTING, R.drawable.ic_list_start);
+		states_c.put(MachineState.STOPPING, R.drawable.ic_list_acpi);
+		states_c.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi);
+		states_c.put(MachineState.PAUSED, R.drawable.ic_list_pause);
+		states_c.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot);
+		states_c.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_del);
+		states_c.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_del);
+		states_c.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_del);
+		states_c.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_snapshot);
+		states_c.put(MachineState.SAVING, R.drawable.ic_list_save);
+		states_c.put(MachineState.SAVED, R.drawable.ic_list_save);
+		states_c.put(MachineState.RESTORING, R.drawable.ic_list_save);
+		states_c.put(MachineState.ABORTED, R.drawable.ic_list_abort);
+		states_c.put(MachineState.STUCK, R.drawable.ic_list_stuck);
+		resources_c.put( "Start", R.drawable.ic_list_start );
+		resources_c.put("Power Off", R.drawable.ic_list_poweroff);
+		resources_c.put("Pause", R.drawable.ic_list_pause);
+		resources_c.put("Resume", R.drawable.ic_list_start);
+		resources_c.put("Reset", R.drawable.ic_list_reset);
+		resources_c.put("Power Button", R.drawable.ic_list_acpi );
+		resources_c.put("Save State", R.drawable.ic_list_save);
+		resources_c.put("Discard State", R.drawable.ic_list_save);
+		resources_c.put("Take Snapshot", R.drawable.ic_list_snapshot_add);
+		resources_c.put("Restore Snapshot", R.drawable.ic_list_snapshot);
+		resources_c.put("Delete Snapshot", R.drawable.ic_list_snapshot_del);
 		
-		states.put(MachineState.RUNNING, R.drawable.ic_list_start_small_c);
-		states.put(MachineState.STARTING, R.drawable.ic_list_start_small_c);
-		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_small_c);
-		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_small_c);
-		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_small_c);
-		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot_small_c);
-		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_small_c);
-		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_small_c);
-		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_small_c);
-		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_save_small_c);
-		states.put(MachineState.SAVING, R.drawable.ic_list_save_small_c);
-		states.put(MachineState.SAVED, R.drawable.ic_list_save_small_c);
-		states.put(MachineState.RESTORING, R.drawable.ic_list_start_small_c);
-		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_small_c);
-		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_small_c);
+		states.put(MachineState.RUNNING, R.drawable.ic_list_start_c);
+		states.put(MachineState.STARTING, R.drawable.ic_list_start_c);
+		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_c);
+		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_c);
+		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_c);
+		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot_add_c);
+		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_del_c);
+		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_del_c);
+		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_del_c);
+		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_snapshot_c);
+		states.put(MachineState.SAVING, R.drawable.ic_list_save_c);
+		states.put(MachineState.SAVED, R.drawable.ic_list_save_c);
+		states.put(MachineState.RESTORING, R.drawable.ic_list_save_c);
+		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_c);
+		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_c);
 		resources.put( "Start", R.drawable.ic_list_start_c );
 		resources.put("Power Off", R.drawable.ic_list_poweroff_c);
 		resources.put("Pause", R.drawable.ic_list_pause_c);
@@ -71,8 +76,9 @@ public class VBoxApplication  extends Application {
 		resources.put("Power Button", R.drawable.ic_list_acpi_c );
 		resources.put("Save State", R.drawable.ic_list_save_c);
 		resources.put("Discard State", R.drawable.ic_list_save_c);
-		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_c);
+		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_add_c);
 		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
+		resources.put("Delete Snapshot", R.drawable.ic_list_snapshot_del_c);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -82,9 +88,9 @@ public class VBoxApplication  extends Application {
 	}
 	
 	public String[] getActions(MachineState state) {
-		if(state.equals(MachineState.RUNNING)) return new String[] { "Pause", "Reset", "Power Off" , "Save State", "Power Button", "Take Snapshot" };
+		if(state.equals(MachineState.RUNNING)) return new String[] { "Pause", "Reset", "Power Off" , "Power Button", "Save State", "Take Snapshot" };
 		 else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new String[] { "Start",  "Take Snapshot" };
-		else if (state.equals(MachineState.PAUSED))	return new String[] { "Resume", "Reset", "Power Off" };
+		else if (state.equals(MachineState.PAUSED))	return new String[] { "Resume", "Reset", "Power Off", "Take Snapshot" };
 		 else if (state.equals(MachineState.SAVED))	return new String[] { "Restore State", "Discard State" };
 		return new String[] {};
 	}
@@ -121,7 +127,7 @@ public class VBoxApplication  extends Application {
 	 * @return address of resource
 	 */
 	public int get(MachineState state) {
-		return states.containsKey(state)  ? states.get(state) : R.drawable.ic_list_start_small;	
+		return states.containsKey(state)  ? states.get(state) : R.drawable.ic_list_start;	
 	}
 	
 	/**

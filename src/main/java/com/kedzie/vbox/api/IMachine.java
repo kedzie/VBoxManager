@@ -3,9 +3,9 @@ package com.kedzie.vbox.api;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.kedzie.vbox.Cacheable;
 import com.kedzie.vbox.KSOAP;
 import com.kedzie.vbox.KSOAPTransport;
 import com.kedzie.vbox.api.jaxb.ChipsetType;
@@ -16,36 +16,36 @@ public interface IMachine extends IRemoteObject {
 	public static enum LaunchMode { headless, gui; }
 	
 	public static final Parcelable.Creator<IMachine> CREATOR = new Parcelable.Creator<IMachine>() {
-		 public IMachine createFromParcel(Parcel in) { 
-			 String id = in.readString();
-			 String url = in.readString();
-			 @SuppressWarnings("unchecked") Map<String, Object> cache = in.readHashMap(IMachine.class.getClassLoader());
-			 KSOAPTransport t = new KSOAPTransport(url);
-			 return t.getProxy(IMachine.class, id, cache);
+		@SuppressWarnings("unchecked")  
+		public IMachine createFromParcel(Parcel in) { 
+			 String id = in.readString(), url = in.readString();
+			 Map<String, Object> cache = in.readHashMap(IMachine.class.getClassLoader()); //TODO: Make enumerations Serializable
+			 return new KSOAPTransport(url).getProxy(IMachine.class, id, cache);
 		 }
-		 public IMachine[] newArray(int size) {  return new IMachine[size]; }
+		 public IMachine[] newArray(int size) {  
+			 return new IMachine[size];
+		 }
 	 };
-	
-	@KSOAP(cache=true) public String getId();
-	@KSOAP(cache=true) public String getName() ;
-	@KSOAP(cache=true) public MachineState getState() ;
-	@KSOAP(cache=true) public String getDescription();
-	@KSOAP(cache=true) public String getOSTypeId();
-	@KSOAP(cache=true) public Integer getMemorySize();
-	@KSOAP(cache=true) public Integer getMemoryBalloonSize();
-	@KSOAP(cache=true) public Integer getVRAMSize();
-	@KSOAP(cache=true) public Integer getCPUCount();
-	@KSOAP(cache=true) public Integer getCPUExecutionCap();
-	@KSOAP(cache=true) public Integer getMonitorCount();
-	@KSOAP(cache=true) public Boolean getAccelerate3dEnabled();
-	@KSOAP(cache=true) public Boolean getCurrentStateModified();
-	@KSOAP(cache=true) public Boolean getAccelerate2dVideoEnabled();
-	@KSOAP(cache=true) public ChipsetType getChipsetType();
+	 
+	@Cacheable @KSOAP(cache=true) public String getId();
+	@Cacheable @KSOAP(cache=true) public String getName() ;
+	@Cacheable @KSOAP(cache=true) public MachineState getState() ;
+	@Cacheable @KSOAP(cache=true) public String getDescription();
+	@Cacheable @KSOAP(cache=true) public String getOSTypeId();
+	@Cacheable @KSOAP(cache=true) public Integer getMemorySize();
+	@Cacheable @KSOAP(cache=true) public Integer getMemoryBalloonSize();
+	@Cacheable @KSOAP(cache=true) public Integer getVRAMSize();
+	@Cacheable @KSOAP(cache=true) public Integer getCPUCount();
+	@Cacheable @KSOAP(cache=true) public Integer getCPUExecutionCap();
+	@Cacheable @KSOAP(cache=true) public Integer getMonitorCount();
+	@Cacheable @KSOAP(cache=true) public Boolean getAccelerate3dEnabled();
+	@Cacheable @KSOAP(cache=true) public Boolean getCurrentStateModified();
+	@Cacheable @KSOAP(cache=true) public Boolean getAccelerate2dVideoEnabled();
+	@Cacheable @KSOAP(cache=true) public ChipsetType getChipsetType();
+	@Cacheable @KSOAP(cache=true) public ISnapshot getCurrentSnapshot();
 	
 	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") LaunchMode type) throws IOException;
 	public void lockMachine(@KSOAP("session")ISession s, @KSOAP("lockType")LockType lockType) throws IOException;
-	
-	@KSOAP(cache=true) public ISnapshot getCurrentSnapshot();
 	
 	public Map<String, List<String>> querySavedThumbnailSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	public Map<String, List<String>> readSavedThumbnailPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
