@@ -1,11 +1,13 @@
 package com.kedzie.vbox.api;
 
+import com.kedzie.vbox.Cacheable;
+
 public interface IHost extends IRemoteObject {
-	public Integer getMemorySize();
-	public Integer getMemoryAvailable();
-	public Integer getProcessorCount();
-	public Integer getProcessorCoreCount();
-	public Integer getProcessorOnlineCount();
-	public Integer getProcessorSpeed();
+	@Cacheable public Integer getMemorySize();
+	@Cacheable public Integer getMemoryAvailable();
+	@Cacheable public Integer getProcessorCount();
+	@Cacheable public Integer getProcessorCoreCount();
+	@Cacheable public Integer getProcessorOnlineCount();
+	@Cacheable public Integer getProcessorSpeed();
 	
 }

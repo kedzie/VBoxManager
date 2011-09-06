@@ -2,14 +2,17 @@ package com.kedzie.vbox.machine;
 
 import java.util.ArrayList;
 import java.util.List;
+import pl.polidea.treeview.AbstractTreeViewAdapter;
+import pl.polidea.treeview.InMemoryTreeStateManager;
+import pl.polidea.treeview.TreeBuilder;
+import pl.polidea.treeview.TreeNodeInfo;
+import pl.polidea.treeview.TreeStateManager;
+import pl.polidea.treeview.TreeViewList;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.kedzie.vbox.BaseActivity;
 import com.kedzie.vbox.R;
@@ -22,13 +25,17 @@ public class SnapshotActivity extends BaseActivity {
 
 	private VBoxSvc _vmgr;
 	private IMachine _machine;
-	private ListView _listView;
+	private TreeViewList _treeView;
+	private TreeStateManager<ISnapshot> _stateManager;
+	private TreeBuilder<ISnapshot> _treeBuilder;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.server_list);
-        _listView = (ListView)findViewById(R.id.list);
+        setContentView(R.layout.tree);
+        _treeView = (TreeViewList)findViewById(R.id.mainTreeView);
+        _stateManager = new InMemoryTreeStateManager<ISnapshot>();
+        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
         _vmgr =getIntent().getParcelableExtra("vmgr");
 		_machine = _vmgr.getProxy(IMachine.class, getIntent().getStringExtra("machine"));
 		new LoadSnapshotsTask(this, _vmgr).execute(_machine);
@@ -42,6 +49,7 @@ public class SnapshotActivity extends BaseActivity {
 			List<ISnapshot> snapshots = new ArrayList<ISnapshot>();
 			ISnapshot c = params[0].getCurrentSnapshot();
 			while(c!=null) {
+				c.getChildren(); //cache values
 				snapshots.add(c);
 				c = c.getParent();
 			}
@@ -51,25 +59,47 @@ public class SnapshotActivity extends BaseActivity {
 		@Override
 		protected void onPostExecute(List<ISnapshot> result)	{
 			super.onPostExecute(result);
-			if(result!=null)	_listView.setAdapter(new SnapshotAdapter(SnapshotActivity.this, result));
+			if(result!=null)	{
+				_treeView.setAdapter(new SnapshotTreeAdapter(SnapshotActivity.this, _stateManager, result.size()));
+				ISnapshot root = result.get(result.size()-1);
+				populate(null, root);
+			}
 		}
 	}
 	
-	class SnapshotAdapter extends ArrayAdapter<ISnapshot> {
-		private final LayoutInflater _layoutInflater;
-		
-		public SnapshotAdapter(Context context, List<ISnapshot> snapshots) {
-			super(context, 0, snapshots);
-			_layoutInflater = LayoutInflater.from(context);
+	private void populate(ISnapshot parent, ISnapshot child) {
+		if(parent==null)
+			_treeBuilder.sequentiallyAddNextNode(child, 0);
+		else
+			_treeBuilder.addRelation(parent, child);
+		if(child.getChildren()!=null && child.getChildren().size()>0) {
+			for(ISnapshot c : child.getChildren()) {
+				populate(child, c);	
+			}
+		}
+	}
+	
+	class SnapshotTreeAdapter extends AbstractTreeViewAdapter<ISnapshot> {
+
+		public SnapshotTreeAdapter(Activity activity, TreeStateManager<ISnapshot> treeStateManager, int numberOfLevels) {
+			super(activity, treeStateManager, numberOfLevels);
 		}
 
-		public View getView(int position, View view, ViewGroup parent) {
-			if (view == null) { 
-				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-				((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position).getName());
-				((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_snapshot_c);
-			}
+		@Override public long getItemId(int position) {
+			return 0;
+		}
+
+		@Override public View getNewChildView(TreeNodeInfo<ISnapshot> treeNodeInfo) {
+			View v = getLayoutInflater().inflate(R.layout.machine_action_item, null);
+			updateView(v, treeNodeInfo);
+			return v;
+		}
+
+		@Override public View updateView(View view, TreeNodeInfo<ISnapshot> treeNodeInfo) {
+			((TextView)view.findViewById(R.id.action_item_text)).setText(treeNodeInfo.getId().getName());
+			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_snapshot_c);
 			return view;
 		}
+		
 	}
 }

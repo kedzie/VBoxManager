@@ -8,7 +8,7 @@ import com.kedzie.vbox.api.jaxb.SessionType;
 public interface ISession extends IRemoteObject {
 
 	public void unlockMachine() throws IOException;;
-	@KSOAP(cache=false) public IConsole getConsole() throws IOException;
-	@KSOAP(cache=false) public SessionType getType() throws IOException;
-	@KSOAP(cache=false) public SessionState getState() throws IOException;
+	public IConsole getConsole() throws IOException;
+	public SessionType getType() throws IOException;
+	public SessionState getState() throws IOException;
 }

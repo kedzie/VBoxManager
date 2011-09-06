@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -43,6 +42,7 @@ public class ServerListActivity extends BaseActivity implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server_list);
         listView = (ListView)findViewById(R.id.list);
+        Log.i(TAG, "ListView: " + listView);
         registerForContextMenu(listView);
         listView.setOnItemClickListener(this);
         
@@ -152,7 +152,7 @@ public class ServerListActivity extends BaseActivity implements AdapterView.OnIt
 				_vmgr.logon(params[0].getUsername(), params[0].getPassword());
 				return _vmgr.getVBox().getVersion();
 			} catch(IOException e) {
-				ServerListActivity.this.showAlert(e);
+				showAlert(e);
 			}
 			return null;
 		}

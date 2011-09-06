@@ -85,7 +85,8 @@ public class KSOAPTransport {
 				return null; 
 			}
 			KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
-			if(methodKSOAP!=null && methodKSOAP.cache() && method.getName().startsWith("get") && _cache.containsKey(method.getName()))	return _cache.get(method.getName());
+			if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))	
+				return _cache.get(method.getName());
 			
 			SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
 			
@@ -103,7 +104,7 @@ public class KSOAPTransport {
 			transport.call(NAMESPACE+request.getName(), envelope);
 			Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
 			ret = buildProxies( method.getReturnType(), method.getGenericReturnType(), ret );
-			if(methodKSOAP!=null && methodKSOAP.cache() && method.getName().startsWith("get")) _cache.put(method.getName(), ret);
+			if(method.getAnnotation(Cacheable.class)!=null ) _cache.put(method.getName(), ret);
 			return ret;
 			}
 		}

@@ -27,22 +27,22 @@ public interface IMachine extends IRemoteObject {
 		 }
 	 };
 	 
-	@Cacheable @KSOAP(cache=true) public String getId();
-	@Cacheable @KSOAP(cache=true) public String getName() ;
-	@Cacheable @KSOAP(cache=true) public MachineState getState() ;
-	@Cacheable @KSOAP(cache=true) public String getDescription();
-	@Cacheable @KSOAP(cache=true) public String getOSTypeId();
-	@Cacheable @KSOAP(cache=true) public Integer getMemorySize();
-	@Cacheable @KSOAP(cache=true) public Integer getMemoryBalloonSize();
-	@Cacheable @KSOAP(cache=true) public Integer getVRAMSize();
-	@Cacheable @KSOAP(cache=true) public Integer getCPUCount();
-	@Cacheable @KSOAP(cache=true) public Integer getCPUExecutionCap();
-	@Cacheable @KSOAP(cache=true) public Integer getMonitorCount();
-	@Cacheable @KSOAP(cache=true) public Boolean getAccelerate3dEnabled();
-	@Cacheable @KSOAP(cache=true) public Boolean getCurrentStateModified();
-	@Cacheable @KSOAP(cache=true) public Boolean getAccelerate2dVideoEnabled();
-	@Cacheable @KSOAP(cache=true) public ChipsetType getChipsetType();
-	@Cacheable @KSOAP(cache=true) public ISnapshot getCurrentSnapshot();
+	@Cacheable public String getId();
+	@Cacheable public String getName() ;
+	@Cacheable public MachineState getState() ;
+	@Cacheable public String getDescription();
+	@Cacheable public String getOSTypeId();
+	@Cacheable public Integer getMemorySize();
+	@Cacheable public Integer getMemoryBalloonSize();
+	@Cacheable public Integer getVRAMSize();
+	@Cacheable public Integer getCPUCount();
+	@Cacheable public Integer getCPUExecutionCap();
+	@Cacheable public Integer getMonitorCount();
+	@Cacheable public Boolean getAccelerate3dEnabled();
+	@Cacheable public Boolean getCurrentStateModified();
+	@Cacheable public Boolean getAccelerate2dVideoEnabled();
+	@Cacheable public ChipsetType getChipsetType();
+	@Cacheable public ISnapshot getCurrentSnapshot();
 	
 	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") LaunchMode type) throws IOException;
 	public void lockMachine(@KSOAP("session")ISession s, @KSOAP("lockType")LockType lockType) throws IOException;

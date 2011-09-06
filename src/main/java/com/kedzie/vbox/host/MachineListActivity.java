@@ -89,11 +89,11 @@ public class MachineListActivity extends BaseActivity implements AdapterView.OnI
     	vmgr = (VBoxSvc)getIntent().getParcelableExtra("vmgr");
     	setTitle("VirtualBox v." + vmgr.getVBox().getVersion());
     	
-//    	if(getLastNonConfigurationInstance()!=null) { 
-//    		_machines = (List<IMachine>)getLastNonConfigurationInstance();
-//    		_listView.setAdapter(new MachineListAdapter(MachineListActivity.this, _machines));
-//    		bindService(new Intent(MachineListActivity.this, EventService.class).putExtra("vmgr", vmgr).putExtra("listener", _messenger), localConnection, Context.BIND_AUTO_CREATE);
-//    	} else
+    	if(getLastNonConfigurationInstance()!=null) { 
+    		_machines = (List<IMachine>)getLastNonConfigurationInstance();
+    		_listView.setAdapter(new MachineListAdapter(MachineListActivity.this, _machines));
+    		bindService(new Intent(MachineListActivity.this, EventService.class).putExtra("vmgr", vmgr).putExtra("listener", _messenger), localConnection, Context.BIND_AUTO_CREATE);
+    	} else
     		new LoadMachinesTask(this, vmgr).execute();
     	
     }
@@ -134,8 +134,7 @@ public class MachineListActivity extends BaseActivity implements AdapterView.OnI
 
 	@Override 
 	protected void onPause() {
-		if(_eventService!=null) 
-			_eventService.setMessenger(null);
+		if(_eventService!=null) _eventService.setMessenger(null);
 		super.onPause();
 	}
 
@@ -246,7 +245,6 @@ public class MachineListActivity extends BaseActivity implements AdapterView.OnI
 	}
 	
 	class SetupMetricsTask extends AsyncTask<List<IMachine>, Void, Void>	{
-		
 		@Override 
 		protected Void doInBackground(List<IMachine>... params) {
 			try {
@@ -268,7 +266,6 @@ public class MachineListActivity extends BaseActivity implements AdapterView.OnI
 		public MachineListAdapter(MachineListActivity context, List<IMachine> machines) {
 			super(context, 0, machines);
 		}
-
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null)	view = new MachineView(getApp(), MachineListActivity.this);
 			((MachineView)view).update(getItem(position));

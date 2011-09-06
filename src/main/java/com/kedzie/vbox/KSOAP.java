@@ -15,5 +15,4 @@ public @interface KSOAP {
 	public String type() default "";
 	public String prefix() default "";
 	public String thisReference() default "_this";
-	public boolean cache() default false;
 }
