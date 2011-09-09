@@ -2,7 +2,7 @@
 
 <PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory  android:title="Preferences">
+    <PreferenceCategory  android:title="Metrics">
 
         <ListPreference
                 android:key="metric_count"
@@ -11,12 +11,14 @@
                 android:entries="@array/metric_count_entities"
                 android:entryValues="@array/metric_count_entity_values" />
     
-    <ListPreference
+    <ListPreference 
                 android:key="metric_period"
                 android:title="@string/metric_period_title"
                 android:summary="@string/metric_period_summary"
                 android:entries="@array/metric_period_entities"
                 android:entryValues="@array/metric_period_entity_values" />
+                
+                
     </PreferenceCategory>
     
 </PreferenceScreen>

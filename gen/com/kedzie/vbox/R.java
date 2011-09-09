@@ -15,10 +15,10 @@ public final class R {
         public static final int slide_out_right=0x7f040003;
     }
     public static final class array {
-        public static final int metric_count_entities=0x7f090002;
-        public static final int metric_count_entity_values=0x7f090003;
-        public static final int metric_period_entities=0x7f090000;
-        public static final int metric_period_entity_values=0x7f090001;
+        public static final int metric_count_entities=0x7f080003;
+        public static final int metric_count_entity_values=0x7f080001;
+        public static final int metric_period_entities=0x7f080002;
+        public static final int metric_period_entity_values=0x7f080000;
     }
     public static final class attr {
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
@@ -323,20 +323,20 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int server_options_menu=0x7f0b0005;
     }
     public static final class string {
-        public static final int app_name=0x7f080000;
-        public static final int machine=0x7f080001;
-        public static final int machine_list=0x7f080002;
-        public static final int metric_count_summary=0x7f08000d;
-        public static final int metric_count_title=0x7f08000c;
-        public static final int metric_period_summary=0x7f08000b;
-        public static final int metric_period_title=0x7f08000a;
-        public static final int namespace=0x7f080009;
-        public static final int server_edit=0x7f080004;
-        public static final int server_host=0x7f080005;
-        public static final int server_list=0x7f080003;
-        public static final int server_password=0x7f080008;
-        public static final int server_port=0x7f080006;
-        public static final int server_username=0x7f080007;
+        public static final int app_name=0x7f090000;
+        public static final int machine=0x7f090001;
+        public static final int machine_list=0x7f090002;
+        public static final int metric_count_summary=0x7f09000d;
+        public static final int metric_count_title=0x7f09000c;
+        public static final int metric_period_summary=0x7f09000b;
+        public static final int metric_period_title=0x7f09000a;
+        public static final int namespace=0x7f090009;
+        public static final int server_edit=0x7f090004;
+        public static final int server_host=0x7f090005;
+        public static final int server_list=0x7f090003;
+        public static final int server_password=0x7f090008;
+        public static final int server_port=0x7f090006;
+        public static final int server_username=0x7f090007;
     }
     public static final class style {
         public static final int treeViewListStyle=0x7f0a0000;
