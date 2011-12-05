@@ -16,22 +16,25 @@ import com.kedzie.vbox.api.jaxb.SessionState;
  */
 public abstract class MachineTask extends BaseTask<IMachine, IMachine> {
 
-		public MachineTask(Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate) {
-			super(ctx, vmgr, msg, indeterminate);
+		protected boolean indeterminate;
+	
+		public MachineTask(String TAG, Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate) {
+			super(TAG, ctx, vmgr, msg);
+			this.indeterminate=indeterminate;
 		}
 		
 		@Override
-		protected IMachine work(IMachine... params) throws Exception {
+		protected IMachine work(IMachine... m) throws Exception {
 			ISession session = _vmgr.getVBox().getSessionObject();
-			if( session.getState().equals(SessionState.UNLOCKED)) params[0].lockMachine(session, LockType.SHARED);
-			
-			if(pDialog.isIndeterminate())
-				work(params[0], _vmgr.getVBox().getSessionObject().getConsole() );
+			if( session.getState().equals(SessionState.UNLOCKED)) 
+				m[0].lockMachine(session, LockType.SHARED);
+			if(indeterminate)
+				work(m[0], _vmgr.getVBox().getSessionObject().getConsole() );
 			else
-				handleProgress( workWithProgress(params[0], _vmgr.getVBox().getSessionObject().getConsole()) );
-			
-			if(session.getState().equals(SessionState.LOCKED)) session.unlockMachine();
-			return params[0];
+				handleProgress( workWithProgress(m[0], _vmgr.getVBox().getSessionObject().getConsole()) );
+			if(session.getState().equals(SessionState.LOCKED)) 
+				session.unlockMachine();
+			return m[0];
 		}
 
 		protected void work(IMachine m, IConsole console) throws Exception {};

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">VirtualBox Manager</string>
-    <string name="machine">Virtual Machine</string>
-    <string name="machine_list">Virtual Machines</string>
-    <string name="server_list">VBox Servers</string>
+    <string name="server_list">VirtualBox Servers</string>
     
     <string name="server_edit">Edit Server</string>
     <string name="server_host">Host</string>
@@ -18,5 +16,4 @@
     
     <string name="metric_count_title"># of Samples</string>
     <string name="metric_count_summary"># of Samples</string>
-    
 </resources>

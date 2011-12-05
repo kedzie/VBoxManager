@@ -2,6 +2,7 @@ package com.kedzie.vbox.machine;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import pl.polidea.treeview.AbstractTreeViewAdapter;
 import pl.polidea.treeview.InMemoryTreeStateManager;
 import pl.polidea.treeview.TreeBuilder;
@@ -14,14 +15,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.kedzie.vbox.BaseActivity;
+
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.task.BaseTask;
 
-public class SnapshotActivity extends BaseActivity {
+public class SnapshotActivity extends Activity {
 
 	private VBoxSvc _vmgr;
 	private IMachine _machine;
@@ -42,7 +44,7 @@ public class SnapshotActivity extends BaseActivity {
     }
 	
 	class LoadSnapshotsTask extends BaseTask<IMachine, List<ISnapshot>>	{
-		public LoadSnapshotsTask(Context ctx, VBoxSvc vmgr) { super( ctx, vmgr, "Loading Snapshots", true); 	}
+		public LoadSnapshotsTask(Context ctx, VBoxSvc vmgr) { super( "vbox.LoadSnapshotsTask", ctx, vmgr, "Loading Snapshots"); 	}
 
 		@Override
 		protected List<ISnapshot> work(IMachine... params) throws Exception {
@@ -77,6 +79,10 @@ public class SnapshotActivity extends BaseActivity {
 				populate(child, c);	
 			}
 		}
+	}
+
+public VBoxApplication getApp() { 
+		return (VBoxApplication)getApplication(); 
 	}
 	
 	class SnapshotTreeAdapter extends AbstractTreeViewAdapter<ISnapshot> {

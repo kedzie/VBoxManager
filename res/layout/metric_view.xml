@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_centerVertical="true"  android:padding="2dp">
+	<TextView  android:id="@+id/ram_metrics_title"  android:text="Memory Usage"  android:textSize="16sp" android:textStyle="bold"  
+						android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical"/>
+
+	<com.kedzie.vbox.common.MetricView   android:id="@+id/ram_metrics" android:layout_width="fill_parent"  android:layout_height="fill_parent" android:layout_weight="1"  />
+
+	<TextView  android:id="@+id/ram_metrics_text"  android:text="RAM/Usage/Used"  android:textSize="12sp" android:textStyle="bold"  
+							android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical"/>
+</LinearLayout>
+

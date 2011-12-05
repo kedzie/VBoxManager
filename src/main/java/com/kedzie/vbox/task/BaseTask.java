@@ -1,6 +1,7 @@
 package com.kedzie.vbox.task;
 
 import java.io.IOException;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,7 +11,10 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import com.kedzie.vbox.BaseActivity;
+import android.widget.Toast;
+
+import com.google.common.base.Throwables;
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IProgress;
@@ -20,92 +24,144 @@ import com.kedzie.vbox.api.IProgress;
  * @param <Input>  Operation input argument 
  * @param <Output> Operation output
  * @author Marek Kedzierski
- * @Aug 8, 2011
  */
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
-		private static final String TAG = "vbox."+BaseTask.class.getSimpleName();
-		protected final static int PROGRESS_INTERVAL = 100;
+	private final String TAG;
+	/** interval used to update progress bar for longing-running operation*/
+	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7, PROGRESS_INTERVAL = 100;
 		
-		protected Context context;
-		protected VBoxSvc _vmgr;
-		protected ProgressDialog pDialog;
-		protected Handler _handler = new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
+	protected Context context;
+	protected ProgressDialog pDialog;
+	protected String description;
+	/** VirtualBox web service API */
+	 protected VBoxSvc _vmgr;
+		
+	/** Show an Alert Dialog */
+	protected Handler _handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what) {
+			case WHAT_ERROR:
 				new AlertDialog.Builder(context)
+					.setIcon(R.drawable.ic_dialog_alert)
+					.setTitle(msg.getData().getString("title"))
 					.setMessage(msg.getData().getString("msg"))
 					.setPositiveButton("OK", new OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { 	dialog.dismiss();}})
 					.show();
+				break;
+			case WHAT_CANCEL:
+				Toast.makeText(context, "Cancelling Operation...", Toast.LENGTH_LONG).show();
+				pDialog.dismiss();
+				break;
 			}
-		};
+		}
+	};
 
-		/**
-		 * @param ctx Android <code>Context</code>
-		 * @param vmgr VirtualBox API service
-		 * @param msg <code>ProgressDialog</code> operation description
-		 * @param indeterminate <code>ProgressDialog.setIndeterminate()</code> true if indeterminate progress, false if progress is determinate
-		 */
-		public BaseTask(Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate) {
-			this.context= ctx;
-			_vmgr=vmgr;
-			pDialog = new ProgressDialog(ctx);
-			pDialog.setMessage(msg);
-			pDialog.setIndeterminate(indeterminate);
-			pDialog.setProgressStyle(indeterminate ? ProgressDialog.STYLE_SPINNER : ProgressDialog.STYLE_HORIZONTAL);
+	/**
+	 * @param TAG LogCat tag
+	 * @param ctx Android <code>Context</code>
+	 * @param vmgr VirtualBox API service
+	 * @param msg  operation description
+	 */
+	public BaseTask(String TAG, Context ctx, VBoxSvc vmgr, String msg) {
+		this.TAG = TAG;
+		this.context= ctx;
+		_vmgr=vmgr;
+		this.description=msg;
+	}
+	
+	@Override
+	protected void onPreExecute()		{
+		pDialog = new ProgressDialog(context);
+		pDialog.setMessage(description);
+		pDialog.setIndeterminate(true);
+		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pDialog.show();
+	}
+
+	@Override
+	protected Output doInBackground(Input... params)	{
+		try	{
+			return work(params);
+		} catch(Throwable e)	{
+			showAlert(TAG, e);
 		}
-		
-		protected void showAlert(Throwable e) {
-			Log.e(TAG, e.getMessage(), e);
-			while(e.getCause()!=null) e = e.getCause();
-			new BundleBuilder().putString("msg", e.getMessage()).sendMessage(_handler, BaseActivity.WHAT_ERROR);
-		}
-		
-		protected IProgress handleProgress(IProgress p)  throws IOException {
-			if(p==null) return null;
-			while(!p.getCompleted()) {
-				p.clearCache();
-				p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
-				publishProgress(p);
-				try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
-			}
-			p.clearCache();
-			p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
+		return null;
+	}
+	
+	/**
+	 * Implement task with default exception handling
+	 * @param params task input parameters
+	 * @return task return value
+	 * @throws <code>Exception</code> any exception thrown will be displayed to user in an Alert dialog
+	 */
+	protected abstract Output work(Input...params) throws Exception;
+	
+	@Override
+	protected void onPostExecute(Output result)	{
+		pDialog.dismiss();
+	}
+	
+	/**
+	 * Show Alert Dialog Box
+	 * @param e <code>Throwable</code> which caused the error
+	 */
+	protected void showAlert(String TAG, Throwable e) {
+		showAlert(TAG, e.getMessage(), e);
+	}
+
+	/**
+	 * Show an Alert dialog with text message
+	 * @param msg  text message to display
+	 * @param e  cause of the error
+	 */
+	protected void showAlert(String tag, String msg, Throwable e) {
+		Log.e(tag, msg, e);
+		e = Throwables.getRootCause(e);
+		new BundleBuilder()
+				.putString("title", msg)
+				.putString("msg", e.getClass().getSimpleName()+" -- "+e.getMessage())
+				.putString("stacktrace", Throwables.getStackTraceAsString(e))
+				.sendMessage(_handler, WHAT_ERROR);
+	}
+
+	/**
+	 * Handle VirtualBox API progress functionality
+	 * @param p  <code>IProgress</code> of the ongoing task
+	 * @return <code>IProgress</code> of the finished task
+	 * @throws IOException
+	 */
+	protected IProgress handleProgress(IProgress p)  throws IOException {
+		if(p==null) return null;
+		while(!p.getCompleted()) {
+			p.clearCache(); p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
 			publishProgress(p);
-			return p;
+			try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
 		}
-		
-		@Override
-		protected void onProgressUpdate(IProgress... p) {
-			try {
-				pDialog.setCancelable(p[0].getCancelable());
+		p.clearCache();
+		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
+		publishProgress(p);
+		return p;
+	}
+
+	@Override
+	protected void onProgressUpdate(IProgress... p) {
+		try {
+			if(pDialog.isIndeterminate()) {	//Dismiss Indeterminate progress dialog and display the determinate one.
+				pDialog.dismiss();
+				pDialog = new ProgressDialog(this.context);
 				pDialog.setTitle(p[0].getDescription());
-				pDialog.setMessage(p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription());
-				pDialog.setProgress(p[0].getOperationPercent());
-				pDialog.setSecondaryProgress(p[0].getPercent());
-			} catch (IOException e) {
-				showAlert(e);
-			}
-		}
-		
-		@Override
-		protected void onPreExecute()		{
+				pDialog.setIndeterminate(false);
+				pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				pDialog.setCancelable(p[0].getCancelable()); 
+				pDialog.setCancelMessage(_handler.obtainMessage(WHAT_CANCEL));
 				pDialog.show();
-		}
-		
-		@Override
-		protected Output doInBackground(Input... params)	{
-			try	{
-				return work(params);
-			} catch(Throwable e)	{
-				showAlert(e);
 			}
-			return null;
+			pDialog.setMessage("Operation " + p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription() + " - " + p[0].getOperationPercent() + "%  remaining " + p[0].getTimeRemaining() + "secs");
+			pDialog.setProgress(p[0].getPercent());
+			pDialog.setSecondaryProgress(p[0].getOperationPercent());
+		} catch (IOException e) {
+			showAlert(TAG, "Error updating Progress", e);
 		}
-		
-		protected abstract Output work(Input...params) throws Exception;
-		
-		@Override
-		protected void onPostExecute(Output result)	{
-			pDialog.dismiss();
-		}
+	}
 }

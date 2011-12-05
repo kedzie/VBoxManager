@@ -4,7 +4,7 @@ import com.kedzie.vbox.Cacheable;
 import com.kedzie.vbox.KSOAP;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 
-public interface IEvent extends IRemoteObject {
+public interface IEvent extends IManagedObjectRef {
 
 	@Cacheable @KSOAP(prefix="IEvent") public VBoxEventType getType();
 	@KSOAP(prefix="IEvent") public void setProcessed();

@@ -10,13 +10,14 @@ public class Server implements Parcelable {
 	 };
 	 
 	private Long id=-1L;
+	private String name;
 	private Integer port=18083;
 	private String host;
 	private String username;
 	private String password;
 
 	public Server() {}
-	public Server(Long id, String host, Integer port, String username, String password) {
+	public Server(Long id, String name, String host, Integer port, String username, String password) {
 		this.id=id;
 		this.port = port;
 		this.host = host;
@@ -25,6 +26,7 @@ public class Server implements Parcelable {
 	}
 	public Server(Parcel p) {
 		id = p.readLong();
+		name=p.readString();
 		port = p.readInt();
 		host = p.readString(); 
 		username = p.readString();
@@ -34,6 +36,7 @@ public class Server implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(id);
+		dest.writeString(name);
 		dest.writeInt(port);
 		dest.writeString(host); 
 		dest.writeString(username);
@@ -50,6 +53,12 @@ public class Server implements Parcelable {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Integer getPort() {
 		return port;

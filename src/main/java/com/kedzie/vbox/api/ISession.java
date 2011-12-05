@@ -1,11 +1,11 @@
 package com.kedzie.vbox.api;
 
 import java.io.IOException;
-import com.kedzie.vbox.KSOAP;
+
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
 
-public interface ISession extends IRemoteObject {
+public interface ISession extends IManagedObjectRef {
 
 	public void unlockMachine() throws IOException;;
 	public IConsole getConsole() throws IOException;

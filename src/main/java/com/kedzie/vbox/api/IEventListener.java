@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.kedzie.vbox.KSOAP;
 
-public interface IEventListener extends IRemoteObject {
+public interface IEventListener extends IManagedObjectRef {
 
 	public void handleEvent(@KSOAP("event") IEvent event) throws IOException;
 	

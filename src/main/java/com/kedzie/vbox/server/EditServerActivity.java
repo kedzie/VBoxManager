@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import com.kedzie.vbox.R;
 
 public class EditServerActivity extends Activity {
@@ -15,7 +16,6 @@ public class EditServerActivity extends Activity {
 	
 	protected Server _server;
 	
-	/* @see android.app.Activity#onRetainNonConfigurationInstance() */
 	@Override public Object onRetainNonConfigurationInstance() {
 		return _server;
 	}
@@ -25,6 +25,7 @@ public class EditServerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server);
        	_server = (Server)(getLastNonConfigurationInstance()==null ? getIntent().getParcelableExtra("server") : getLastNonConfigurationInstance());
+       	((TextView)findViewById(R.id.server_name)).setText(_server.getName());
         ((TextView)findViewById(R.id.server_host)).setText(_server.getHost());
         ((TextView)findViewById(R.id.server_port)).setText(""+_server.getPort());
         ((TextView)findViewById(R.id.server_username)).setText(_server.getUsername());
@@ -54,13 +55,13 @@ public class EditServerActivity extends Activity {
 		}
 	}
 	
-	/* @see android.app.Activity#onBackPressed() */
 	@Override public void onBackPressed() {
 		setResult(ServerListActivity.RESULT_CANCELED);
 		super.onBackPressed();
 	}
 
 	private void save() {
+		_server.setName( ((TextView)findViewById(R.id.server_name)).getText().toString() );
 		_server.setHost( ((TextView)findViewById(R.id.server_host)).getText().toString() );
 		_server.setPort( Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString()) );
 		_server.setUsername( ((TextView)findViewById(R.id.server_username)).getText().toString() );

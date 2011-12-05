@@ -7,7 +7,7 @@ import com.kedzie.vbox.Cacheable;
 import com.kedzie.vbox.KSOAP;
 
 
-public interface IVirtualBox extends IRemoteObject {
+public interface IVirtualBox extends IManagedObjectRef {
 	
 	@Cacheable public String getVersion();
 	@Cacheable public IEventSource getEventSource() ;

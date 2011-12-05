@@ -1,10 +1,9 @@
 package com.kedzie.vbox.api;
 
 import com.kedzie.vbox.Cacheable;
-import com.kedzie.vbox.KSOAP;
 
 
-public interface IPerformanceMetric extends IRemoteObject {
+public interface IPerformanceMetric extends IManagedObjectRef {
 	@Cacheable  public String getMetricName();
 	@Cacheable  public String getDescription();
 	@Cacheable  public Integer getMinimumValue();

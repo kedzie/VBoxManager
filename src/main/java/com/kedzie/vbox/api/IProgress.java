@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.kedzie.vbox.Cacheable;
 import com.kedzie.vbox.KSOAP;
 
-public interface IProgress extends IRemoteObject {
+public interface IProgress extends IManagedObjectRef {
 
 	public void waitForCompletion(@KSOAP(type="int", value="timeout") int millseconds) throws IOException;
 	public void waitForCompletion(@KSOAP(type="unsignedInt", value="operation") int operation, @KSOAP(type="int", value="timeout") int millseconds) throws IOException;
@@ -16,17 +16,17 @@ public interface IProgress extends IRemoteObject {
 	public String getErrorInfo() throws IOException;
 	
 	@Cacheable public String getDescription() throws IOException;
-	@Cacheable  public Integer getPercent() throws IOException;
-	@Cacheable public Integer getTimeRemaining() throws IOException;
-	@Cacheable public String getOperation() throws IOException;
+	public Integer getPercent() throws IOException;
+	public Integer getTimeRemaining() throws IOException;
+	public String getOperation() throws IOException;
 	@Cacheable public Integer getOperationCount() throws IOException;
-	@Cacheable public String getOperationDescription() throws IOException;
-	@Cacheable public Integer getOperationPercent() throws IOException;
-	@Cacheable public Integer getOperationWeight() throws IOException;
+	public String getOperationDescription() throws IOException;
+	public Integer getOperationPercent() throws IOException;
+	public Integer getOperationWeight() throws IOException;
 	@Cacheable public String getInitiator() throws IOException;
-	@Cacheable public Boolean getCancelled() throws IOException;
+	public Boolean getCancelled() throws IOException;
 	@Cacheable public Boolean getCancelable() throws IOException;
-	@Cacheable public Boolean getCompleted() throws IOException;
+	public Boolean getCompleted() throws IOException;
 	
 	public void cancel() throws IOException;
 	public void setTimeout(@KSOAP(type="unsignedInt", value="timeout") int timeout) throws IOException;

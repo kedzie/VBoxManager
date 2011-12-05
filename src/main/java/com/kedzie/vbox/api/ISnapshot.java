@@ -3,7 +3,7 @@ package com.kedzie.vbox.api;
 import java.util.List;
 import com.kedzie.vbox.Cacheable;
 
-public interface ISnapshot extends IRemoteObject {
+public interface ISnapshot extends IManagedObjectRef {
 
 	@Cacheable public String getName();
 	@Cacheable public String getDescription();

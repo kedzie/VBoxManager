@@ -3,80 +3,45 @@ package com.kedzie.vbox.common;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
-import com.kedzie.vbox.VBoxSvc;
-import com.kedzie.vbox.api.IEvent;
-import com.kedzie.vbox.api.IEventListener;
-import com.kedzie.vbox.api.IEventSource;
-import com.kedzie.vbox.api.IMachineEvent;
-import com.kedzie.vbox.api.jaxb.VBoxEventType;
 
-public class EventService extends Service{
-	protected static final String TAG = "vbox."+ EventService.class.getSimpleName();
-	public static final int WHAT_EVENT = 1;
-	private static final int INTERVAL = 500;
-	private HandlerThread _ht= new HandlerThread(TAG, HandlerThread.MIN_PRIORITY);
-	private boolean _running=true;
-	private Messenger _messenger;
-	private VBoxSvc _vmgr;
+import com.kedzie.vbox.VBoxSvc;
+
+/**
+ * Listen for VirtualBox events and publish notifications
+ */
+public class EventService extends Service {
+	protected static final String TAG = EventService.class.getSimpleName();
+	
+	private EventThread _eventThread;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		_messenger = intent.getParcelableExtra("listener"); 
-		_vmgr = intent.getParcelableExtra("vmgr");
-		_ht.start();
-		Handler h = new Handler(_ht.getLooper()) {
-			@Override 
-			public void handleMessage(Message msg) {
-				IEventSource evSource = _vmgr.getVBox().getEventSource();
-				IEventListener listener = evSource.createListener();
-				IEvent event = null;
-				try {
-					evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.MACHINE_EVENT }, false);
-					while(_running) {
-							if((event=evSource.getEvent(listener, 0))!=null) {
-								Log.d(TAG, "Get Event: " + event.getType());
-								BundleBuilder b = new BundleBuilder().putString("evt", event.getIdRef());
-								if(event instanceof IMachineEvent) b.putString("machine",  _vmgr.getVBox().findMachine(((IMachineEvent)event).getMachineId()).getIdRef());
-								synchronized(EventService.class) {
-									if(_messenger!=null && _running)  {
-										Log.d(TAG, "Sending Message");
-										b.sendMessage(_messenger, WHAT_EVENT);
-									}
-								}
-								evSource.eventProcessed(listener, event); 
-							} else
-								Thread.sleep(INTERVAL);
-					}
-				} catch (Throwable e) {} 
-				finally {
-					try {
-						if(listener!=null && evSource!=null)  evSource.unregisterListener(listener);
-					} catch (Throwable e) {}
-				}
-			}
-		};
-		h.sendEmptyMessage(0);
+		_eventThread = new EventThread((VBoxSvc)intent.getParcelableExtra("vmgr"));
+		_eventThread.addListener((Messenger)intent.getParcelableExtra("listener"));
+		_eventThread.start();
 		return new LocalBinder();
 	}
 	
 	@Override
 	public boolean onUnbind(Intent intent) {
 		Log.i(TAG, "Destroying Event Service");
-		_running=false;
-		_ht.quit();
+		boolean done = false;
+        _eventThread._running= false;
+        while (!done) {
+            try {
+                _eventThread.join();
+                done = true;
+            } catch (InterruptedException e) { }
+        }
 		return super.onUnbind(intent);
 	}
 	
-	public synchronized void setMessenger(Messenger m) {
+	public  void setMessenger(Messenger m) {
 		Log.i(TAG, "Setting event listener: " + m);
-		_messenger = m;
+		_eventThread.addListener(m);
 	}
 	
 	public  class LocalBinder extends Binder {

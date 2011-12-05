@@ -2,7 +2,7 @@ package com.kedzie.vbox.api;
 
 import com.kedzie.vbox.Cacheable;
 
-public interface ISystemProperties extends IRemoteObject {
+public interface ISystemProperties extends IManagedObjectRef {
 	@Cacheable public Integer getMinGuestRAM();
 	@Cacheable public Integer getMaxGuestRam();
 	@Cacheable public Integer getMinGuestCPUCount();

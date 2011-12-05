@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine;
 
 import java.io.IOException;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -24,7 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.kedzie.vbox.BaseActivity;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
@@ -36,13 +37,13 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.common.EventService;
-import com.kedzie.vbox.common.MachineView;
+import com.kedzie.vbox.common.EventThread;
 import com.kedzie.vbox.common.MetricActivity;
 import com.kedzie.vbox.common.PreferencesActivity;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
-public class MachineActivity extends BaseActivity  implements AdapterView.OnItemClickListener {
+public class MachineActivity extends Activity  implements AdapterView.OnItemClickListener {
 	protected static final String TAG = MachineActivity.class.getSimpleName();
 	
 	private VBoxSvc _vmgr;
@@ -54,7 +55,7 @@ public class MachineActivity extends BaseActivity  implements AdapterView.OnItem
 		@Override
 		public void handleMessage(Message msg) {
 			switch(msg.what){
-			case EventService.WHAT_EVENT:
+			case EventThread.WHAT_EVENT:
 				Log.d(TAG, "Got Event");
 					IEvent event = _vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
 					if(event instanceof IMachineStateChangedEvent)
@@ -91,19 +92,47 @@ public class MachineActivity extends BaseActivity  implements AdapterView.OnItem
 		if(action.equals("Start"))	
 			new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
 		else if(action.equals("Power Off"))	
-			new MachineTask(this, _vmgr, "Powering Off", false) { protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { 	return console.powerDown(); }}.execute(_machine);
+			new MachineTask("LaunchVMProcessTask", this, _vmgr, "Powering Off", false) { 
+				protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { 	
+					return console.powerDown(); 
+				}
+			}.execute(_machine);
 		else if(action.equals("Reset"))
-			new MachineTask(this, _vmgr, "Resetting", true) { protected void work(IMachine m, IConsole console) throws Exception { 	console.reset(); }}.execute(_machine);
+			new MachineTask("ResetTask", this, _vmgr, "Resetting", true) { 
+				protected void work(IMachine m, IConsole console) throws Exception { 	
+					console.reset(); 
+				}
+			}.execute(_machine);
 		else if(action.equals("Pause")) 	
-			new MachineTask(this, _vmgr, "Pausing", true) { protected void work(IMachine m, IConsole console) throws Exception { console.pause(); }}.execute(_machine);
+			new MachineTask("PauseTask", this, _vmgr, "Pausing", true) { 
+				protected void work(IMachine m, IConsole console) throws Exception { 
+					console.pause();
+				}
+			}.execute(_machine);
 		else if(action.equals("Resume")) 
-			new MachineTask(this, _vmgr, "Resuming", true) { protected void work(IMachine m, IConsole console) throws Exception { 	console.resume(); }}.execute(_machine);
+			new MachineTask("ResumeTask", this, _vmgr, "Resuming", true) { 
+				protected void work(IMachine m, IConsole console) throws Exception { 	
+					console.resume(); 
+				}
+			}.execute(_machine);
 		else if(action.equals("Power Button")) 	
-			new MachineTask(this, _vmgr, "ACPI Power Down", true) { protected void work(IMachine m, IConsole console) throws Exception { console.powerButton(); }}.execute(_machine);
+			new MachineTask("PowerButtonTask", this, _vmgr, "ACPI Power Down", true) { 
+				protected void work(IMachine m, IConsole console) throws Exception { 
+					console.powerButton(); 
+				}
+			}.execute(_machine);
 		else if(action.equals("Save State")) 	
-			new MachineTask(this, _vmgr, "Saving State", false) { protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { 	return console.saveState(); }}.execute(_machine);
+			new MachineTask("SaveStateTask", this, _vmgr, "Saving State", false) { 
+				protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { 	
+					return console.saveState(); 
+				}
+			}.execute(_machine);
 		else if(action.equals("Discard State")) 	
-			new MachineTask(this, _vmgr, "Discarding State", true) { protected void work(IMachine m, IConsole console) throws Exception { 	console.discardSavedState(true); }}.execute(_machine);
+			new MachineTask("DiscardStateTask", this, _vmgr, "Discarding State", true) { 
+				protected void work(IMachine m, IConsole console) throws Exception { 	
+					console.discardSavedState(true); 
+				}
+			}.execute(_machine);
 		else if(action.equals("Take Snapshot")) 	{
 			final Dialog dialog = new Dialog(this);
 			dialog.setContentView(R.layout.snapshot_dialog);
@@ -111,7 +140,7 @@ public class MachineActivity extends BaseActivity  implements AdapterView.OnItem
 				@Override
 				public void onClick(View v) {
 					dialog.dismiss();
-					new MachineTask(MachineActivity.this, _vmgr, "Taking Snapshot", false) {	
+					new MachineTask("TaskSnapshotTask", MachineActivity.this, _vmgr, "Taking Snapshot", false) {	
 						protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { 	
 							return console.takeSnapshot( ((TextView)dialog.findViewById(R.id.snapshot_name)).getText().toString(),  ((TextView)dialog.findViewById(R.id.snapshot_description)).getText().toString()); 
 						}
@@ -138,7 +167,7 @@ public class MachineActivity extends BaseActivity  implements AdapterView.OnItem
 			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
 				_vmgr.getVBox().getSessionObject().unlockMachine();
 		} catch (IOException e) {
-			showAlert(e);
+			Log.e(TAG, "Exception unlocking machine", e);
 		}
 		super.onPause();
 	}
@@ -147,6 +176,10 @@ public class MachineActivity extends BaseActivity  implements AdapterView.OnItem
 		_machine.clearCache();
 		_headerView.update(_machine);
 		_listView.setAdapter(new MachineActionAdapter(this, getApp().getActions(_machine.getState())));
+	}
+
+	public VBoxApplication getApp() { 
+		return (VBoxApplication)getApplication(); 
 	}
 	
 	@Override

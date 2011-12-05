@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"  android:padding="8dip"  android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_centerVertical="true"  >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"  
+		android:padding="12dip"    android:layout_centerVertical="true"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"   >
     
     <LinearLayout android:orientation="horizontal"  android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView android:text="Name"  android:textSize="12sp" android:layout_marginRight="8dip" android:layout_gravity="left" android:layout_width="wrap_content" android:layout_height="wrap_content"  />
-		<EditText android:id="@+id/snapshot_name" android:text="New Snapshot" android:textSize="12sp"  android:layout_weight="1"  android:layout_width="wrap_content" android:layout_height="wrap_content" >
+
+		<TextView android:text="Name"   android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textSize="12sp" android:layout_marginRight="8dip" android:layout_gravity="left"   />
+
+		<EditText android:id="@+id/snapshot_name" android:text="New Snapshot" android:textSize="12sp"  android:layout_weight="1"  
+						android:layout_width="wrap_content" android:layout_height="wrap_content" >
 	    	<requestFocus/>
 		</EditText>
+
     </LinearLayout>
 
     <LinearLayout android:orientation="horizontal"  android:layout_width="fill_parent" android:layout_height="wrap_content">
     	<TextView android:text="Description"  android:textSize="12sp" android:layout_marginRight="8dip" android:layout_gravity="left" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    	<EditText android:id="@+id/snapshot_description"  android:text="Snapshot Description" android:textSize="12sp"  android:layout_weight="1" android:lines="3" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    	<EditText android:id="@+id/snapshot_description"  android:text="Snapshot Description" 
+					android:textSize="12sp"  android:layout_weight="1" android:lines="3" 
+					android:layout_width="wrap_content" android:layout_height="wrap_content" />
     </LinearLayout>
     
     <LinearLayout android:orientation="horizontal"   android:gravity="center_horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" >
