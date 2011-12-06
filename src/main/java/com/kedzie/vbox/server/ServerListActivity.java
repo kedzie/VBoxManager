@@ -140,8 +140,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
 				((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_vbox );
 				Server s = getItem(position);
-				String name = (s.getName()==null || "".equals(s.getName())) ? s.getHost() : s.getName();
-				((TextView)view.findViewById(R.id.action_item_text)).setText(name);
+				((TextView)view.findViewById(R.id.action_item_text)).setText((s.getName()==null || "".equals(s.getName())) ? s.getHost() : s.getName());
 			}
 			return view;
 		}

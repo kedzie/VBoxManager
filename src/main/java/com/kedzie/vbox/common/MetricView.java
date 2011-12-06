@@ -3,7 +3,6 @@ package com.kedzie.vbox.common;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
@@ -59,7 +58,7 @@ public class MetricView  implements SurfaceHolder.Callback {
 		return _metrics;
 	}
 	
-	public void addData(Map<String, Map<String, Object>> data) {
+	public void addData(Map<String, Point2D> data) {
 		_thread.addData(data);
 	}
 	
@@ -92,6 +91,7 @@ public class MetricView  implements SurfaceHolder.Callback {
 		private double pixelsPerSecond; 
 		
 		public RenderThread(SurfaceHolder holder, int count, int period, int max, String []metrics, IPerformanceMetric pm) {
+			super("Metric Render");
 			_surfaceHolder = holder;
 			_max=max;
 			_count=count;
@@ -149,6 +149,10 @@ public class MetricView  implements SurfaceHolder.Callback {
 			}
 		}
 		
+		private int getXPixelFromTimestamp(long stamp, long current) {
+			return _width-(int)(((current-stamp)/1000.d)*pixelsPerSecond);
+		}
+		
 		protected void onDraw(Canvas canvas) {
 			if(bounds==null) 
 				bounds = canvas.getClipBounds();
@@ -174,27 +178,20 @@ public class MetricView  implements SurfaceHolder.Callback {
 				Point2D p = it.next();
 				while(it.hasNext() ) {
 					Point2D nP = it.next();
-					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)p.y, bounds.left+(int)nP.x, bounds.bottom-(int)nP.y, metricPaint);
+					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)(p.y*vStep), bounds.left+(int)nP.x, bounds.bottom-(int)(nP.y*vStep), metricPaint);
 					p = nP;
 				}
 			}
 		}
 		
-		public void addData(Map<String, Map<String, Object>> d) {
+		public void addData(Map<String, Point2D> d) {
 			synchronized (_surfaceHolder) {
 				for(String metric : _metrics){
-					@SuppressWarnings("unchecked")
-					int newValue  = ((List<Integer>)d.get(metric).get("val")).get(0);
-					Log.i(TAG, "Added data point: " + newValue);
-					data.get(metric).addLast(new Point2D( 0, newValue*vStep, System.currentTimeMillis()+1000 ));
+					data.get(metric).addLast( d.get(metric) );
 					if(data.get(metric).size()>_count) 
 						data.get(metric).removeFirst();
 				}
 			}
-		}
-		
-		private int getXPixelFromTimestamp(long stamp, long current) {
-			return _width-(int)(((current-stamp)/1000.d)*pixelsPerSecond);
 		}
 		
 		@Override

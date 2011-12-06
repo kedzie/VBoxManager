@@ -51,6 +51,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	private EventService eventService;
 	private MachineView _headerView;
 	private ListView _listView;
+	private EventThread _thread;
 	private Messenger _messenger = new Messenger( new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -84,6 +85,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 		_listView = (ListView)findViewById(R.id.list);
 		_listView.addHeaderView(_headerView);
 		_listView.setOnItemClickListener(this);
+		_thread = new EventThread(_vmgr);
     }
 	
 	@Override 
@@ -156,6 +158,8 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	protected void onResume() {
 		super.onResume();
 		updateState();
+//		_thread.start();
+//		_thread.addListener(_messenger);
 		bindService(new Intent(this, EventService.class), localConnection, Context.BIND_AUTO_CREATE);
 	}
 	
@@ -163,6 +167,14 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	protected void onPause() {
 		if(eventService!=null) eventService.setMessenger(null);
 		unbindService(localConnection);
+//		boolean done = false;
+//        _thread._running= false;
+//        while (!done) {
+////            try {
+//                _thread.join();
+//                done = true;
+//            } catch (InterruptedException e) { }
+//        }
 		try {
 			if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
 				_vmgr.getVBox().getSessionObject().unlockMachine();

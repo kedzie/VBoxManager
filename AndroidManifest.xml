@@ -15,7 +15,8 @@
 		<activity android:configChanges="orientation" android:name=".machine.MachineInfoActivity"/>
 		<activity android:configChanges="orientation" android:name=".machine.SnapshotActivity"/>
 		<activity android:configChanges="orientation" android:name=".machine.MachineActivity"/>
-		<activity android:configChanges="orientation" android:name=".common.MetricActivity" android:screenOrientation="landscape"/>
+		<activity android:configChanges="orientation" android:name=".common.MetricActivity" />
+		<activity android:configChanges="orientation" android:name=".common.MetricTabActivity" android:theme="@android:style/Theme.NoTitleBar"/>
 		<activity android:label="Preferences" android:name=".common.PreferencesActivity"/>
 		<service android:name=".common.EventService"/>
     </application>

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import android.R;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
@@ -39,6 +39,7 @@ import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.common.EventService;
+import com.kedzie.vbox.common.EventThread;
 import com.kedzie.vbox.common.MetricActivity;
 import com.kedzie.vbox.common.PreferencesActivity;
 import com.kedzie.vbox.task.BaseTask;
@@ -49,15 +50,16 @@ import com.kedzie.vbox.task.MachineTask;
 public class MachineListActivity extends Activity implements AdapterView.OnItemClickListener {
 	protected static final String TAG = MachineListActivity.class.getSimpleName();
 	
-	private VBoxSvc vmgr;
+	private VBoxSvc _vmgr;
 	private List<IMachine> _machines;
 	private ListView _listView;
+	private EventThread _eventThread;
 	private Messenger _messenger = new Messenger(new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-				IEvent event = vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
+				IEvent event = _vmgr.getProxy(IEvent.class, msg.getData().getString("evt"));
 				if(event instanceof IMachineStateChangedEvent) {
-					IMachine eventMachine = vmgr.getProxy(IMachine.class, msg.getData().getString("machine"));
+					IMachine eventMachine = _vmgr.getProxy(IMachine.class, msg.getData().getString("machine"));
 					int pos = getAdapter().getPosition(eventMachine);
 					getAdapter().setNotifyOnChange(false);
 					getAdapter().remove(eventMachine);
@@ -70,10 +72,10 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	private ServiceConnection localConnection = new ServiceConnection() {
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
 			_eventService = ((EventService.LocalBinder)service).getLocalBinder();
-			_eventService.setMessenger(_messenger );
+			_eventService.addListener(_messenger );
 		}
 		@Override public void onServiceDisconnected(ComponentName name) { 
-			_eventService.setMessenger(null);
+			_eventService.removeListener(_messenger);
 		}
 	};
 	
@@ -84,19 +86,28 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
        	_listView = (ListView)findViewById(R.id.list);
        	registerForContextMenu(_listView);
        	_listView.setOnItemClickListener(this);
-    	vmgr = (VBoxSvc)getIntent().getParcelableExtra("vmgr");
-    	setTitle("VirtualBox v." + vmgr.getVBox().getVersion());
+    	_vmgr = (VBoxSvc)getIntent().getParcelableExtra("vmgr");
+    	setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
     	
     	if(getLastNonConfigurationInstance()!=null) { 
     		_machines = (List<IMachine>)getLastNonConfigurationInstance();
     		_listView.setAdapter(new MachineListAdapter(MachineListActivity.this, _machines));
     		startEventListener();
     	} else
-    		new LoadMachinesTask(this, vmgr).execute();
+    		new LoadMachinesTask(this, _vmgr).execute();
     }
 	
 	protected void startEventListener() {
-		bindService(new Intent(MachineListActivity.this, EventService.class).putExtra("vmgr", vmgr).putExtra("listener", _messenger), localConnection, Context.BIND_AUTO_CREATE);
+		Intent intent = new Intent(MachineListActivity.this, EventService.class).putExtra("vmgr", _vmgr).putExtra("listener", _messenger);
+		bindService(intent, localConnection, Context.BIND_AUTO_CREATE);
+//		startService(intent);
+//		_eventThread = new EventThread(_vmgr);
+//		_eventThread.addListener(_messenger);
+//		_eventThread.start();
+	}
+	
+	protected void stopEventListener() {
+		_eventThread.quit();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -110,7 +121,8 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		startActivity(new Intent().setClass(MachineListActivity.this, MachineActivity.class).putExtra("vmgr", vmgr).putExtra("machine", getAdapter().getItem(position).getIdRef()));
+//		startActivity(new Intent(MachineListActivity.this, MachineActivity.class).putExtra("vmgr", vmgr).putExtra("machine", getAdapter().getItem(position).getIdRef()));
+		startActivity(new Intent(MachineListActivity.this, MachineTabActivity.class).putExtra("vmgr", _vmgr).putExtra("machine", getAdapter().getItem(position).getIdRef()));
 	}
 	
 	@Override 
@@ -121,12 +133,15 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(_eventService!=null)_eventService.setMessenger(_messenger);
+		if(_eventService!=null)
+			_eventService.addListener(_messenger);
 	}
 
 	@Override 
 	protected void onPause() {
-		if(_eventService!=null) _eventService.setMessenger(null);
+		
+		if(_eventService!=null) 
+			_eventService.removeListener(_messenger);
 		super.onPause();
 	}
 
@@ -134,7 +149,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	protected void onDestroy() {
 		try {  
 			unbindService(localConnection);
-			if(vmgr.getVBox()!=null)  vmgr.getVBox().logoff(); 
+			if(_vmgr.getVBox()!=null)  _vmgr.getVBox().logoff(); 
 		} catch (Exception e) { 
 			Log.e(TAG, "error ", e); 
 		} 
@@ -151,12 +166,12 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.machine_list_option_menu_refresh:
-			new LoadMachinesTask(this, vmgr).execute();
+			new LoadMachinesTask(this, _vmgr).execute();
 			return true;
 		case R.id.machine_list_option_menu_metrics:
-			startActivity(new Intent(this, MetricActivity.class).putExtra("vmgr", vmgr).putExtra("title", "Host Metrics")
-				.putExtra(MetricActivity.INTENT_OBJECT, vmgr.getVBox().getHost().getIdRef() )
-				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, vmgr.getVBox().getHost().getMemorySize())
+			startActivity(new Intent(this, MetricActivity.class).putExtra("vmgr", _vmgr).putExtra("title", "Host Metrics")
+				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
+				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
 				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
 			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
@@ -187,22 +202,22 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	  IMachine m = getAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
 	  case R.id.machines_context_menu_start:  
-		  new LaunchVMProcessTask(this, vmgr).execute(m);	  
+		  new LaunchVMProcessTask(this, _vmgr).execute(m);	  
 		  break;
 	  case R.id.machines_context_menu_poweroff:   
-		  new MachineTask("vbox.PoweroffTask", this, vmgr, "Powering Off", false) {	protected IProgress workWithProgress(IMachine m,  IConsole console) throws Exception { 	return console.powerDown(); }}.execute(m);
+		  new MachineTask("PoweroffTask", this, _vmgr, "Powering Off", false) {	protected IProgress workWithProgress(IMachine m,  IConsole console) throws Exception { 	return console.powerDown(); }}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_reset:	 
-		  new MachineTask("vbox.ResetTask", this, vmgr, "Resetting", true) {	protected void work(IMachine m,  IConsole console) throws Exception { 	console.reset(); }}.execute(m);
+		  new MachineTask("ResetTask", this, _vmgr, "Resetting", true) {	protected void work(IMachine m,  IConsole console) throws Exception { 	console.reset(); }}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_resume:	  
-		  new MachineTask("vbox.ResumeTask", this, vmgr, "Resuming", true) {	protected void work(IMachine m,  IConsole console) throws Exception { 	console.resume(); }}.execute(m);
+		  new MachineTask("ResumeTask", this, _vmgr, "Resuming", true) {	protected void work(IMachine m,  IConsole console) throws Exception { 	console.resume(); }}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_pause:	  
-		  new MachineTask("vbox.PauseTask", this, vmgr, "Pausing", true) {	protected void work(IMachine m,  IConsole console) throws Exception {  console.pause();	}}.execute(m);
+		  new MachineTask("PauseTask", this, _vmgr, "Pausing", true) {	protected void work(IMachine m,  IConsole console) throws Exception {  console.pause();	}}.execute(m);
 		  break;
 	  case R.id.machines_context_menu_acpi:	  
-		  new MachineTask("vbox.ACPITask", this, vmgr, "ACPI Power Down", true) {protected void work(IMachine m,  IConsole console) throws Exception {	console.powerButton(); 	}}.execute(m);
+		  new MachineTask("ACPITask", this, _vmgr, "ACPI Power Down", true) {protected void work(IMachine m,  IConsole console) throws Exception {	console.powerButton(); 	}}.execute(m);
 		  break;
 	  }
 	  return true;
@@ -218,13 +233,13 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
 			Collection<IManagedObjectRef> running = new ArrayList<IManagedObjectRef>();
-			running.add(vmgr.getVBox().getHost());
+			running.add(_vmgr.getVBox().getHost());
 			for(IMachine m :  machines) {
 				if(MachineState.RUNNING.equals(m.getState()))	
 					running.add(m);
 				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();   //cache the values\
 			}
-			vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriod(), 1, running);
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriod(), 1, running);
 			return machines;
 		}
 

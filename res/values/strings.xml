@@ -2,18 +2,14 @@
 <resources>
     <string name="app_name">VirtualBox Manager</string>
     <string name="server_list">VirtualBox Servers</string>
-    
     <string name="server_edit">Edit Server</string>
     <string name="server_host">Host</string>
     <string name="server_port">Port</string>
     <string name="server_username">Username</string>
     <string name="server_password">Password</string>
-    
     <string name="namespace">http://www.virtualbox.org</string>
-    
     <string name="metric_period_title">Period</string>
     <string name="metric_period_summary">Sample Rate</string>
-    
     <string name="metric_count_title"># of Samples</string>
     <string name="metric_count_summary"># of Samples</string>
 </resources>

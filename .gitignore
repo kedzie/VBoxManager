@@ -1,3 +1,5 @@
 /target
 /proguard
 /gen
+/bin
+/org

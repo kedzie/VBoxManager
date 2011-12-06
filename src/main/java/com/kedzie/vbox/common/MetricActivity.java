@@ -1,6 +1,8 @@
 package com.kedzie.vbox.common;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
@@ -135,6 +137,7 @@ public class MetricActivity extends Activity  implements OnGestureListener {
 		private int _period;
 		
 		public MetricThread(VBoxSvc vmgr, String object, int count, int period, MetricView...views){
+			super("Metric Data");
 			_vmgr=vmgr;
 			_object=object;
 			_period=period;
@@ -145,9 +148,15 @@ public class MetricActivity extends Activity  implements OnGestureListener {
 		public void run() {
 			while(_running) {
 				try {
+					Map<String, Point2D> newData = new HashMap<String, Point2D>();
 					Map<String, Map<String, Object>> data = _vmgr.queryMetricsData(_object, 1, _period, "*:");
+					for(String metric : data.keySet()){
+						@SuppressWarnings("unchecked")
+						int newValue  = ((List<Integer>)data.get(metric).get("val")).get(0);
+						newData.put(metric, new Point2D( 0, newValue, System.currentTimeMillis()+1000 ));
+					}
 					for(MetricView v : _views)
-						v.addData(data);
+						v.addData(newData);
 					Thread.sleep(_period*1000);
 				} catch (Exception e) {
 					Log.e(TAG, "", e);

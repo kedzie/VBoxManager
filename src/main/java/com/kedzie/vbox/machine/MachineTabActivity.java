@@ -8,6 +8,7 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.common.MetricActivity;
+import com.kedzie.vbox.common.MetricTabActivity;
 
 public class MachineTabActivity extends TabActivity  {
 	
@@ -26,7 +27,7 @@ public class MachineTabActivity extends TabActivity  {
 	    getTabHost().addTab(getTabHost().newTabSpec("snapshots").setIndicator("Snapshots",	getResources().getDrawable(R.drawable.ic_tab_snapshots)).setContent(
 	    		new Intent(this, SnapshotActivity.class).putExtras(getIntent())));
 	    getTabHost().addTab(getTabHost().newTabSpec("metrics").setIndicator("Metrics", getResources().getDrawable(R.drawable.ic_tab_metrics)).setContent(
-	    		new Intent(this, MetricActivity.class).putExtras(getIntent())
+	    		new Intent(this, MetricTabActivity.class).putExtras(getIntent())
 		    		.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize())
 					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
