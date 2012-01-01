@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/machine_option_menu_refresh" android:icon="@drawable/ic_menu_refresh" android:title="Refresh"></item>
-    <item android:icon="@drawable/ic_menu_metric" android:id="@+id/machine_option_menu_metrics" android:title="Metrics"></item>
-     <item android:icon="@drawable/ic_menu_info_details" android:id="@+id/machine_option_menu_info" android:title="Info"></item>
-     <item android:icon="@drawable/ic_menu_camera" android:id="@+id/machine_option_menu_snapshots" android:title="Snapshots"></item>
+<!--     <item android:icon="@drawable/ic_menu_metric" android:id="@+id/machine_option_menu_metrics" android:title="Metrics"></item> -->
+<!--      <item android:icon="@drawable/ic_menu_info_details" android:id="@+id/machine_option_menu_info" android:title="Info"></item> -->
+<!--      <item android:icon="@drawable/ic_menu_camera" android:id="@+id/machine_option_menu_snapshots" android:title="Snapshots"></item> -->
     <item android:icon="@drawable/ic_menu_preferences" android:id="@+id/machine_option_menu_preferences" android:title="Settings"></item>
 </menu>

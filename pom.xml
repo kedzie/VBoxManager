@@ -4,23 +4,22 @@
 
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android</artifactId>
-	<version>1.9.2</version>
+	<version>2.0.0</version>
 	
 	<packaging>apk</packaging>
 	<name>VirtualBox Manager</name>
 	<description>Manage/Monitor Virtual Machines on Android mobile device</description>
-
+	
 	<scm>
 		<connection>scm:git:git://github.com/kedzie/VBoxManager.git</connection>
 		<developerConnection>scm:git:git://github.com/kedzie/VBoxManager.git</developerConnection>
 		<url>https://github.com/kedzie/VBoxManager</url>
 	</scm>
-
+	
 	<properties>
-		<versionCode>11</versionCode>
 		<environment>development</environment>
 	</properties>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -29,54 +28,23 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.ksoap2-android</groupId>
-			<artifactId>ksoap2-j2se</artifactId>
-			<version>2.5.8</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>10.0.1</version>
-		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.sun.xml.bind</groupId> -->
-		<!-- <artifactId>jaxb-xjc</artifactId> -->
-		<!-- <version>2.2.4-1</version> -->
-		<!-- </dependency> -->
 	</dependencies>
-
+	
 	<build>
+		<directory>bin</directory>
+		<outputDirectory>bin/classes</outputDirectory>
 		<finalName>${project.artifactId}</finalName>
-
-		<resources>
-			<resource>
-				<directory>${project.basedir}/res</directory>
-				<filtering>true</filtering>
-				<targetPath>${project.build.directory}/filtered-res</targetPath>
-				<includes><include>**/*.xml</include></includes>
-			</resource>
-			<resource>
-				<directory>${project.basedir}/res</directory>
-				<filtering>false</filtering>
-				<targetPath>${project.build.directory}/filtered-res</targetPath>
-				<excludes><exclude>**/*.xml</exclude></excludes>
-			</resource>
-			<resource>
-				<directory>${project.basedir}</directory>
-				<filtering>true</filtering>
-				<targetPath>${project.build.directory}/filtered-manifest</targetPath>
-				<includes>
-					<include>AndroidManifest.xml</include>
-				</includes>
-			</resource>
-		</resources>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.0.0-alpha-14</version>
+					<version>3.0.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -85,10 +53,7 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
+				<configuration><source>1.6</source><target>1.6</target></configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -108,16 +73,17 @@
 				<artifactId>android-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml</androidManifestFile>
-					<resourceDirectory>${project.build.directory}/filtered-res</resourceDirectory>
+					<manifestDebuggable>${android.debuggable}</manifestDebuggable>
+					<manifestVersionName/>
+					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 					<sdk><platform>8</platform></sdk>
+					<genDirectory>${project.build.directory}/generated-sources/r</genDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<profiles>
-		<!-- Debugging & Development -->
 		<profile>
 			<id>development</id>
 			<activation>
@@ -130,10 +96,9 @@
 				<android.debuggable>true</android.debuggable>
 			</properties>
 		</profile>
-
-		<!-- Signed/Zipaligned APK for Google Market Distribution -->
+		
 		<profile>
-			<id>release</id>
+			<id>production</id> <!-- Signed/Zipaligned APK for Google Market Distribution -->
 			<activation>
 				<property>
 					<name>environment</name>
@@ -150,21 +115,10 @@
 						<version>1.2</version>
 						<executions>
 							<execution>
-								<id>sign</id>
-								<goals>
-									<goal>sign</goal>
-									<goal>verify</goal>
-								</goals>
-								<phase>package</phase>
-								<inherited>true</inherited>
+								<id>sign</id><phase>package</phase><goals><goal>sign</goal></goals>
 								<configuration>
-									<removeExistingSignatures>true</removeExistingSignatures>
-									<archiveDirectory />
-									<includes><include>${project.build.directory}/${project.artifactId}.apk</include></includes>
-									<keystore>android</keystore>
-									<storepass>android</storepass>
-									<keypass>android</keypass>
-									<alias>kedzieandroid</alias>
+									<archive>${project.build.directory}/${project.artifactId}.apk</archive>
+									<keystore>android</keystore><storepass>android</storepass><keypass>android</keypass><alias>kedzieandroid</alias>
 									<verbose>true</verbose>
 								</configuration>
 							</execution>
@@ -173,20 +127,16 @@
 					<plugin>
 						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 						<artifactId>android-maven-plugin</artifactId>
-						<inherited>true</inherited>
 						<configuration>
 							<sign><debug>false</debug></sign>
 							<zipalign>
+								<skip>false</skip>
 								<verbose>true</verbose>
-								<inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
-								<outputApk>${project.build.directory}/${project.artifactId}-signed-aligned.apk</outputApk>
 							</zipalign>
 						</configuration>
 						<executions>
 							<execution>
-								<id>zipalign</id>
-								<phase>package</phase>
-								<goals><goal>zipalign</goal></goals>
+								<id>zipalign</id><phase>package</phase><goals><goal>zipalign</goal></goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -222,11 +172,11 @@
 			<name>codehaus</name>
 			<url>http://repository.codehaus.org</url>
 		</repository>
-		<repository>
+		<!--repository>
 			<id>googlecode-ksoap2-android</id>
 			<name>googlecode-ksoap2-android</name>
 			<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
-		</repository>
+		</repository-->
 	</repositories>
 
 </project>

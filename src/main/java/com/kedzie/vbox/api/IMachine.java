@@ -77,12 +77,12 @@ public interface IMachine extends IManagedObjectRef {
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host. 
 	 */
-	@KSOAP @Cacheable public Boolean getAccelerate3dEnabled();
+	@KSOAP @Cacheable public Boolean getAccelerate3DEnabled();
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 2D video acceleration support available on the host. 
 	 */
-	@KSOAP @Cacheable public Boolean getAccelerate2dVideoEnabled();
+	@KSOAP @Cacheable public Boolean getAccelerate2DVideoEnabled();
 
 	/**
 	 * @return Number of virtual monitors. 
@@ -148,11 +148,6 @@ public interface IMachine extends IManagedObjectRef {
 	 * @return Returns true if the current state of the machine is not identical to the state stored in the current snapshot. 
 	 */
 	@KSOAP @Cacheable public Boolean getCurrentStateModified();
-
-//	/**
-//	 * @return 
-//	 */
-//	@KSOAP @Cacheable public  get();
 
 	
 	/**
@@ -247,6 +242,7 @@ public interface IMachine extends IManagedObjectRef {
 	 * @param screenId
 	 * @return
 	 */
+	@Deprecated
 	public Map<String, List<String>> readSavedScreenshotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	/**

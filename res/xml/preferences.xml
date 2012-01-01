@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
+    
     <PreferenceCategory  android:title="Metrics">
-        <ListPreference
+              <ListPreference
                 android:key="metric_count"
                 android:title="@string/metric_count_title"
                 android:summary="@string/metric_count_summary"
-                android:entries="@array/metric_count_entities"
-                android:entryValues="@array/metric_count_entity_values" />
-    <ListPreference 
+                android:entries="@array/metric_count_entries"
+                android:entryValues="@array/metric_count_entryValues" 
+                android:defaultValue="30"/>
+            <ListPreference 
                 android:key="metric_period"
                 android:title="@string/metric_period_title"
                 android:summary="@string/metric_period_summary"
-                android:entries="@array/metric_period_entities"
-                android:entryValues="@array/metric_period_entity_values" />
+                android:entries="@array/metric_period_entries"
+                android:entryValues="@array/metric_period_entryValues" 
+                android:defaultValue="2"/>
     </PreferenceCategory>
+    
+        <PreferenceCategory android:title="Appearence">
+            
+            <CheckBoxPreference 
+                	android:key="colored_icons"
+                	android:title="Color Icons"
+                	android:summary="B/W or Color Icons"
+                	android:defaultValue="false"
+                />
+            
+        </PreferenceCategory>
 </PreferenceScreen>

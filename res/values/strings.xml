@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">VirtualBox Manager</string>
     <string name="server_list">VirtualBox Servers</string>
-    <string name="server_edit">Edit Server</string>
     <string name="server_host">Host</string>
     <string name="server_port">Port</string>
     <string name="server_username">Username</string>

@@ -11,6 +11,8 @@ import com.kedzie.vbox.VBoxSvc;
  */
 public interface IManagedObjectRef  {
 	
+	public Class<? extends IManagedObjectRef> getInterface();
+	
 	/**
 	 * @return Managed object identifier
 	 */

@@ -14,30 +14,32 @@ import com.kedzie.vbox.api.jaxb.SessionState;
  * @author Marek Kedzierski
  * @Aug 8, 2011
  */
-public abstract class MachineTask extends BaseTask<IMachine, IMachine> {
+public abstract class MachineTask<Input> extends BaseTask<Input, IMachine> {
 
 		protected boolean indeterminate;
-	
-		public MachineTask(String TAG, Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate) {
+		protected IMachine _machine;
+		
+		public MachineTask(String TAG, Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
 			super(TAG, ctx, vmgr, msg);
 			this.indeterminate=indeterminate;
+			_machine = m;
 		}
 		
 		@Override
-		protected IMachine work(IMachine... m) throws Exception {
+		protected IMachine work(Input...inputs) throws Exception {
 			ISession session = _vmgr.getVBox().getSessionObject();
 			if( session.getState().equals(SessionState.UNLOCKED)) 
-				m[0].lockMachine(session, LockType.SHARED);
+				_machine.lockMachine(session, LockType.SHARED);
 			if(indeterminate)
-				work(m[0], _vmgr.getVBox().getSessionObject().getConsole() );
+				work(_machine, _vmgr.getVBox().getSessionObject().getConsole(), inputs);
 			else
-				handleProgress( workWithProgress(m[0], _vmgr.getVBox().getSessionObject().getConsole()) );
+				handleProgress( workWithProgress(_machine, _vmgr.getVBox().getSessionObject().getConsole(), inputs) );
 			if(session.getState().equals(SessionState.LOCKED)) 
 				session.unlockMachine();
-			return m[0];
+			return _machine;
 		}
 
-		protected void work(IMachine m, IConsole console) throws Exception {};
+		protected void work(IMachine m, IConsole console, Input...inputs) throws Exception {};
 		
-		protected IProgress workWithProgress(IMachine m, IConsole console) throws Exception { return null; };
+		protected IProgress workWithProgress(IMachine m, IConsole console, Input...inputs) throws Exception { return null; };
 }

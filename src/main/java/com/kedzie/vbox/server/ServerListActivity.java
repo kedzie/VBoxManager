@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +86,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		getMenuInflater().inflate(R.menu.server_list_context_menu, menu);
+		menu.setHeaderTitle("VirtualBox Webserver");
 	}
 	
 	@Override
@@ -136,12 +136,10 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		}
 
 		public View getView(int position, View view, ViewGroup parent) {
-			if (view == null) { 
-				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-				((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_vbox );
-				Server s = getItem(position);
-				((TextView)view.findViewById(R.id.action_item_text)).setText((s.getName()==null || "".equals(s.getName())) ? s.getHost() : s.getName());
-			}
+			if (view == null)
+				view = _layoutInflater.inflate(R.layout.server_item, parent, false);
+			Server s = getItem(position);
+			((TextView)view.findViewById(R.id.server_item_text)).setText((s.getName()==null || "".equals(s.getName())) ? s.getHost() : s.getName());
 			return view;
 		}
 	}
@@ -151,7 +149,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
  	 */
  	class LoadServersTask extends BaseTask<Void, List<Server>>	{
  		public LoadServersTask(Context ctx) {
- 			super("vbox.LoadServersTask", ctx,  null, "Loading Servers"); 
+ 			super("LoadServersTask", ctx,  null, "Loading Servers"); 
  		}
 		@Override 
 		protected List<Server> work(Void... params) throws Exception { 
@@ -175,7 +173,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
  	 */
  	class LogonTask extends BaseTask<Server, IVirtualBox>	{
  		public LogonTask(Context ctx, VBoxSvc vmgr) { 
-			super( "vbox.LogonTask", ctx, vmgr, "Connecting");
+			super( "LogonTask", ctx, vmgr, "Connecting");
 		}
 		@Override
 		protected IVirtualBox work(Server... params) throws Exception {
@@ -186,7 +184,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 			super.onPostExecute(vbox);
 			if(vbox!=null) {
 				Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion(), Toast.LENGTH_LONG).show();
-				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra("vmgr", _vmgr));
+				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 			}
 		}
 	}

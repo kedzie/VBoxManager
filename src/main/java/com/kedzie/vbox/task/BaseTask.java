@@ -1,6 +1,8 @@
 package com.kedzie.vbox.task;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -13,7 +15,6 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.common.base.Throwables;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.VBoxSvc;
@@ -68,14 +69,14 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		this.context= ctx;
 		_vmgr=vmgr;
 		this.description=msg;
-	}
-	
-	@Override
-	protected void onPreExecute()		{
 		pDialog = new ProgressDialog(context);
 		pDialog.setMessage(description);
 		pDialog.setIndeterminate(true);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	}
+	
+	@Override
+	protected void onPreExecute()		{
 		pDialog.show();
 	}
 
@@ -103,25 +104,19 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	}
 	
 	/**
-	 * Show Alert Dialog Box
+	 * Show an Alert dialog 
 	 * @param e <code>Throwable</code> which caused the error
 	 */
-	protected void showAlert(String TAG, Throwable e) {
-		showAlert(TAG, e.getMessage(), e);
-	}
-
-	/**
-	 * Show an Alert dialog with text message
-	 * @param msg  text message to display
-	 * @param e  cause of the error
-	 */
-	protected void showAlert(String tag, String msg, Throwable e) {
-		Log.e(tag, msg, e);
-		e = Throwables.getRootCause(e);
+	protected void showAlert(String tag, Throwable e) {
+		Log.e(tag, "caught throwable", e);
+		while(e.getCause()!=null)
+			e = e.getCause();
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
 		new BundleBuilder()
-				.putString("title", msg)
-				.putString("msg", e.getClass().getSimpleName()+" -- "+e.getMessage())
-				.putString("stacktrace", Throwables.getStackTraceAsString(e))
+				.putString("exception", e.getClass().getSimpleName())
+				.putString("msg", e.getMessage())
+				.putString("stacktrace", sw.toString())
 				.sendMessage(_handler, WHAT_ERROR);
 	}
 
@@ -161,7 +156,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			pDialog.setProgress(p[0].getPercent());
 			pDialog.setSecondaryProgress(p[0].getOperationPercent());
 		} catch (IOException e) {
-			showAlert(TAG, "Error updating Progress", e);
+			showAlert(TAG, e);
 		}
 	}
 }

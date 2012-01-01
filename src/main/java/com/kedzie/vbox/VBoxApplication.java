@@ -6,7 +6,9 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,71 +16,73 @@ import android.os.Messenger;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.SparseArray;
+
+import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.jaxb.MachineState;
-import com.kedzie.vbox.common.PreferencesActivity;
+import com.kedzie.vbox.machine.PreferencesActivity;
 
 public class VBoxApplication  extends Application {
-
-	/** Colored Resources */
-	public Map<String,Integer> resources = new HashMap<String, Integer>();
-	public Map<MachineState,Integer> states = new HashMap<MachineState, Integer>();
-	/** GreyScale Resources */
-	public Map<String,Integer> resources_c = new HashMap<String, Integer>();
-	public Map<MachineState,Integer> states_c = new HashMap<MachineState, Integer>();
+	private Map<String,Integer> resources = new HashMap<String, Integer>();
+	private Map<String,Integer> resources_color = new HashMap<String, Integer>();
+	
 	{
-		states_c.put(MachineState.RUNNING, R.drawable.ic_list_start);
-		states_c.put(MachineState.STARTING, R.drawable.ic_list_start);
-		states_c.put(MachineState.STOPPING, R.drawable.ic_list_acpi);
-		states_c.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi);
-		states_c.put(MachineState.PAUSED, R.drawable.ic_list_pause);
-		states_c.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot);
-		states_c.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_del);
-		states_c.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_del);
-		states_c.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_del);
-		states_c.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_snapshot);
-		states_c.put(MachineState.SAVING, R.drawable.ic_list_save);
-		states_c.put(MachineState.SAVED, R.drawable.ic_list_save);
-		states_c.put(MachineState.RESTORING, R.drawable.ic_list_save);
-		states_c.put(MachineState.ABORTED, R.drawable.ic_list_abort);
-		states_c.put(MachineState.STUCK, R.drawable.ic_list_stuck);
-		resources_c.put( "Start", R.drawable.ic_list_start );
-		resources_c.put("Power Off", R.drawable.ic_list_poweroff);
-		resources_c.put("Pause", R.drawable.ic_list_pause);
-		resources_c.put("Resume", R.drawable.ic_list_start);
-		resources_c.put("Reset", R.drawable.ic_list_reset);
-		resources_c.put("Power Button", R.drawable.ic_list_acpi );
-		resources_c.put("Save State", R.drawable.ic_list_save);
-		resources_c.put("Discard State", R.drawable.ic_list_save);
-		resources_c.put("Take Snapshot", R.drawable.ic_list_snapshot_add);
-		resources_c.put("Restore Snapshot", R.drawable.ic_list_snapshot);
-		resources_c.put("Delete Snapshot", R.drawable.ic_list_snapshot_del);
-		
-		states.put(MachineState.RUNNING, R.drawable.ic_list_start_c);
-		states.put(MachineState.STARTING, R.drawable.ic_list_start_c);
-		states.put(MachineState.STOPPING, R.drawable.ic_list_acpi_c);
-		states.put(MachineState.POWERED_OFF, R.drawable.ic_list_acpi_c);
-		states.put(MachineState.PAUSED, R.drawable.ic_list_pause_c);
-		states.put(MachineState.LIVE_SNAPSHOTTING, R.drawable.ic_list_snapshot_add_c);
-		states.put(MachineState.DELETING_SNAPSHOT, R.drawable.ic_list_snapshot_del_c);
-		states.put(MachineState.DELETING_SNAPSHOT_ONLINE, R.drawable.ic_list_snapshot_del_c);
-		states.put(MachineState.DELETING_SNAPSHOT_PAUSED, R.drawable.ic_list_snapshot_del_c);
-		states.put(MachineState.RESTORING_SNAPSHOT, R.drawable.ic_list_snapshot_c);
-		states.put(MachineState.SAVING, R.drawable.ic_list_save_c);
-		states.put(MachineState.SAVED, R.drawable.ic_list_save_c);
-		states.put(MachineState.RESTORING, R.drawable.ic_list_save_c);
-		states.put(MachineState.ABORTED, R.drawable.ic_list_abort_c);
-		states.put(MachineState.STUCK, R.drawable.ic_list_stuck_c);
-		resources.put( "Start", R.drawable.ic_list_start_c );
-		resources.put("Power Off", R.drawable.ic_list_poweroff_c);
-		resources.put("Pause", R.drawable.ic_list_pause_c);
-		resources.put("Resume", R.drawable.ic_list_start_c);
-		resources.put("Reset", R.drawable.ic_list_reset_c);
-		resources.put("Power Button", R.drawable.ic_list_acpi_c );
-		resources.put("Save State", R.drawable.ic_list_save_c);
-		resources.put("Discard State", R.drawable.ic_list_save_c);
-		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_add_c);
-		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
-		resources.put("Delete Snapshot", R.drawable.ic_list_snapshot_del_c);
+		resources.put(MachineState.RUNNING.name(), R.drawable.ic_list_start);
+		resources.put(MachineState.STARTING.name(), R.drawable.ic_list_start);
+		resources.put(MachineState.STOPPING.name(), R.drawable.ic_list_acpi);
+		resources.put(MachineState.POWERED_OFF.name(), R.drawable.ic_list_acpi);
+		resources.put(MachineState.PAUSED.name(), R.drawable.ic_list_pause);
+		resources.put(MachineState.LIVE_SNAPSHOTTING.name(), R.drawable.ic_list_snapshot);
+		resources.put(MachineState.DELETING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del);
+		resources.put(MachineState.DELETING_SNAPSHOT_ONLINE.name(), R.drawable.ic_list_snapshot_del);
+		resources.put(MachineState.DELETING_SNAPSHOT_PAUSED.name(), R.drawable.ic_list_snapshot_del);
+		resources.put(MachineState.RESTORING_SNAPSHOT.name(), R.drawable.ic_list_snapshot);
+		resources.put(MachineState.SAVING.name(), R.drawable.ic_list_save);
+		resources.put(MachineState.SAVED.name(), R.drawable.ic_list_save);
+		resources.put(MachineState.RESTORING.name(), R.drawable.ic_list_save);
+		resources.put(MachineState.ABORTED.name(), R.drawable.ic_list_abort);
+		resources.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck);
+		resources.put( "Start", R.drawable.ic_list_start );
+		resources.put("Power Off", R.drawable.ic_list_poweroff);
+		resources.put("Pause", R.drawable.ic_list_pause);
+		resources.put("Resume", R.drawable.ic_list_start);
+		resources.put("Reset", R.drawable.ic_list_reset);
+		resources.put("Power Button", R.drawable.ic_list_acpi );
+		resources.put("Save State", R.drawable.ic_list_save);
+		resources.put("Discard State", R.drawable.ic_list_save);
+		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_add);
+		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot);
+		resources.put("Delete Snapshot", R.drawable.ic_list_snapshot_del);
+		resources_color.put(MachineState.RUNNING.name(), R.drawable.ic_list_start_c);
+		resources_color.put(MachineState.STARTING.name(), R.drawable.ic_list_start_c);
+		resources_color.put(MachineState.STOPPING.name(), R.drawable.ic_list_acpi_c);
+		resources_color.put(MachineState.POWERED_OFF.name(), R.drawable.ic_list_acpi_c);
+		resources_color.put(MachineState.PAUSED.name(), R.drawable.ic_list_pause_c);
+		resources_color.put(MachineState.LIVE_SNAPSHOTTING.name(), R.drawable.ic_list_snapshot_add_c);
+		resources_color.put(MachineState.DELETING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del_c);
+		resources_color.put(MachineState.DELETING_SNAPSHOT_ONLINE.name(), R.drawable.ic_list_snapshot_del_c);
+		resources_color.put(MachineState.DELETING_SNAPSHOT_PAUSED.name(), R.drawable.ic_list_snapshot_del_c);
+		resources_color.put(MachineState.RESTORING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_c);
+		resources_color.put(MachineState.SAVING.name(), R.drawable.ic_list_save_c);
+		resources_color.put(MachineState.SAVED.name(), R.drawable.ic_list_save_c);
+		resources_color.put(MachineState.RESTORING.name(), R.drawable.ic_list_save_c);
+		resources_color.put(MachineState.ABORTED.name(), R.drawable.ic_list_abort_c);
+		resources_color.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck_c);
+		resources_color.put( "Start", R.drawable.ic_list_start_c );
+		resources_color.put("Power Off", R.drawable.ic_list_poweroff_c);
+		resources_color.put("Pause", R.drawable.ic_list_pause_c);
+		resources_color.put("Resume", R.drawable.ic_list_start_c);
+		resources_color.put("Reset", R.drawable.ic_list_reset_c);
+		resources_color.put("Power Button", R.drawable.ic_list_acpi_c );
+		resources_color.put("Save State", R.drawable.ic_list_save_c);
+		resources_color.put("Discard State", R.drawable.ic_list_save_c);
+		resources_color.put("Take Snapshot", R.drawable.ic_list_snapshot_add_c);
+		resources_color.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
+		resources_color.put("Delete Snapshot", R.drawable.ic_list_snapshot_del_c);
+	}
+	
+	public Map<String,Integer> getDrawables() {
+		return getSharedPreferences(getPackageName(), 0).getBoolean(PreferencesActivity.ICON_COLORS, PreferencesActivity.ICON_COLORS_DEFAULT) 
+				? resources_color :  resources;
 	}
 	
 	/**
@@ -87,16 +91,11 @@ public class VBoxApplication  extends Application {
 	 * @return address of resource
 	 */
 	public  int get(String name) {
-		if(resources.containsKey(name)) {
-			return resources.get(name);
-		} else {
+		if(!getDrawables().containsKey(name)) {
 			int id = getResources().getIdentifier(name, "drawable", getPackageName());
-			if(id!=0) {
-				resources.put(name, id);
-				return id;
-			}
+			getDrawables().put(name, id!=0 ? id : R.drawable.ic_list_os_other);
 		}
-		return R.drawable.ic_list_os_other; 	
+		return getDrawables().get(name);
 	}
 	
 	/**
@@ -105,13 +104,7 @@ public class VBoxApplication  extends Application {
 	 * @return address of resource
 	 */
 	public int get(MachineState state) {
-		return states.containsKey(state)  ? states.get(state) : R.drawable.ic_list_start;	
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
-		for(Annotation at : a) if(at.annotationType().equals(clazz)) return (T)at;
-		return null;
+		return getDrawables().containsKey(state.name())  ? getDrawables().get(state.name()) : R.drawable.ic_list_start;	
 	}
 	
 	public String[] getActions(MachineState state) {
@@ -132,8 +125,6 @@ public class VBoxApplication  extends Application {
 	
 	/**
 	 * Builder pattern for <code>Android.os.Bundle</code>
-	 * @author Marek Kedzierski
-	 * @Aug 8, 2011
 	 */
 	public static class BundleBuilder {
 		private Bundle b = new Bundle();
@@ -271,6 +262,21 @@ public class VBoxApplication  extends Application {
 			msg.what = what;
 			msg.setData(b);
 			m.send(msg);
+		}
+		public BundleBuilder putProxy(String key, IManagedObjectRef value) {
+			b.putParcelable(key, new ParcelableProxy(value.getInterface(), value));
+			return this;
+		}
+		public static void addProxy(Intent intent, String name, IManagedObjectRef obj) {
+			intent.putExtra(name, new ParcelableProxy(obj.getInterface(), obj));
+		}
+		public static <T> T getProxy(Intent intent, String name, Class<T> clazz) {
+			ParcelableProxy p = intent.getParcelableExtra(name);
+			return clazz.cast( p.getProxy() );
+		}
+		public static <T> T getProxy(Bundle bundle, String name, Class<T> clazz) {
+			ParcelableProxy p = bundle.getParcelable(name);
+			return clazz.cast( p.getProxy() );
 		}
 	}
 }

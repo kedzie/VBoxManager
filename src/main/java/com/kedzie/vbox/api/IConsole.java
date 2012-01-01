@@ -3,6 +3,7 @@ package com.kedzie.vbox.api;
 import java.io.IOException;
 
 import com.kedzie.vbox.KSOAP;
+import com.kedzie.vbox.VBoxSvc.SerializationEnvelope;
 
 /**
  * <p>The IConsole interface represents an interface to control virtual machine execution.</p>
@@ -106,16 +107,16 @@ public interface IConsole extends IManagedObjectRef {
 	public IProgress takeSnapshot(@KSOAP("name") String name, @KSOAP("description") String description) throws IOException;
 	
 	/**
-	 * @param s
+	 * @param id  id of snapshot to be deleted
 	 * @return
 	 * @throws IOException
 	 */
-	public IProgress deleteSnapshot(@KSOAP("snapshot") ISnapshot s) throws IOException;
+	public IProgress deleteSnapshot(@KSOAP(namespace=SerializationEnvelope.XSD, type="string", value="id") String id) throws IOException;
 	
 	/**
-	 * @param s
+	 * @param name
 	 * @return
 	 * @throws IOException
 	 */
-	public IProgress restoreSnapshot(@KSOAP("snapshot") ISnapshot s) throws IOException;
+	public IProgress restoreSnapshot(@KSOAP("name") String name) throws IOException;
 }

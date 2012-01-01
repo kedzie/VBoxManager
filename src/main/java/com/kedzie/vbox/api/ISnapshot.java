@@ -11,4 +11,5 @@ public interface ISnapshot extends IManagedObjectRef {
 	@Cacheable public Boolean getOnline();
 	@Cacheable public ISnapshot getParent();
 	@Cacheable public List<ISnapshot> getChildren();
+	@Cacheable public IMachine getMachine();
 }

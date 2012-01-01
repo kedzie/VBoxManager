@@ -9,5 +9,4 @@ public interface IHost extends IManagedObjectRef {
 	@Cacheable public Integer getProcessorCoreCount();
 	@Cacheable public Integer getProcessorOnlineCount();
 	@Cacheable public Integer getProcessorSpeed();
-	
 }
