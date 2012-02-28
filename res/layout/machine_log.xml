@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:orientation="vertical" 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    android:layout_centerVertical="true"  
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/logText"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:inputType="textMultiLine" 
+        android:contentDescription="Machine Log" 
+        android:text="Machine Log" 
+        android:textSize="10sp"  />
+
+</LinearLayout>
