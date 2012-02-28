@@ -19,7 +19,7 @@ import android.view.SurfaceView;
 
 import com.kedzie.vbox.api.IPerformanceMetric;
 
-public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder.Callback {
+public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder.Callback, DataThread.Renderer {
 	private static final String TAG = MetricViewSurfaceView.class.getSimpleName();
 	
 	private RenderThread _thread;
@@ -56,8 +56,9 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 		return _thread._metrics;
 	}
 	
-	public void addData(Map<String, Point2D> data) {
-		_thread.addData(data);
+	@Override
+	public void addData(Map<String, Point2F> d) {
+		_thread.addData(d);
 	}
 	
 	public void pause() {
@@ -83,7 +84,7 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 		private Rect bounds;
 		private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint();
 		private Map<String, Integer> metricColor = new HashMap<String, Integer>();
-		private Map<String, LinkedList<Point2D>> data;
+		private Map<String, LinkedList<Point2F>> data;
 		/** timestamp of last rendering */
 		private double pixelsPerSecond; 
 		
@@ -114,9 +115,9 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 			metricPaint.setStrokeCap(Cap.SQUARE);
 			metricPaint.setAntiAlias(true);
 			metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
-			data = new HashMap<String, LinkedList<Point2D>>();
+			data = new HashMap<String, LinkedList<Point2F>>();
 			for(String metric : _metrics)
-					data.put(metric, new LinkedList<Point2D>());
+					data.put(metric, new LinkedList<Point2F>());
 		}
 		
 		public void setSize(int w, int h) {
@@ -140,8 +141,8 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 		
 		protected void update() {
 			long timestamp= System.currentTimeMillis();
-			for(LinkedList<Point2D> dataPoints : data.values()) {
-				for(Point2D p : dataPoints)
+			for(LinkedList<Point2F> dataPoints : data.values()) {
+				for(Point2F p : dataPoints)
 					p.x=getXPixelFromTimestamp(p.timestamp, timestamp);
 			}
 		}
@@ -156,7 +157,7 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 			canvas.drawRect(bounds, bgPaint);
 			canvas.drawRect(bounds, borderPaint);
 			
-			for(int i=_count; i>=0; i-=5) {	//horizontal grid
+			for(int i=0; i>=_count; i+=2) {	//horizontal grid
 				int horiz = bounds.left+i*hStep;
 				canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 				canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);
@@ -166,17 +167,17 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 			for(String metric : _metrics) {
 				if(!data.containsKey(metric) || data.get(metric).isEmpty()) continue;
 				metricPaint.setColor(getColor(metric));
-				Iterator<Point2D> it=data.get(metric).iterator();
-				Point2D p = it.next();
+				Iterator<Point2F> it=data.get(metric).iterator();
+				Point2F p = it.next();
 				while(it.hasNext() ) {
-					Point2D nP = it.next();
+					Point2F nP = it.next();
 					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)(p.y*vStep), bounds.left+(int)nP.x, bounds.bottom-(int)(nP.y*vStep), metricPaint);
 					p = nP;
 				}
 			}
 		}
 		
-		public void addData(Map<String, Point2D> d) {
+		public void addData(Map<String, Point2F> d) {
 			synchronized (_surfaceHolder) {
 				for(String metric : _metrics){
 					data.get(metric).addLast( d.get(metric) );
