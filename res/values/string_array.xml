@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string-array name="metric_period_entries" >
-    	<item>1 second</item>
-    	<item>2 seconds</item>
-    	<item>3 seconds</item>
-    	<item>4 seconds</item>
-    </string-array>
     
-    <string-array name="metric_count_entries">
-    	<item>20 samples</item>
-    	<item>40 samples</item>
-    	<item>60 samples</item>
-    	<item>80 samples</item>
-    </string-array>
     
 </resources>

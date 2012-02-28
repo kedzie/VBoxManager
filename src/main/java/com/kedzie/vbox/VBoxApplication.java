@@ -2,7 +2,6 @@ package com.kedzie.vbox;
 
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +14,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.kedzie.vbox.api.IManagedObjectRef;
@@ -22,10 +23,16 @@ import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.machine.PreferencesActivity;
 
 public class VBoxApplication  extends Application {
-	private Map<String,Integer> resources = new HashMap<String, Integer>();
-	private Map<String,Integer> resources_color = new HashMap<String, Integer>();
+	private static final String TAG = VBoxApplication.class.getSimpleName();
 	
-	{
+	protected Map<String,Integer> resources = new HashMap<String, Integer>();
+	protected Map<String,Integer> resources_color = new HashMap<String, Integer>();
+	protected Map<String, Integer> metricColor = new HashMap<String, Integer>();
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		resources.put(MachineState.RUNNING.name(), R.drawable.ic_list_start);
 		resources.put(MachineState.STARTING.name(), R.drawable.ic_list_start);
 		resources.put(MachineState.STOPPING.name(), R.drawable.ic_list_acpi);
@@ -79,10 +86,9 @@ public class VBoxApplication  extends Application {
 		resources_color.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
 		resources_color.put("Delete Snapshot", R.drawable.ic_list_snapshot_del_c);
 	}
-	
+
 	public Map<String,Integer> getDrawables() {
-		return getSharedPreferences(getPackageName(), 0).getBoolean(PreferencesActivity.ICON_COLORS, PreferencesActivity.ICON_COLORS_DEFAULT) 
-				? resources_color :  resources;
+		return isColoredIcons()	? resources_color :  resources;
 	}
 	
 	/**
@@ -116,11 +122,33 @@ public class VBoxApplication  extends Application {
 	}
 	
 	public int getPeriod() {
-		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.PERIOD, PreferencesActivity.PERIOD_DEFAULT);
+		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.PERIOD, ""));
+		Log.i(TAG, "getPeriod? " + ret);
+		return ret;
 	}
 	
 	public int getCount() {
-		return getSharedPreferences(getPackageName(), 0).getInt(PreferencesActivity.COUNT, PreferencesActivity.COUNT_DEFAULT);
+		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.COUNT, ""));
+		Log.i(TAG, "getCount? " + ret);
+		return ret;
+	}
+	
+	public boolean isColoredIcons() {
+		boolean ret =  PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.ICON_COLORS, false);
+		Log.i(TAG, "isColoredIcons? " + ret);
+		return ret;
+	}
+	
+	public boolean isBetaEnabled() {
+		boolean ret = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.BETA_ENABLED, false);
+		Log.i(TAG, "isBetaEnabled? " + ret);
+		return ret;
+	}
+	
+	public int getColor(String name) {
+		if(!metricColor.containsKey(name)) 
+			metricColor.put(name, getResources().getColor(getResources().getIdentifier(name.replace("/", "_"), "color", getPackageName())) );
+		return metricColor.get(name);
 	}
 	
 	/**

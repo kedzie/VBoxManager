@@ -2,31 +2,33 @@
 
 <PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <PreferenceCategory  android:title="Metrics">
-              <ListPreference
-                android:key="metric_count"
-                android:title="@string/metric_count_title"
-                android:summary="@string/metric_count_summary"
-                android:entries="@array/metric_count_entries"
-                android:entryValues="@array/metric_count_entryValues" 
-                android:defaultValue="30"/>
-            <ListPreference 
-                android:key="metric_period"
-                android:title="@string/metric_period_title"
-                android:summary="@string/metric_period_summary"
-                android:entries="@array/metric_period_entries"
-                android:entryValues="@array/metric_period_entryValues" 
-                android:defaultValue="2"/>
-    </PreferenceCategory>
-    
-        <PreferenceCategory android:title="Appearence">
-            
+        <PreferenceCategory android:title="@string/pref_category_appearance">
             <CheckBoxPreference 
                 	android:key="colored_icons"
-                	android:title="Color Icons"
-                	android:summary="B/W or Color Icons"
-                	android:defaultValue="false"
-                />
-            
+                	android:title="@string/pref_colored_icons"
+                	android:summary="@string/pref_colored_icons_summary"
+                	android:defaultValue="false" />
         </PreferenceCategory>
-</PreferenceScreen>
+        
+        <PreferenceCategory  android:title="@string/pref_category_metrics">
+        	<ListPreference  
+            		android:key="metric_count"
+            		android:title="@string/pref_metric_count_title"
+            		android:summary="@string/pref_metric_count_summary"
+            		android:defaultValue="30"
+            		android:entries="@array/metric_count_entries"
+                	android:entryValues="@array/metric_count_entryValues"
+                	android:dialogTitle="@string/pref_metric_count_title"
+            		/>
+        	<ListPreference 
+                	android:key="metric_period"
+                	android:title="@string/pref_metric_period_title"
+                	android:summary="@string/pref_metric_period_summary"
+                	android:defaultValue="2"
+                	android:entries="@array/metric_period_entries"
+                	android:entryValues="@array/metric_period_entryValues"    
+                	android:dialogTitle="@string/pref_metric_period_title"        	
+                	/>
+    
+    </PreferenceCategory>
+</PreferenceScreen>  

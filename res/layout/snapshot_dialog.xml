@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"   android:padding="12dip"    android:layout_centerVertical="true" android:layout_width="fill_parent" android:layout_height="fill_parent"   >
     <LinearLayout android:orientation="horizontal"  android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView android:text="Name"   android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:textSize="16sp" android:layout_marginRight="8dip" android:layout_gravity="left"   android:padding="8dp"/>
-		<EditText android:id="@+id/snapshot_name" android:text="New Snapshot" 
-		    			android:textSize="16sp"  android:layout_weight="1"  
-						android:layout_width="wrap_content" android:layout_height="wrap_content" >
+		<TextView 
+					android:text="Name"   
+					style="@style/NormalText"
+					android:layout_marginRight="8dip" 
+					android:layout_gravity="left"   
+					android:padding="8dp"/>
+		<EditText 
+					android:id="@+id/snapshot_name" 
+					android:text="New Snapshot" 
+		    		style="@style/MonoText"
+		    		android:layout_weight="1"  >
 	    	<requestFocus/>
 		</EditText>
     </LinearLayout>
-    <LinearLayout android:orientation="horizontal"  android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:text="Description"  android:textSize="16sp" android:layout_marginRight="8dip" android:layout_gravity="left" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp"/>
-    	<EditText android:id="@+id/snapshot_description"  android:text="Snapshot Description" 
-					android:textSize="16sp"  android:layout_weight="1" android:lines="3" 
-					android:layout_width="wrap_content" android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout android:orientation="horizontal"   android:gravity="center_horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content" >
-		<Button android:text="OK" android:id="@+id/button_save" android:layout_width="wrap_content"  android:layout_height="wrap_content" android:layout_weight="1"   />
-		<Button android:text="Cancel" android:id="@+id/button_cancel" android:layout_width="wrap_content"  android:layout_height="wrap_content"  android:layout_weight="1"   android:layout_gravity="right"/>
+    <LinearLayout 
+    				android:orientation="horizontal"  
+    				android:layout_width="fill_parent" 
+    				android:layout_height="wrap_content">
+    	<TextView 
+    				android:text="Description"  
+    				style="@style/NormalText"
+    				android:layout_marginRight="8dip" 
+    				android:layout_gravity="left" 
+    				android:padding="8dp"/>
+    	<EditText 
+    				android:id="@+id/snapshot_description"  
+    				android:text="Snapshot Description" 
+					style="@style/MonoText"
+					android:layout_weight="1" 
+					android:lines="3"  />
+    	<Button
+    			android:id="@+id/button_save"
+    			style="@style/MonoText"
+    			android:text="Take Snapshot" 
+				android:layout_weight="1"   />
+		<Button 
+				style="@style/MonoText" 
+				android:text="Cancel" 
+				android:id="@+id/button_cancel" 
+				android:layout_weight="1"   
+				android:layout_gravity="right"/>
     </LinearLayout>
 </LinearLayout>

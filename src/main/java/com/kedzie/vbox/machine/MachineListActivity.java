@@ -251,14 +251,9 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		@Override
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
-//			Collection<IManagedObjectRef> running = new ArrayList<IManagedObjectRef>();
 			for(IMachine m :  machines) {
-//				if(MachineState.RUNNING.equals(m.getState()))	
-//					running.add(m);
 				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();   //cache the values\
 			}
-//			running.add(_vmgr.getVBox().getHost());
-//			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriod(), 1, running);
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriod(), 1, (IManagedObjectRef)null);
 			return machines;
 		}

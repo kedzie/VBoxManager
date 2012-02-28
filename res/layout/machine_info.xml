@@ -1,52 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_centerVertical="true"  >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+		android:orientation="vertical" 
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent" 
+		android:layout_centerVertical="true"  
+		style="@style/NormalText" >
     
-    <TextView android:textSize="18sp" android:textStyle="bold"   android:text="General" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
+    <TextView style="@style/HeaderText"   android:text="General"  android:layout_gravity="left"  />
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView android:textSize="12sp"    android:text="Name:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-		<TextView  android:id="@+id/name" android:textSize="12sp"  android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+		<TextView    android:text="Name:"  android:layout_gravity="left"  />
+		<TextView  android:id="@+id/name"   android:layout_weight="1"/>
     </LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"    android:text="OS Type:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-	    <TextView  android:id="@+id/ostype" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView    android:text="OS Type:" android:layout_gravity="left" />
+	    <TextView  android:id="@+id/ostype"   android:layout_weight="1"/>
     </LinearLayout>
     
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="System" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
+	<TextView   android:text="System"  android:layout_gravity="left"  style="@style/HeaderText"/>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"   android:text="Base Memory:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/baseMemory" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView   android:text="Base Memory:" android:layout_gravity="left" />
+    	<TextView  android:id="@+id/baseMemory"  android:layout_weight="1"/>
     </LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"   android:text="Processors:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/processors" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView    android:text="Processors:"  android:layout_gravity="left"  />
+    	<TextView  android:id="@+id/processors"  android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"   android:text="Boot Order:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/bootOrder" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView   android:text="Boot Order:"  android:layout_gravity="left"  />
+    	<TextView  android:id="@+id/bootOrder"  android:layout_weight="1"/>
     </LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"    android:text="Acceleration:" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/acceleration" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView android:text="Acceleration:" android:layout_gravity="left"  />
+    	<TextView  android:id="@+id/acceleration" android:layout_weight="1"/>
     </LinearLayout>
     
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="Display" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
+	<TextView style="@style/HeaderText"  android:text="Display"  android:layout_gravity="left" />
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"    android:text="Video Memory" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/videoMemory" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView     android:text="Video Memory"  android:layout_gravity="left" />
+    	<TextView  android:id="@+id/videoMemory"     android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"    android:text="Acceleration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/accelerationVideo" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView    android:text="Acceleration" android:layout_gravity="left"  />
+    	<TextView  android:id="@+id/accelerationVideo"     android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"    android:text="Remote Desktop Port" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-    	<TextView  android:id="@+id/rdpPort" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+    	<TextView android:textSize="12sp"    android:text="Remote Desktop Port" android:layout_gravity="left" />
+    	<TextView  android:id="@+id/rdpPort" android:textSize="12sp"    android:layout_weight="1"/>
     </LinearLayout>
     
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="Storage" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="Audio" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="Network" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="USB" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-	<TextView android:textSize="18sp" android:textStyle="bold"   android:text="Description" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="left" android:padding="8dip" />
-	<TextView  android:id="@+id/description" android:textSize="12sp" android:padding="8dip"  android:layout_width="wrap_content" android:layout_height="wrap_content"  android:layout_weight="1"/>
+	<TextView    android:text="Storage"  android:layout_gravity="left" style="@style/HeaderText"/>
+	<TextView   android:text="Audio"  android:layout_gravity="left" style="@style/HeaderText"/>
+	<TextView   android:text="Network"  android:layout_gravity="left"  style="@style/HeaderText"/>
+	<TextView    android:text="USB" android:layout_gravity="left"  style="@style/HeaderText"/>
+	<TextView    android:text="Description"  android:layout_gravity="left"  style="@style/HeaderText"/>
+	<TextView  android:id="@+id/description"   android:layout_weight="1" />
 </LinearLayout>

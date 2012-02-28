@@ -24,14 +24,15 @@ import android.widget.Toast;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.VBoxApplication.BundleBuilder;
+import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.SessionState;
+import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
@@ -166,6 +167,14 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			return true;
 		case R.id.machine_option_menu_preferences:
 			startActivity(new Intent(this, PreferencesActivity.class));
+			return true;
+		case R.id.machine_option_menu_metrics:
+			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+				.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics (OpenGL)")
+				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
+				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
+				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
+			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
 		default:
 			return true;

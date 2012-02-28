@@ -62,7 +62,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		new LogonTask(this, null).execute(getAdapter().getItem(position));
+		new LogonTask(this).execute(getAdapter().getItem(position));
 	}
 	
 		@Override
@@ -86,13 +86,17 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		getMenuInflater().inflate(R.menu.server_list_context_menu, menu);
-		menu.setHeaderTitle("VirtualBox Webserver");
+		menu.setHeaderTitle("VirtualBox Server");
 	}
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-	  Server s = getAdapter().getItem(((AdapterContextMenuInfo)item.getMenuInfo()).position);
+	  int position = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
+	Server s = getAdapter().getItem(position);
 	  switch (item.getItemId()) {
+	  case R.id.server_list_context_menu_select:
+		  new LogonTask(this).execute(getAdapter().getItem(position));
+	        return true;
 	  case R.id.server_list_context_menu_edit:
         startActivityForResult(new Intent(this, EditServerActivity.class).putExtra("server", s), REQUEST_CODE_EDIT);
         return true;
@@ -144,9 +148,6 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		}
 	}
  	
- 	/**
- 	 * Load Servers from SQLLite
- 	 */
  	class LoadServersTask extends BaseTask<Void, List<Server>>	{
  		public LoadServersTask(Context ctx) {
  			super("LoadServersTask", ctx,  null, "Loading Servers"); 
@@ -161,7 +162,6 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 			if(result.size()==0) {
 				result.add(new Server(new Long(-1), "kedzie-server", "192.168.1.10", 18083, "Marek", "Mk0204$$"));
 		        result.add(new Server(new Long(-1), "kedzie-xps", "192.168.1.1", 18083, "kedzie", "Mk0204$$"));
-		        result.add(new Server(new Long(-1), "kedzie-xps", "192.168.1.17", 18083, "kedzie", "Mk0204$$"));
 			}
 			listView.setAdapter( new ServerListAdapter(ServerListActivity.this, result) );
 			getAdapter().setNotifyOnChange(false);
@@ -172,8 +172,8 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
  	 * Connect & Logon to VirtualBox webservice
  	 */
  	class LogonTask extends BaseTask<Server, IVirtualBox>	{
- 		public LogonTask(Context ctx, VBoxSvc vmgr) { 
-			super( "LogonTask", ctx, vmgr, "Connecting");
+ 		public LogonTask(Context ctx) { 
+			super( "LogonTask", ctx, null, "Connecting");
 		}
 		@Override
 		protected IVirtualBox work(Server... params) throws Exception {
@@ -189,9 +189,6 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		}
 	}
 
-	/**
-	 * Create SQLLite database
-	 */
 	class ServerDB extends SQLiteOpenHelper {
 		public ServerDB(Context context) { 
 	    	super(context, "vbox.db", null, 2);  

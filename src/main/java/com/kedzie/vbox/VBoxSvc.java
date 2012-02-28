@@ -153,7 +153,6 @@ public class VBoxSvc implements Parcelable {
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 			synchronized( VBoxSvc.class ) {
 				if(method.getName().equals("getIdRef")) return this.uiud;
-				if(method.getDeclaringClass().equals(Object.class)) method.invoke(this, args); //forward Object methods to Handler
 				if(method.getName().equals("hashCode")) return uiud==null ? 0 : uiud.hashCode();
 				if(method.getName().equals("toString")) return type.getSimpleName() + "#" + uiud.toString();
 				if(method.getName().equals("getInterface")) return type;
@@ -187,7 +186,9 @@ public class VBoxSvc implements Parcelable {
 		
 		@SuppressWarnings("unchecked")
 		public <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
-			for(Annotation at : a) if(at.annotationType().equals(clazz)) return (T)at;
+			for(Annotation at : a) 
+				if(at.annotationType().equals(clazz)) 
+					return (T)at;
 			return null;
 		}
 
