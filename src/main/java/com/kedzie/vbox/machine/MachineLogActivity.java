@@ -3,6 +3,7 @@ package com.kedzie.vbox.machine;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
@@ -12,6 +13,7 @@ import com.kedzie.vbox.task.BaseTask;
 
 public class MachineLogActivity extends Activity {
 	private static final int MAX_LOG_SIZE=1024;
+	private static final String TAG = "MachineLogActivity";
 	
 	private IMachine _machine;
 	private String log;
@@ -21,7 +23,7 @@ public class MachineLogActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.machine_log);
         _machine = BundleBuilder.getProxy(getIntent(), "machine", IMachine.class);
-        if((log=(String)getLastNonConfigurationInstance())!=null) 
+        if((log=(String)getLastNonConfigurationInstance())!=null)
         	((TextView)findViewById(R.id.logText)).setText(log);
         else
         	new LoadLogTask(this).execute(_machine);
@@ -46,6 +48,8 @@ class LoadLogTask extends BaseTask<IMachine, String> {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+			((TextView)findViewById(R.id.logText)).setText(result);
+			Log.i(TAG,"Log size: " + result.length());
 		}
 	}
 }

@@ -20,7 +20,7 @@ public class LaunchVMProcessTask extends BaseTask<IMachine, IMachine> {
 			throw new RuntimeException("Machine session state is " + m[0].getSessionState());
 		handleProgress( m[0].launchVMProcess(_vmgr.getVBox().getSessionObject(), IMachine.LaunchMode.headless) );
 		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" },  
-				PreferenceManager.getDefaultSharedPreferences(context).getInt(PreferencesActivity.PERIOD, 0), 1, m[0]);
+				Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString(PreferencesActivity.PERIOD, "")), 1, m[0]);
 		return m[0];
 	}
 }

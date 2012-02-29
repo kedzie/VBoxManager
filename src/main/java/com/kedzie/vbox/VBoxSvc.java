@@ -273,7 +273,7 @@ public class VBoxSvc implements Parcelable {
 		private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
 			if(ret==null) return null;
 			if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
-				android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
+				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
 			if(returnType.equals(Boolean.class)) 	
 				return Boolean.valueOf(ret.toString());
 			else if(returnType.equals(Integer.class)) 	

@@ -4,48 +4,48 @@
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent" 
 		android:layout_centerVertical="true"  
-		style="@style/NormalText" >
+		style="@style/SmallText" >
     
     <TextView style="@style/HeaderText"   android:text="General"  android:layout_gravity="left"  />
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView    android:text="Name:"  android:layout_gravity="left"  />
-		<TextView  android:id="@+id/name"   android:layout_weight="1"/>
+		<TextView   style="@style/SmallText"  android:layout_gravity="left"  />
+		<TextView  style="@style/SmallText" android:id="@+id/name"   android:layout_weight="1"/>
     </LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView    android:text="OS Type:" android:layout_gravity="left" />
-	    <TextView  android:id="@+id/ostype"   android:layout_weight="1"/>
+    	<TextView   style="@style/SmallText"  android:text="OS Type:" android:layout_gravity="left" />
+	    <TextView  style="@style/SmallText" android:id="@+id/ostype"   android:layout_weight="1"/>
     </LinearLayout>
     
 	<TextView   android:text="System"  android:layout_gravity="left"  style="@style/HeaderText"/>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView   android:text="Base Memory:" android:layout_gravity="left" />
-    	<TextView  android:id="@+id/baseMemory"  android:layout_weight="1"/>
+    	<TextView  style="@style/SmallText"  android:text="Base Memory:" android:layout_gravity="left" />
+    	<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1"/>
     </LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView    android:text="Processors:"  android:layout_gravity="left"  />
-    	<TextView  android:id="@+id/processors"  android:layout_weight="1"/>
+    	<TextView  style="@style/SmallText"   android:text="Processors:"  android:layout_gravity="left"  />
+    	<TextView  style="@style/SmallText" android:id="@+id/processors"  android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView   android:text="Boot Order:"  android:layout_gravity="left"  />
-    	<TextView  android:id="@+id/bootOrder"  android:layout_weight="1"/>
+    	<TextView  style="@style/SmallText"  android:text="Boot Order:"  android:layout_gravity="left"  />
+    	<TextView style="@style/SmallText"  android:id="@+id/bootOrder"  android:layout_weight="1"/>
     </LinearLayout>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:text="Acceleration:" android:layout_gravity="left"  />
-    	<TextView  android:id="@+id/acceleration" android:layout_weight="1"/>
+    	<TextView style="@style/SmallText" android:text="Acceleration:" android:layout_gravity="left"  />
+    	<TextView style="@style/SmallText"  android:id="@+id/acceleration" android:layout_weight="1"/>
     </LinearLayout>
     
 	<TextView style="@style/HeaderText"  android:text="Display"  android:layout_gravity="left" />
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView     android:text="Video Memory"  android:layout_gravity="left" />
-    	<TextView  android:id="@+id/videoMemory"     android:layout_weight="1"/>
+    	<TextView   style="@style/SmallText"   android:text="Video Memory"  android:layout_gravity="left" />
+    	<TextView style="@style/SmallText"  android:id="@+id/videoMemory"     android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView    android:text="Acceleration" android:layout_gravity="left"  />
-    	<TextView  android:id="@+id/accelerationVideo"     android:layout_weight="1"/>
+    	<TextView  style="@style/SmallText"   android:text="Acceleration" android:layout_gravity="left"  />
+    	<TextView style="@style/SmallText"  android:id="@+id/accelerationVideo"     android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView android:textSize="12sp"    android:text="Remote Desktop Port" android:layout_gravity="left" />
-    	<TextView  android:id="@+id/rdpPort" android:textSize="12sp"    android:layout_weight="1"/>
+    	<TextView style="@style/SmallText" android:textSize="12sp"    android:text="Remote Desktop Port" android:layout_gravity="left" />
+    	<TextView  style="@style/SmallText" android:id="@+id/rdpPort" android:textSize="12sp"    android:layout_weight="1"/>
     </LinearLayout>
     
 	<TextView    android:text="Storage"  android:layout_gravity="left" style="@style/HeaderText"/>
@@ -53,5 +53,5 @@
 	<TextView   android:text="Network"  android:layout_gravity="left"  style="@style/HeaderText"/>
 	<TextView    android:text="USB" android:layout_gravity="left"  style="@style/HeaderText"/>
 	<TextView    android:text="Description"  android:layout_gravity="left"  style="@style/HeaderText"/>
-	<TextView  android:id="@+id/description"   android:layout_weight="1" />
+	<TextView  style="@style/SmallText"  android:id="@+id/description"   android:layout_weight="1" />
 </LinearLayout>
