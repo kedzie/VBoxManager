@@ -10,7 +10,7 @@
 		<EditText 
 					android:id="@+id/snapshot_name" 
 					android:text="New Snapshot" 
-		    		style="@style/MonoText"
+		    		style="@style/NormalText"
 		    		android:layout_weight="1"  >
 	    	<requestFocus/>
 		</EditText>
@@ -28,16 +28,16 @@
     	<EditText 
     				android:id="@+id/snapshot_description"  
     				android:text="Snapshot Description" 
-					style="@style/MonoText"
+					style="@style/NormalText"
 					android:layout_weight="1" 
 					android:lines="3"  />
     	<Button
     			android:id="@+id/button_save"
-    			style="@style/MonoText"
+    			style="@style/NormalText"
     			android:text="Take Snapshot" 
 				android:layout_weight="1"   />
 		<Button 
-				style="@style/MonoText" 
+				style="@style/NormalText" 
 				android:text="Cancel" 
 				android:id="@+id/button_cancel" 
 				android:layout_weight="1"   

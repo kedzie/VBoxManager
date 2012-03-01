@@ -2,8 +2,8 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import com.kedzie.vbox.KSOAP;
-import com.kedzie.vbox.VBoxSvc.SerializationEnvelope;
+import com.kedzie.vbox.soap.KSOAP;
+import com.kedzie.vbox.soap.VBoxSvc.SerializationEnvelope;
 
 /**
  * <p>The IConsole interface represents an interface to control virtual machine execution.</p>

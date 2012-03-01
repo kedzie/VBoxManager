@@ -17,7 +17,8 @@
 		<activity android:configChanges="orientation" android:label="Virtual Machine"  android:name=".machine.MachineActivity"/>
 		<activity android:configChanges="orientation" android:label="Log File"  android:name=".machine.MachineLogActivity"/>
 		<activity android:configChanges="orientation" android:label="Metrics"  android:name=".metrics.MetricActivity" />
-		<activity android:label="Preferences" android:name=".machine.PreferencesActivity"/>
+		<activity android:label="Preferences" android:name=".PreferencesActivity"/>
+		<activity android:label="Preferences" android:name=".MetricPreferencesActivity"/>
 		<service android:name=".machine.EventService"/>
     </application>
 </manifest>

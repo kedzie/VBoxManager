@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.task.BaseTask;
 

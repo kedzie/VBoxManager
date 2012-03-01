@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.soap;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -25,6 +25,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
@@ -37,6 +38,7 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
  * VirtualBox JAX-WS API
  */
 public class VBoxSvc implements Parcelable {
+	private static final String TAG = "VBoxSvc";
 	protected static final int TIMEOUT = 60000;
 	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
 
@@ -164,8 +166,10 @@ public class VBoxSvc implements Parcelable {
 				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
 				
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
-				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))	
+				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))	{
+					Log.d(TAG, "returning cached value");
 					return _cache.get(method.getName());
+				}
 				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
 				if(methodKSOAP==null) 
 					request.addProperty("_this", this.uiud);	

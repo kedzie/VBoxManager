@@ -3,10 +3,10 @@ package com.kedzie.vbox.task;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
-import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.SessionState;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 public class LaunchVMProcessTask extends BaseTask<IMachine, IMachine> {
 	

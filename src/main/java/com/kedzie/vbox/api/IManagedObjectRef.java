@@ -1,7 +1,7 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.KSOAP;
-import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.soap.KSOAP;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * <p>Managed object reference.</p>

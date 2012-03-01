@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import com.kedzie.vbox.KSOAP;
+
+import com.kedzie.vbox.soap.KSOAP;
 
 /**
  *<p>The {@link IPerformanceCollector} interface represents a service that collects and stores performance metrics data.

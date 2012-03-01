@@ -27,10 +27,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
-import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
@@ -39,12 +39,14 @@ import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
 
 public class MachineListActivity extends Activity implements AdapterView.OnItemClickListener {
+	private static final int REQUEST_CODE_PREFERENCES = 6;
 	protected static final String TAG = MachineListActivity.class.getSimpleName();
 	
 	private VBoxSvc _vmgr;
@@ -92,11 +94,22 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
     }
 	
 	protected void startEventListener() {
-		if(_eventService==null)
+		if(_eventService==null && getApp().getNotificationsPreference())
 			bindService(new Intent(MachineListActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
 		_eventThread = new EventThread(TAG , _vmgr, VBoxEventType.MACHINE_EVENT);
 		_eventThread.addListener(_messenger);
 		_eventThread.start();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode==REQUEST_CODE_PREFERENCES) {
+			if(_eventService==null && getApp().getNotificationsPreference())
+				bindService(new Intent(MachineListActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
+			else if(_eventService!=null && !getApp().getNotificationsPreference()) {
+				unbindService(localConnection);
+			}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -154,6 +167,13 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if(!getApp().getBetaEnabledPreference())
+			menu.removeItem(R.id.machine_list_option_menu_glmetrics);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.machine_list_option_menu_refresh:
@@ -161,6 +181,16 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 			return true;
 		case R.id.machine_list_option_menu_metrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.SURFACEVIEW)
+				.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
+				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
+				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
+				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
+			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
+			return true;
+		case R.id.machine_list_option_menu_glmetrics:
+			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL)
 				.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
@@ -168,7 +198,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
 		case R.id.machine_list_option_menu_preferences:
-			startActivity(new Intent(this, PreferencesActivity.class));
+			startActivityForResult(new Intent(this, PreferencesActivity.class),REQUEST_CODE_PREFERENCES);
 			return true;
 		default:
 			return true;
@@ -242,7 +272,9 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	  return true;
 	}
 	
-	/** Load the Machines */
+	/** 
+	 * Load the Machines 
+	 */
 	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
 		public LoadMachinesTask(Context ctx, VBoxSvc vmgr) { 
 			super( "LoadMachinesTask", ctx, vmgr, "Loading Machines");
@@ -252,9 +284,10 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
 			for(IMachine m :  machines) {
-				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();   //cache the values\
+				//cache property values to avoid remote calls
+				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
 			}
-			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriod(), 1, (IManagedObjectRef)null);
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriodPreference(), 1, (IManagedObjectRef)null);
 			return machines;
 		}
 
@@ -270,6 +303,9 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		}
 	}
 	
+	/**
+	 * List adapter for Virtual Machines
+	 */
 	class MachineListAdapter extends ArrayAdapter<IMachine> {
 		public MachineListAdapter(MachineListActivity context, List<IMachine> machines) {
 			super(context, 0, machines);

@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.soap;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

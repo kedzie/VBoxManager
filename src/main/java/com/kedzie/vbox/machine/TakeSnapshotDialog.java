@@ -8,11 +8,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.MachineTask;
 
 /**
@@ -20,12 +20,12 @@ import com.kedzie.vbox.task.MachineTask;
  */
 public class TakeSnapshotDialog extends Dialog implements View.OnClickListener {
 
-	private IMachine _machine;
-	private VBoxSvc _vmgr;
-	private TextView snapshotName;
-	private TextView snapshotDescription;
-	private Button saveButton;
-	private Button cancelButton;
+	protected IMachine _machine;
+	protected VBoxSvc _vmgr;
+	protected TextView snapshotName;
+	protected TextView snapshotDescription;
+	protected Button saveButton;
+	protected Button cancelButton;
 	
 	public TakeSnapshotDialog(Context context, VBoxSvc api, IMachine m) {
 		super(context);

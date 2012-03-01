@@ -61,6 +61,11 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 		_thread.addData(d);
 	}
 	
+	@Override
+	public void setMetricPreferences(int period, int count) {
+		_thread.setMetricPreferences(period,count);
+	}
+	
 	public void pause() {
 		_thread._on=false;
 	}
@@ -130,7 +135,22 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 				pixelsPerSecond =hStep/_period;
 			}
 		}
-		
+
+		public void setMetricPreferences(int period, int count) {
+			synchronized (_surfaceHolder) {
+				_period = period;
+				_count = count;
+				Log.i(TAG, "Metric Preferences Changed ("+period+"," + count + ")");
+				hStep = _width/_count;
+				pixelsPerSecond =hStep/_period;
+				for(String metric : _metrics) {
+					while(data.get(metric).size()>_count) {  //if count is lowered, dump unecessary data points
+						data.get(metric).removeFirst();
+					}
+				}
+			}
+		}
+
 		private int getColor(String name) {
 			if(!metricColor.containsKey(name)) 	{
 				Resources res = getContext().getResources();
@@ -157,7 +177,7 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 			canvas.drawRect(bounds, bgPaint);
 			canvas.drawRect(bounds, borderPaint);
 			
-			for(int i=0; i>=_count; i+=2) {	//horizontal grid
+			for(int i=0; i<=_count; i+=2) {	//horizontal grid
 				int horiz = bounds.left+i*hStep;
 				canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 				canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);

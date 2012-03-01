@@ -1,13 +1,13 @@
 package com.kedzie.vbox.task;
 
 import android.content.Context;
-import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.SessionState;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Machine operation without VirtualBox progress handling

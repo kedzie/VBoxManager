@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.api.IMachine;
 
 public class MachineInfoActivity extends Activity {

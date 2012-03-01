@@ -2,18 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
 			android:orientation="vertical" 
 			android:layout_width="fill_parent" 
-			android:layout_height="fill_parent" 
-			android:layout_centerVertical="true"  
-			style="@style/MonoText">
+			android:layout_height="fill_parent">
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView   style="@style/NormalText"   android:text="Name" android:layout_gravity="left" android:padding="8dip" />
-		<EditText android:layout_weight="1" android:id="@+id/server_name"  ><requestFocus></requestFocus></EditText>
+		<TextView   style="@style/NormalText"   android:text="@string/server_name" android:layout_gravity="left"  />
+		<EditText android:layout_weight="1" android:id="@+id/server_name"></EditText>
     </LinearLayout>
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
 		<TextView   style="@style/NormalText"    android:text="@string/server_host"  android:layout_gravity="left" />
-		<EditText android:layout_weight="1" android:id="@+id/server_host"   ><requestFocus></requestFocus></EditText>
+		<EditText android:layout_weight="1" android:id="@+id/server_host"><requestFocus/></EditText>
     </LinearLayout>
 
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">

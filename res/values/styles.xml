@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style parent="@android:attr/listViewStyle" name="treeViewListStyle">
+    <style name="treeViewListStyle" parent="@android:attr/listViewStyle">
         <item name="android:background">@android:color/white</item>
         <item name="android:divider">@drawable/divider</item>
     </style>
 
-	<style  name="NormalText" parent="@android:style/TextAppearance">
+    <style name="Text" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dip</item>
+    </style>
+
+    <style name="SmallText" parent="Text">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="NormalText" parent="Text">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="BoldText" parent="Text">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dip</item>
     </style>
-    
-	<style  name="SmallText" parent="@android:style/TextAppearance">
-        <item name="android:textSize">12sp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dip</item>
+
+    <style name="HeaderText" parent="BoldText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">fill_parent</item>
     </style>
-    
-    <style  name="MonoText" parent="NormalText">
-        <item name="android:typeface">monospace</item>
-    </style>
-    
-    <style  name="HeaderText" parent="NormalText">
-    <item name="android:textSize">20sp</item>
-    <item name="android:layout_width">fill_parent</item>
-    </style>
-	
 </resources>

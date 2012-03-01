@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.Cacheable;
+import com.kedzie.vbox.soap.Cacheable;
 
 public interface IHost extends IManagedObjectRef {
 	@Cacheable public Integer getMemorySize();
@@ -9,4 +9,5 @@ public interface IHost extends IManagedObjectRef {
 	@Cacheable public Integer getProcessorCoreCount();
 	@Cacheable public Integer getProcessorOnlineCount();
 	@Cacheable public Integer getProcessorSpeed();
+	@Cacheable public String getOperatingSystem();
 }

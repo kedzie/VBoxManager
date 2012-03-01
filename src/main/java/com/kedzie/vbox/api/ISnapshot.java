@@ -1,7 +1,8 @@
 package com.kedzie.vbox.api;
 
 import java.util.List;
-import com.kedzie.vbox.Cacheable;
+
+import com.kedzie.vbox.soap.Cacheable;
 
 public interface ISnapshot extends IManagedObjectRef {
 

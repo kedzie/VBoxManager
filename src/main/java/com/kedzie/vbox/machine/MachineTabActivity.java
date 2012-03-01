@@ -4,8 +4,8 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.metrics.MetricActivity;

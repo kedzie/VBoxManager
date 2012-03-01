@@ -15,10 +15,10 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
-import com.kedzie.vbox.VBoxSvc;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * VirtualBox API Asynchronous task with progress & error handling

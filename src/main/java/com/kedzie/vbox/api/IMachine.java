@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.kedzie.vbox.Cacheable;
-import com.kedzie.vbox.KSOAP;
 import com.kedzie.vbox.api.jaxb.ChipsetType;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
+import com.kedzie.vbox.soap.Cacheable;
+import com.kedzie.vbox.soap.KSOAP;
 
 /**
  * <p>The IMachine interface represents a virtual machine, or guest, created in VirtualBox.</p> 

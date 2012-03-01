@@ -12,15 +12,17 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
-import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Listen for VirtualBox events and publish notifications
@@ -34,6 +36,8 @@ public class EventService extends Service {
 		protected static final int NOTIFICATION_ID = 1;
 		@Override
 		public void handleMessage(Message msg) {
+			if(!isNotificationEnabled()) 
+				return;
 			IEvent event = BundleBuilder.getProxy(msg.getData(), EventThread.BUNDLE_EVENT, IEvent.class);
 			Log.i(TAG, "Status Bar Notification Listener recieved event: " + event);
 			String text = "VirtualBox event: " + event.getType();
@@ -55,18 +59,27 @@ public class EventService extends Service {
 		}
 	});
 	
+	/**
+	 * Check Shared Preferences if Event Notifications are enabled.
+	 * @return true if notifications are enabled, false otherwise
+	 */
+	protected boolean isNotificationEnabled() {
+		return PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(PreferencesActivity.NOTIFICATIONS, false);
+	}
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		_vmgr = intent.getParcelableExtra(VBoxSvc.BUNDLE);
 		_eventThread = new EventThread("Notification", _vmgr);
 		_eventThread.addListener(statusBarNotificationListener);
 		_eventThread.start();
+		VBoxApplication.toast(this, "Starting Event Notifier Service");
 		return new LocalBinder();
 	}
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		Toast.makeText(EventService.this, "Shutting down VirtualBox Event Notifier Service", Toast.LENGTH_SHORT).show();
+		VBoxApplication.toast(this, "Shutting down VirtualBox Event Notifier Service");
 		_eventThread.quit();
 		return super.onUnbind(intent);
 	}

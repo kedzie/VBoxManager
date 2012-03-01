@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.Cacheable;
+import com.kedzie.vbox.soap.Cacheable;
 
 public interface ISystemProperties extends IManagedObjectRef {
 	@Cacheable public Integer getMinGuestRAM();

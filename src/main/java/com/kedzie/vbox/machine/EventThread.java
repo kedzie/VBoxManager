@@ -7,13 +7,13 @@ import java.util.List;
 import android.os.Messenger;
 import android.util.Log;
 
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
-import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IEventListener;
 import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachineEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseThread;
 
 /**
@@ -21,6 +21,7 @@ import com.kedzie.vbox.task.BaseThread;
  */
 public class EventThread extends BaseThread {
 	protected static final String TAG = EventThread.class.getSimpleName();
+	private static final int DEFAULT_INTERVAL = 500;
 	public static final int WHAT_EVENT = 1;
 	public static final String BUNDLE_EVENT = "evt";
 	public static final String BUNDLE_MACHINE = "machine";
@@ -29,21 +30,21 @@ public class EventThread extends BaseThread {
 	protected VBoxEventType[] _eventTypes;
 	protected List<Messenger> _listeners = new ArrayList<Messenger>();
 	protected VBoxSvc _vmgr;
-	protected IEvent event ;
-	protected IEventSource evSource ;
-	protected IEventListener listener ;
+	protected IEvent _event ;
+	protected IEventSource _evSource ;
+	protected IEventListener _listener ;
 	
 	/**
 	 * @param name				Thread name
 	 * @param vmgr 				VirtualBox API
-	 * @param interval 		polling interval
-	 * @param events 			which events to subscribe to
+	 * @param interval 			polling interval
+	 * @param events 			event types to subscribe to
 	 */
 	public EventThread(String name, VBoxSvc vmgr, int interval, VBoxEventType...events) {
 		super(name + " Event Handler");
-		_vmgr=new VBoxSvc(vmgr);
-		_eventTypes=events;
-		_interval=interval;
+		_vmgr = new VBoxSvc(vmgr);
+		_eventTypes = events;
+		_interval = interval;
 	}
 	
 	/**
@@ -52,7 +53,7 @@ public class EventThread extends BaseThread {
 	 * @param events 			which events to subscribe to
 	 */
 	public EventThread(String name, VBoxSvc vmgr, VBoxEventType...events) {
-		this(name, vmgr, 500, events);
+		this(name, vmgr, DEFAULT_INTERVAL, events);
 	}
 	
 	/**
@@ -65,26 +66,26 @@ public class EventThread extends BaseThread {
 	
 	@Override
 	public void preExecute() {
-		evSource =  _vmgr.getVBox().getEventSource();
-		listener = evSource.createListener();
-		evSource.registerListener(listener, _eventTypes, false);
+		_evSource =  _vmgr.getVBox().getEventSource();
+		_listener = _evSource.createListener();
+		_evSource.registerListener(_listener, _eventTypes, false);
 	}
 	
 	@Override
 	public void postExecute() {
 		try { 
-			evSource.unregisterListener(listener);	
+			_evSource.unregisterListener(_listener);	
 		} catch(IOException e) {}
 	}
 	
 	@Override
 	public void loop() {
 				try {
-					if((event=evSource.getEvent(listener, 0))!=null) {
-						Log.d(TAG, "Got Event: " + event.getType());
-						BundleBuilder bundle = new BundleBuilder().putProxy(BUNDLE_EVENT, event);
-						if(event instanceof IMachineEvent)
-							bundle.putProxy(BUNDLE_MACHINE,  _vmgr.getVBox().findMachine(((IMachineEvent)event).getMachineId()));
+					if((_event=_evSource.getEvent(_listener, 0))!=null) {
+						Log.d(TAG, "Got Event: " + _event.getType());
+						BundleBuilder bundle = new BundleBuilder().putProxy(BUNDLE_EVENT, _event);
+						if(_event instanceof IMachineEvent)
+							bundle.putProxy(BUNDLE_MACHINE,  _vmgr.getVBox().findMachine(((IMachineEvent)_event).getMachineId()));
 						if(_listeners.isEmpty())
 							wait();
 						synchronized(_listeners) {
@@ -93,7 +94,7 @@ public class EventThread extends BaseThread {
 									bundle.sendMessage(messenger, WHAT_EVENT);
 							}
 						}
-						evSource.eventProcessed(listener, event); 
+						_evSource.eventProcessed(_listener, _event); 
 					} else {
 					 	sleep(_interval);
 					}

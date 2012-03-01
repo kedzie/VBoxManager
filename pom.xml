@@ -16,10 +16,6 @@
 		<url>https://github.com/kedzie/VBoxManager</url>
 	</scm>
 
-	<properties>
-		<environment>development</environment>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -38,7 +34,7 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -129,12 +125,6 @@
 	<profiles>
 		<profile>
 			<id>development</id>
-			<activation>
-				<property>
-					<name>environment</name>
-					<value>development</value>
-				</property>
-			</activation>
 			<properties>
 				<android.debuggable>true</android.debuggable>
 			</properties>
@@ -142,12 +132,6 @@
 
 		<profile>
 			<id>production</id> <!-- Signed/Zipaligned APK for Google Market Distribution -->
-			<activation>
-				<property>
-					<name>environment</name>
-					<value>production</value>
-				</property>
-			</activation>
 			<properties>
 				<android.debuggable>false</android.debuggable>
 			</properties>
@@ -160,9 +144,7 @@
 							<execution>
 								<id>sign</id>
 								<phase>package</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
+								<goals><goal>sign</goal></goals>
 								<configuration>
 									<archive>${project.build.directory}/${project.artifactId}.apk</archive>
 									<keystore>android</keystore>
@@ -190,9 +172,7 @@
 							<execution>
 								<id>zipalign</id>
 								<phase>package</phase>
-								<goals>
-									<goal>zipalign</goal>
-								</goals>
+								<goals><goal>zipalign</goal></goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -204,9 +184,7 @@
 							<execution>
 								<id>attach</id>
 								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
+								<goals><goal>attach-artifact</goal></goals>
 								<configuration>
 									<artifacts>
 										<artifact>
@@ -242,8 +220,11 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<!--repository> <id>googlecode-ksoap2-android</id> <name>googlecode-ksoap2-android</name> 
-			<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url> </repository -->
+		<repository>
+			<id>googlecode-ksoap2-android</id>
+			<name>googlecode-ksoap2-android</name> 
+	 		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
+ 		</repository>
 	</repositories>
 
 </project>

@@ -1,28 +1,22 @@
 package com.kedzie.vbox;
 
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Application;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.Parcelable;
-import android.os.RemoteException;
+import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
+import android.widget.Toast;
 
-import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.jaxb.MachineState;
-import com.kedzie.vbox.machine.PreferencesActivity;
 
-public class VBoxApplication  extends Application {
+/**
+ * 
+ * @author Marek Kedzierski
+ */
+public class VBoxApplication extends Application {
 	private static final String TAG = VBoxApplication.class.getSimpleName();
 	
 	protected Map<String,Integer> resources = new HashMap<String, Integer>();
@@ -34,69 +28,72 @@ public class VBoxApplication  extends Application {
 		super.onCreate();
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		resources.put(MachineState.RUNNING.name(), R.drawable.ic_list_start);
-		resources.put(MachineState.STARTING.name(), R.drawable.ic_list_start);
-		resources.put(MachineState.STOPPING.name(), R.drawable.ic_list_acpi);
-		resources.put(MachineState.POWERED_OFF.name(), R.drawable.ic_list_acpi);
-		resources.put(MachineState.PAUSED.name(), R.drawable.ic_list_pause);
-		resources.put(MachineState.LIVE_SNAPSHOTTING.name(), R.drawable.ic_list_snapshot);
-		resources.put(MachineState.DELETING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del);
-		resources.put(MachineState.DELETING_SNAPSHOT_ONLINE.name(), R.drawable.ic_list_snapshot_del);
-		resources.put(MachineState.DELETING_SNAPSHOT_PAUSED.name(), R.drawable.ic_list_snapshot_del);
-		resources.put(MachineState.RESTORING_SNAPSHOT.name(), R.drawable.ic_list_snapshot);
-		resources.put(MachineState.SAVING.name(), R.drawable.ic_list_save);
-		resources.put(MachineState.SAVED.name(), R.drawable.ic_list_save);
-		resources.put(MachineState.RESTORING.name(), R.drawable.ic_list_save);
-		resources.put(MachineState.ABORTED.name(), R.drawable.ic_list_abort);
-		resources.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck);
-		resources.put( "Start", R.drawable.ic_list_start );
-		resources.put("Power Off", R.drawable.ic_list_poweroff);
-		resources.put("Pause", R.drawable.ic_list_pause);
-		resources.put("Resume", R.drawable.ic_list_start);
-		resources.put("Reset", R.drawable.ic_list_reset);
-		resources.put("Power Button", R.drawable.ic_list_acpi );
-		resources.put("Save State", R.drawable.ic_list_save);
-		resources.put("Discard State", R.drawable.ic_list_save);
-		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_add);
-		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot);
-		resources.put("Delete Snapshot", R.drawable.ic_list_snapshot_del);
 		resources_color.put(MachineState.RUNNING.name(), R.drawable.ic_list_start_c);
+		resources.put(MachineState.STARTING.name(), R.drawable.ic_list_start);
 		resources_color.put(MachineState.STARTING.name(), R.drawable.ic_list_start_c);
+		resources.put(MachineState.STOPPING.name(), R.drawable.ic_list_acpi);
 		resources_color.put(MachineState.STOPPING.name(), R.drawable.ic_list_acpi_c);
+		resources.put(MachineState.POWERED_OFF.name(), R.drawable.ic_list_acpi);
 		resources_color.put(MachineState.POWERED_OFF.name(), R.drawable.ic_list_acpi_c);
+		resources.put(MachineState.PAUSED.name(), R.drawable.ic_list_pause);
 		resources_color.put(MachineState.PAUSED.name(), R.drawable.ic_list_pause_c);
+		resources.put(MachineState.LIVE_SNAPSHOTTING.name(), R.drawable.ic_list_snapshot);
 		resources_color.put(MachineState.LIVE_SNAPSHOTTING.name(), R.drawable.ic_list_snapshot_add_c);
+		resources.put(MachineState.DELETING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del);
 		resources_color.put(MachineState.DELETING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del_c);
+		resources.put(MachineState.DELETING_SNAPSHOT_ONLINE.name(), R.drawable.ic_list_snapshot_del);
 		resources_color.put(MachineState.DELETING_SNAPSHOT_ONLINE.name(), R.drawable.ic_list_snapshot_del_c);
+		resources.put(MachineState.DELETING_SNAPSHOT_PAUSED.name(), R.drawable.ic_list_snapshot_del);
 		resources_color.put(MachineState.DELETING_SNAPSHOT_PAUSED.name(), R.drawable.ic_list_snapshot_del_c);
+		resources.put(MachineState.RESTORING_SNAPSHOT.name(), R.drawable.ic_list_snapshot);
 		resources_color.put(MachineState.RESTORING_SNAPSHOT.name(), R.drawable.ic_list_snapshot_c);
+		resources.put(MachineState.SAVING.name(), R.drawable.ic_list_save);
 		resources_color.put(MachineState.SAVING.name(), R.drawable.ic_list_save_c);
+		resources.put(MachineState.SAVED.name(), R.drawable.ic_list_save);
 		resources_color.put(MachineState.SAVED.name(), R.drawable.ic_list_save_c);
+		resources.put(MachineState.RESTORING.name(), R.drawable.ic_list_save);
 		resources_color.put(MachineState.RESTORING.name(), R.drawable.ic_list_save_c);
+		resources.put(MachineState.ABORTED.name(), R.drawable.ic_list_abort);
 		resources_color.put(MachineState.ABORTED.name(), R.drawable.ic_list_abort_c);
+		resources.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck);
 		resources_color.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck_c);
+		resources.put( "Start", R.drawable.ic_list_start );
 		resources_color.put( "Start", R.drawable.ic_list_start_c );
+		resources.put("Power Off", R.drawable.ic_list_poweroff);
 		resources_color.put("Power Off", R.drawable.ic_list_poweroff_c);
+		resources.put("Pause", R.drawable.ic_list_pause);
 		resources_color.put("Pause", R.drawable.ic_list_pause_c);
+		resources.put("Resume", R.drawable.ic_list_start);
 		resources_color.put("Resume", R.drawable.ic_list_start_c);
+		resources.put("Reset", R.drawable.ic_list_reset);
 		resources_color.put("Reset", R.drawable.ic_list_reset_c);
+		resources.put("Power Button", R.drawable.ic_list_acpi );
 		resources_color.put("Power Button", R.drawable.ic_list_acpi_c );
+		resources.put("Save State", R.drawable.ic_list_save);
 		resources_color.put("Save State", R.drawable.ic_list_save_c);
+		resources.put("Discard State", R.drawable.ic_list_save);
 		resources_color.put("Discard State", R.drawable.ic_list_save_c);
+		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_add);
 		resources_color.put("Take Snapshot", R.drawable.ic_list_snapshot_add_c);
+		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot);
 		resources_color.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
+		resources.put("Delete Snapshot", R.drawable.ic_list_snapshot_del);
 		resources_color.put("Delete Snapshot", R.drawable.ic_list_snapshot_del_c);
 	}
 
-	public Map<String,Integer> getDrawables() {
-		return isColoredIcons()	? resources_color :  resources;
+	/**
+	 * @return black/white or colored icons based on Shared Preferences
+	 */
+	protected Map<String,Integer> getDrawables() {
+		return getColoredIconsPreference()	? resources_color :  resources;
 	}
 	
 	/**
-	 * get Resource based on string
+	 * Get Drawable Resource based on the name
 	 * @param name name of resource
 	 * @return address of resource
 	 */
-	public  int get(String name) {
+	public int getDrawableResource(String name) {
 		if(!getDrawables().containsKey(name)) {
 			int id = getResources().getIdentifier(name, "drawable", getPackageName());
 			getDrawables().put(name, id!=0 ? id : R.drawable.ic_list_os_other);
@@ -105,14 +102,19 @@ public class VBoxApplication  extends Application {
 	}
 	
 	/**
-	 * Get resource drawable for given <code>MachineState</code>
+	 * Get resource drawable for given {@link MachineState}
 	 * @param state name of resource
 	 * @return address of resource
 	 */
-	public int get(MachineState state) {
+	public int getDrawableResource(MachineState state) {
 		return getDrawables().containsKey(state.name())  ? getDrawables().get(state.name()) : R.drawable.ic_list_start;	
 	}
 	
+	/**
+	 * Which actions can be performed on a Virtual Machine for each {@link MachineState}
+	 * @param state virtual machine state
+	 * @return actions which can be performed
+	 */
 	public String[] getActions(MachineState state) {
 		if(state.equals(MachineState.RUNNING)) return new String[] { "Pause", "Reset", "Power Off" , "Power Button", "Save State", "Take Snapshot" };
 		 else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new String[] { "Start",  "Take Snapshot" };
@@ -121,190 +123,53 @@ public class VBoxApplication  extends Application {
 		return new String[] {};
 	}
 	
-	public int getPeriod() {
+	public int getPeriodPreference() {
 		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.PERIOD, ""));
-		Log.i(TAG, "getPeriod? " + ret);
+		Log.d(TAG, "getPeriodPreference? " + ret);
 		return ret;
 	}
 	
-	public int getCount() {
+	public int getCountPreference() {
 		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.COUNT, ""));
-		Log.i(TAG, "getCount? " + ret);
+		Log.d(TAG, "getCountPreference? " + ret);
 		return ret;
 	}
 	
-	public boolean isColoredIcons() {
+	public boolean getColoredIconsPreference() {
 		boolean ret =  PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.ICON_COLORS, false);
-		Log.i(TAG, "isColoredIcons? " + ret);
+		Log.d(TAG, "getColoredIconsPreference? " + ret);
 		return ret;
 	}
 	
-	public boolean isBetaEnabled() {
+	public boolean getNotificationsPreference() {
+		boolean ret =  PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.NOTIFICATIONS, false);
+		Log.d(TAG, "getNotificationsPreference? " + ret);
+		return ret;
+	}
+	
+	public boolean getBetaEnabledPreference() {
 		boolean ret = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.BETA_ENABLED, false);
-		Log.i(TAG, "isBetaEnabled? " + ret);
+		Log.d(TAG, "getBetaEnabledPreference? " + ret);
 		return ret;
 	}
 	
+	/**
+	 * Show {@link Toast} notification
+	 * @param ctx message {@link Context}
+	 * @param msg Message to show
+	 */
+	public static void toast(Context ctx, String msg) {
+		Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+	}
+	
+	/**
+	 * Get a color resource by name
+	 * @param name name of color resource
+	 * @return 0xAARRGGBB
+	 */
 	public int getColor(String name) {
 		if(!metricColor.containsKey(name)) 
 			metricColor.put(name, getResources().getColor(getResources().getIdentifier(name.replace("/", "_"), "color", getPackageName())) );
 		return metricColor.get(name);
-	}
-	
-	/**
-	 * Builder pattern for <code>Android.os.Bundle</code>
-	 */
-	public static class BundleBuilder {
-		private Bundle b = new Bundle();
-		
-		public BundleBuilder putAll(Bundle map) {
-			b.putAll(map);
-			return this;
-		}
-		public BundleBuilder putBoolean(String key, boolean value) {
-			b.putBoolean(key, value);
-			return this;
-		}
-		public BundleBuilder putByte(String key, byte value) {
-			b.putByte(key, value);
-			return this;
-		}
-		public BundleBuilder putChar(String key, char value) {
-			b.putChar(key, value);
-			return this;
-		}
-		public BundleBuilder putShort(String key, short value) {
-			b.putShort(key, value);
-			return this;
-		}
-		public BundleBuilder putInt(String key, int value) {
-			b.putInt(key, value);
-			return this;
-		}
-		public BundleBuilder putLong(String key, long value) {
-			b.putLong(key, value);
-			return this;
-		}
-		public BundleBuilder putFloat(String key, float value) {
-			b.putFloat(key, value);
-			return this;
-		}
-		public BundleBuilder putDouble(String key, double value) {
-			b.putDouble(key, value);
-			return this;
-		}
-		public BundleBuilder putString(String key, String value) {
-			b.putString(key, value);
-			return this;
-		}
-		public BundleBuilder putCharSequence(String key, CharSequence value) {
-			b.putCharSequence(key, value);
-			return this;
-		}
-		public BundleBuilder putParcelable(String key, Parcelable value) {
-			b.putParcelable(key, value);
-			return this;
-		}
-		public BundleBuilder putParcelableArray(String key, Parcelable[] value) {
-			b.putParcelableArray(key, value);
-			return this;
-		}
-		public BundleBuilder putParcelableArrayList(String key, ArrayList<? extends Parcelable> value) {
-			b.putParcelableArrayList(key, value);
-			return this;
-		}
-		public BundleBuilder putSparseParcelableArray(String key, SparseArray<? extends Parcelable> value) {
-			b.putSparseParcelableArray(key, value);
-			return this;
-		}
-		public BundleBuilder putIntegerArrayList(String key, ArrayList<Integer> value) {
-			b.putIntegerArrayList(key, value);
-			return this;
-		}
-		public BundleBuilder putStringArrayList(String key, ArrayList<String> value) {
-			b.putStringArrayList(key, value);
-			return this;
-		}
-		public BundleBuilder putCharSequenceArrayList(String key, ArrayList<CharSequence> value) {
-			b.putCharSequenceArrayList(key, value);
-			return this;
-		}
-		public BundleBuilder putSerializable(String key, Serializable value) {
-			b.putSerializable(key, value);
-			return this;
-		}
-		public BundleBuilder putBooleanArray(String key, boolean[] value) {
-			b.putBooleanArray(key, value);
-			return this;
-		}
-		public BundleBuilder putByteArray(String key, byte[] value) {
-			b.putByteArray(key, value);
-			return this;
-		}
-		public BundleBuilder putShortArray(String key, short[] value) {
-			b.putShortArray(key, value);
-			return this;
-		}
-		public BundleBuilder putCharArray(String key, char[] value) {
-			b.putCharArray(key, value);
-			return this;
-		}
-		public BundleBuilder putIntArray(String key, int[] value) {
-			b.putIntArray(key, value);
-			return this;
-		}
-		public BundleBuilder putLongArray(String key, long[] value) {
-			b.putLongArray(key, value);
-			return this;
-		}
-		public BundleBuilder putFloatArray(String key, float[] value) {
-			b.putFloatArray(key, value);
-			return this;
-		}
-		public BundleBuilder putDoubleArray(String key, double[] value) {
-			b.putDoubleArray(key, value);
-			return this;
-		}
-		public BundleBuilder putStringArray(String key, String[] value) {
-			b.putStringArray(key, value);
-			return this;
-		}
-		public BundleBuilder putCharSequenceArray(String key, CharSequence[] value) {
-			b.putCharSequenceArray(key, value);
-			return this;
-		}
-		public BundleBuilder putBundle(String key, Bundle value) {
-			b.putBundle(key, value);
-			return this;
-		}
-		public Bundle create() {
-			return b;
-		}
-		public void sendMessage(Handler h, int what) {
-			Message msg = h.obtainMessage(what);
-			msg.setData(b);
-			msg.sendToTarget();
-		}
-		public void sendMessage(Messenger m, int what) throws RemoteException {
-			Message msg = new Message();
-			msg.what = what;
-			msg.setData(b);
-			m.send(msg);
-		}
-		public BundleBuilder putProxy(String key, IManagedObjectRef value) {
-			b.putParcelable(key, new ParcelableProxy(value.getInterface(), value));
-			return this;
-		}
-		public static void addProxy(Intent intent, String name, IManagedObjectRef obj) {
-			intent.putExtra(name, new ParcelableProxy(obj.getInterface(), obj));
-		}
-		public static <T> T getProxy(Intent intent, String name, Class<T> clazz) {
-			ParcelableProxy p = intent.getParcelableExtra(name);
-			return clazz.cast( p.getProxy() );
-		}
-		public static <T> T getProxy(Bundle bundle, String name, Class<T> clazz) {
-			ParcelableProxy p = bundle.getParcelable(name);
-			return clazz.cast( p.getProxy() );
-		}
 	}
 }

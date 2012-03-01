@@ -6,7 +6,7 @@ import java.util.Map;
 
 import android.util.Log;
 
-import com.kedzie.vbox.VBoxSvc;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseThread;
 
 public class DataThread extends BaseThread {
@@ -23,6 +23,10 @@ public class DataThread extends BaseThread {
 			_object=object;
 			_period=period;
 			_views=views;
+		}
+		
+		public void setPeriod(int period) {
+			_period = period;
 		}
 
 		@Override
@@ -59,5 +63,7 @@ public class DataThread extends BaseThread {
 			 * @return list of metrics
 			 */
 			public String[] getMetrics();
+			
+			public void setMetricPreferences(int period, int count);
 		}
 }

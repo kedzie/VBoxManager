@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.soap;
 
 import java.util.Map;
 

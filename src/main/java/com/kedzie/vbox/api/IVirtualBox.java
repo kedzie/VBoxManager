@@ -3,8 +3,8 @@ package com.kedzie.vbox.api;
 import java.io.IOException;
 import java.util.List;
 
-import com.kedzie.vbox.Cacheable;
-import com.kedzie.vbox.KSOAP;
+import com.kedzie.vbox.soap.Cacheable;
+import com.kedzie.vbox.soap.KSOAP;
 
 
 public interface IVirtualBox extends IManagedObjectRef {

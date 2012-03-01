@@ -18,23 +18,25 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxSvc;
-import com.kedzie.vbox.VBoxApplication.BundleBuilder;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.MachineTask;
 
 public class SnapshotActivity extends Activity {
 
-	private VBoxSvc _vmgr;
-	private IMachine _machine;
-	private TreeViewList _treeView;
-	private TreeStateManager<ISnapshot> _stateManager;
-	private TreeBuilder<ISnapshot> _treeBuilder;
+	protected VBoxSvc _vmgr;
+	protected IMachine _machine;
+	protected TreeViewList _treeView;
+	protected TreeStateManager<ISnapshot> _stateManager;
+	protected TreeBuilder<ISnapshot> _treeBuilder;
+	/** Root of snapshot tree; retained on configuration change */
+	protected ISnapshot _rootSnapshot;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,18 @@ public class SnapshotActivity extends Activity {
         _vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
         _machine = BundleBuilder.getProxy(getIntent(), EventThread.BUNDLE_MACHINE, IMachine.class);
 		registerForContextMenu(_treeView);
-		new LoadSnapshotsTask(this, _vmgr).execute(_machine);
+		//load snapshots
+		if((_rootSnapshot=(ISnapshot)getLastNonConfigurationInstance())==null) {
+			new LoadSnapshotsTask(this, _vmgr).execute(_machine);
+		} else {
+			populate(null, _rootSnapshot);
+		}
     }
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		return _rootSnapshot;
+	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,7 +109,24 @@ public class SnapshotActivity extends Activity {
 		  }
 		  return true;
 	}
-
+	
+	/**
+	 * Recursively populate the tree structure
+	 * @param parent
+	 * @param child
+	 */
+	protected void populate(ISnapshot parent, ISnapshot child) {
+		if(parent==null)
+			_treeBuilder.sequentiallyAddNextNode(child, 0);
+		else
+			_treeBuilder.addRelation(parent, child);
+		for(ISnapshot c : child.getChildren())
+			populate(child, c);	
+	}
+	
+	/**
+	 *	Load complete snapshot tree.
+	 */
 	class LoadSnapshotsTask extends BaseTask<IMachine, ISnapshot>	{
 		public LoadSnapshotsTask(Context ctx, VBoxSvc vmgr) { 
 			super( "LoadSnapshotsTask", ctx, vmgr, "Loading Snapshots"); 	
@@ -127,40 +156,36 @@ public class SnapshotActivity extends Activity {
 			super.onPostExecute(result);
 			if(result!=null)	{
 				_treeView.setAdapter(new SnapshotTreeAdapter(SnapshotActivity.this, _stateManager, 10));
-				if(result!=null)
+				_rootSnapshot=result;
+				if(result!=null) 
 					populate(null, result);
 			}
 		}
 	}
 	
-	private void populate(ISnapshot parent, ISnapshot child) {
-		if(parent==null)
-			_treeBuilder.sequentiallyAddNextNode(child, 0);
-		else
-			_treeBuilder.addRelation(parent, child);
-		if(child.getChildren()!=null && child.getChildren().size()>0) {
-			for(ISnapshot c : child.getChildren())
-				populate(child, c);	
-		}
-	}
-
+	/**
+	 * Snapshot tree node
+	 */
 	class SnapshotTreeAdapter extends AbstractTreeViewAdapter<ISnapshot> {
 		
 		public SnapshotTreeAdapter(Activity activity, TreeStateManager<ISnapshot> treeStateManager, int numberOfLevels) {
 			super(activity, treeStateManager, numberOfLevels);
 		}
 
-		@Override public long getItemId(int position) {
+		@Override 
+		public long getItemId(int position) {
 			return position;
 		}
 
-		@Override public View getNewChildView(TreeNodeInfo<ISnapshot> treeNodeInfo) {
+		@Override 
+		public View getNewChildView(TreeNodeInfo<ISnapshot> treeNodeInfo) {
 			View v = getLayoutInflater().inflate(R.layout.machine_action_item, null);
 			updateView(v, treeNodeInfo);
 			return v;
 		}
 
-		@Override public View updateView(View view, TreeNodeInfo<ISnapshot> treeNodeInfo) {
+		@Override 
+		public View updateView(View view, TreeNodeInfo<ISnapshot> treeNodeInfo) {
 			((TextView)view.findViewById(R.id.action_item_text)).setText(treeNodeInfo.getId().getName());
 			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_snapshot_c);
 			return view;
