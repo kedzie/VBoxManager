@@ -27,6 +27,7 @@ public class VBoxApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, false);
 		resources.put(MachineState.RUNNING.name(), R.drawable.ic_list_start);
 		resources_color.put(MachineState.RUNNING.name(), R.drawable.ic_list_start_c);
 		resources.put(MachineState.STARTING.name(), R.drawable.ic_list_start);

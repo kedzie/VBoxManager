@@ -85,7 +85,7 @@ public class Server implements Parcelable {
 		this.password = password;
 	}
 	public String toString() {
-		return getHost() + ":" + getPort();
+		return (name!=null && !name.equals("")) ? name : getHost() + ":" + getPort();
 	}
 	@Override
 	public int hashCode() {

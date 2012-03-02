@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -22,11 +29,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -34,8 +42,9 @@ import com.kedzie.vbox.task.BaseTask;
 
 
 public class ServerListActivity extends Activity implements AdapterView.OnItemClickListener {
-	protected static final String TAG = ServerListActivity.class.getName();
+	private static final String TAG = ServerListActivity.class.getName();
 	static final int REQUEST_CODE_ADD = 9303,REQUEST_CODE_EDIT = 9304, RESULT_CODE_SAVE = 1,RESULT_CODE_DELETE = 2;
+	private static final String FIRST_RUN_PREFERENCE = "first_run";
 	
 	private ServerDB _db = new ServerDB(this);
 	private ListView listView;
@@ -44,11 +53,51 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server_list);
+        
         listView = (ListView)findViewById(R.id.list);
         registerForContextMenu(listView);
         listView.setOnItemClickListener(this);
+        
+        Button addButton = new Button(this);
+        addButton.setText("Add Server");
+        addButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addServer();
+			}
+		});
+        listView.addFooterView(addButton);
+        
+        TextView emptyView = new TextView(this);
+        emptyView.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
+        emptyView.setTextSize(10f);
+        emptyView.setText("No servers defined");
+        listView.setEmptyView(emptyView);
+        
         new LoadServersTask(this).execute();
+        checkIfFirstRun();
     }
+	
+	protected void checkIfFirstRun() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		if(prefs.getBoolean(FIRST_RUN_PREFERENCE, true)) {
+			Log.i(TAG, "First execution detected");
+			Editor editor = prefs.edit();
+			editor.putBoolean(FIRST_RUN_PREFERENCE, false);
+			editor.commit();
+			new AlertDialog.Builder(this)
+					.setTitle("Welcome")
+					.setMessage("Press OK to add a new Server")
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setPositiveButton("OK", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							addServer();
+						}
+					})
+					.show();
+		}
+	}
 	
 	@Override protected void onDestroy() {
 		super.onDestroy();
@@ -59,7 +108,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	protected ArrayAdapter<Server> getAdapter() {
 		return (ArrayAdapter<Server>)listView.getAdapter();
 	}
-
+	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		new LogonTask(this).execute(getAdapter().getItem(position));
@@ -75,7 +124,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.server_list_option_menu_add:
-	        startActivityForResult(new Intent(this, EditServerActivity.class).putExtra("server", new Server(-1L, "", "", 18083, "", "")), REQUEST_CODE_ADD);
+	        addServer();
 	        return true;
 	    default:
 	        return true;
@@ -98,7 +147,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		  new LogonTask(this).execute(getAdapter().getItem(position));
 	        return true;
 	  case R.id.server_list_context_menu_edit:
-        startActivityForResult(new Intent(this, EditServerActivity.class).putExtra("server", s), REQUEST_CODE_EDIT);
+        startActivityForResult(new Intent(this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, s), REQUEST_CODE_EDIT);
         return true;
 	  case R.id.server_list_context_menu_delete:
 		  _db.delete(s.getId());
@@ -112,7 +161,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
  	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
  		if(data == null) return;
- 		Server s = data.getParcelableExtra("server");
+ 		Server s = data.getParcelableExtra(EditServerActivity.INTENT_SERVER);
         switch(resultCode) {
 		case(RESULT_CODE_SAVE):
 			_db.insertOrUpdate(s);
@@ -131,6 +180,16 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
         getAdapter().notifyDataSetChanged();
     }
  	
+ 	/**
+	 * Launch activity to create a new Server
+	 */
+	protected void addServer() {
+		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", 18083, "", "")), REQUEST_CODE_ADD);
+	}
+ 	
+ 	/**
+ 	 * Server list adapter
+ 	 */
  	class ServerListAdapter extends ArrayAdapter<Server> {
 		private final LayoutInflater _layoutInflater;
 		
@@ -143,11 +202,14 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 			if (view == null)
 				view = _layoutInflater.inflate(R.layout.server_item, parent, false);
 			Server s = getItem(position);
-			((TextView)view.findViewById(R.id.server_item_text)).setText((s.getName()==null || "".equals(s.getName())) ? s.getHost() : s.getName());
+			((TextView)view.findViewById(R.id.server_item_text)).setText(s.toString());
 			return view;
 		}
 	}
  	
+ 	/**
+ 	 * Load Servers from DB
+ 	 */
  	class LoadServersTask extends BaseTask<Void, List<Server>>	{
  		public LoadServersTask(Context ctx) {
  			super("LoadServersTask", ctx,  null, "Loading Servers"); 
@@ -159,10 +221,6 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		@Override 
 		protected void onPostExecute(List<Server> result)	{
 			super.onPostExecute(result);
-			if(result.size()==0) {
-				result.add(new Server(new Long(-1), "kedzie-server", "192.168.1.10", 18083, "Marek", "Mk0204$$"));
-		        result.add(new Server(new Long(-1), "kedzie-xps", "192.168.1.1", 18083, "kedzie", "Mk0204$$"));
-			}
 			listView.setAdapter( new ServerListAdapter(ServerListActivity.this, result) );
 			getAdapter().setNotifyOnChange(false);
 		}
@@ -183,18 +241,22 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		protected void onPostExecute(IVirtualBox vbox) {
 			super.onPostExecute(vbox);
 			if(vbox!=null) {
-				Toast.makeText(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion(), Toast.LENGTH_LONG).show();
+				VBoxApplication.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
 				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 			}
 		}
 	}
 
+	/**
+	 * Table for VirtualBox Servers
+	 */
 	class ServerDB extends SQLiteOpenHelper {
 		public ServerDB(Context context) { 
 	    	super(context, "vbox.db", null, 2);  
 	    }
 	    @Override
 	    public void onCreate(SQLiteDatabase db) { 
+	    	Log.i("ServerSQL", "Creating database schema");
 	    	db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, NAME TEXT, HOST TEXT, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
 	    }
 	    @Override

@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.kedzie.vbox.R;
 
 public class EditServerActivity extends Activity {
-	protected static final String TAG = EditServerActivity.class.getSimpleName();
+	public static final String INTENT_SERVER = "server";
 	
 	protected Server _server;
 	
@@ -24,7 +24,7 @@ public class EditServerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server);
-       	_server = (Server)(getLastNonConfigurationInstance()==null ? getIntent().getParcelableExtra("server") : getLastNonConfigurationInstance());
+       	_server = (Server)(getLastNonConfigurationInstance()==null ? getIntent().getParcelableExtra(INTENT_SERVER) : getLastNonConfigurationInstance());
        	((TextView)findViewById(R.id.server_name)).setText(_server.getName());
         ((TextView)findViewById(R.id.server_host)).setText(_server.getHost());
         ((TextView)findViewById(R.id.server_port)).setText(""+_server.getPort());
