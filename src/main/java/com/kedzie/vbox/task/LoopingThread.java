@@ -4,11 +4,12 @@ package com.kedzie.vbox.task;
 /**
  * Looping-thread with safe shutdown (via quit())
  */
-public abstract class BaseThread extends Thread {
+public abstract class LoopingThread extends Thread {
 	/** thread is running */
 	protected boolean _running=false;
+	protected boolean _paused=false;
 	
-	public BaseThread(String name) {
+	public LoopingThread(String name) {
 		super(name);
 	}
 	
@@ -17,7 +18,8 @@ public abstract class BaseThread extends Thread {
 		_running=true;
 		preExecute();
 		while(_running) {
-			loop();
+			if(!_paused)
+				loop();
 		}
 		postExecute();
 	}
@@ -37,6 +39,20 @@ public abstract class BaseThread extends Thread {
 	 */
 	public abstract void loop();
 
+	/**
+	 * Pause execution
+	 */
+	public void pause() {
+		_paused=true;
+	}
+	
+	/**
+	 * Resume execution
+	 */
+	public void unpause() {
+		_paused=false;
+	}
+	
 	/**
 	 * Nicely shuts down the thread
 	 */

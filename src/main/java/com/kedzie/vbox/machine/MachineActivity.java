@@ -24,7 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.PreferencesActivity;
@@ -67,7 +66,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			case EventThread.WHAT_EVENT:
 				IEvent event = BundleBuilder.getProxy(msg.getData(), EventThread.BUNDLE_EVENT, IEvent.class);
 				if(event instanceof IMachineStateChangedEvent) {
-					Toast.makeText(MachineActivity.this, _machine.getName() + "  changed State: " + _machine.getState(), Toast.LENGTH_LONG).show();
+					VBoxApplication.toast(MachineActivity.this, _machine.getName()+"  changed State: "+_machine.getState());
 					updateState();
 				}
 				break;
@@ -93,35 +92,35 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 		if(action.equals("Start"))	
 			new LaunchVMProcessTask(MachineActivity.this, _vmgr).execute(_machine);
 		else if(action.equals("Power Off"))	
-			new MachineTask<IMachine>("LaunchVMProcessTask", this, _vmgr, "Powering Off", false, _machine) { 
-				protected IProgress workWithProgress(IMachine m, IConsole console, IMachine...i) throws Exception { 	
-					return console.powerDown(); 
-				}
-			}.execute(_machine);
+			new MachineTask<IMachine>("PoweroffTask", this, _vmgr, "Powering Off", false, _machine) {	
+			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+				  return console.powerDown();
+			  }
+		  }.execute(_machine);
 		else if(action.equals("Reset"))
-			new MachineTask<IMachine>("ResetTask", this, _vmgr, "Resetting", true, _machine) { 
-				protected void work(IMachine m, IConsole console, IMachine...i) throws Exception { 	
-					console.reset(); 
-				}
-			}.execute(_machine);
+			new MachineTask<IMachine>("ResetTask", this, _vmgr, "Resetting", true, _machine) {	
+			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+				  console.reset(); 
+			  }
+			  }.execute(_machine);
 		else if(action.equals("Pause")) 	
-			new MachineTask<IMachine>("PauseTask", this, _vmgr, "Pausing", true, _machine) { 
-				protected void work(IMachine m, IConsole console, IMachine...i) throws Exception { 
-					console.pause();
-				}
-			}.execute(_machine);
+			new MachineTask<IMachine>("PauseTask", this, _vmgr, "Pausing", true, _machine) {	
+			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
+				  console.pause();	
+			  }
+		  }.execute(_machine);
 		else if(action.equals("Resume")) 
-			new MachineTask<IMachine>("ResumeTask", this, _vmgr, "Resuming", true, _machine) { 
-				protected void work(IMachine m, IConsole console, IMachine...i) throws Exception { 	
-					console.resume(); 
-				}
-			}.execute(_machine);
+			new MachineTask<IMachine>("ResumeTask", this, _vmgr, "Resuming", true, _machine) {	
+			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+				  console.resume(); 
+			  }
+		  }.execute(_machine);
 		else if(action.equals("Power Button")) 	
-			new MachineTask<IMachine>("PowerButtonTask", this, _vmgr, "ACPI Power Down", true, _machine) { 
-				protected void work(IMachine m, IConsole console, IMachine...i) throws Exception { 
-					console.powerButton(); 
-				}
-			}.execute(_machine);
+			new MachineTask<IMachine>("ACPITask", this, _vmgr, "ACPI Power Down", true, _machine) {
+			  protected void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
+				  console.powerButton(); 	
+			  }
+		  }.execute(_machine);
 		else if(action.equals("Save State")) 	
 			new MachineTask<IMachine>("SaveStateTask", this, _vmgr, "Saving State", false, _machine) { 
 				protected IProgress workWithProgress(IMachine m, IConsole console, IMachine...i) throws Exception { 	
@@ -151,9 +150,9 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == REQUEST_CODE_PREFERENCES) {
-			if(_eventService==null && getApp().getNotificationsPreference())
+			if(_eventService==null && VBoxApplication.getNotificationsPreference(this))
 				bindService(new Intent(MachineActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !getApp().getNotificationsPreference()) {
+			else if(_eventService!=null && !VBoxApplication.getNotificationsPreference(this)) {
 				unbindService(localConnection);
 			}
 		}

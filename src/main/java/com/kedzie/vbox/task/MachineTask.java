@@ -22,7 +22,7 @@ public abstract class MachineTask<Input> extends BaseTask<Input, IMachine> {
 		public MachineTask(String TAG, Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
 			super(TAG, ctx, vmgr, msg);
 			this.indeterminate=indeterminate;
-			_machine = m;
+			_machine=m;
 		}
 		
 		@Override

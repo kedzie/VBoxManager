@@ -14,12 +14,12 @@ import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachineEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.BaseThread;
+import com.kedzie.vbox.task.LoopingThread;
 
 /**
  * Listen for & dispatch VirtualBox events
  */
-public class EventThread extends BaseThread {
+public class EventThread extends LoopingThread {
 	protected static final String TAG = EventThread.class.getSimpleName();
 	private static final int DEFAULT_INTERVAL = 500;
 	public static final int WHAT_EVENT = 1;

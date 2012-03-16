@@ -66,7 +66,7 @@ public class EditServerActivity extends Activity {
 		_server.setPort( Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString()) );
 		_server.setUsername( ((TextView)findViewById(R.id.server_username)).getText().toString() );
 		_server.setPassword(((TextView)findViewById(R.id.server_password)).getText().toString() );
-		getIntent().putExtra("server", _server);
+		getIntent().putExtra(INTENT_SERVER, _server);
 		setResult(ServerListActivity.RESULT_CODE_SAVE, getIntent());
 		finish();
 	}

@@ -167,7 +167,7 @@ public class VBoxSvc implements Parcelable {
 				
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))	{
-					Log.d(TAG, "returning cached value");
+					Log.v(TAG, "returning cached value "+method.getName() + "() -> "+ _cache.get(method.getName()));
 					return _cache.get(method.getName());
 				}
 				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());

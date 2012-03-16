@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
@@ -17,17 +16,19 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IPerformanceMetric;
+import com.kedzie.vbox.task.LoopingThread;
 
 public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder.Callback, DataThread.Renderer {
 	private static final String TAG = MetricViewSurfaceView.class.getSimpleName();
 	
 	private RenderThread _thread;
 	
-	public MetricViewSurfaceView(Context ctx, int count, int period, int max, String []metrics, IPerformanceMetric pm) {
+	public MetricViewSurfaceView(Context ctx, int max, String []metrics, IPerformanceMetric pm) {
 		super(ctx);
 		getHolder().addCallback(this);
-		_thread = new RenderThread(getHolder(), count, period, max, metrics, pm);
+		_thread = new RenderThread(getHolder(), max, metrics, pm);
 	}
 	
 	@Override
@@ -42,14 +43,8 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		boolean done = false;
-        _thread._running= false;
-        while (!done) {
-            try {
-                _thread.join();
-                done = true;
-            } catch (InterruptedException e) { }
-        }
+		_thread.quit();
+        _thread=null;
 	}
 	
 	public String[] getMetrics() {
@@ -66,41 +61,50 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 		_thread.setMetricPreferences(period,count);
 	}
 	
+	@Override
 	public void pause() {
 		_thread._on=false;
 	}
 	
+	@Override
 	public void resume() {
 		_thread._on=true;
 	}
 	
-	class RenderThread extends Thread {
-		boolean _running=true;
+	class RenderThread extends LoopingThread {
 		boolean _on=true;
 		private SurfaceHolder _surfaceHolder;
-		private int _max;
-		private int _count;
-		private int _period;
-		private int _width;
-		private String[] _metrics;
-		private IPerformanceMetric _baseMetric;
-		private int hStep;
-		private double vStep;
 		private Rect bounds;
 		private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint();
-		private Map<String, Integer> metricColor = new HashMap<String, Integer>();
-		private Map<String, LinkedList<Point2F>> data;
+		private Map<String, LinkedList<Point2F>> data= new HashMap<String, LinkedList<Point2F>>();
+		/** Maximum Y Value */
+		private int _max;
+		/** # of data points */
+		private int _count;
+		/** Time interval between datapoints */
+		private int _period;
+		/** width in pixels */
+		private int _width;
+		/** Metric names to render */
+		private String[] _metrics;
+		private IPerformanceMetric _baseMetric;
+		/** pixels/period */
+		private int hStep;
+		/** pixels/unit */
+		private double vStep;
 		/** timestamp of last rendering */
 		private double pixelsPerSecond; 
 		
-		public RenderThread(SurfaceHolder holder, int count, int period, int max, String []metrics, IPerformanceMetric pm) {
+		public RenderThread(SurfaceHolder holder, int max, String []metrics, IPerformanceMetric pm) {
 			super("Metric Render");
-			_surfaceHolder = holder;
 			_max=max;
-			_count=count;
+			_count=VBoxApplication.getCountPreference(getContext());
 			_metrics=metrics;
-			_period=period;
+			_period=VBoxApplication.getPeriodPreference(getContext());;
 			_baseMetric=pm;
+			for(String metric : _metrics)
+				data.put(metric, new LinkedList<Point2F>());
+			_surfaceHolder = holder;
 			bgPaint.setARGB(255, 255, 255, 255);
 			bgPaint.setStyle(Style.FILL);
 			borderPaint.setStyle(Style.STROKE);
@@ -120,55 +124,52 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 			metricPaint.setStrokeCap(Cap.SQUARE);
 			metricPaint.setAntiAlias(true);
 			metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
-			data = new HashMap<String, LinkedList<Point2F>>();
-			for(String metric : _metrics)
-					data.put(metric, new LinkedList<Point2F>());
 		}
 		
 		public void setSize(int w, int h) {
-			synchronized (_surfaceHolder) {
-				_width=w;
-				Log.i(TAG, "OnSizeChanged("+w+"," + h + ")");
-				hStep = w/_count;
-				vStep = h/(double)_max;
-				bounds=null;
-				pixelsPerSecond =hStep/_period;
+			Log.i(TAG, "OnSizeChanged("+w+"," + h + ")");
+			bounds=null;
+			_width=w;
+			vStep = (float)h/(float)_max;
+			setMetricPreferences(_period, _count);
+			for(String metric : _metrics) {  //REscale the scaled data set
+				for(Point2F p : data.get(metric))
+					p.scaledY = (float)(p.y*vStep);
 			}
 		}
 
 		public void setMetricPreferences(int period, int count) {
 			synchronized (_surfaceHolder) {
+				Log.i(TAG, "Metric Preferences Changed ("+period+"," + count + ")");
 				_period = period;
 				_count = count;
-				Log.i(TAG, "Metric Preferences Changed ("+period+"," + count + ")");
 				hStep = _width/_count;
 				pixelsPerSecond =hStep/_period;
 				for(String metric : _metrics) {
-					while(data.get(metric).size()>_count) {  //if count is lowered, dump unecessary data points
+					while(data.get(metric).size()>_count)  //if count is lowered, dump unecessary data points
 						data.get(metric).removeFirst();
-					}
 				}
 			}
 		}
 
-		private int getColor(String name) {
-			if(!metricColor.containsKey(name)) 	{
-				Resources res = getContext().getResources();
-				metricColor.put(name, res.getColor(res.getIdentifier(name.replace("/", "_"), "color", getContext().getPackageName())) );
+		public void addData(Map<String, Point2F> d) {
+			synchronized (_surfaceHolder) {
+				for(String metric : _metrics){
+					d.get(metric).scaledY = (float)(d.get(metric).y*vStep);
+					data.get(metric).addLast( d.get(metric) );
+					if(data.get(metric).size()>_count)
+						data.get(metric).removeFirst();
+				}
 			}
-			return metricColor.get(name);
 		}
-		
+
 		protected void update() {
 			long timestamp= System.currentTimeMillis();
 			for(LinkedList<Point2F> dataPoints : data.values()) {
-				for(Point2F p : dataPoints)
-					p.x=getXPixelFromTimestamp(p.timestamp, timestamp);
+				for(Point2F p : dataPoints) {
+					p.x=MetricView.getXPixelFromTimestamp(_width, pixelsPerSecond, p.timestamp, timestamp);
+				}
 			}
-		}
-		
-		private int getXPixelFromTimestamp(long stamp, long current) {
-			return _width-(int)(((current-stamp)/1000.d)*pixelsPerSecond);
 		}
 		
 		protected void onDraw(Canvas canvas) {
@@ -177,52 +178,43 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 			canvas.drawRect(bounds, bgPaint);
 			canvas.drawRect(bounds, borderPaint);
 			
-			for(int i=0; i<=_count; i+=2) {	//horizontal grid
+			for(int i=0; i<=_count; i+=5) {	//horizontal grid
 				int horiz = bounds.left+i*hStep;
 				canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
-				canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);
+				canvas.drawText((_count-i)*_period+"sec", horiz, bounds.bottom-20, textPaint);
 			}
 			canvas.drawText(_max+""+_baseMetric.getUnit(), bounds.left+20, bounds.bottom-(float)(_max*vStep), textPaint);
 
 			for(String metric : _metrics) {
 				if(!data.containsKey(metric) || data.get(metric).isEmpty()) continue;
-				metricPaint.setColor(getColor(metric));
+				metricPaint.setColor(VBoxApplication.getColor(getContext(), metric.replace("/", "_")));
 				Iterator<Point2F> it=data.get(metric).iterator();
 				Point2F p = it.next();
 				while(it.hasNext() ) {
 					Point2F nP = it.next();
-					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)(p.y*vStep), bounds.left+(int)nP.x, bounds.bottom-(int)(nP.y*vStep), metricPaint);
+					Log.v(TAG, "Datapoint: " + nP);
+					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)(p.scaledY), bounds.left+(int)nP.x, bounds.bottom-(int)(nP.y*vStep), metricPaint);
 					p = nP;
 				}
 			}
 		}
 		
-		public void addData(Map<String, Point2F> d) {
-			synchronized (_surfaceHolder) {
-				for(String metric : _metrics){
-					data.get(metric).addLast( d.get(metric) );
-					if(data.get(metric).size()>_count) 
-						data.get(metric).removeFirst();
-				}
-			}
-		}
-		
 		@Override
-		public void run() {
-			while(_running) {
-				Canvas c = null;
-                try {
-                    c = _surfaceHolder.lockCanvas(null);
-                    synchronized (_surfaceHolder) {
-                        if (_on) update();
-                        onDraw(c);
-                    }
-                } finally {
-                    if (c != null) {
-                        _surfaceHolder.unlockCanvasAndPost(c);
+		public void loop() {
+			Canvas c = null;
+            try {
+                c = _surfaceHolder.lockCanvas(null);
+                synchronized (_surfaceHolder) {
+                    if (_on) {
+                    	update();
+                    	onDraw(c);
                     }
                 }
-			}
+            } finally {
+                if (c != null) {
+                    _surfaceHolder.unlockCanvasAndPost(c);
+                }
+            }
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.kedzie.vbox.metrics;
 public class Point2F {
 	public float x;
 	public float y;
+	public float scaledY;
 	public long timestamp;
 	
 	public Point2F(float x, float y) {

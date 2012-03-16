@@ -21,7 +21,7 @@ public class VBoxApplication extends Application {
 	
 	protected Map<String,Integer> resources = new HashMap<String, Integer>();
 	protected Map<String,Integer> resources_color = new HashMap<String, Integer>();
-	protected Map<String, Integer> metricColor = new HashMap<String, Integer>();
+	protected static Map<String, Integer> metricColor = new HashMap<String, Integer>();
 	
 	@Override
 	public void onCreate() {
@@ -86,7 +86,7 @@ public class VBoxApplication extends Application {
 	 * @return black/white or colored icons based on Shared Preferences
 	 */
 	protected Map<String,Integer> getDrawables() {
-		return getColoredIconsPreference()	? resources_color :  resources;
+		return getColoredIconsPreference(this)	? resources_color :  resources;
 	}
 	
 	/**
@@ -124,32 +124,32 @@ public class VBoxApplication extends Application {
 		return new String[] {};
 	}
 	
-	public int getPeriodPreference() {
-		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.PERIOD, ""));
+	public static int getPeriodPreference(Context ctx) {
+		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(PreferencesActivity.PERIOD, ""));
 		Log.d(TAG, "getPeriodPreference? " + ret);
 		return ret;
 	}
 	
-	public int getCountPreference() {
-		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferencesActivity.COUNT, ""));
+	public static int getCountPreference(Context ctx) {
+		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(PreferencesActivity.COUNT, ""));
 		Log.d(TAG, "getCountPreference? " + ret);
 		return ret;
 	}
 	
-	public boolean getColoredIconsPreference() {
-		boolean ret =  PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.ICON_COLORS, false);
+	public static boolean getColoredIconsPreference(Context ctx) {
+		boolean ret =  PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.ICON_COLORS, false);
 		Log.d(TAG, "getColoredIconsPreference? " + ret);
 		return ret;
 	}
 	
-	public boolean getNotificationsPreference() {
-		boolean ret =  PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.NOTIFICATIONS, false);
+	public static boolean getNotificationsPreference(Context ctx) {
+		boolean ret =  PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.NOTIFICATIONS, false);
 		Log.d(TAG, "getNotificationsPreference? " + ret);
 		return ret;
 	}
 	
-	public boolean getBetaEnabledPreference() {
-		boolean ret = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferencesActivity.BETA_ENABLED, false);
+	public static boolean getBetaEnabledPreference(Context ctx) {
+		boolean ret = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.BETA_ENABLED, false);
 		Log.d(TAG, "getBetaEnabledPreference? " + ret);
 		return ret;
 	}
@@ -168,9 +168,13 @@ public class VBoxApplication extends Application {
 	 * @param name name of color resource
 	 * @return 0xAARRGGBB
 	 */
-	public int getColor(String name) {
+	public static int getColor(Context ctx, String name) {
 		if(!metricColor.containsKey(name)) 
-			metricColor.put(name, getResources().getColor(getResources().getIdentifier(name.replace("/", "_"), "color", getPackageName())) );
+			metricColor.put(name, ctx.getResources()
+						.getColor(
+								ctx.getResources().getIdentifier(name, 
+								"color", 
+								ctx.getPackageName())) );
 		return metricColor.get(name);
 	}
 }

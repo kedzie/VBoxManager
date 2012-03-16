@@ -22,14 +22,14 @@ public enum VMAction {
 	POWER_BUTTON("Power Button"),
 	POWER_OFF("Power Off");
 	
-	private String val;
+	private String _val;
 	
 	private VMAction(String val) {
-		this.val=val;
+		_val=val;
 	}
 	
 	public String toString() {
-		return val;
+		return _val;
 	}
 	
 	/**

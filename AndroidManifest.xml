@@ -9,6 +9,12 @@
                 	<category android:name="android.intent.category.LAUNCHER"/>
             	</intent-filter>
         </activity>
+        <activity android:label="Test Harness" android:name=".harness.HarnessActivity">
+			<intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 		<activity android:configChanges="orientation" android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity"/>
 		<activity android:configChanges="orientation" android:name=".machine.MachineListActivity"/>
 		<activity android:configChanges="orientation" android:name=".machine.MachineTabActivity" android:theme="@android:style/Theme.NoTitleBar"/>

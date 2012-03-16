@@ -9,14 +9,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -89,14 +86,6 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
         _vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
     	setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
     	
-    	PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(
-    			new OnSharedPreferenceChangeListener() {
-					@Override
-					public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-						Log.i(TAG, "Shared Preference changed: " + key);
-					}
-				});
-    	
     	if(getLastNonConfigurationInstance()!=null) { 
     		_machines = (List<IMachine>)getLastNonConfigurationInstance();
     		_listView.setAdapter(new MachineListAdapter(MachineListActivity.this, _machines));
@@ -106,7 +95,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
     }
 	
 	protected void startEventListener() {
-		if(_eventService==null && getApp().getNotificationsPreference())
+		if(_eventService==null && VBoxApplication.getNotificationsPreference(this))
 			bindService(new Intent(MachineListActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
 		_eventThread = new EventThread(TAG , _vmgr, VBoxEventType.MACHINE_EVENT);
 		_eventThread.addListener(_messenger);
@@ -116,9 +105,9 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
-			if(_eventService==null && getApp().getNotificationsPreference())
+			if(_eventService==null && VBoxApplication.getNotificationsPreference(this))
 				bindService(new Intent(MachineListActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !getApp().getNotificationsPreference()) {
+			else if(_eventService!=null && !VBoxApplication.getNotificationsPreference(this)) {
 				unbindService(localConnection);
 			}
 		}
@@ -180,13 +169,24 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if(!getApp().getBetaEnabledPreference())
+		getMenuInflater().inflate(R.menu.machine_list_options_menu, menu);
+		if(!VBoxApplication.getBetaEnabledPreference(this))
 			menu.removeItem(R.id.machine_list_option_menu_glmetrics);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getTitle().equals("GL Metrics")) {
+			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL.name())
+					.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
+					.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
+					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
+					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
+				.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
+			return true;
+		}
 		switch(item.getItemId()) {
 		case R.id.machine_list_option_menu_refresh:
 			new LoadMachinesTask(this, _vmgr).execute();
@@ -194,15 +194,6 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		case R.id.machine_list_option_menu_metrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
 				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.SURFACEVIEW.name())
-				.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
-				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
-				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
-				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
-			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
-			return true;
-		case R.id.machine_list_option_menu_glmetrics:
-			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL.name())
 				.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
@@ -299,7 +290,10 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 				//cache property values to avoid remote calls
 				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
 			}
-			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, getApp().getPeriodPreference(), 1, (IManagedObjectRef)null);
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
+					VBoxApplication.getPeriodPreference(context), 
+					1, 
+					(IManagedObjectRef)null);
 			return machines;
 		}
 

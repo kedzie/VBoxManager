@@ -23,6 +23,7 @@
 			<version>2.2.1</version>
 			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -203,28 +204,21 @@
 	</profiles>
 
 	<repositories>
-		<repository>
-			<id>codehause</id>
-			<name>codehaus</name>
-			<url>http://repository.codehaus.org</url>
-		</repository>
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Repository Group</name>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+<!-- 		<repository> -->
+<!-- 			<id>codehause</id> -->
+<!-- 			<name>codehaus</name> -->
+<!-- 			<url>http://repository.codehaus.org</url> -->
+<!-- 		</repository> -->
 		<repository>
 			<id>googlecode-ksoap2-android</id>
 			<name>googlecode-ksoap2-android</name> 
 	 		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
  		</repository>
+<!--  		<repository> -->
+<!--         	<id>jboss-releases</id> -->
+<!--         	<name>jboss-releases</name> -->
+<!--         	<url>http://repository.jboss.org/nexus/content/repositories/releases</url> -->
+<!--      	</repository> -->
 	</repositories>
 
 </project>

@@ -15,7 +15,6 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -29,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -52,27 +50,11 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.server_list);
         
-        listView = (ListView)findViewById(R.id.list);
+        listView = new ListView(this);
+        setContentView(listView);
         registerForContextMenu(listView);
         listView.setOnItemClickListener(this);
-        
-        Button addButton = new Button(this);
-        addButton.setText("Add Server");
-        addButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				addServer();
-			}
-		});
-        listView.addFooterView(addButton);
-        
-        TextView emptyView = new TextView(this);
-        emptyView.setTypeface(Typeface.DEFAULT, Typeface.ITALIC);
-        emptyView.setTextSize(10f);
-        emptyView.setText("No servers defined");
-        listView.setEmptyView(emptyView);
         
         new LoadServersTask(this).execute();
         checkIfFirstRun();
@@ -80,22 +62,22 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	
 	protected void checkIfFirstRun() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		if(prefs.getBoolean(FIRST_RUN_PREFERENCE, true)) {
+		if(!prefs.contains(FIRST_RUN_PREFERENCE)) {
 			Log.i(TAG, "First execution detected");
 			Editor editor = prefs.edit();
 			editor.putBoolean(FIRST_RUN_PREFERENCE, false);
 			editor.commit();
 			new AlertDialog.Builder(this)
-					.setTitle("Welcome")
-					.setMessage("Press OK to add a new Server")
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setPositiveButton("OK", new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							addServer();
-						}
-					})
-					.show();
+			.setTitle("Welcome")
+			.setMessage("Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host 192.168.1.10 --port 18083")
+			.setIcon(android.R.drawable.ic_dialog_info)
+			.setPositiveButton("OK", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					addServer();
+				}
+			})
+			.show();
 		}
 	}
 	
@@ -167,6 +149,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 			_db.insertOrUpdate(s);
 			if(requestCode==REQUEST_CODE_EDIT) {
 				int pos = getAdapter().getPosition(s);
+				getAdapter().setNotifyOnChange(false);
 				getAdapter().remove(s);
 				getAdapter().insert(s, pos);
 			} else if (requestCode == REQUEST_CODE_ADD)
@@ -208,6 +191,30 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	}
  	
  	/**
+ 	 * Logs on and launches MachineList Activity
+ 	 */
+ 	class LogonTask extends BaseTask<Server, IVirtualBox> {
+		
+		public LogonTask(Context ctx) { 
+			super( "LogonTask", ctx, null, "Connecting");
+		}
+		
+		@Override
+		protected IVirtualBox work(Server... params) throws Exception {
+			_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
+			return _vmgr.logon(params[0].getUsername(), params[0].getPassword());
+		}
+
+		@Override protected void onPostExecute(IVirtualBox vbox) {
+			if(vbox!=null) {
+				VBoxApplication.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
+				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+			}
+			super.onPostExecute(vbox);
+		}
+	}
+ 	
+ 	/**
  	 * Load Servers from DB
  	 */
  	class LoadServersTask extends BaseTask<Void, List<Server>>	{
@@ -222,27 +229,19 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		protected void onPostExecute(List<Server> result)	{
 			super.onPostExecute(result);
 			listView.setAdapter( new ServerListAdapter(ServerListActivity.this, result) );
-			getAdapter().setNotifyOnChange(false);
-		}
-	}
- 	
- 	/**
- 	 * Connect & Logon to VirtualBox webservice
- 	 */
- 	class LogonTask extends BaseTask<Server, IVirtualBox>	{
- 		public LogonTask(Context ctx) { 
-			super( "LogonTask", ctx, null, "Connecting");
-		}
-		@Override
-		protected IVirtualBox work(Server... params) throws Exception {
-			_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
-			return _vmgr.logon(params[0].getUsername(), params[0].getPassword());
-		}
-		protected void onPostExecute(IVirtualBox vbox) {
-			super.onPostExecute(vbox);
-			if(vbox!=null) {
-				VBoxApplication.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+			if(result.isEmpty()) {
+				new AlertDialog.Builder(ServerListActivity.this)
+				.setTitle("Add new server")
+				.setMessage("You have no VirtualBox servers defined.  Would you like to add one?")
+				.setIcon(android.R.drawable.ic_menu_help)
+				.setPositiveButton("OK", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						addServer();
+					}
+				})
+				.setCancelable(true)
+				.show();
 			}
 		}
 	}

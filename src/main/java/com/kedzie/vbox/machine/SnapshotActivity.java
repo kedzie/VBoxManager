@@ -41,7 +41,7 @@ public class SnapshotActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tree);
+        setContentView(R.layout.snapshot_tree);
         _treeView = (TreeViewList)findViewById(R.id.mainTreeView);
         _stateManager = new InMemoryTreeStateManager<ISnapshot>();
         _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
