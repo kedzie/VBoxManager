@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,8 +30,8 @@ public class MetricActivity extends Activity  {
 			INTENT_RAM_AVAILABLE = "ra", INTENT_RAM_METRICS="rm",
 			INTENT_CPU_METRICS="cm",INTENT_IMPLEMENTATION="i";
 	
-	private View cpuView, ramView;
-	private View cpuRenderer, ramRenderer;
+	private DataThread.Renderer cpuRenderer, ramRenderer;
+	private MetricView cpuV, ramV;
 	private DataThread _thread;
 	private VBoxSvc _vmgr;
 	private String _object;
@@ -50,50 +51,54 @@ public class MetricActivity extends Activity  {
 		try {
 			Implementation _i = Implementation.valueOf(getIntent().getStringExtra(INTENT_IMPLEMENTATION));
 			
-//			cpuView = new MetricView(this, "CPU", _i, 100000, cpuMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, _object).get(0));
-//			ramView = new MetricView(this,"Memory", _i, ramAvailable*1000, ramMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, _object).get(0));
-//			LinearLayout contentView = new LinearLayout(this);
-//    		contentView.setOrientation(LinearLayout.VERTICAL);
-//    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//    		params.weight=.5f;
-//    		contentView.addView(cpuView, params);
-//    		contentView.addView(ramView, params);
-//    		setContentView(contentView);
-			
-			if(_i.equals(Implementation.SURFACEVIEW)) {
-				cpuRenderer = new MetricViewSurfaceView(this, 100000, cpuMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, _object).get(0));
-				ramRenderer = new MetricViewSurfaceView(this, ramAvailable*1000, ramMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, _object).get(0));
-			} else if (_i.equals(Implementation.OPENGL)) {
-				cpuRenderer = new MetricViewGL(this, 100000, cpuMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, _object).get(0));
-				ramRenderer = new MetricViewGL(this, ramAvailable*1000, ramMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, _object).get(0));
-			}
-    		LinearLayout cpuLayout = new LinearLayout(this);
-    		cpuLayout.setOrientation(LinearLayout.VERTICAL);
-    		TextView cpuText = new TextView(this);
-    		cpuText.setText("CPU");
-    		cpuText.setTextSize(16.f);
-    		cpuLayout.addView(cpuText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    		params.weight=1.f;
-    		cpuLayout.addView(cpuRenderer, params);
-    		createMetricTextFields(cpuLayout, cpuMetrics);
-    		
-    		LinearLayout ramLayout = new LinearLayout(this);
-    		ramLayout.setOrientation(LinearLayout.VERTICAL);
-    		TextView ramText = new TextView(this);
-    		ramText.setText("Memory");
-    		ramText.setTextSize(16.f);
-    		ramLayout.addView(ramText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-    		ramLayout.addView(ramRenderer, params);
-    		createMetricTextFields(ramLayout, ramMetrics);
-    		
-    		LinearLayout contentView = new LinearLayout(this);
+			cpuV = new MetricView(this, "CPU", _i, 100000, cpuMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, _object).get(0));
+			ramV = new MetricView(this,"Memory", _i, ramAvailable*1000, ramMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, _object).get(0));
+			LinearLayout contentView = new LinearLayout(this);
     		contentView.setOrientation(LinearLayout.VERTICAL);
-    		params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     		params.weight=.5f;
-    		contentView.addView(cpuLayout, params);
-    		contentView.addView(ramLayout, params);
+    		contentView.addView(cpuV, params);
+    		contentView.addView(ramV, params);
     		setContentView(contentView);
+			
+//			if(_i.equals(Implementation.SURFACEVIEW)) {
+//				cpuV = new MetricViewSurfaceView(this, 100000, cpuMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, _object).get(0));
+//				cpuRenderer = (DataThread.Renderer)cpuV;
+//				ramV = new MetricViewSurfaceView(this, ramAvailable*1000, ramMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, _object).get(0));
+//				ramRenderer = (DataThread.Renderer)ramV;
+//			} else if (_i.equals(Implementation.OPENGL)) {
+//				cpuV = new GLSurfaceView(this);
+//				cpuRenderer = new MetricViewGL(this, (GLSurfaceView)cpuV,  100000, cpuMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(cpuMetrics, _object).get(0));
+//				ramV = new GLSurfaceView(this);
+//				ramRenderer = new MetricViewGL(this, (GLSurfaceView)ramV, ramAvailable*1000, ramMetrics, _vmgr.getVBox().getPerformanceCollector().getMetrics(ramMetrics, _object).get(0));
+//			}
+//    		LinearLayout cpuLayout = new LinearLayout(this);
+//    		cpuLayout.setOrientation(LinearLayout.VERTICAL);
+//    		TextView cpuText = new TextView(this);
+//    		cpuText.setText("CPU");
+//    		cpuText.setTextSize(16.f);
+//    		cpuLayout.addView(cpuText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//    		params.weight=1.f;
+//    		cpuLayout.addView(cpuV, params);
+//    		createMetricTextFields(cpuLayout, cpuMetrics);
+//    		
+//    		LinearLayout ramLayout = new LinearLayout(this);
+//    		ramLayout.setOrientation(LinearLayout.VERTICAL);
+//    		TextView ramText = new TextView(this);
+//    		ramText.setText("Memory");
+//    		ramText.setTextSize(16.f);
+//    		ramLayout.addView(ramText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//    		ramLayout.addView(ramV, params);
+//    		createMetricTextFields(ramLayout, ramMetrics);
+//    		
+//    		LinearLayout contentView = new LinearLayout(this);
+//    		contentView.setOrientation(LinearLayout.VERTICAL);
+//    		params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//    		params.weight=.5f;
+//    		contentView.addView(cpuLayout, params);
+//    		contentView.addView(ramLayout, params);
+//    		setContentView(contentView);
 			startDataThread();
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage(), e);
@@ -103,8 +108,9 @@ public class MetricActivity extends Activity  {
 	private void startDataThread() {
 		_thread = new DataThread(_vmgr, _object, 
 				VBoxApplication.getPeriodPreference(this), 
-				(DataThread.Renderer)cpuRenderer, 
-				(DataThread.Renderer)ramRenderer);
+				cpuV, 
+				ramV);
+		_thread.start();
 	}
 
 	protected void createMetricTextFields(LinearLayout parent, String[] metrics) {
@@ -155,16 +161,10 @@ public class MetricActivity extends Activity  {
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(this, _vmgr).execute(VBoxApplication.getPeriodPreference(this));
 			_thread.setPeriod(VBoxApplication.getPeriodPreference(this));
-//			((DataThread.Renderer)cpuView).setMetricPreferences(
-//					VBoxApplication.getPeriodPreference(this), 
-//					VBoxApplication.getCountPreference(this));
-//			((DataThread.Renderer)ramView).setMetricPreferences(
-//					VBoxApplication.getPeriodPreference(this), 
-//					VBoxApplication.getCountPreference(this));
-			((DataThread.Renderer)cpuRenderer).setMetricPreferences(
+			cpuV.setMetricPreferences(
 					VBoxApplication.getPeriodPreference(this), 
 					VBoxApplication.getCountPreference(this));
-			((DataThread.Renderer)ramRenderer).setMetricPreferences(
+			ramV.setMetricPreferences(
 					VBoxApplication.getPeriodPreference(this), 
 					VBoxApplication.getCountPreference(this));
 		}
@@ -172,21 +172,17 @@ public class MetricActivity extends Activity  {
 
 	@Override
 	protected void onPause() {
-		_thread.pause();
-//		((DataThread.Renderer)cpuView).pause();
-//		((DataThread.Renderer)ramView).pause();
-		((DataThread.Renderer)cpuRenderer).pause();
-		((DataThread.Renderer)ramRenderer).pause();
+		if(_thread!=null) _thread.quit();
+		cpuV.pause();
+		ramV.pause();
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
-		_thread.unpause();
-//		((DataThread.Renderer)cpuView).resume();
-//		((DataThread.Renderer)ramView).resume();
-		((DataThread.Renderer)cpuRenderer).resume();
-		((DataThread.Renderer)ramRenderer).resume();
+		startDataThread();
+		cpuV.resume();
+		ramV.resume();
 		super.onResume();
 	}
 }

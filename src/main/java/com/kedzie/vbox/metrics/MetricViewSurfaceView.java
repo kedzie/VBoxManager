@@ -20,15 +20,15 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.task.LoopingThread;
 
-public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder.Callback, DataThread.Renderer {
+public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHolder.Callback {
 	private static final String TAG = MetricViewSurfaceView.class.getSimpleName();
 	
 	private RenderThread _thread;
 	
-	public MetricViewSurfaceView(Context ctx, int max, String []metrics, IPerformanceMetric pm) {
-		super(ctx);
-		getHolder().addCallback(this);
-		_thread = new RenderThread(getHolder(), max, metrics, pm);
+	public MetricViewSurfaceView(Context ctx, SurfaceView view, int max, String []metrics, IPerformanceMetric pm) {
+		super(ctx, max, metrics, pm);
+		view.getHolder().addCallback(this);
+		_thread = new RenderThread(view.getHolder());
 	}
 	
 	@Override
@@ -187,7 +187,7 @@ public class MetricViewSurfaceView  extends SurfaceView implements SurfaceHolder
 
 			for(String metric : _metrics) {
 				if(!data.containsKey(metric) || data.get(metric).isEmpty()) continue;
-				metricPaint.setColor(VBoxApplication.getColor(getContext(), metric.replace("/", "_")));
+				metricPaint.setColor(VBoxApplication.getColor(getContext(), metric.replace('/', '_')));
 				Iterator<Point2F> it=data.get(metric).iterator();
 				Point2F p = it.next();
 				while(it.hasNext() ) {

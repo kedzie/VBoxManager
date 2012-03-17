@@ -169,6 +169,10 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.removeItem(R.id.machine_list_option_menu_refresh);
+		menu.removeItem(R.id.machine_list_option_menu_preferences);
+		menu.removeItem(R.id.machine_list_option_menu_metrics);
+		menu.removeItem(R.id.machine_list_option_menu_glmetrics);
 		getMenuInflater().inflate(R.menu.machine_list_options_menu, menu);
 		if(!VBoxApplication.getBetaEnabledPreference(this))
 			menu.removeItem(R.id.machine_list_option_menu_glmetrics);
