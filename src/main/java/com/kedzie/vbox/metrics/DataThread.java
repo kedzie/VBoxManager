@@ -42,8 +42,10 @@ public class DataThread extends LoopingThread {
 					Point2F datapoint = new Point2F( 0, values.get(0), System.currentTimeMillis()+1000 );
 					newData.put(metric, datapoint);
 				}
-				for(Renderer v : _views)
-					v.addData(newData);
+				if(!newData.isEmpty()) {
+					for(Renderer v : _views)
+						v.addData(newData);
+				}
 			} catch (Exception e) {
 				Log.e(TAG, "", e);
 			} finally {

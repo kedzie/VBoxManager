@@ -85,7 +85,7 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 			metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
 		}
 
-		protected synchronized void update() {
+		protected void update() {
 			long timestamp= System.currentTimeMillis();
 			for(LinkedList<Point2F> dataPoints : data.values()) {
 				for(Point2F p : dataPoints) {
@@ -94,7 +94,7 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 			}
 		}
 		
-		protected synchronized void onDraw(Canvas canvas) {
+		protected void onDraw(Canvas canvas) {
 			if(bounds==null) 
 				bounds = canvas.getClipBounds();
 			canvas.drawRect(bounds, bgPaint);
@@ -126,7 +126,7 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 			Canvas c = null;
             try {
                 c = _surfaceHolder.lockCanvas(null);
-                synchronized (_surfaceHolder){
+                synchronized (MetricViewSurfaceView.this){
                     if (_on) {
                     	update();
                     	onDraw(c);

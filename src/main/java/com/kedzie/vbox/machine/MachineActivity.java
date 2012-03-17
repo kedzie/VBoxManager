@@ -216,8 +216,8 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 				.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
-				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
-			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "Guest/RAM/Usage/Used" } ));
+				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
+				.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
 		case R.id.machine_option_menu_glmetrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
@@ -225,8 +225,8 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize())
-					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
-				.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "Guest/RAM/Usage/Used" } ));
+					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
+				.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
 		default:
 			return true;

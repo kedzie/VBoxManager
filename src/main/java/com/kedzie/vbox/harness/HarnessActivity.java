@@ -1,5 +1,7 @@
 package com.kedzie.vbox.harness;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +9,8 @@ import android.util.Log;
 
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IHost;
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.server.Server;
@@ -45,6 +49,11 @@ public class HarnessActivity extends Activity {
 			IHost host = _vmgr.getVBox().getHost();
 			host.getMemorySize();
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, VBoxApplication.getPeriodPreference(context), 1, host);
+			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"}, _vmgr.getVBox().getHost().getIdRef()) )
+				Log.i(TAG, "Host metric: " + m.getMetricName());
+			List<IMachine> machines = _vmgr.getVBox().getMachines();
+			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"}, machines.get(0).getIdRef()) )
+				Log.i(TAG, "Machine metric: " + m.getMetricName());
 			Thread.sleep(2000);
 			return host;
 		}

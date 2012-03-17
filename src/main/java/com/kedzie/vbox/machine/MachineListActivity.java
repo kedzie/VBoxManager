@@ -36,6 +36,7 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;

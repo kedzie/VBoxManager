@@ -39,13 +39,14 @@ public class BaseMetricView implements DataThread.Renderer{
 		_metrics=metrics;
 		_period=VBoxApplication.getPeriodPreference(context);
 		_baseMetric=pm;
-		for(String metric : _metrics)
+		for(String metric : _metrics) 
 			data.put(metric, new LinkedList<Point2F>());
 	}
 	
 	@Override
 	public synchronized void addData(Map<String, Point2F> d) {
 		for(String metric : _metrics){
+			if(!d.containsKey(metric)) continue;
 			d.get(metric).scaledY = (float)(d.get(metric).y*vStep);
 			data.get(metric).addLast( d.get(metric) );
 			if(data.get(metric).size()>_count)
