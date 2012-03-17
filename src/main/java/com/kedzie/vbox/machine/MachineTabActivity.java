@@ -7,8 +7,6 @@ import android.os.Bundle;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.jaxb.MachineState;
-import com.kedzie.vbox.metrics.MetricActivity;
 
 public class MachineTabActivity extends TabActivity  {
 	
@@ -26,13 +24,5 @@ public class MachineTabActivity extends TabActivity  {
 	    		new Intent(this, SnapshotActivity.class).putExtras(getIntent())));
 	    getTabHost().addTab(getTabHost().newTabSpec("log").setIndicator("Log",	getResources().getDrawable(R.drawable.ic_tab_info)).setContent(
 	    		new Intent(this, MachineLogActivity.class).putExtras(getIntent())));
-	    if(_machine.getState().equals(MachineState.RUNNING)) {
-		    getTabHost().addTab(getTabHost().newTabSpec("metrics").setIndicator("Metrics", getResources().getDrawable(R.drawable.ic_tab_metrics)).setContent(
-		    		new Intent(this, MetricActivity.class).putExtras(getIntent())
-			    		.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize())
-						.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
-						.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
-						.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "Guest/RAM/Usage/Shared", "Guest/RAM/Usage/Cache" } )));
-	    }
 	}
 }
