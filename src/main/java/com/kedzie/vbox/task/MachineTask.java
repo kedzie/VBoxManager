@@ -31,9 +31,9 @@ public abstract class MachineTask<Input> extends BaseTask<Input, IMachine> {
 			if( session.getState().equals(SessionState.UNLOCKED)) 
 				_machine.lockMachine(session, LockType.SHARED);
 			if(indeterminate)
-				work(_machine, _vmgr.getVBox().getSessionObject().getConsole(), inputs);
+				work(_machine, session.getConsole(), inputs);
 			else
-				handleProgress( workWithProgress(_machine, _vmgr.getVBox().getSessionObject().getConsole(), inputs) );
+				handleProgress( workWithProgress(_machine, session.getConsole(), inputs) );
 			if(session.getState().equals(SessionState.LOCKED)) 
 				session.unlockMachine();
 			return _machine;

@@ -181,7 +181,8 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getTitle().equals("GL Metrics")) {
+		switch(item.getItemId()) {
+		case R.id.machine_list_option_menu_glmetrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
 					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL.name())
 					.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
@@ -190,8 +191,6 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
 				.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
-		}
-		switch(item.getItemId()) {
 		case R.id.machine_list_option_menu_refresh:
 			new LoadMachinesTask(this, _vmgr).execute();
 			return true;

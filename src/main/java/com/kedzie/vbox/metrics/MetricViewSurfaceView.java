@@ -1,9 +1,7 @@
 package com.kedzie.vbox.metrics;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -38,27 +36,13 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		_thread.setSize(width,height);
+		super.setSize(width,height);
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		_thread.quit();
         _thread=null;
-	}
-	
-	public String[] getMetrics() {
-		return _thread._metrics;
-	}
-	
-	@Override
-	public void addData(Map<String, Point2F> d) {
-		_thread.addData(d);
-	}
-	
-	@Override
-	public void setMetricPreferences(int period, int count) {
-		_thread.setMetricPreferences(period,count);
 	}
 	
 	@Override
@@ -76,34 +60,9 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 		private SurfaceHolder _surfaceHolder;
 		private Rect bounds;
 		private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint();
-		private Map<String, LinkedList<Point2F>> data= new HashMap<String, LinkedList<Point2F>>();
-		/** Maximum Y Value */
-		private int _max;
-		/** # of data points */
-		private int _count;
-		/** Time interval between datapoints */
-		private int _period;
-		/** width in pixels */
-		private int _width;
-		/** Metric names to render */
-		private String[] _metrics;
-		private IPerformanceMetric _baseMetric;
-		/** pixels/period */
-		private int hStep;
-		/** pixels/unit */
-		private double vStep;
-		/** timestamp of last rendering */
-		private double pixelsPerSecond; 
 		
-		public RenderThread(SurfaceHolder holder, int max, String []metrics, IPerformanceMetric pm) {
+		public RenderThread(SurfaceHolder holder) {
 			super("Metric Render");
-			_max=max;
-			_count=VBoxApplication.getCountPreference(getContext());
-			_metrics=metrics;
-			_period=VBoxApplication.getPeriodPreference(getContext());;
-			_baseMetric=pm;
-			for(String metric : _metrics)
-				data.put(metric, new LinkedList<Point2F>());
 			_surfaceHolder = holder;
 			bgPaint.setARGB(255, 255, 255, 255);
 			bgPaint.setStyle(Style.FILL);
@@ -125,54 +84,17 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 			metricPaint.setAntiAlias(true);
 			metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
 		}
-		
-		public void setSize(int w, int h) {
-			Log.i(TAG, "OnSizeChanged("+w+"," + h + ")");
-			bounds=null;
-			_width=w;
-			vStep = (float)h/(float)_max;
-			setMetricPreferences(_period, _count);
-			for(String metric : _metrics) {  //REscale the scaled data set
-				for(Point2F p : data.get(metric))
-					p.scaledY = (float)(p.y*vStep);
-			}
-		}
 
-		public void setMetricPreferences(int period, int count) {
-			synchronized (_surfaceHolder) {
-				Log.i(TAG, "Metric Preferences Changed ("+period+"," + count + ")");
-				_period = period;
-				_count = count;
-				hStep = _width/_count;
-				pixelsPerSecond =hStep/_period;
-				for(String metric : _metrics) {
-					while(data.get(metric).size()>_count)  //if count is lowered, dump unecessary data points
-						data.get(metric).removeFirst();
-				}
-			}
-		}
-
-		public void addData(Map<String, Point2F> d) {
-			synchronized (_surfaceHolder) {
-				for(String metric : _metrics){
-					d.get(metric).scaledY = (float)(d.get(metric).y*vStep);
-					data.get(metric).addLast( d.get(metric) );
-					if(data.get(metric).size()>_count)
-						data.get(metric).removeFirst();
-				}
-			}
-		}
-
-		protected void update() {
+		protected synchronized void update() {
 			long timestamp= System.currentTimeMillis();
 			for(LinkedList<Point2F> dataPoints : data.values()) {
 				for(Point2F p : dataPoints) {
-					p.x=MetricView.getXPixelFromTimestamp(_width, pixelsPerSecond, p.timestamp, timestamp);
+					p.x=getXPixelFromTimestamp(p.timestamp, timestamp);
 				}
 			}
 		}
 		
-		protected void onDraw(Canvas canvas) {
+		protected synchronized void onDraw(Canvas canvas) {
 			if(bounds==null) 
 				bounds = canvas.getClipBounds();
 			canvas.drawRect(bounds, bgPaint);
@@ -193,7 +115,7 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 				while(it.hasNext() ) {
 					Point2F nP = it.next();
 					Log.v(TAG, "Datapoint: " + nP);
-					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)(p.scaledY), bounds.left+(int)nP.x, bounds.bottom-(int)(nP.y*vStep), metricPaint);
+					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)p.scaledY, bounds.left+(int)nP.x, bounds.bottom-(int)nP.scaledY, metricPaint);
 					p = nP;
 				}
 			}
@@ -204,7 +126,7 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 			Canvas c = null;
             try {
                 c = _surfaceHolder.lockCanvas(null);
-                synchronized (_surfaceHolder) {
+                synchronized (_surfaceHolder){
                     if (_on) {
                     	update();
                     	onDraw(c);

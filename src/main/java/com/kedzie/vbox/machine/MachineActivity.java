@@ -34,6 +34,7 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -185,6 +186,22 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	}
 	
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.removeItem(R.id.machine_option_menu_refresh);
+		menu.removeItem(R.id.machine_option_menu_preferences);
+		menu.removeItem(R.id.machine_option_menu_metrics);
+		menu.removeItem(R.id.machine_option_menu_glmetrics);
+		getMenuInflater().inflate(R.menu.machine_options_menu, menu);
+		if(!_machine.getState().equals(MachineState.RUNNING)) {
+			menu.removeItem(R.id.machine_option_menu_metrics);
+			menu.removeItem(R.id.machine_option_menu_glmetrics);
+		}
+		if(!VBoxApplication.getBetaEnabledPreference(this))
+			menu.removeItem(R.id.machine_option_menu_glmetrics);
+		return true;
+	}
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.machine_option_menu_refresh:
@@ -195,11 +212,21 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			return true;
 		case R.id.machine_option_menu_metrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.SURFACEVIEW.name())
 				.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
 				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
 			.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "Guest/RAM/Usage/Used" } ));
+			return true;
+		case R.id.machine_option_menu_glmetrics:
+			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL.name())
+					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
+					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
+					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize())
+					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "Guest/CPU/Load/User", "Guest/CPU/Load/Kernel" } )
+				.	putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "Guest/RAM/Usage/Used" } ));
 			return true;
 		default:
 			return true;

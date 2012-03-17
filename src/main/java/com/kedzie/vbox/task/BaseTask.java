@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
@@ -114,9 +115,17 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
 		new BundleBuilder()
-				.putString("exception", e.getClass().getSimpleName())
+				.putString("title", e.getClass().getSimpleName())
 				.putString("msg", e.getMessage())
 				.putString("stacktrace", sw.toString())
+				.sendMessage(_handler, WHAT_ERROR);
+	}
+	
+	protected void showAlert(String tag, int code, String msg) {
+		Log.e(tag, "Alert error: " + msg);
+		new BundleBuilder()
+				.putString("title", "VirtualBox error")
+				.putString("msg", "Result Code: " + code + " - " + msg)
 				.sendMessage(_handler, WHAT_ERROR);
 	}
 
@@ -126,17 +135,27 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 * @return <code>IProgress</code> of the finished task
 	 * @throws IOException
 	 */
-	protected IProgress handleProgress(IProgress p)  throws IOException {
-		if(p==null) return null;
+	protected void handleProgress(IProgress p)  throws IOException {
+		if(p==null) return;
 		while(!p.getCompleted()) {
-			p.clearCache(); p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
+			cacheProgress(p);
 			publishProgress(p);
 			try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
 		}
+		Log.i(TAG, "Operation Completed. result code: " + p.getResultCode());
+		if(p.getResultCode()!=0) {
+			IVirtualBoxErrorInfo info = p.getErrorInfo();
+			showAlert(TAG, p.getResultCode(), info != null ? info.getText() : "No Message");
+			return;
+		}
+		cacheProgress(p);
+		publishProgress(p);
+		return;
+	}
+	
+	private void cacheProgress(IProgress p ) throws IOException { 
 		p.clearCache();
 		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
-		publishProgress(p);
-		return p;
 	}
 
 	@Override

@@ -3,4 +3,5 @@
     <item android:id="@+id/machine_option_menu_refresh" android:icon="@drawable/ic_menu_refresh" android:title="@string/menu_options_refresh"/>
     <item android:icon="@drawable/ic_menu_preferences" android:id="@+id/machine_option_menu_preferences" android:title="@string/menu_options_preferences"/>
     <item android:icon="@drawable/ic_menu_metric" android:id="@+id/machine_option_menu_metrics" android:title="@string/menu_options_metrics"/>
+    <item android:icon="@drawable/ic_menu_metric" android:id="@+id/machine_option_menu_glmetrics"  android:title="@string/menu_options_glmetrics"/>
 </menu>
