@@ -6,28 +6,28 @@
 			>
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView   style="@style/NormalText"   android:text="@string/server_name" android:layout_gravity="left"  />
-		<EditText android:layout_weight="1" android:id="@+id/server_name" style="@style/NormalText" android:inputType="textCapWords"></EditText>
+		<TextView   style="@style/BoldText"   android:text="@string/server_name" android:layout_gravity="left"  />
+		<EditText android:layout_weight="1" android:id="@+id/server_name" android:text="New Server" android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
     </LinearLayout>
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView   style="@style/NormalText"    android:text="@string/server_host"  android:layout_gravity="left" />
-		<EditText android:layout_weight="1" android:id="@+id/server_host" style="@style/NormalText" android:inputType="text"><requestFocus/></EditText>
+		<TextView   style="@style/BoldText"    android:text="@string/server_host"  android:layout_gravity="left" />
+		<EditText android:layout_weight="1" android:id="@+id/server_host" android:layout_width="fill_parent" android:layout_height="wrap_content"><requestFocus/></EditText>
     </LinearLayout>
 
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView  style="@style/NormalText"   android:text="@string/server_port" />
-    	<EditText android:id="@+id/server_port"  android:layout_weight="1"  android:inputType="number" style="@style/NormalText"/>
+    	<TextView  style="@style/BoldText"   android:text="@string/server_port" />
+    	<EditText android:id="@+id/server_port"  android:layout_weight="1"  android:inputType="number" android:text="18083" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
     </LinearLayout>
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView  style="@style/NormalText"  android:text="@string/server_username" />
-    	<EditText android:id="@+id/server_username"  android:layout_weight="1" style="@style/NormalText" android:inputType="text"/>
+    	<TextView  style="@style/BoldText"  android:text="@string/server_username" />
+    	<EditText android:id="@+id/server_username"  android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
     </LinearLayout>
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView  style="@style/NormalText"  android:text="@string/server_password" />
-    	<EditText android:id="@+id/server_password"  android:layout_weight="1" style="@style/NormalText"  android:inputType="textPassword"/>
+    	<TextView  style="@style/BoldText"  android:text="@string/server_password" />
+    	<EditText android:id="@+id/server_password"  android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:inputType="textPassword"/>
     </LinearLayout>
     
     <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:gravity="center_horizontal">

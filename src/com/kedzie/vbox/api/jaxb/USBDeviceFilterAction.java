@@ -1,0 +1,56 @@
+
+
+
+
+
+
+
+
+package com.kedzie.vbox.api.jaxb;
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+public enum USBDeviceFilterAction {
+
+    
+    NULL("Null"),
+    
+    IGNORE("Ignore"),
+    
+    HOLD("Hold");
+    private final String value;
+
+    USBDeviceFilterAction(String v) {
+        value = v;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public static USBDeviceFilterAction fromValue(String v) {
+        for (USBDeviceFilterAction c: USBDeviceFilterAction.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+
+}
