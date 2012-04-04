@@ -8,11 +8,11 @@
     </style>
 
     <style name="SmallText" parent="Text">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="NormalText" parent="Text">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="BoldText" parent="Text">
@@ -23,10 +23,5 @@
     <style name="HeaderText" parent="BoldText">
         <item name="android:textSize">20sp</item>
         <item name="android:layout_width">fill_parent</item>
-    </style>
-    
-    <style parent="@android:attr/listViewStyle" name="treeViewListStyle">
-        <item name="android:background">@android:color/white</item>
-        <item name="android:divider">@drawable/divider</item>
     </style>
 </resources>

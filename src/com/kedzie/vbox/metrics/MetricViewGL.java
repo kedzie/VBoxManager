@@ -36,12 +36,12 @@ public class MetricViewGL extends BaseMetricView implements GLSurfaceView.Render
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL10.GL_LEQUAL);
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-		gl.glEnable(GL10.GL_LIGHTING);
-		gl.glEnable(GL10.GL_LIGHT0);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, new float[] { 1f, 1f, -1f }, 0);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, new float[] { 1f, 1f, 1f,1f }, 0);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, new float[] { 1f, 1f, 1f,1f }, 0);
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, new float[] { 0f,0f, 0f,1f }, 0);
+//		gl.glEnable(GL10.GL_LIGHTING);
+//		gl.glEnable(GL10.GL_LIGHT0);
+//		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, new float[] { 1f, 1f, -1f }, 0);
+//		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, new float[] { 1f, 1f, 1f,1f }, 0);
+//		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, new float[] { 1f, 1f, 1f,1f }, 0);
+//		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, new float[] { 0f,0f, 0f,1f }, 0);
 		
 		for(String metric : _metrics) {
 			ByteBuffer vbb = ByteBuffer.allocateDirect(_count*2*4); 
@@ -105,17 +105,17 @@ public class MetricViewGL extends BaseMetricView implements GLSurfaceView.Render
 		gl.glLoadIdentity();
 		gl.glTranslatef(0f, 0f, -1f);
 		
-		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, new float[] { 1f, 1f, 1f, 1f }, 0);
-		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, new float[] { 0f, 0f, 1f, 1f }, 0);
+//		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, new float[] { 1f, 1f, 1f, 1f }, 0);
+//		gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, new float[] { 0f, 0f, 1f, 1f }, 0);
 		
 		gl.glLineWidth(LINE_WIDTH);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		for(String metric : _metrics) {
 			int c = VBoxApplication.getColor(getContext(), metric.replace('/', '_'));
-			gl.glMaterialxv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, getColorv(metric), 0);
+//			gl.glMaterialxv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, getColorv(metric), 0);
 			gl.glColor4x(c&0x00ff0000, c&0x0000ff00, c&0x000000ff, c&0xff000000);
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, buffers.get(metric));
-			gl.glNormalPointer(GL10.GL_FLOAT, 3, nBuffers.get(metric));
+//			gl.glNormalPointer(GL10.GL_FLOAT, 3, nBuffers.get(metric));
 			gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, data.get(metric).size());//TODO change count
 		}
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);

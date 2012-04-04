@@ -37,6 +37,7 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.metrics.MetricActivity;
+import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
@@ -212,7 +213,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			return true;
 		case R.id.machine_option_menu_metrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.SURFACEVIEW.name())
+				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricView.Implementation.SURFACEVIEW.name())
 				.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
@@ -221,7 +222,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			return true;
 		case R.id.machine_option_menu_glmetrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL.name())
+					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricView.Implementation.OPENGL.name())
 					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize())

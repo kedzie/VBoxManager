@@ -74,7 +74,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 			.setPositiveButton("OK", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					addServer();
+					dialog.dismiss();
 				}
 			})
 			.show();

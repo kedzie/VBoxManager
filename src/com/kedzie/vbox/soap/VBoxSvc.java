@@ -45,9 +45,9 @@ public class VBoxSvc implements Parcelable {
 	protected String _url;
 	protected IVirtualBox _vbox;
 	protected HttpTransportSE  _transport;
-	
-	public VBoxSvc(String url) { 
-		_url=url; 
+
+	public VBoxSvc(String url) {
+		_url=url;
 		_transport = new HttpTransportSE(_url, TIMEOUT);
 	}
 
@@ -55,7 +55,7 @@ public class VBoxSvc implements Parcelable {
 		this(copy._url);
 		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
 	}
-	
+
 	/**
 	 * Create remote-invocation proxy w/o cached properties
 	 * @param clazz 		type of {@link ManagedObjectRef}
@@ -65,7 +65,7 @@ public class VBoxSvc implements Parcelable {
 	protected <T> T getProxy(Class<T> clazz, String id) {
 		return getProxy(clazz, id, null);
 	}
-	
+
 	/**
 	 * Create remote-invocation proxy w/cached properties
 	 * @param clazz 		type of {@link ManagedObjectRef}
@@ -77,14 +77,14 @@ public class VBoxSvc implements Parcelable {
 		T proxy = clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new KSOAPInvocationHandler(id, clazz, cache)));
 		if(IEvent.class.equals(clazz)) {
 			VBoxEventType type = ((IEvent)proxy).getType();
-			if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) 
+			if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))
 				return clazz.cast(getProxy( IMachineStateChangedEvent.class, id, cache ));
-			else if(type.equals(VBoxEventType.ON_SESSION_STATE_CHANGED))	
+			else if(type.equals(VBoxEventType.ON_SESSION_STATE_CHANGED))
 				return clazz.cast(getProxy( ISessionStateChangedEvent.class, id, cache ));
 		}
 		return proxy;
 	}
-	
+
 	/**
 	 * Connect to {@link vboxwebsrv} & initialize the VBoxSvc API interface
 	 * @param username username
@@ -107,32 +107,33 @@ public class VBoxSvc implements Parcelable {
 	public Map<String, Map<String,Object>> queryMetricsData(String object, String...metrics) throws IOException {
 		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
 		List<Integer> vals = new ArrayList<Integer>(data.get("returnval").size());
-		for(String s : data.get("returnval")) { 
+		for(String s : data.get("returnval"))
 			vals.add(Integer.valueOf(s));
-		}
+
 		Map<String, Map<String,Object>> ret = new HashMap<String, Map<String, Object>>();
 		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
 			Map<String, Object> metric = new HashMap<String, Object>();
 			for(Map.Entry<String, List<String>> entry : data.entrySet())
 				metric.put(entry.getKey().substring(6), entry.getValue().get(i) );
-					int start = Integer.valueOf(metric.remove("DataIndices").toString());
-					int length = Integer.valueOf(metric.remove("DataLengths").toString());
-					List<Integer> metricValues = new ArrayList<Integer>(vals.size());
-					metricValues.addAll( vals.subList(start, start+length) );
-					metric.put("val", metricValues);
-					ret.put(  metric.get("MetricNames").toString(), metric );
+			int start = Integer.valueOf(metric.remove("DataIndices").toString());
+			int length = Integer.valueOf(metric.remove("DataLengths").toString());
+			List<Integer> metricValues = new ArrayList<Integer>(vals.size());
+			metricValues.addAll( vals.subList(start, start+length) );
+			metric.put("val", metricValues);
+			ret.put(  metric.get("MetricNames").toString(), metric );
 		}
+		Log.d(TAG, "Metric query: " + ret);
 		return ret;
 	}
 
-	public IVirtualBox getVBox() { 
-		return _vbox;	
+	public IVirtualBox getVBox() {
+		return _vbox;
 	}
-	
-	public String getURL() { 
+
+	public String getURL() {
 		return _url;
 	}
-	
+
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
 	 */
@@ -150,7 +151,7 @@ public class VBoxSvc implements Parcelable {
 			if(cache!=null)
 				_cache=cache;
 		}
-		
+
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 			synchronized( VBoxSvc.class ) {
@@ -164,21 +165,21 @@ public class VBoxSvc implements Parcelable {
 				}
 				if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
 				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
-				
+
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))	{
 					return _cache.get(method.getName());
 				}
 				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
-				if(methodKSOAP==null) 
-					request.addProperty("_this", this.uiud);	
-				else if ( !"".equals(methodKSOAP.thisReference()))  
+				if(methodKSOAP==null)
+					request.addProperty("_this", this.uiud);
+				else if ( !"".equals(methodKSOAP.thisReference()))
 					request.addProperty(methodKSOAP.thisReference(), this.uiud);
 				if(args!=null) {
-					for(int i=0; i<args.length; i++) 
+					for(int i=0; i<args.length; i++)
 						marshal(request, getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
 				}
-				SerializationEnvelope envelope = new SerializationEnvelope(); 
+				SerializationEnvelope envelope = new SerializationEnvelope();
 				envelope.setOutputSoapObject(request);
 				_transport.call(NAMESPACE+request.getName(), envelope);
 				Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
@@ -186,11 +187,11 @@ public class VBoxSvc implements Parcelable {
 				return ret;
 			}
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		public <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
-			for(Annotation at : a) 
-				if(at.annotationType().equals(clazz)) 
+			for(Annotation at : a)
+				if(at.annotationType().equals(clazz))
 					return (T)at;
 			return null;
 		}
@@ -205,14 +206,14 @@ public class VBoxSvc implements Parcelable {
 		 */
 		private void marshal(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
 			if(obj==null) return;
-			if(clazz.isArray()) { 
+			if(clazz.isArray()) {
 				for(Object o : (Object[])obj)  marshal( request, ksoap, clazz.getComponentType(), gType,  o );
 			} else if(Collection.class.isAssignableFrom(clazz)) {
 				Class<?> pClazz = (Class<?>) ((ParameterizedType)gType).getActualTypeArguments()[0];
 				for(Object o : (List<?>)obj) marshal(request, ksoap,pClazz, gType,  o );
 			} else if(!ksoap.type().equals("")) {
 				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
-			} else if(IManagedObjectRef.class.isAssignableFrom(clazz)) {	
+			} else if(IManagedObjectRef.class.isAssignableFrom(clazz)) {
 				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
 			} else if(clazz.isEnum())	{
 				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
@@ -230,7 +231,7 @@ public class VBoxSvc implements Parcelable {
 		public SerializationEnvelope() {
 			super(SoapEnvelope.VER11);
 		}
-		
+
 		/**
 		 * Unmarshall SoapEnvelope to correct type
 		 * @param returnType   type to umarshall
@@ -243,19 +244,19 @@ public class VBoxSvc implements Parcelable {
 			boolean isCollection = Collection.class.isAssignableFrom(returnType);
 			boolean isMap = Map.class.isAssignableFrom(returnType);
 			KvmSerializable ks = (KvmSerializable) bodyIn;
-			if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}"))) 
+			if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
 				return null;
 			if(isMap) {
 				Map<String, List<String>> map = new HashMap<String, List<String>>();
 				PropertyInfo info = new PropertyInfo();
 				for (int i = 0; i < ks.getPropertyCount(); i++) {
 					ks.getPropertyInfo(i, null, info);
-					if (!map.containsKey(info.getName())) 
+					if (!map.containsKey(info.getName()))
 						map.put(info.getName(), new ArrayList<String>());
 					map.get(info.getName()).add(   ks.getProperty(i).toString() );
 				}
 				return map;
-			} 
+			}
 			if(isCollection) {
 				Class<?> pClazz = (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
 				Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
@@ -265,7 +266,7 @@ public class VBoxSvc implements Parcelable {
 			}
 			return unmarshal(returnType, genericType, ks.getProperty(0));
 		}
-		
+
 		/**
 		 * convert string return value to correct type
 		 * @param returnType remote method return type
@@ -277,42 +278,42 @@ public class VBoxSvc implements Parcelable {
 			if(ret==null) return null;
 			if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
 				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
-			if(returnType.equals(Boolean.class)) 	
+			if(returnType.equals(Boolean.class))
 				return Boolean.valueOf(ret.toString());
-			else if(returnType.equals(Integer.class)) 	
+			else if(returnType.equals(Integer.class))
 				return Integer.valueOf(ret.toString());
-			else if(returnType.equals(Long.class)) 	
+			else if(returnType.equals(Long.class))
 				return Long.valueOf(ret.toString());
-			else if(returnType.equals(String.class))	
+			else if(returnType.equals(String.class))
 				return ret.toString();
-			else if(IManagedObjectRef.class.isAssignableFrom(returnType))	
+			else if(IManagedObjectRef.class.isAssignableFrom(returnType))
 				return getProxy(returnType, ret.toString());
 			else if(returnType.isEnum()) {
-				for( Object element : returnType.getEnumConstants()) 
-					if( element.toString().equals( ret.toString() ) ) 
+				for( Object element : returnType.getEnumConstants())
+					if( element.toString().equals( ret.toString() ) )
 						return element;
 			}
 			return ret;
 		}
 	}
-	
+
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
 		public VBoxSvc createFromParcel(Parcel in) {
 			VBoxSvc svc = new VBoxSvc(in.readString());
 			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
-			return svc; 
+			return svc;
 		}
 		public VBoxSvc[] newArray(int size) {   return new VBoxSvc[size];  }
 	};
-	
+
 	@Override
-	public int describeContents() {  
+	public int describeContents() {
 		return 0;
 	}
-	
+
 	@Override
-	public void writeToParcel(Parcel dest, int flags) { 
-		dest.writeString(_url); 
-		dest.writeString(_vbox.getIdRef()); 
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(_url);
+		dest.writeString(_vbox.getIdRef());
 	}
 }

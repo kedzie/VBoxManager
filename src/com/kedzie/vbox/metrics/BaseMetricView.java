@@ -10,7 +10,7 @@ import android.util.Log;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IPerformanceMetric;
 
-public class BaseMetricView implements DataThread.Renderer{
+public class BaseMetricView {
 	private static String TAG = "BaseMetricView";
 	protected Context _context;
 	/** Maximum Y Value */
@@ -29,9 +29,9 @@ public class BaseMetricView implements DataThread.Renderer{
 	/** pixels/unit */
 	protected double vStep;
 	/** timestamp of last rendering */
-	protected double pixelsPerSecond; 
+	protected double pixelsPerSecond;
 	protected Map<String, LinkedList<Point2F>> data= new HashMap<String, LinkedList<Point2F>>();
-	
+
 	public BaseMetricView(Context context, int max, String []metrics, IPerformanceMetric pm) {
 		_context = context;
 		_max=max;
@@ -39,11 +39,10 @@ public class BaseMetricView implements DataThread.Renderer{
 		_metrics=metrics;
 		_period=VBoxApplication.getPeriodPreference(context);
 		_baseMetric=pm;
-		for(String metric : _metrics) 
+		for(String metric : _metrics)
 			data.put(metric, new LinkedList<Point2F>());
 	}
-	
-	@Override
+
 	public synchronized void addData(Map<String, Point2F> d) {
 		for(String metric : _metrics){
 			if(!d.containsKey(metric)) continue;
@@ -54,15 +53,14 @@ public class BaseMetricView implements DataThread.Renderer{
 		}
 	}
 
-	@Override
 	public String[] getMetrics() {
 		return _metrics;
 	}
-	
+
 	protected Context getContext() {
 		return _context;
 	}
-	
+
 	public synchronized void setSize(int width, int height) {
 		_width=width;
 		hStep = width/_count;
@@ -74,7 +72,7 @@ public class BaseMetricView implements DataThread.Renderer{
 				p.scaledY = (float)(p.y*vStep);
 		}
 	}
-	
+
 	/**
 	 * Get X-coordinate of a specific point in time
 	 * @param stamp datapoint timestamp
@@ -85,7 +83,6 @@ public class BaseMetricView implements DataThread.Renderer{
 		return _width-(int)(((current-stamp)/1000.d)*pixelsPerSecond);
 	}
 
-	@Override
 	public synchronized void setMetricPreferences(int period, int count) {
 			Log.i(TAG, "Metric Preferences Changed ("+period+"," + count + ")");
 			for(String metric : _metrics) {
@@ -98,9 +95,7 @@ public class BaseMetricView implements DataThread.Renderer{
 			pixelsPerSecond =((float)hStep/(float)_period);
 	}
 
-	@Override
 	public void pause() {}
 
-	@Override
 	public void resume() {}
 }

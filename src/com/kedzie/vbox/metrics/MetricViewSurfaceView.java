@@ -88,9 +88,8 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 		protected void update() {
 			long timestamp= System.currentTimeMillis();
 			for(LinkedList<Point2F> dataPoints : data.values()) {
-				for(Point2F p : dataPoints) {
+				for(Point2F p : dataPoints)
 					p.x=getXPixelFromTimestamp(p.timestamp, timestamp);
-				}
 			}
 		}
 		
@@ -114,7 +113,6 @@ public class MetricViewSurfaceView  extends BaseMetricView implements SurfaceHol
 				Point2F p = it.next();
 				while(it.hasNext() ) {
 					Point2F nP = it.next();
-					Log.v(TAG, "Datapoint: " + nP);
 					canvas.drawLine(bounds.left+(int)p.x, bounds.bottom-(int)p.scaledY, bounds.left+(int)nP.x, bounds.bottom-(int)nP.scaledY, metricPaint);
 					p = nP;
 				}

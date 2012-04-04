@@ -157,8 +157,7 @@ public class SnapshotActivity extends Activity {
 			if(result!=null)	{
 				_treeView.setAdapter(new SnapshotTreeAdapter(SnapshotActivity.this, _stateManager, 10));
 				_rootSnapshot=result;
-				if(result!=null) 
-					populate(null, result);
+				populate(null, _rootSnapshot);
 			}
 		}
 	}

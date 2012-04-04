@@ -36,10 +36,10 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
-import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
+import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
@@ -185,7 +185,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		switch(item.getItemId()) {
 		case R.id.machine_list_option_menu_glmetrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.OPENGL.name())
+					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricView.Implementation.OPENGL.name())
 					.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
@@ -197,7 +197,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 			return true;
 		case R.id.machine_list_option_menu_metrics:
 			startActivity(new Intent(this, MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricActivity.Implementation.SURFACEVIEW.name())
+				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricView.Implementation.SURFACEVIEW.name())
 				.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())

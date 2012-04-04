@@ -13,6 +13,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
+import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
@@ -35,9 +36,9 @@ public class HarnessActivity extends Activity {
 	}
 	
 	class GLMetricsTask extends  BaseTask<Server, IHost> {
-		private MetricActivity.Implementation implementation;
+		private MetricView.Implementation implementation;
 		
-		public GLMetricsTask(MetricActivity.Implementation i) {
+		public GLMetricsTask(MetricView.Implementation i) {
 			super(TAG, HarnessActivity.this, null, "Starting GLMetrics");
 			this.implementation=i;
 		}
