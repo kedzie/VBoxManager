@@ -1,8 +1,9 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.metrics;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.R.xml;
 
 public class MetricPreferencesActivity extends PreferenceActivity {
 	public static final String PERIOD = "metric_period";

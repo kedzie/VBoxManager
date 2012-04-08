@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IPerformanceMetric;
@@ -43,7 +44,7 @@ public class HarnessActivity extends Activity {
 		protected IHost work(Server... server) throws Exception {
 			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
 			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
-			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, Utils.getPeriodPreference(context), 1, _vmgr.getVBox().getHost());
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, Utils.getIntPreference(context, PreferencesActivity.PERIOD), 1, _vmgr.getVBox().getHost());
 			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"}, _vmgr.getVBox().getHost().getIdRef()) )
 				Log.i(TAG, "Host metric: " + m.getMetricName());
 			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"},  _vmgr.getVBox().getMachines().get(0).getIdRef()) )

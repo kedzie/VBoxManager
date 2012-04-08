@@ -13,27 +13,8 @@ public class Utils {
 		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, ""));
 	}
 	
-	public static int getPeriodPreference(Context ctx) {
-		return getIntPreference(ctx, PreferencesActivity.PERIOD);
-	}
-	
-	public static int getCountPreference(Context ctx) {
-		return getIntPreference(ctx, PreferencesActivity.COUNT);
-	}
-	
-	public static boolean getColoredIconsPreference(Context ctx) {
-		boolean ret =  PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.ICON_COLORS, false);
-		return ret;
-	}
-	
-	public static boolean getNotificationsPreference(Context ctx) {
-		boolean ret =  PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.NOTIFICATIONS, false);
-		return ret;
-	}
-	
-	public static boolean getBetaEnabledPreference(Context ctx) {
-		boolean ret = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.BETA_ENABLED, false);
-		return ret;
+	public static boolean getBooleanPreference(Context ctx, String name) {
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(name, false);
 	}
 	
 	/**

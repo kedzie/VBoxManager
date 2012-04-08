@@ -155,9 +155,9 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(this, _vmgr).execute();
-			if(_eventService==null && Utils.getNotificationsPreference(this))
+			if(_eventService==null && Utils.getBooleanPreference(this, PreferencesActivity.NOTIFICATIONS))
 				bindService(new Intent(MachineActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !Utils.getNotificationsPreference(this)) {
+			else if(_eventService!=null && !Utils.getBooleanPreference(this, PreferencesActivity.NOTIFICATIONS)) {
 				unbindService(localConnection);
 			}
 		}
@@ -200,7 +200,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			menu.removeItem(R.id.machine_option_menu_metrics);
 			menu.removeItem(R.id.machine_option_menu_glmetrics);
 		}
-		if(!Utils.getBetaEnabledPreference(this))
+		if(!Utils.getBooleanPreference(this, PreferencesActivity.BETA_ENABLED))
 			menu.removeItem(R.id.machine_option_menu_glmetrics);
 		return true;
 	}

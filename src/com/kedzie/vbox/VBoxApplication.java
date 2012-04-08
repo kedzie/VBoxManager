@@ -83,7 +83,7 @@ public class VBoxApplication extends Application {
 	 * @return black/white or colored icons based on Shared Preferences
 	 */
 	protected Map<String,Integer> getDrawables() {
-		return Utils.getColoredIconsPreference(this)	? resources_color :  resources;
+		return Utils.getBooleanPreference(this, PreferencesActivity.ICON_COLORS)	? resources_color :  resources;
 	}
 	
 	/**

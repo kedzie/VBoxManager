@@ -98,7 +98,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
     }
 	
 	protected void startEventListener() {
-		if(_eventService==null && Utils.getNotificationsPreference(this))
+		if(_eventService==null && Utils.getBooleanPreference(this, PreferencesActivity.NOTIFICATIONS))
 			bindService(new Intent(MachineListActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
 		_eventThread = new EventThread(TAG , _vmgr, VBoxEventType.MACHINE_EVENT);
 		_eventThread.addListener(_messenger);
@@ -109,9 +109,9 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(this, _vmgr).execute();
-			if(_eventService==null && Utils.getNotificationsPreference(this))
+			if(_eventService==null && Utils.getBooleanPreference(this, PreferencesActivity.NOTIFICATIONS))
 				bindService(new Intent(MachineListActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !Utils.getNotificationsPreference(this)) {
+			else if(_eventService!=null && !Utils.getBooleanPreference(this, PreferencesActivity.NOTIFICATIONS)) {
 				unbindService(localConnection);
 			}
 		}
@@ -178,7 +178,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 		menu.removeItem(R.id.machine_list_option_menu_metrics);
 		menu.removeItem(R.id.machine_list_option_menu_glmetrics);
 		getMenuInflater().inflate(R.menu.machine_list_options_menu, menu);
-		if(!Utils.getBetaEnabledPreference(this))
+		if(!Utils.getBooleanPreference(this, PreferencesActivity.BETA_ENABLED))
 			menu.removeItem(R.id.machine_list_option_menu_glmetrics);
 		return true;
 	}
@@ -292,7 +292,7 @@ public class MachineListActivity extends Activity implements AdapterView.OnItemC
 				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getPeriodPreference(context), 
+					Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
 					1, 
 					(IManagedObjectRef)null);
 			return machines;

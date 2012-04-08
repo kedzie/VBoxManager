@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
-import com.kedzie.vbox.MetricPreferencesActivity;
+import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IPerformanceCollector;
@@ -86,20 +86,20 @@ public class MetricActivity extends Activity  {
 				protected void onPostExecute(Void result) {
 					super.onPostExecute(result);
 					cpuV.setMetricPreferences(
-							Utils.getPeriodPreference(MetricActivity.this),
-							Utils.getCountPreference(MetricActivity.this));
+							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.COUNT),
+							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.PERIOD));
 					ramV.setMetricPreferences(
-							Utils.getPeriodPreference(MetricActivity.this),
-							Utils.getCountPreference(MetricActivity.this));
+							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.COUNT),
+							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.PERIOD));
 				}
-			}.execute(Utils.getPeriodPreference(this));
+			}.execute(Utils.getIntPreference(this, PreferencesActivity.PERIOD));
 		}
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		_thread = new DataThread(_vmgr, _object, Utils.getPeriodPreference(this), cpuV, ramV);
+		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, PreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
 	
