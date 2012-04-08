@@ -32,7 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -207,7 +207,7 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 
 		@Override protected void onPostExecute(IVirtualBox vbox) {
 			if(vbox!=null) {
-				VBoxApplication.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
+				Utils.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
 				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 			}
 			super.onPostExecute(vbox);

@@ -18,7 +18,7 @@ import android.util.Log;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
@@ -73,13 +73,13 @@ public class EventService extends Service {
 		_eventThread = new EventThread("Notification", _vmgr);
 		_eventThread.addListener(statusBarNotificationListener);
 		_eventThread.start();
-		VBoxApplication.toast(this, "Starting Event Notifier Service");
+		Utils.toast(this, "Starting Event Notifier Service");
 		return new LocalBinder();
 	}
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		VBoxApplication.toast(this, "Shutting down VirtualBox Event Notifier Service");
+		Utils.toast(this, "Shutting down VirtualBox Event Notifier Service");
 		_eventThread.quit();
 		return super.onUnbind(intent);
 	}

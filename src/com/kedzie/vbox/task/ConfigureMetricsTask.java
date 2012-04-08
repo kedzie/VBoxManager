@@ -2,6 +2,7 @@ package com.kedzie.vbox.task;
 
 import android.content.Context;
 
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -18,7 +19,10 @@ public class ConfigureMetricsTask extends BaseTask<Integer, Void> {
 
 	@Override
 	protected Void work(Integer... params) throws Exception {
-		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, params[0], 1, (IManagedObjectRef)null);
+		//if no period is specified then default to preferences
+		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
+				Utils.isNullArray(params)  ? Utils.getPeriodPreference(context) : params[0], 
+						1, (IManagedObjectRef)null);
 		return null;
 	}
 }

@@ -1,6 +1,7 @@
 package com.kedzie.vbox.metrics;
 
 import java.io.IOException;
+import java.lang.Thread.State;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +13,7 @@ import android.widget.LinearLayout;
 
 import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IPerformanceCollector;
 import com.kedzie.vbox.metrics.MetricView.Implementation;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -56,25 +57,9 @@ public class MetricActivity extends Activity  {
     		contentView.addView(cpuV, params);
     		contentView.addView(ramV, params);
     		setContentView(contentView);
-
-			startDataThread();
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
-	}
-
-	private void startDataThread() {
-		_thread = new DataThread(_vmgr, _object,
-				VBoxApplication.getPeriodPreference(this),
-				cpuV,
-				ramV);
-		_thread.start();
-	}
-
-	@Override
-	protected void onDestroy() {
-		if(_thread!=null) _thread.quit();
-		super.onDestroy();
 	}
 
 	@Override
@@ -100,21 +85,36 @@ public class MetricActivity extends Activity  {
 				@Override
 				protected void onPostExecute(Void result) {
 					super.onPostExecute(result);
-					_thread.setPeriod(VBoxApplication.getPeriodPreference(MetricActivity.this));
 					cpuV.setMetricPreferences(
-							VBoxApplication.getPeriodPreference(MetricActivity.this),
-							VBoxApplication.getCountPreference(MetricActivity.this));
+							Utils.getPeriodPreference(MetricActivity.this),
+							Utils.getCountPreference(MetricActivity.this));
 					ramV.setMetricPreferences(
-							VBoxApplication.getPeriodPreference(MetricActivity.this),
-							VBoxApplication.getCountPreference(MetricActivity.this));
+							Utils.getPeriodPreference(MetricActivity.this),
+							Utils.getCountPreference(MetricActivity.this));
 				}
-			}.execute(VBoxApplication.getPeriodPreference(this));
+			}.execute(Utils.getPeriodPreference(this));
 		}
 	}
-
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		_thread = new DataThread(_vmgr, _object, Utils.getPeriodPreference(this), cpuV, ramV);
+		_thread.start();
+	}	
+	
+	@Override 
+	protected void onStop() {
+		if(_thread!=null){
+			if(_thread.getState().equals(State.TIMED_WAITING))
+				_thread.interrupt();
+			_thread.quit();
+		}
+		super.onStop();
+	}
+	
 	@Override
 	protected void onPause() {
-		if(_thread!=null) _thread.quit();
 		cpuV.pause();
 		ramV.pause();
 		super.onPause();
@@ -122,7 +122,6 @@ public class MetricActivity extends Activity  {
 
 	@Override
 	protected void onResume() {
-		startDataThread();
 		cpuV.resume();
 		ramV.resume();
 		super.onResume();

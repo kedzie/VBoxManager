@@ -7,8 +7,6 @@ import java.util.Map;
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
 
@@ -17,7 +15,6 @@ import com.kedzie.vbox.api.jaxb.MachineState;
  * @author Marek Kedzierski
  */
 public class VBoxApplication extends Application {
-	private static final String TAG = VBoxApplication.class.getSimpleName();
 	
 	protected Map<String,Integer> resources = new HashMap<String, Integer>();
 	protected Map<String,Integer> resources_color = new HashMap<String, Integer>();
@@ -86,7 +83,7 @@ public class VBoxApplication extends Application {
 	 * @return black/white or colored icons based on Shared Preferences
 	 */
 	protected Map<String,Integer> getDrawables() {
-		return getColoredIconsPreference(this)	? resources_color :  resources;
+		return Utils.getColoredIconsPreference(this)	? resources_color :  resources;
 	}
 	
 	/**
@@ -122,45 +119,6 @@ public class VBoxApplication extends Application {
 		else if (state.equals(MachineState.PAUSED))	return new String[] { "Resume", "Reset", "Power Off", "Take Snapshot" };
 		 else if (state.equals(MachineState.SAVED))	return new String[] { "Restore State", "Discard State" };
 		return new String[] {};
-	}
-	
-	public static int getPeriodPreference(Context ctx) {
-		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(PreferencesActivity.PERIOD, ""));
-		Log.d(TAG, "getPeriodPreference? " + ret);
-		return ret;
-	}
-	
-	public static int getCountPreference(Context ctx) {
-		int ret =  Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(PreferencesActivity.COUNT, ""));
-		Log.d(TAG, "getCountPreference? " + ret);
-		return ret;
-	}
-	
-	public static boolean getColoredIconsPreference(Context ctx) {
-		boolean ret =  PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.ICON_COLORS, false);
-		Log.d(TAG, "getColoredIconsPreference? " + ret);
-		return ret;
-	}
-	
-	public static boolean getNotificationsPreference(Context ctx) {
-		boolean ret =  PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.NOTIFICATIONS, false);
-		Log.d(TAG, "getNotificationsPreference? " + ret);
-		return ret;
-	}
-	
-	public static boolean getBetaEnabledPreference(Context ctx) {
-		boolean ret = PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(PreferencesActivity.BETA_ENABLED, false);
-		Log.d(TAG, "getBetaEnabledPreference? " + ret);
-		return ret;
-	}
-	
-	/**
-	 * Show {@link Toast} notification
-	 * @param ctx message {@link Context}
-	 * @param msg Message to show
-	 */
-	public static void toast(Context ctx, String msg) {
-		Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
 	}
 	
 	/**

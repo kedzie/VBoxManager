@@ -6,7 +6,7 @@ package com.kedzie.vbox.task;
  */
 public abstract class LoopingThread extends Thread {
 	/** thread is running */
-	protected boolean _running=false;
+	protected  boolean _running=false;
 	protected boolean _paused=false;
 	
 	public LoopingThread(String name) {

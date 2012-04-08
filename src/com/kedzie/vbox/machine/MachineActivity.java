@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
@@ -40,6 +41,7 @@ import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.ConfigureMetricsTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
@@ -68,7 +70,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			case EventThread.WHAT_EVENT:
 				IEvent event = BundleBuilder.getProxy(msg.getData(), EventThread.BUNDLE_EVENT, IEvent.class);
 				if(event instanceof IMachineStateChangedEvent) {
-					VBoxApplication.toast(MachineActivity.this, _machine.getName()+"  changed State: "+_machine.getState());
+					Utils.toast(MachineActivity.this, _machine.getName()+"  changed State: "+_machine.getState());
 					updateState();
 				}
 				break;
@@ -152,9 +154,10 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == REQUEST_CODE_PREFERENCES) {
-			if(_eventService==null && VBoxApplication.getNotificationsPreference(this))
+			new ConfigureMetricsTask(this, _vmgr).execute();
+			if(_eventService==null && Utils.getNotificationsPreference(this))
 				bindService(new Intent(MachineActivity.this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !VBoxApplication.getNotificationsPreference(this)) {
+			else if(_eventService!=null && !Utils.getNotificationsPreference(this)) {
 				unbindService(localConnection);
 			}
 		}
@@ -197,7 +200,7 @@ public class MachineActivity extends Activity  implements AdapterView.OnItemClic
 			menu.removeItem(R.id.machine_option_menu_metrics);
 			menu.removeItem(R.id.machine_option_menu_glmetrics);
 		}
-		if(!VBoxApplication.getBetaEnabledPreference(this))
+		if(!Utils.getBetaEnabledPreference(this))
 			menu.removeItem(R.id.machine_option_menu_glmetrics);
 		return true;
 	}

@@ -1,15 +1,12 @@
 package com.kedzie.vbox.harness;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IHost;
-import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
@@ -30,15 +27,14 @@ public class HarnessActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Harness created");
 		Server server = new Server(0L, null, "192.168.1.10",18083, "kedzie", "Mk0204$$" );
-		new MachineListTask().execute(server);
-//		new GLMetricsTask(MetricActivity.Implementation.OPENGL).execute(server); 
-//		new GLMetricsTask(MetricActivity.Implementation.SURFACEVIEW).execute(server); 
+//		new MachineListTask().execute(server);
+		new MetricsTask(MetricView.Implementation.OPENGL).execute(server); 
 	}
 	
-	class GLMetricsTask extends  BaseTask<Server, IHost> {
+	class MetricsTask extends  BaseTask<Server, IHost> {
 		private MetricView.Implementation implementation;
 		
-		public GLMetricsTask(MetricView.Implementation i) {
+		public MetricsTask(MetricView.Implementation i) {
 			super(TAG, HarnessActivity.this, null, "Starting GLMetrics");
 			this.implementation=i;
 		}
@@ -47,16 +43,13 @@ public class HarnessActivity extends Activity {
 		protected IHost work(Server... server) throws Exception {
 			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
 			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
-			IHost host = _vmgr.getVBox().getHost();
-			host.getMemorySize();
-			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, VBoxApplication.getPeriodPreference(context), 1, host);
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, Utils.getPeriodPreference(context), 1, _vmgr.getVBox().getHost());
 			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"}, _vmgr.getVBox().getHost().getIdRef()) )
 				Log.i(TAG, "Host metric: " + m.getMetricName());
-			List<IMachine> machines = _vmgr.getVBox().getMachines();
-			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"}, machines.get(0).getIdRef()) )
+			for(IPerformanceMetric m : _vmgr.getVBox().getPerformanceCollector().getMetrics(new String[] {"*:"},  _vmgr.getVBox().getMachines().get(0).getIdRef()) )
 				Log.i(TAG, "Machine metric: " + m.getMetricName());
 			Thread.sleep(2000);
-			return host;
+			return _vmgr.getVBox().getHost();
 		}
 
 		@Override
@@ -91,9 +84,5 @@ public class HarnessActivity extends Activity {
 			startActivity(new Intent(HarnessActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, vmgr));
 			super.onPostExecute(vmgr);
 		}
-	}
-	
-	protected VBoxApplication getApp() {
-		return (VBoxApplication)getApplication();
 	}
 }

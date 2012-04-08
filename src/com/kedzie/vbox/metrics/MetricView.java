@@ -15,7 +15,7 @@ import com.kedzie.vbox.api.IPerformanceMetric;
 public class MetricView extends LinearLayout {
 
 	private View view;
-	private BaseMetricView _renderer;
+	private MetricRenderer _renderer;
 	
 	/** Metric View component implementations */
 	public enum Implementation { SURFACEVIEW, OPENGL; }
@@ -27,10 +27,10 @@ public class MetricView extends LinearLayout {
 
 		if(implementation.equals(Implementation.SURFACEVIEW)) {
 			view = new SurfaceView(getContext());
-			_renderer = new MetricViewSurfaceView(getContext(), (SurfaceView) view, max, metrics, pm);
+			_renderer = new MetricRendererSurfaceView(getContext(), (SurfaceView) view, max, metrics, pm);
 		} else if (implementation.equals(Implementation.OPENGL)) {
 			view = new GLSurfaceView(getContext());
-			_renderer = new MetricViewGL(getContext(), (GLSurfaceView)view, max, metrics, pm);
+			_renderer = new MetricRendererGL(getContext(), (GLSurfaceView)view, max, metrics, pm);
 		}
 		TextView titletextView = new TextView(getContext());
 		titletextView.setText(title);

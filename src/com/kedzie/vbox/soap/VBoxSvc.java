@@ -167,9 +167,10 @@ public class VBoxSvc implements Parcelable {
 				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
 
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
-				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))	{
+			
+				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))
 					return _cache.get(method.getName());
-				}
+				
 				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
 				if(methodKSOAP==null)
 					request.addProperty("_this", this.uiud);

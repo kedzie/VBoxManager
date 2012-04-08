@@ -49,7 +49,9 @@ public class DataThread extends LoopingThread {
 			} catch (Exception e) {
 				Log.e(TAG, "", e);
 			} finally {
-				try { Thread.sleep(_period*1000); } catch (InterruptedException e) { }
+				try { Thread.sleep(_period*1000); } catch (InterruptedException e) { 
+					_running=false;
+				}
 			}
 		}
 }
