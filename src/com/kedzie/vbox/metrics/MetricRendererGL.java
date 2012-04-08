@@ -23,10 +23,12 @@ public class MetricRendererGL extends MetricRenderer implements GLSurfaceView.Re
 	private Map<String, FloatBuffer> buffers = new HashMap<String, FloatBuffer>();
 	private FloatBuffer timeGridBuffer;
 	private int numTimeGridLines;
+	private GLSurfaceView _surfaceView;
 	
 	public MetricRendererGL(Context context, GLSurfaceView view, int max, String []metrics, IPerformanceMetric pm) {
 		super(context, max, metrics, pm);
 		view.setRenderer(this);
+		_surfaceView=view;
 	}
 	
 	/**
@@ -119,5 +121,15 @@ public class MetricRendererGL extends MetricRenderer implements GLSurfaceView.Re
 			gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, data.get(metric).size());
 		}
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+	}
+	
+	@Override
+	public void pause() {
+		_surfaceView.onPause();
+	}
+
+	@Override
+	public void resume() {
+		_surfaceView.onResume();
 	}
 }
