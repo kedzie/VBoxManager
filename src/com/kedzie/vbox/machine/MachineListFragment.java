@@ -202,10 +202,10 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
             			.putParcelable(VBoxSvc.BUNDLE, _vmgr)
             			.putProxy(IMachine.BUNDLE, getAdapter().getItem(index))
             			.create();
-            tb.addTab("Actions", ActionsFragment.getInstance(b));
-    		tb.addTab("Info", InfoFragment.getInstance(b));
-    		tb.addTab("Log", LogFragment.getInstance(b));
-    		tb.addTab("Snapshots", SnapshotFragment.getInstance(b));
+            tb.addTab("Actions", ActionsFragment.getInstance(b), R.id.details);
+    		tb.addTab("Info", InfoFragment.getInstance(b), R.id.details);
+    		tb.addTab("Log", LogFragment.getInstance(b), R.id.details);
+    		tb.addTab("Snapshots", SnapshotFragment.getInstance(b), R.id.details);
         } else {
         	Intent intent = new Intent(getActivity(), MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr);
     		BundleBuilder.addProxy(intent, "machine", getAdapter().getItem(index) );
