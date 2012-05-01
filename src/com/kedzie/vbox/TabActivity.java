@@ -3,11 +3,11 @@ package com.kedzie.vbox;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
@@ -25,26 +25,48 @@ public class TabActivity extends SherlockFragmentActivity {
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 	}
 	
-	protected void addTab(String name, Fragment f) {
-		com.actionbarsherlock.app.ActionBar.Tab tab = getSupportActionBar().newTab();
+	/**
+	 * Add a tab to the {@link ActionBar}
+	 * @param containerId	the id of the {@link ViewContainer} which will hold the {@link Fragment}
+	 * @param name name (& tag) of {@link Tab}
+	 * @param f the {@link Fragment}
+	 */
+	public void addTab(String name, Fragment f, int containerId) {
+		Tab tab = getSupportActionBar().newTab();
         tab.setText(name);
         tab.setTag(name);
-        tab.setTabListener(new TabListener(f, name));
+        tab.setTabListener(new TabListener(f, name, containerId));
         getSupportActionBar().addTab(tab);
         _tabs.put(name, tab);
 	}
 	
-	protected void removeTab(String name) {
+	/**
+	 * Add a tab to the {@link ActionBar}
+	 * @param name name (& tag) of {@link Tab}
+	 * @param f the {@link Fragment}
+	 */
+	public void addTab(String name, Fragment f) {
+		addTab(name, f, android.R.id.content);
+	}
+	
+	/**
+	 * Remove a tab from the {@link ActionBar}
+	 * @param name name (& tag) of Tab
+	 */
+	public void removeTab(String name) {
 		getSupportActionBar().removeTab(_tabs.remove(name));
 	}
 	
-	protected void removeAllTabs() {
+	/**
+	 * Remove all tabs from the {@link ActionBar}
+	 */
+	public void removeAllTabs() {
 		getSupportActionBar().removeAllTabs();
 		_tabs.clear();
 	}
 	
 
-	private class TabListener implements com.actionbarsherlock.app.ActionBar.TabListener {
+	protected class TabListener implements com.actionbarsherlock.app.ActionBar.TabListener {
         private Fragment _fragment;
         private String _tag;
         private int _containerId;
@@ -53,10 +75,6 @@ public class TabActivity extends SherlockFragmentActivity {
             _fragment = fragment;
             _tag=tag;
             _containerId=containerId;
-        }
-        
-        public TabListener(Fragment fragment, String tag) {
-            this(fragment, tag, android.R.id.content);
         }
 
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
@@ -70,5 +88,4 @@ public class TabActivity extends SherlockFragmentActivity {
         public void onTabReselected(Tab tab, FragmentTransaction ft) {
         }
     }
-
 }

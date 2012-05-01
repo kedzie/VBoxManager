@@ -1,55 +1,31 @@
-
-
-
-
-
-
-
-
 package com.kedzie.vbox.api.jaxb;
 
+import java.io.Serializable;
 
+public enum SessionType implements Serializable {
 
+	NULL("Null"), WRITE_LOCK("WriteLock"), REMOTE("Remote"), SHARED("Shared");
+	private final String value;
 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-public enum SessionType {
+	SessionType(String v) {
+		value = v;
+	}
 
-        NULL("Null"),
-        WRITE_LOCK("WriteLock"),
-        REMOTE("Remote"),
-        SHARED("Shared");
-    private final String value;
+	public String value() {
+		return value;
+	}
 
-    SessionType(String v) {
-        value = v;
-    }
+	public String toString() {
+		return value;
+	}
 
-    public String value() {
-        return value;
-    }
-    public String toString() { return value; }
-    public static SessionType fromValue(String v) {
-        for (SessionType c: SessionType.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
+	public static SessionType fromValue(String v) {
+		for (SessionType c : SessionType.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 
 }

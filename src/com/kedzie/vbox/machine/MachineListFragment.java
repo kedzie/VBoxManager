@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.TabActivity;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
@@ -58,6 +60,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	private VBoxSvc _vmgr;
 	private List<IMachine> _machines;
 	private ListView _listView;
+	private int _curCheckPosition;
+	private boolean _dualPane;
 	private EventThread _eventThread;
 	private Messenger _messenger = new Messenger(new Handler() {
 		@Override
@@ -75,26 +79,37 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	};
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
 		_vmgr = getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
-		getActivity().setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
+		
+		View detailsFrame = getActivity().findViewById(R.id.details);
+		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+		if (_dualPane) 
+            _listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
+		if(savedInstanceState==null)
+			new LoadMachinesTask(_vmgr).execute();
+		else  { 
+    		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
+    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
+    		_listView.setAdapter(new MachineListAdapter(_machines));
+    		startEventListener();
+    		showDetails(_curCheckPosition);
+    	} 
 	}
 
-	@SuppressWarnings("unchecked") @Override
+	@Override
+	@SuppressWarnings("unchecked")
     public void onCreate(Bundle savedInstanceState) {
        	super.onCreate(savedInstanceState);
-       	_vmgr = BundleBuilder.getProxy(getArguments(), VBoxSvc.BUNDLE, VBoxSvc.class);
        	setHasOptionsMenu(true);
        	
     	if(savedInstanceState!=null) { 
-    		_machines = (List<IMachine>)savedInstanceState.getSerializable("machines");
-    		_listView.setAdapter(new MachineListAdapter(_machines));
-    		startEventListener();
-    	} else {
-    		new LoadMachinesTask(_vmgr).execute();
-    	}
+    		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
+    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
+    	} 
     }
 	
 	@Override
@@ -108,7 +123,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putSerializable("machines", (Serializable)_machines);
+		outState.putSerializable("machines", 	(Serializable)_machines);
+		outState.putInt("curChoice", _curCheckPosition);
 	}
 	
 	@Override
@@ -172,10 +188,30 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Intent intent = new Intent(getActivity(), MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr);
-		BundleBuilder.addProxy(intent, "machine", getAdapter().getItem(position) );
-		startActivity(intent);
+		showDetails(position);
 	}
+
+	
+	void showDetails(int index) {
+        _curCheckPosition = index;
+        if (_dualPane) {
+            _listView.setItemChecked(index, true);
+            TabActivity tb = (TabActivity)getSherlockActivity();
+            tb.removeAllTabs();
+            Bundle b = new BundleBuilder()
+            			.putParcelable(VBoxSvc.BUNDLE, _vmgr)
+            			.putProxy(IMachine.BUNDLE, getAdapter().getItem(index))
+            			.create();
+            tb.addTab("Actions", ActionsFragment.getInstance(b));
+    		tb.addTab("Info", InfoFragment.getInstance(b));
+    		tb.addTab("Log", LogFragment.getInstance(b));
+    		tb.addTab("Snapshots", SnapshotFragment.getInstance(b));
+        } else {
+        	Intent intent = new Intent(getActivity(), MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr);
+    		BundleBuilder.addProxy(intent, "machine", getAdapter().getItem(index) );
+    		startActivity(intent);
+        }
+    }
 	
 	@Override
 	public void onStart() {
@@ -283,14 +319,17 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		@Override
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
+			_vmgr.getVBox().getHost().getMemorySize();
 			for(IMachine m :  machines) {
 				//cache property values to avoid remote calls
 				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
+				m.getState();
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
 					Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
 					1, 
 					(IManagedObjectRef)null);
+			_vmgr.getVBox().getVersion();
 			return machines;
 		}
 
@@ -299,6 +338,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			super.onPostExecute(result);
 			_machines = result;
 			if(result!=null)	{
+				getActivity().setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
 				_listView.setAdapter(new MachineListAdapter(result));
 				getAdapter().setNotifyOnChange(false);
 				startEventListener();

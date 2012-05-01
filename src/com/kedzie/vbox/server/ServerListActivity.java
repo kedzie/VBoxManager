@@ -50,20 +50,17 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         
         listView = new ListView(this);
         setContentView(listView);
         registerForContextMenu(listView);
         listView.setOnItemClickListener(this);
         
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setSupportProgressBarIndeterminateVisibility(true);
-        
         new LoadServersTask().execute();
-        checkIfFirstRun();
     }
 	
-	protected void checkIfFirstRun() {
+	protected void checkIfFirstRun(Server s) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		if(!prefs.contains(FIRST_RUN_PREFERENCE)) {
 			Log.i(TAG, "First execution detected");
@@ -72,7 +69,7 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
 			editor.commit();
 			new AlertDialog.Builder(this)
 			.setTitle("Welcome")
-			.setMessage("Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host 192.168.1.10 --port 18083")
+			.setMessage(String.format("Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host %s --port %d", s.getHost(), s.getPort()))
 			.setIcon(android.R.drawable.ic_dialog_info)
 			.setPositiveButton("OK", new OnClickListener() {
 				@Override
@@ -96,7 +93,7 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		new LogonTask(this).execute(getAdapter().getItem(position));
+		new LogonTask().execute(getAdapter().getItem(position));
 	}
 	
 		@Override
@@ -130,7 +127,7 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
 	Server s = getAdapter().getItem(position);
 	  switch (item.getItemId()) {
 	  case R.id.server_list_context_menu_select:
-		  new LogonTask(this).execute(getAdapter().getItem(position));
+		  new LogonTask().execute(getAdapter().getItem(position));
 	        return true;
 	  case R.id.server_list_context_menu_edit:
         startActivityForResult(new Intent(this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, s), REQUEST_CODE_EDIT);
@@ -156,8 +153,10 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
 				getAdapter().setNotifyOnChange(false);
 				getAdapter().remove(s);
 				getAdapter().insert(s, pos);
-			} else if (requestCode == REQUEST_CODE_ADD)
+			} else if (requestCode == REQUEST_CODE_ADD) {
 				getAdapter().add(s);
+				checkIfFirstRun(s);
+			}
 			break;
 		case(RESULT_CODE_DELETE):
 			_db.delete(s.getId());
@@ -199,8 +198,8 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
  	 */
  	class LogonTask extends BaseTask<Server, IVirtualBox> {
 		
-		public LogonTask(Context ctx) { 
-			super( "LogonTask", ctx, null, "Connecting");
+		public LogonTask() { 
+			super( "LogonTask", ServerListActivity.this, null, "Connecting");
 		}
 		
 		@Override

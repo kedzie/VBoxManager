@@ -1,8 +1,12 @@
 package com.kedzie.vbox.api;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.kedzie.vbox.api.jaxb.ChipsetType;
 import com.kedzie.vbox.api.jaxb.LockType;
@@ -11,6 +15,7 @@ import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
 import com.kedzie.vbox.soap.Cacheable;
 import com.kedzie.vbox.soap.KSOAP;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * <p>The IMachine interface represents a virtual machine, or guest, created in VirtualBox.</p> 
@@ -21,7 +26,24 @@ Note that {@link IMachine} does not provide methods to control virtual machine e
 <dl><dt><b>See also:</b></dt><dd>{@link ISession}, {@link IConsole}</dd></dl>
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
-public interface IMachine extends IManagedObjectRef {
+public interface IMachine extends IManagedObjectRef, Parcelable {
+	
+	static ClassLoader loader = IMachine.class.getClassLoader();
+	
+	public static final Parcelable.Creator<IMachine> CREATOR = new Parcelable.Creator<IMachine>() {
+		public IMachine createFromParcel(Parcel in) {
+			Class<?> clazz = (Class<?>) in.readSerializable();
+			VBoxSvc vmgr =  in.readParcelable(loader);
+			String id = in.readString();
+			Map<String, Object> cache = new HashMap<String, Object>();
+			in.readMap(cache, loader);
+			return (IMachine) vmgr.getProxy(clazz, id, cache); 
+		}
+		public IMachine[] newArray(int size) {  
+			return new IMachine[size]; 
+		}
+	};
+	
 	public static String BUNDLE = "machine";
 	public static enum LaunchMode { headless, gui; }
 	

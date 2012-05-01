@@ -63,7 +63,7 @@ public class VBoxSvc implements Parcelable {
 	 * @param id			UIUD of {@link ManagedObjectRef}
 	 * @return 				remote invocation proxy
 	 */
-	protected <T> T getProxy(Class<T> clazz, String id) {
+	public <T> T getProxy(Class<T> clazz, String id) {
 		return getProxy(clazz, id, null);
 	}
 
@@ -74,7 +74,7 @@ public class VBoxSvc implements Parcelable {
 	 * @param 				cached properties
 	 * @return 				remote invocation proxy
 	 */
-	protected <T> T getProxy(Class<T> clazz, String id, Map<String, Object> cache) {
+	public <T> T getProxy(Class<T> clazz, String id, Map<String, Object> cache) {
 		T proxy = clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new KSOAPInvocationHandler(id, clazz, cache)));
 		if(IEvent.class.equals(clazz)) {
 			VBoxEventType type = ((IEvent)proxy).getType();
@@ -105,22 +105,23 @@ public class VBoxSvc implements Parcelable {
 	 * @return  {@link Map} from metric name to another {@link Map} containing metric data
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	public Map<String, Map<String,Object>> queryMetricsData(String object, String...metrics) throws IOException {
 		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
-		List<Integer> vals = new ArrayList<Integer>(data.get("returnval").size());
-		for(String s : data.get("returnval"))
-			vals.add(Integer.valueOf(s));
 
 		Map<String, Map<String,Object>> ret = new HashMap<String, Map<String, Object>>();
 		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
 			Map<String, Object> metric = new HashMap<String, Object>();
-			for(Map.Entry<String, List<String>> entry : data.entrySet())
+			for(Map.Entry<String, List<String>> entry : data.entrySet()) {
 				metric.put(entry.getKey().substring(6), entry.getValue().get(i) );
+			}
 			int start = Integer.valueOf(metric.remove("DataIndices").toString());
 			int length = Integer.valueOf(metric.remove("DataLengths").toString());
-			List<Integer> metricValues = new ArrayList<Integer>(vals.size());
-			metricValues.addAll( vals.subList(start, start+length) );
-			metric.put("val", metricValues);
+			
+			metric.put("val", new ArrayList<Integer>(length) );
+			for(String s : data.get("returnval").subList(start, start+length)) {
+				((List<Integer>)metric.get("val")).add(Integer.valueOf(s)/Integer.valueOf((String)metric.get("Scales")));
+			}
 			ret.put(  metric.get("MetricNames").toString(), metric );
 		}
 		Log.d(TAG, "Metric query: " + ret);
@@ -168,6 +169,15 @@ public class VBoxSvc implements Parcelable {
 				}
 				if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
 				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
+				if(method.getName().equals("describeContents")) return 0;
+				if(method.getName().equals("writeToParcel")) {
+					Parcel out = (Parcel)args[0];
+					out.writeSerializable(type);
+					out.writeParcelable(VBoxSvc.this, 0);
+					out.writeString(uiud);
+					out.writeMap(_cache);
+					return null;
+				}
 
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 			

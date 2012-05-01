@@ -249,6 +249,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 			m[0].getCurrentStateModified(); m[0].getOSTypeId(); m[0].getName(); m[0].getState();
 			if(m[0].getCurrentSnapshot()!=null)   
 				m[0].getCurrentSnapshot().getName(); 
+			m[0].getMemorySize();
 			return m[0];
 		}
 
