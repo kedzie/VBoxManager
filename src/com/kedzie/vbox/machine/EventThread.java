@@ -11,6 +11,7 @@ import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IEventListener;
 import com.kedzie.vbox.api.IEventSource;
+import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -24,7 +25,6 @@ public class EventThread extends LoopingThread {
 	private static final int DEFAULT_INTERVAL = 500;
 	public static final int WHAT_EVENT = 1;
 	public static final String BUNDLE_EVENT = "evt";
-	public static final String BUNDLE_MACHINE = "machine";
 	
 	protected int _interval;
 	protected VBoxEventType[] _eventTypes;
@@ -85,7 +85,7 @@ public class EventThread extends LoopingThread {
 						Log.d(TAG, "Got Event: " + _event.getType());
 						BundleBuilder bundle = new BundleBuilder().putProxy(BUNDLE_EVENT, _event);
 						if(_event instanceof IMachineEvent)
-							bundle.putProxy(BUNDLE_MACHINE,  _vmgr.getVBox().findMachine(((IMachineEvent)_event).getMachineId()));
+							bundle.putProxy(IMachine.BUNDLE,  _vmgr.getVBox().findMachine(((IMachineEvent)_event).getMachineId()));
 						if(_listeners.isEmpty())
 							wait();
 						synchronized(_listeners) {

@@ -9,7 +9,7 @@ import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IPerformanceMetric;
-import com.kedzie.vbox.machine.MachineListActivity;
+import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.server.Server;
@@ -82,7 +82,7 @@ public class HarnessActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(VBoxSvc vmgr) {
-			startActivity(new Intent(HarnessActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, vmgr));
+			startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, vmgr));
 			super.onPostExecute(vmgr);
 		}
 	}

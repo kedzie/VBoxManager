@@ -7,19 +7,23 @@ import pl.polidea.treeview.TreeNodeInfo;
 import pl.polidea.treeview.TreeStateManager;
 import pl.polidea.treeview.TreeViewList;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
@@ -28,63 +32,80 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.MachineTask;
 
-public class SnapshotActivity extends Activity {
-
+public class SnapshotFragment extends SherlockFragment {
+	
 	protected VBoxSvc _vmgr;
 	protected IMachine _machine;
+	protected View _view;
 	protected TreeViewList _treeView;
 	protected TreeStateManager<ISnapshot> _stateManager;
 	protected TreeBuilder<ISnapshot> _treeBuilder;
 	/** Root of snapshot tree; retained on configuration change */
 	protected ISnapshot _rootSnapshot;
 	
+	public static SnapshotFragment getInstance(Bundle args) {
+		SnapshotFragment f = new SnapshotFragment();
+		f.setArguments(args);
+		return f;
+	}
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.snapshot_tree);
-        _treeView = (TreeViewList)findViewById(R.id.mainTreeView);
-        _stateManager = new InMemoryTreeStateManager<ISnapshot>();
-        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
-        _vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
-        _machine = BundleBuilder.getProxy(getIntent(), EventThread.BUNDLE_MACHINE, IMachine.class);
-		registerForContextMenu(_treeView);
-		//load snapshots
-		if((_rootSnapshot=(ISnapshot)getLastNonConfigurationInstance())==null) {
-			new LoadSnapshotsTask(this, _vmgr).execute(_machine);
-		} else {
-			populate(null, _rootSnapshot);
-		}
+        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+        _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+		if(savedInstanceState!=null)
+			_rootSnapshot = BundleBuilder.getProxy(savedInstanceState, "rootSnapshot", ISnapshot.class);
     }
 	
 	@Override
-	public Object onRetainNonConfigurationInstance() {
-		return _rootSnapshot;
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		_view = inflater.inflate(R.layout.snapshot_tree, null);
+        _treeView = (TreeViewList)_view.findViewById(R.id.mainTreeView);
+        registerForContextMenu(_treeView);
+        _stateManager = new InMemoryTreeStateManager<ISnapshot>();
+        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
+        return _view;
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.snapshots_menu, menu);
-		return true;
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		if(_rootSnapshot==null) 
+			new LoadSnapshotsTask(_vmgr).execute(_machine);
+		else
+			populate(null, _rootSnapshot);
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		BundleBuilder.putProxy(outState, "rootSnapshot", _rootSnapshot);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.snapshots_menu, menu);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_add:
-			new TakeSnapshotDialog(this, _vmgr, _machine).show();
+			TakeSnapshotFragment.getInstance(getArguments())
+				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
 			return true;
 		case R.id.option_menu_refresh:
-			new LoadSnapshotsTask(this, _vmgr).execute(_machine);
+			new LoadSnapshotsTask( _vmgr).execute(_machine);
 			return true;
 		default:
 			return true;
 		}
 	}
-
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		getMenuInflater().inflate(R.menu.snapshots_context_menu, menu);
+		menu.add(Menu.NONE, R.id.context_menu_restore_snapshot, Menu.NONE, VMAction.RESTORE_SNAPSHOT.toString());
+		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, "Delete Snapshot");
 	}
 
 	@Override
@@ -93,14 +114,14 @@ public class SnapshotActivity extends Activity {
 		 ISnapshot snapshot = nodeinfo.getId();
 		  switch (item. getItemId()) {
 		  case R.id.context_menu_delete_snapshot:  
-			  new MachineTask<ISnapshot>("DeleteSnapshotTask", this, _vmgr, "Deleting Snapshot", false, snapshot.getMachine()) { 
+			  new MachineTask<ISnapshot>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, snapshot.getMachine()) { 
 					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 						return console.deleteSnapshot(s[0].getIdRef()); 
 					}
 				}.execute(snapshot);
 			  break;
 		  case R.id.context_menu_restore_snapshot:
-			  new MachineTask<ISnapshot>("RestoreSnapshotTask", this, _vmgr, "Restoring Snapshot", false, snapshot.getMachine()) { 
+			  new MachineTask<ISnapshot>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, snapshot.getMachine()) { 
 					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 						return console.restoreSnapshot(s[0].getName());
 					}
@@ -128,8 +149,8 @@ public class SnapshotActivity extends Activity {
 	 *	Load complete snapshot tree.
 	 */
 	class LoadSnapshotsTask extends BaseTask<IMachine, ISnapshot>	{
-		public LoadSnapshotsTask(Context ctx, VBoxSvc vmgr) { 
-			super( "LoadSnapshotsTask", ctx, vmgr, "Loading Snapshots"); 	
+		public LoadSnapshotsTask(VBoxSvc vmgr) { 
+			super( "LoadSnapshotsTask", getActivity(), vmgr, "Loading Snapshots"); 	
 		}
 
 		@Override
@@ -147,6 +168,7 @@ public class SnapshotActivity extends Activity {
 		 * @param s the {@link ISnapshot}
 		 */
 		protected void cache(ISnapshot s) {
+			s.getName();
 			for(ISnapshot child : s.getChildren())
 				cache(child);
 		}
@@ -155,7 +177,7 @@ public class SnapshotActivity extends Activity {
 		protected void onPostExecute(ISnapshot result)	{
 			super.onPostExecute(result);
 			if(result!=null)	{
-				_treeView.setAdapter(new SnapshotTreeAdapter(SnapshotActivity.this, _stateManager, 10));
+				_treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
 				_rootSnapshot=result;
 				populate(null, _rootSnapshot);
 			}
@@ -178,7 +200,7 @@ public class SnapshotActivity extends Activity {
 
 		@Override 
 		public View getNewChildView(TreeNodeInfo<ISnapshot> treeNodeInfo) {
-			View v = getLayoutInflater().inflate(R.layout.machine_action_item, null);
+			View v = LayoutInflater.from(getActivity()).inflate(R.layout.machine_action_item, null);
 			updateView(v, treeNodeInfo);
 			return v;
 		}

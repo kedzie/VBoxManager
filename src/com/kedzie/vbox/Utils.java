@@ -17,6 +17,10 @@ public class Utils {
 		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(name, false);
 	}
 	
+	public static String getStringPreference(Context ctx, String name) {
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, "");
+	}
+	
 	/**
 	 * Show {@link Toast} notification
 	 * @param ctx message {@link Context}

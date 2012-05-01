@@ -1,6 +1,7 @@
 package com.kedzie.vbox.soap;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -137,7 +138,9 @@ public class VBoxSvc implements Parcelable {
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
 	 */
-	public class KSOAPInvocationHandler implements InvocationHandler {
+	public class KSOAPInvocationHandler implements InvocationHandler, Serializable {
+		private static final long serialVersionUID = 1L;
+		
 		/** managed object UIUD */
 		private String uiud;
 		/** type of {@link IManagedObjectRef} */
@@ -160,7 +163,7 @@ public class VBoxSvc implements Parcelable {
 				if(method.getName().equals("toString")) return type.getSimpleName() + "#" + uiud.toString();
 				if(method.getName().equals("getInterface")) return type;
 				if(method.getName().equals("equals")) {
-					if(!(args[0] instanceof IManagedObjectRef) || !args[0].getClass().equals(type)) return false;
+					if(!(args[0] instanceof IManagedObjectRef) || !type.isAssignableFrom(args[0].getClass())) return false;
 					return this.uiud.equals(((IManagedObjectRef)args[0]).getIdRef());
 				}
 				if(method.getName().equals("clearCache")) { _cache.clear(); return null; }

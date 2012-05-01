@@ -1,17 +1,15 @@
 package com.kedzie.vbox.server;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.kedzie.vbox.R;
 
-public class EditServerActivity extends Activity {
+public class EditServerActivity extends SherlockActivity {
 	public static final String INTENT_SERVER = "server";
 	
 	protected Server _server;
@@ -34,15 +32,14 @@ public class EditServerActivity extends Activity {
         ((ImageButton)findViewById(R.id.button_delete)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { delete(); } });
     }
 	
-	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.server_options_menu, menu);
-		return true;
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+			 getSupportMenuInflater().inflate(R.menu.server_options_menu, menu);
+			    return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.server_list_option_menu_save:
 			save();

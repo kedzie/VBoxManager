@@ -46,8 +46,8 @@ public class EventService extends Service {
 			PendingIntent pending = null;
 			if(event instanceof IMachineStateChangedEvent) {
 				IMachineStateChangedEvent me = (IMachineStateChangedEvent)event;
-				IMachine eventMachine = BundleBuilder.getProxy(msg.getData(), EventThread.BUNDLE_MACHINE, IMachine.class);
-				intent = new Intent(EventService.this, MachineTabActivity.class).putExtra("vmgr", (Parcelable)_vmgr);
+				IMachine eventMachine = BundleBuilder.getProxy(msg.getData(), IMachine.BUNDLE, IMachine.class);
+				intent = new Intent(EventService.this, MachineFragmentActivity.class).putExtra("vmgr", (Parcelable)_vmgr);
 				BundleBuilder.addProxy(intent, "machine", eventMachine);
 				description = eventMachine.getName() + " changed State:  "  + me.getState();
 				Notification notification = new Notification(R.drawable.ic_list_vbox, text, System.currentTimeMillis());

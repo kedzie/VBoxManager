@@ -16,6 +16,7 @@ public enum VMAction {
 	RESUME("Resume"),
 	TAKE_SNAPSHOT("Take Snapshot"),
 	RESTORE_SNAPSHOT("Restore Snapshot"),
+	DELETE_SNAPSHOT("Delete Snapshot"),
 	SAVE_STATE("Save State"),
 	RESTORE_STATE("Restore State"),
 	DISCARD_STATE("Discard State"),

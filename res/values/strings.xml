@@ -10,10 +10,10 @@
     <string name="metric_cpu">CPU Load</string>
     <string name="metric_ram">Memory Usage</string>
     <string name="menu_options_refresh">Refresh</string>
-    <string name="menu_options_metrics">Metrics</string>
-    <string name="menu_options_glmetrics">GL Metrics</string>
+    <string name="menu_options_host_metrics">Host Metrics</string>
+    <string name="menu_options_machine_metrics">Machine Metrics</string>
     <string name="menu_options_preferences">Preferences</string>
-    <string name="menu_context_machine_start"></string>
+    <string name="menu_context_machine_start">Start</string>
     <string name="menu_context_machine_reset">Reset</string>
     <string name="menu_context_machine_poweroff">Power Off</string>
     <string name="menu_context_machine_pause">Pause</string>
@@ -29,6 +29,8 @@
     <string name="menu_options_snapshot_refresh">Refresh</string>
     <string name="pref_metric_period_title">Interval</string>
     <string name="pref_metric_period_summary">Metric Sampling Rate (seconds)</string>
+    <string name="pref_metric_implementation_title">Implementation</string>
+    <string name="pref_metric_implementation_summary">Metric Implementation</string>
     <string name="pref_metric_count_title">Count</string>
     <string name="pref_metric_count_summary"># of data points</string>
     <string name="pref_colored_icons">Color Icons</string>
@@ -38,6 +40,4 @@
     <string name="pref_category_general">General</string>
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_category_metrics">Metrics</string>
-    <string name="pref_beta">Development Features</string>
-    <string name="pref_beta_summary">Enable Developmental Features</string>
 </resources>

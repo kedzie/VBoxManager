@@ -12,15 +12,19 @@
                 	android:key="notifications"
                 	android:title="@string/pref_notifications"
                 	android:summary="@string/pref_notifications_summary"
-                	android:defaultValue="true" />
-              <CheckBoxPreference 
-                	android:key="beta"
-                	android:title="@string/pref_beta"
-                	android:summary="@string/pref_beta_summary"
-                	android:defaultValue="false" />   	
+                	android:defaultValue="true" />    	
         </PreferenceCategory>
         
         <PreferenceCategory  android:title="@string/pref_category_metrics">
+            <ListPreference 
+                	android:key="metric_implementation"
+                	android:title="@string/pref_metric_implementation_title"
+                	android:summary="@string/pref_metric_implementation_summary"
+                	android:defaultValue="2"
+                	android:entries="@array/metric_implementation_entries"
+                	android:entryValues="@array/metric_implementation_entryValues"    
+                	android:dialogTitle="@string/pref_metric_implementation_title"        	
+                	/>	
         	<ListPreference  
             		android:key="metric_count"
             		android:title="@string/pref_metric_count_title"

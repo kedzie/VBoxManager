@@ -22,6 +22,7 @@ Note that {@link IMachine} does not provide methods to control virtual machine e
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
 public interface IMachine extends IManagedObjectRef {
+	public static String BUNDLE = "machine";
 	public static enum LaunchMode { headless, gui; }
 	
 	 /**

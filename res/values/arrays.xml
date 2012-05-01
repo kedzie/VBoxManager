@@ -6,12 +6,6 @@
     	<item>3</item>
     	<item>4</item>
     </string-array>
-    <string-array name="metric_count_entryValues">
-    	<item>20</item>
-    	<item>30</item>
-    	<item>60</item>
-    	<item>100</item>
-    </string-array>    
     <string-array name="metric_period_entries" >
     	<item>1 second</item>
     	<item>2 seconds</item>
@@ -23,5 +17,21 @@
     	<item>30 samples</item>
     	<item>60 samples</item>
     	<item>100 samples</item>
+    </string-array>
+    <string-array name="metric_count_entryValues">
+    	<item>20</item>
+    	<item>30</item>
+    	<item>60</item>
+    	<item>100</item>
+    </string-array>    
+    <string-array name="metric_implementation_entries" >
+    	<item>SurfaceView</item>
+    	<item>OpenGL</item>
+    	<item>View</item>
+    </string-array>
+    <string-array name="metric_implementation_entryValues">
+    	<item>SURFACEVIEW</item>
+    	<item>OPENGL</item>
+    	<item>VIEW</item>
     </string-array>
 </resources>

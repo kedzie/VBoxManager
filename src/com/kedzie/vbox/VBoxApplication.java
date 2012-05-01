@@ -55,28 +55,28 @@ public class VBoxApplication extends Application {
 		resources_color.put(MachineState.ABORTED.name(), R.drawable.ic_list_abort_c);
 		resources.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck);
 		resources_color.put(MachineState.STUCK.name(), R.drawable.ic_list_stuck_c);
-		resources.put( "Start", R.drawable.ic_list_start );
-		resources_color.put( "Start", R.drawable.ic_list_start_c );
-		resources.put("Power Off", R.drawable.ic_list_poweroff);
-		resources_color.put("Power Off", R.drawable.ic_list_poweroff_c);
-		resources.put("Pause", R.drawable.ic_list_pause);
-		resources_color.put("Pause", R.drawable.ic_list_pause_c);
-		resources.put("Resume", R.drawable.ic_list_start);
-		resources_color.put("Resume", R.drawable.ic_list_start_c);
-		resources.put("Reset", R.drawable.ic_list_reset);
-		resources_color.put("Reset", R.drawable.ic_list_reset_c);
-		resources.put("Power Button", R.drawable.ic_list_acpi );
-		resources_color.put("Power Button", R.drawable.ic_list_acpi_c );
-		resources.put("Save State", R.drawable.ic_list_save);
-		resources_color.put("Save State", R.drawable.ic_list_save_c);
-		resources.put("Discard State", R.drawable.ic_list_save);
-		resources_color.put("Discard State", R.drawable.ic_list_save_c);
-		resources.put("Take Snapshot", R.drawable.ic_list_snapshot_add);
-		resources_color.put("Take Snapshot", R.drawable.ic_list_snapshot_add_c);
-		resources.put("Restore Snapshot", R.drawable.ic_list_snapshot);
-		resources_color.put("Restore Snapshot", R.drawable.ic_list_snapshot_c);
-		resources.put("Delete Snapshot", R.drawable.ic_list_snapshot_del);
-		resources_color.put("Delete Snapshot", R.drawable.ic_list_snapshot_del_c);
+		resources.put( VMAction.START.name(), R.drawable.ic_list_start );
+		resources_color.put( VMAction.START.name(), R.drawable.ic_list_start_c );
+		resources.put(VMAction.POWER_OFF.name(), R.drawable.ic_list_poweroff);
+		resources_color.put(VMAction.POWER_OFF.name(), R.drawable.ic_list_poweroff_c);
+		resources.put(VMAction.PAUSE.name(), R.drawable.ic_list_pause);
+		resources_color.put(VMAction.PAUSE.name(), R.drawable.ic_list_pause_c);
+		resources.put(VMAction.RESUME.name(), R.drawable.ic_list_start);
+		resources_color.put(VMAction.RESUME.name(), R.drawable.ic_list_start_c);
+		resources.put(VMAction.RESET.name(), R.drawable.ic_list_reset);
+		resources_color.put(VMAction.RESET.name(), R.drawable.ic_list_reset_c);
+		resources.put(VMAction.POWER_BUTTON.name(), R.drawable.ic_list_acpi );
+		resources_color.put(VMAction.POWER_BUTTON.name(), R.drawable.ic_list_acpi_c );
+		resources.put(VMAction.SAVE_STATE.name(), R.drawable.ic_list_save);
+		resources_color.put(VMAction.SAVE_STATE.name(), R.drawable.ic_list_save_c);
+		resources.put(VMAction.DISCARD_STATE.name(), R.drawable.ic_list_save);
+		resources_color.put(VMAction.DISCARD_STATE.name(), R.drawable.ic_list_save_c);
+		resources.put(VMAction.TAKE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_add);
+		resources_color.put(VMAction.TAKE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_add_c);
+		resources.put(VMAction.RESTORE_SNAPSHOT.name(), R.drawable.ic_list_snapshot);
+		resources_color.put(VMAction.RESTORE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_c);
+		resources.put(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del);
+		resources_color.put(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del_c);
 	}
 
 	/**
@@ -100,25 +100,21 @@ public class VBoxApplication extends Application {
 	}
 	
 	/**
+	 * Get Drawable Resource based on the name
+	 * @param name name of resource
+	 * @return address of resource
+	 */
+	public int getDrawableResource(VMAction name) {
+		return getDrawables().get(name.name());
+	}
+	
+	/**
 	 * Get resource drawable for given {@link MachineState}
 	 * @param state name of resource
 	 * @return address of resource
 	 */
 	public int getDrawableResource(MachineState state) {
 		return getDrawables().containsKey(state.name())  ? getDrawables().get(state.name()) : R.drawable.ic_list_start;	
-	}
-	
-	/**
-	 * Which actions can be performed on a Virtual Machine for each {@link MachineState}
-	 * @param state virtual machine state
-	 * @return actions which can be performed
-	 */
-	public String[] getActions(MachineState state) {
-		if(state.equals(MachineState.RUNNING)) return new String[] { "Pause", "Reset", "Power Off" , "Power Button", "Save State", "Take Snapshot" };
-		 else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new String[] { "Start",  "Take Snapshot" };
-		else if (state.equals(MachineState.PAUSED))	return new String[] { "Resume", "Reset", "Power Off", "Take Snapshot" };
-		 else if (state.equals(MachineState.SAVED))	return new String[] { "Restore State", "Discard State" };
-		return new String[] {};
 	}
 	
 	/**

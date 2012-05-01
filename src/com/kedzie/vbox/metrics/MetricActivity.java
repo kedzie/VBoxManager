@@ -3,14 +3,14 @@ package com.kedzie.vbox.metrics;
 import java.io.IOException;
 import java.lang.Thread.State;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
@@ -23,7 +23,7 @@ import com.kedzie.vbox.task.ConfigureMetricsTask;
  * Activity to view metric graphs for Virtual Machine or Host
  * @author Marek Kedzierski
  */
-public class MetricActivity extends Activity  {
+public class MetricActivity extends SherlockActivity  {
 	private static final String TAG = MetricActivity.class.getSimpleName();
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	public static final String INTENT_TITLE="t",INTENT_OBJECT = "o",
@@ -64,7 +64,7 @@ public class MetricActivity extends Activity  {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.metrics_options_menu, menu);
+		getSupportMenuInflater().inflate(R.menu.metrics_options_menu, menu);
 		return true;
 	}
 
@@ -74,8 +74,9 @@ public class MetricActivity extends Activity  {
 		case R.id.metrics_option_menu_preferences:
 			startActivityForResult(new Intent(this, MetricPreferencesActivity.class),REQUEST_CODE_PREFERENCES);
 			return true;
+		default:
+			return true;
 		}
-		return true;
 	}
 
 	@Override
@@ -103,6 +104,18 @@ public class MetricActivity extends Activity  {
 		_thread.start();
 	}	
 	
+	@Override
+	protected void onPause() {
+		cpuV.pause(); ramV.pause();
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		cpuV.resume(); ramV.resume();
+	}
+	
 	@Override 
 	protected void onStop() {
 		if(_thread!=null){
@@ -111,19 +124,5 @@ public class MetricActivity extends Activity  {
 			_thread.quit();
 		}
 		super.onStop();
-	}
-	
-	@Override
-	protected void onPause() {
-		cpuV.pause();
-		ramV.pause();
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		cpuV.resume();
-		ramV.resume();
-		super.onResume();
 	}
 }

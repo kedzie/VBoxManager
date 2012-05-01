@@ -3,7 +3,6 @@ package com.kedzie.vbox.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,7 +20,6 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,15 +29,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IVirtualBox;
-import com.kedzie.vbox.machine.MachineListActivity;
+import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 
 
-public class ServerListActivity extends Activity implements AdapterView.OnItemClickListener {
+public class ServerListActivity extends SherlockActivity implements AdapterView.OnItemClickListener {
 	private static final String TAG = ServerListActivity.class.getName();
 	static final int REQUEST_CODE_ADD = 9303,REQUEST_CODE_EDIT = 9304, RESULT_CODE_SAVE = 1,RESULT_CODE_DELETE = 2;
 	private static final String FIRST_RUN_PREFERENCE = "first_run";
@@ -56,7 +56,10 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
         registerForContextMenu(listView);
         listView.setOnItemClickListener(this);
         
-        new LoadServersTask(this).execute();
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setSupportProgressBarIndeterminateVisibility(true);
+        
+        new LoadServersTask().execute();
         checkIfFirstRun();
     }
 	
@@ -97,21 +100,22 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 	}
 	
 		@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    getMenuInflater().inflate(R.menu.server_list_options_menu, menu);
-	    return true;
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+			 getSupportMenuInflater().inflate(R.menu.server_list_options_menu, menu);
+			    return true;
 	}
-	
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.server_list_option_menu_add:
-	        addServer();
-	        return true;
-	    default:
-	        return true;
-	    }
+	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
+		 switch (item.getItemId()) {
+		    case R.id.server_list_option_menu_add:
+		        addServer();
+		        return true;
+		    default:
+		        return true;
+		    }
 	}
+
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -202,13 +206,15 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
 		@Override
 		protected IVirtualBox work(Server... params) throws Exception {
 			_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
-			return _vmgr.logon(params[0].getUsername(), params[0].getPassword());
+			 _vmgr.logon(params[0].getUsername(), params[0].getPassword());
+			 _vmgr.getVBox().getVersion();
+			 return _vmgr.getVBox();
 		}
 
 		@Override protected void onPostExecute(IVirtualBox vbox) {
 			if(vbox!=null) {
 				Utils.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-				startActivity(new Intent(ServerListActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 			}
 			super.onPostExecute(vbox);
 		}
@@ -218,8 +224,9 @@ public class ServerListActivity extends Activity implements AdapterView.OnItemCl
  	 * Load Servers from DB
  	 */
  	class LoadServersTask extends BaseTask<Void, List<Server>>	{
- 		public LoadServersTask(Context ctx) {
- 			super("LoadServersTask", ctx,  null, "Loading Servers"); 
+ 		
+ 		public LoadServersTask() {
+ 			super("LoadServersTask", ServerListActivity.this,  null, "Loading Servers"); 
  		}
 		@Override 
 		protected List<Server> work(Void... params) throws Exception { 

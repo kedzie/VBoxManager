@@ -13,7 +13,6 @@ import android.os.RemoteException;
 import android.util.SparseArray;
 
 import com.kedzie.vbox.api.IManagedObjectRef;
-import com.kedzie.vbox.soap.ParcelableProxy;
 
 /**
  * Builder pattern for {@link Android.os.Bundle}.  
@@ -29,8 +28,38 @@ public class BundleBuilder {
 	 * @return builder pattern
 	 */
 	public BundleBuilder putProxy(String key, IManagedObjectRef value) {
-		b.putParcelable(key, new ParcelableProxy(value.getInterface(), value));
+		if(value instanceof Parcelable) 
+			b.putParcelable(key, (Parcelable)value);
+		else 
+			b.putSerializable(key, (Serializable)value);
+		
 		return this;
+	}
+	
+	/**
+	 * Add a parceled remote proxy to bundle
+	 * @param key entry key
+	 * @param value remote proxy
+	 * @return builder pattern
+	 */
+	public static void putProxy(Bundle b, String key, IManagedObjectRef value) {
+		if(value instanceof Parcelable) 
+			b.putParcelable(key, (Parcelable)value);
+		else 
+			b.putSerializable(key, (Serializable)value);
+	}
+	
+	/**
+	 * Add a parceled remote proxy to intent
+	 * @param intent the intent
+	 * @param name name of extra
+	 * @param obj remote proxy
+	 */
+	public static void addProxy(Intent intent, String name, IManagedObjectRef obj) {
+		if(obj instanceof Parcelable) 
+			intent.putExtra(name, (Parcelable)obj);
+		else 
+			intent.putExtra(name, (Serializable)obj);
 	}
 	
 	/**
@@ -41,18 +70,11 @@ public class BundleBuilder {
 	 * @return unbundled remote proxy
 	 */
 	public static <T> T getProxy(Bundle bundle, String name, Class<T> clazz) {
-		ParcelableProxy p = bundle.getParcelable(name);
-		return clazz.cast( p.getProxy() );
-	}
-	
-	/**
-	 * Add a parceled remote proxy to intent
-	 * @param intent the intent
-	 * @param name name of extra
-	 * @param obj remote proxy
-	 */
-	public static void addProxy(Intent intent, String name, IManagedObjectRef obj) {
-		intent.putExtra(name, new ParcelableProxy(obj.getInterface(), obj));
+		if(Parcelable.class.isAssignableFrom(clazz)) 
+			return clazz.cast( bundle.getParcelable(name) );
+		
+		else 
+			return clazz.cast( bundle.getSerializable(name) );
 	}
 	
 	/**
@@ -63,8 +85,11 @@ public class BundleBuilder {
 	 * @return the un-parceled remote proxy
 	 */
 	public static <T> T getProxy(Intent intent, String name, Class<T> clazz) {
-		ParcelableProxy p = intent.getParcelableExtra(name);
-		return clazz.cast( p.getProxy() );
+		if(Parcelable.class.isAssignableFrom(clazz)) 
+			return clazz.cast( intent.getParcelableExtra(name) );
+		
+		else 
+			return clazz.cast( intent.getSerializableExtra(name) );
 	}
 	
 	public BundleBuilder putAll(Bundle map) {

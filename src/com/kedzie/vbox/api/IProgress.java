@@ -11,22 +11,22 @@ public interface IProgress extends IManagedObjectRef {
 	public void waitForCompletion(@KSOAP(type="unsignedInt", value="operation") int operation, @KSOAP(type="int", value="timeout") int millseconds) throws IOException;
 	public void waitForAsyncProgressCompletion(@KSOAP("pProgressAsync") String pProgressAsync); 
 	
-	@Cacheable public Integer getTimeout() throws IOException;
-	@Cacheable public Integer getResultCode() throws IOException;
-	@Cacheable public IVirtualBoxErrorInfo getErrorInfo() throws IOException;
+	@Cacheable public Integer getTimeout() ;
+	@Cacheable public Integer getResultCode() ;
+	@Cacheable public IVirtualBoxErrorInfo getErrorInfo() ;
 	
-	@Cacheable public String getDescription() throws IOException;
-	@Cacheable public Integer getPercent() throws IOException;
-	@Cacheable public Integer getTimeRemaining() throws IOException;
-	@Cacheable public String getOperation() throws IOException;
-	@Cacheable public Integer getOperationCount() throws IOException;
-	@Cacheable public String getOperationDescription() throws IOException;
-	@Cacheable public Integer getOperationPercent() throws IOException;
-	@Cacheable public Integer getOperationWeight() throws IOException;
-	@Cacheable public String getInitiator() throws IOException;
-	@Cacheable public Boolean getCancelled() throws IOException;
-	@Cacheable public Boolean getCancelable() throws IOException;
-	public Boolean getCompleted() throws IOException;
+	@Cacheable public String getDescription() ;
+	@Cacheable public Integer getPercent() ;
+	@Cacheable public Integer getTimeRemaining() ;
+	@Cacheable public String getOperation() ;
+	@Cacheable public Integer getOperationCount() ;
+	@Cacheable public String getOperationDescription() ;
+	@Cacheable public Integer getOperationPercent() ;
+	@Cacheable public Integer getOperationWeight() ;
+	@Cacheable public String getInitiator() ;
+	@Cacheable public Boolean getCancelled() ;
+	@Cacheable public Boolean getCancelable() ;
+	@Cacheable public Boolean getCompleted() ;
 	
 	public void cancel() throws IOException;
 	public void setTimeout(@KSOAP(type="unsignedInt", value="timeout") int timeout) throws IOException;
