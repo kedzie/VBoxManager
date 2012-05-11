@@ -6,14 +6,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -62,12 +66,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	private ListView _listView;
 	private int _curCheckPosition;
 	private boolean _dualPane;
-	private EventThread _eventThread;
-	private Messenger _messenger = new Messenger(new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			new HandleEventTask(_vmgr).execute(msg.getData());
-		} });
 	private EventService _eventService;
 	private ServiceConnection localConnection = new ServiceConnection() {
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
@@ -77,12 +75,30 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			_eventService=null;
 		}
 	};
+	private EventThread _eventThread;
+	private Messenger _messenger = new Messenger(new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			new HandleEventTask(_vmgr).execute(msg.getData());
+		} });
+	private LocalBroadcastManager lbm;
+	private BroadcastReceiver _receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(EventService.com_virtualbox_EVENT)) {
+				Log.i(TAG, "Recieved Broadcast");
+				new HandleEventTask(_vmgr).execute(intent.getExtras());
+			}
+		}
+	};
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		_vmgr = getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
+		
+		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
 		
 		View detailsFrame = getActivity().findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
@@ -95,7 +111,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
     		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
     		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
     		_listView.setAdapter(new MachineListAdapter(_machines));
-    		startEventListener();
     		showDetails(_curCheckPosition);
     	} 
 	}
@@ -156,15 +171,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		}
 	}
 
-
-	protected void startEventListener() {
-		if(_eventService==null && Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS))
-			getActivity().bindService(new Intent(getActivity(), EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-		_eventThread = new EventThread(TAG , _vmgr, VBoxEventType.MACHINE_EVENT);
-		_eventThread.addListener(_messenger);
-		_eventThread.start();
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
@@ -216,8 +222,12 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onStart() {
 		super.onStart();
-		if(_machines!=null)
-			startEventListener();
+		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
+		if(_eventService==null && Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS))
+			getActivity().bindService(new Intent(getActivity(), EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
+//		_eventThread = new EventThread(TAG , _vmgr, VBoxEventType.MACHINE_EVENT);
+//		_eventThread.addListener(_messenger);
+//		_eventThread.start();
 	}
 
 	@Override 
@@ -239,8 +249,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		} 
 		super.onDestroy();
 	}
-
-
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -341,7 +349,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 				getActivity().setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
 				_listView.setAdapter(new MachineListAdapter(result));
 				getAdapter().setNotifyOnChange(false);
-				startEventListener();
 			}
 		}
 	}

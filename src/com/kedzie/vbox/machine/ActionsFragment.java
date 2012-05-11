@@ -3,14 +3,18 @@ package com.kedzie.vbox.machine;
 import java.io.IOException;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +39,8 @@ import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.metrics.MetricView;
@@ -69,11 +73,21 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		public void handleMessage(Message msg) {
 			switch(msg.what){
 			case EventThread.WHAT_EVENT:
-				new HandleEventTask(_vmgr).execute(msg.getData());
+				updateState();
 				break;
 			}
 		}
 	});
+	private LocalBroadcastManager lbm;
+	private BroadcastReceiver _receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(EventService.com_virtualbox_EVENT)) {
+				Log.i(TAG, "Recieved Broadcast");
+				updateState();
+			}
+		}
+	};
 	
 	public static ActionsFragment getInstance(Bundle args) {
 		ActionsFragment f = new ActionsFragment();
@@ -81,6 +95,12 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		return f;
 	}
 	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		 lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
+	}
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +116,34 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		_listView.addHeaderView(_headerView);
 		_listView.setOnItemClickListener(this);
 		return _listView;
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		updateState();
+		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
+//		_thread = new EventThread(TAG , _vmgr);
+//		_thread.addListener(_messenger);
+//		_thread.start();
+	}
+
+
+	@Override
+	public void onStop() {
+//		_thread.quit();
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
+						_vmgr.getVBox().getSessionObject().unlockMachine();
+				} catch (IOException e) {
+					Log.e(TAG, "Exception unlocking machine", e);
+				}
+			}
+		}.start();
+		super.onStop();
 	}
 
 	@Override
@@ -189,15 +237,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	}
 	
 	@Override
-	public void onStart() {
-		super.onStart();
-		updateState();
-		_thread = new EventThread(TAG , _vmgr);
-		_thread.addListener(_messenger);
-		_thread.start();
-	}
-	
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
@@ -207,23 +246,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				getActivity().unbindService(localConnection);
 			}
 		}
-	}
-
-	@Override
-	public void onStop() {
-		_thread.quit();
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
-						_vmgr.getVBox().getSessionObject().unlockMachine();
-				} catch (IOException e) {
-					Log.e(TAG, "Exception unlocking machine", e);
-				}
-			}
-		}.start();
-		super.onStop();
 	}
 	
 	private void updateState() {
@@ -240,7 +262,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	class UpdateMachineViewTask extends BaseTask<IMachine, IMachine> {
 		
 		public UpdateMachineViewTask(VBoxSvc vmgr) {
-			super(UpdateMachineViewTask.class.getSimpleName(), getActivity(), vmgr, "Loading Machine");
+			super(UpdateMachineViewTask.class.getSimpleName(), getSherlockActivity(), vmgr, "Loading Machine");
 		}
 		
 		@Override 
@@ -264,29 +286,23 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	/**
 	 * Handle MachineStateChanged event
 	 */
-	class HandleEventTask extends BaseTask<Bundle, IEvent> {
+	class HandleEventTask extends BaseTask<Bundle, ISessionStateChangedEvent> {
 		
-		public HandleEventTask(VBoxSvc vmgr) { 
-			super( "HandleEventTask", getActivity(), vmgr, "Handling Event");
-		}
+		public HandleEventTask(VBoxSvc vmgr) {  super( "HandleEventTask", getActivity(), vmgr, "Handling Event"); }
 
 		@Override
-		protected IEvent work(Bundle... params) throws Exception {
+		protected ISessionStateChangedEvent work(Bundle... params) throws Exception {
 			IEvent event = BundleBuilder.getProxy(params[0], EventThread.BUNDLE_EVENT, IEvent.class);
-			if(event instanceof IMachineStateChangedEvent) {
-				_machine.clearCache();
-				_machine.getName(); _machine.getState();
-				return event;
-			}
+			if(event instanceof ISessionStateChangedEvent)
+				return (ISessionStateChangedEvent) event;
 			return null;
 		}
 
 		@Override
-		protected void onPostExecute(IEvent result)	{
+		protected void onPostExecute(ISessionStateChangedEvent result)	{
 			super.onPostExecute(result);
 			if(result!=null)	{
-				Utils.toast(getActivity(), _machine.getName()+"  changed State: "+_machine.getState());
-				updateState();
+				Utils.toast(getActivity(), "Session  changed State: "+result.getState());
 			}
 		}
 	}
