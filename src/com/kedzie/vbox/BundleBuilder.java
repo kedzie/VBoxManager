@@ -27,21 +27,6 @@ public class BundleBuilder {
 	 * @param value remote proxy
 	 * @return builder pattern
 	 */
-	public BundleBuilder putProxy(String key, IManagedObjectRef value) {
-		if(value instanceof Parcelable) 
-			b.putParcelable(key, (Parcelable)value);
-		else 
-			b.putSerializable(key, (Serializable)value);
-		
-		return this;
-	}
-	
-	/**
-	 * Add a parceled remote proxy to bundle
-	 * @param key entry key
-	 * @param value remote proxy
-	 * @return builder pattern
-	 */
 	public static void putProxy(Bundle b, String key, IManagedObjectRef value) {
 		if(value instanceof Parcelable) 
 			b.putParcelable(key, (Parcelable)value);
@@ -72,7 +57,6 @@ public class BundleBuilder {
 	public static <T> T getProxy(Bundle bundle, String name, Class<T> clazz) {
 		if(Parcelable.class.isAssignableFrom(clazz)) 
 			return clazz.cast( bundle.getParcelable(name) );
-		
 		else 
 			return clazz.cast( bundle.getSerializable(name) );
 	}
@@ -87,9 +71,22 @@ public class BundleBuilder {
 	public static <T> T getProxy(Intent intent, String name, Class<T> clazz) {
 		if(Parcelable.class.isAssignableFrom(clazz)) 
 			return clazz.cast( intent.getParcelableExtra(name) );
-		
 		else 
 			return clazz.cast( intent.getSerializableExtra(name) );
+	}
+	
+	/**
+	 * Add a parceled remote proxy to bundle
+	 * @param key entry key
+	 * @param value remote proxy
+	 * @return builder pattern
+	 */
+	public BundleBuilder putProxy(String key, IManagedObjectRef value) {
+		if(value instanceof Parcelable) 
+			b.putParcelable(key, (Parcelable)value);
+		else 
+			b.putSerializable(key, (Serializable)value);
+		return this;
 	}
 	
 	public BundleBuilder putAll(Bundle map) {

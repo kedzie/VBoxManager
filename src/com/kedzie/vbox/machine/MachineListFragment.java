@@ -13,10 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -34,7 +31,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
@@ -48,9 +44,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IProgress;
-import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
-import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
@@ -75,12 +69,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			_eventService=null;
 		}
 	};
-	private EventThread _eventThread;
-	private Messenger _messenger = new Messenger(new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			new HandleEventTask(_vmgr).execute(msg.getData());
-		} });
 	private LocalBroadcastManager lbm;
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
@@ -143,7 +131,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	}
 	
 	@Override
-	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
 		inflater.inflate(R.menu.machine_list_options_menu, menu);
 	}
 
@@ -160,7 +148,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" })
-					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, 	MetricView.Implementation.valueOf(Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION)));
+					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, 	Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION));
 			startActivity(intent);
 			return true;
 		case R.id.machine_list_option_menu_preferences:
@@ -173,14 +161,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==REQUEST_CODE_PREFERENCES) {
+		if(requestCode==REQUEST_CODE_PREFERENCES)
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
-			if(_eventService==null && Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS))
-				getActivity().bindService(new Intent(getActivity(), EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS)) {
-				getActivity().unbindService(localConnection);
-			}
-		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -223,18 +205,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	public void onStart() {
 		super.onStart();
 		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
-		if(_eventService==null && Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS))
+		if(_eventService==null )
 			getActivity().bindService(new Intent(getActivity(), EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-//		_eventThread = new EventThread(TAG , _vmgr, VBoxEventType.MACHINE_EVENT);
-//		_eventThread.addListener(_messenger);
-//		_eventThread.start();
-	}
-
-	@Override 
-	public void onStop() {
-		if(_eventThread!=null)
-			_eventThread.quit();
-		super.onStop();
 	}
 
 	@Override
@@ -359,7 +331,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	class HandleEventTask extends BaseTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
-			super( "HandleEventTask", getActivity(), vmgr, "Handling Event");
+			super( "HandleEventTask", getSherlockActivity(), vmgr, "Handling Event");
 		}
 
 		@Override
@@ -368,7 +340,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			if(event instanceof IMachineStateChangedEvent) {
 				IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
 				m.getName();m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
-				m.getCurrentStateModified();
+				m.getCurrentStateModified(); m.getOSTypeId();
 				return m;
 			}
 			return null;

@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.Utils;
-import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricRenderer {
 	public static int EXTRA_POINTS = 2;
@@ -27,7 +26,6 @@ public class MetricRenderer {
 	protected int _height;
 	/** Metric names to render */
 	protected String[] _metrics;
-	protected IPerformanceMetric _baseMetric;
 	/** pixels/period */
 	protected int hStep;
 	/** pixels/unit */
@@ -36,11 +34,10 @@ public class MetricRenderer {
 	protected double pixelsPerSecond;
 	protected Map<String, LinkedList<Point2F>> data= new HashMap<String, LinkedList<Point2F>>();
 
-	public MetricRenderer(Context context, int max, String []metrics, IPerformanceMetric pm) {
+	public MetricRenderer(Context context, int max, String []metrics) {
 		_context = context;
 		_max=max;
 		_metrics=metrics;
-		_baseMetric=pm;
 		_count=Utils.getIntPreference(context, PreferencesActivity.COUNT);
 		_period=Utils.getIntPreference(context, PreferencesActivity.PERIOD);
 		for(String metric : _metrics)

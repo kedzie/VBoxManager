@@ -6,7 +6,7 @@ import java.util.Map;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.kedzie.vbox.soap.Cacheable;
+import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public interface IHost extends IManagedObjectRef, Parcelable {
@@ -26,11 +26,11 @@ public interface IHost extends IManagedObjectRef, Parcelable {
 		}
 	};
 	
-	@Cacheable public Integer getMemorySize();
-	@Cacheable public Integer getMemoryAvailable();
-	@Cacheable public Integer getProcessorCount();
-	@Cacheable public Integer getProcessorCoreCount();
-	@Cacheable public Integer getProcessorOnlineCount();
-	@Cacheable public Integer getProcessorSpeed();
-	@Cacheable public String getOperatingSystem();
+	@KSOAP(cacheable=true) public Integer getMemorySize();
+	@KSOAP(cacheable=true) public Integer getMemoryAvailable();
+	@KSOAP(cacheable=true) public Integer getProcessorCount();
+	@KSOAP(cacheable=true) public Integer getProcessorCoreCount();
+	@KSOAP(cacheable=true) public Integer getProcessorOnlineCount();
+	@KSOAP(cacheable=true) public Integer getProcessorSpeed();
+	@KSOAP(cacheable=true) public String getOperatingSystem();
 }

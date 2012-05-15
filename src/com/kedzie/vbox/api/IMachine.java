@@ -13,7 +13,6 @@ import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
-import com.kedzie.vbox.soap.Cacheable;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -50,127 +49,127 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	 /**
 	  * @return Name of the virtual machine. 
 	  */
-	 @KSOAP @Cacheable public String getName() ;
+	 @KSOAP(cacheable=true) public String getName() ;
 
 	 /**
 	  * @return Description of the virtual machine. 
 	  */
-	 @KSOAP @Cacheable public String getDescription();
+	 @KSOAP(cacheable=true) public String getDescription();
 
 	/**
 	 * @return UUID of the virtual machine. 
 	 */
-	@KSOAP @Cacheable public String getId();
+	@KSOAP(cacheable=true) public String getId();
 	
 	/**
 	 * @return User-defined identifier of the Guest OS type. 
 	 */
-	@KSOAP @Cacheable public String getOSTypeId();
+	@KSOAP(cacheable=true) public String getOSTypeId();
 	
 	/**
 	 * @return Number of virtual CPUs in the VM. 
 	 */
-	@KSOAP @Cacheable public Integer getCPUCount();
+	@KSOAP(cacheable=true) public Integer getCPUCount();
 	
 	/**
 	 * This setting determines whether VirtualBox allows CPU hotplugging for this machine. 
 	 */
-	@KSOAP @Cacheable public Boolean getCPUHotPlugEnabled();
+	@KSOAP(cacheable=true) public Boolean getCPUHotPlugEnabled();
 	
 	/**
 	 * @return Number of virtual CPUs in the VM. 
 	 */
-	@KSOAP @Cacheable public Integer getCPUExecutionCap();
+	@KSOAP(cacheable=true) public Integer getCPUExecutionCap();
 
 	/**
 	 * @return System memory size in megabytes. 
 	 */ 
-	@KSOAP @Cacheable public Integer getMemorySize();
+	@KSOAP(cacheable=true) public Integer getMemorySize();
 	
 	/**
 	 * @return Memory balloon size in megabytes. 
 	 */
-	@KSOAP @Cacheable public Integer getMemoryBalloonSize();
+	@KSOAP(cacheable=true) public Integer getMemoryBalloonSize();
 
 	/**
 	 * @return Video memory size in megabytes. 
 	 */
-	@KSOAP @Cacheable public Integer getVRAMSize();
+	@KSOAP(cacheable=true) public Integer getVRAMSize();
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host. 
 	 */
-	@KSOAP @Cacheable public Boolean getAccelerate3DEnabled();
+	@KSOAP(cacheable=true) public Boolean getAccelerate3DEnabled();
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 2D video acceleration support available on the host. 
 	 */
-	@KSOAP @Cacheable public Boolean getAccelerate2DVideoEnabled();
+	@KSOAP(cacheable=true) public Boolean getAccelerate2DVideoEnabled();
 
 	/**
 	 * @return Number of virtual monitors. 
 	 */
-	@KSOAP @Cacheable public Integer getMonitorCount();
+	@KSOAP(cacheable=true) public Integer getMonitorCount();
 
 //	/**
 //	 * @return Object containing all BIOS settings. 
 //	 */
-//	@KSOAP @Cacheable public BIOSSettings getBIOSSettings();
+//	@KSOAP(cacheable=true) public BIOSSettings getBIOSSettings();
 	
 	/**
 	 * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM. 
 	 */
-	@KSOAP @Cacheable public Boolean getHpetEnabled();
+	@KSOAP(cacheable=true) public Boolean getHpetEnabled();
  	
 	/**
 	 * @return  Chipset type used in this VM. 
 	 */
-	@KSOAP @Cacheable public  ChipsetType 	getChipsetType();
+	@KSOAP(cacheable=true) public  ChipsetType 	getChipsetType();
  	
  	/**
 	 * @return  Full path to the directory used to store snapshot data (differencing media and saved state files) of this machine. 
 	 */
-	@KSOAP @Cacheable public String getSnapshotFolder();
+	@KSOAP(cacheable=true) public String getSnapshotFolder();
  	
 // 	/**
 //	 * @return  VirtualBox Remote Desktop Extension (VRDE) server object. 
 //	 */
-//	@KSOAP @Cacheable public  IVRDEServer 	getVRDEServer();
+//	@KSOAP(cacheable=true) public  IVRDEServer 	getVRDEServer();
 	
  	/**
  	 * @return Current session state for this machine. 
  	 */
- 	@KSOAP @Cacheable public SessionState getSessionState();
+ 	@KSOAP(cacheable=true) public SessionState getSessionState();
 
 	/**
 	 * @return  Type of the session. 
 	 */
-	@KSOAP @Cacheable public SessionType getSessionType();
+	@KSOAP(cacheable=true) public SessionType getSessionType();
 	
 	/**
 	 * @return Identifier of the session process. 
 	 */
-	@KSOAP @Cacheable public Integer getSessionPid();
+	@KSOAP(cacheable=true) public Integer getSessionPid();
 	
 	/**
 	 * @return Current execution state of this machine. 
 	 */
-	@KSOAP @Cacheable public MachineState getState() ;
+	@KSOAP(cacheable=true) public MachineState getState() ;
 
 	/**
 	 * @return Number of snapshots taken on this machine. 
 	 */
-	@KSOAP @Cacheable public  Long getSnapshotCount();
+	@KSOAP(cacheable=true) public  Long getSnapshotCount();
 	
 	/**
 	 * @return	Current snapshot of this machine. 
 	 */
-	@KSOAP @Cacheable public ISnapshot getCurrentSnapshot();
+	@KSOAP(cacheable=true) public ISnapshot getCurrentSnapshot();
  	
 	/**
 	 * @return Returns true if the current state of the machine is not identical to the state stored in the current snapshot. 
 	 */
-	@KSOAP @Cacheable public Boolean getCurrentStateModified();
+	@KSOAP(cacheable=true) public Boolean getCurrentStateModified();
 
 	
 	/**

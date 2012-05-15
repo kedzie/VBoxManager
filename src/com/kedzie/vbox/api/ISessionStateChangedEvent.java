@@ -1,8 +1,8 @@
 package com.kedzie.vbox.api;
 
 import com.kedzie.vbox.api.jaxb.SessionState;
-import com.kedzie.vbox.soap.Cacheable;
+import com.kedzie.vbox.soap.KSOAP;
 
 public interface ISessionStateChangedEvent extends IEvent {
-	@Cacheable public SessionState getState();
+	@KSOAP(cacheable=true) public SessionState getState();
 }

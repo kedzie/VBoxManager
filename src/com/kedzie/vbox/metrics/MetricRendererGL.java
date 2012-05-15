@@ -14,7 +14,6 @@ import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricRendererGL extends MetricRenderer implements GLSurfaceView.Renderer {
 	private static final float LINE_WIDTH = 6f;
@@ -25,8 +24,8 @@ public class MetricRendererGL extends MetricRenderer implements GLSurfaceView.Re
 	private int numTimeGridLines;
 	private GLSurfaceView _surfaceView;
 	
-	public MetricRendererGL(Context context, GLSurfaceView view, int max, String []metrics, IPerformanceMetric pm) {
-		super(context, max, metrics, pm);
+	public MetricRendererGL(Context context, GLSurfaceView view, int max, String []metrics) {
+		super(context, max, metrics);
 		view.setRenderer(this);
 		_surfaceView=view;
 	}

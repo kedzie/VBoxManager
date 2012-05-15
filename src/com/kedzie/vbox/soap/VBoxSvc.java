@@ -34,6 +34,7 @@ import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.metrics.MetricQuery;
 
 /**
  * VirtualBox JAX-WS API
@@ -118,10 +119,23 @@ public class VBoxSvc implements Parcelable {
 			int start = Integer.valueOf(metric.remove("DataIndices").toString());
 			int length = Integer.valueOf(metric.remove("DataLengths").toString());
 			
+			MetricQuery q = new MetricQuery();
+			q.name=(String)data.get("returnMetricNames").get(i);
+			q.object=(String)data.get("returnObjects").get(i);
+			q.scale=Integer.valueOf(data.get("returnScales").get(i));
+			q.unit=(String)data.get("returnUnits").get(i);
+			start = Integer.valueOf( data.get("returnDataIndices").get(i));
+			length = Integer.valueOf( data.get("returnDataLengths").get(i));
+			q.values= new int[length];
+			int j=0;
+			for(String s : data.get("returnval").subList(start, start+length)) 
+				q.values[j++] = Integer.valueOf(s)/q.scale;
+			
 			metric.put("val", new ArrayList<Integer>(length) );
 			for(String s : data.get("returnval").subList(start, start+length)) {
 				((List<Integer>)metric.get("val")).add(Integer.valueOf(s)/Integer.valueOf((String)metric.get("Scales")));
 			}
+			
 			ret.put(  metric.get("MetricNames").toString(), metric );
 		}
 		Log.d(TAG, "Metric query: " + ret);
@@ -180,8 +194,8 @@ public class VBoxSvc implements Parcelable {
 				}
 
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
-			
-				if(method.getAnnotation(Cacheable.class)!=null && _cache.containsKey(method.getName()))
+				
+				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(method.getName()))
 					return _cache.get(method.getName());
 				
 				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
@@ -197,11 +211,12 @@ public class VBoxSvc implements Parcelable {
 				envelope.setOutputSoapObject(request);
 				_transport.call(NAMESPACE+request.getName(), envelope);
 				Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
-				if(method.getAnnotation(Cacheable.class)!=null ) _cache.put(method.getName(), ret);
+				if(methodKSOAP!=null && methodKSOAP.cacheable()) 
+					_cache.put(method.getName(), ret);
 				return ret;
 			}
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		public <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
 			for(Annotation at : a)

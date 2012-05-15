@@ -2,18 +2,11 @@ package com.kedzie.vbox.machine;
 
 import java.io.IOException;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,7 +36,6 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.metrics.MetricActivity;
-import com.kedzie.vbox.metrics.MetricView;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
@@ -58,33 +50,13 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	private IMachine _machine;
 	private MachineView _headerView;
 	private ListView _listView;
-	private EventThread _thread;
-	private EventService _eventService;
-	private ServiceConnection localConnection = new ServiceConnection() {
-		@Override public void onServiceConnected(ComponentName name, IBinder service) {	
-			_eventService = ((EventService.LocalBinder)service).getLocalBinder();
-		}
-		@Override public void onServiceDisconnected(ComponentName name) {
-			_eventService=null;
-		}
-	};
-	private Messenger _messenger = new Messenger( new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch(msg.what){
-			case EventThread.WHAT_EVENT:
-				updateState();
-				break;
-			}
-		}
-	});
 	private LocalBroadcastManager lbm;
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(EventService.com_virtualbox_EVENT)) {
 				Log.i(TAG, "Recieved Broadcast");
-				updateState();
+				new UpdateMachineViewTask(_vmgr).execute(_machine);
 			}
 		}
 	};
@@ -121,17 +93,12 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		updateState();
+		new UpdateMachineViewTask(_vmgr).execute(_machine);
 		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
-//		_thread = new EventThread(TAG , _vmgr);
-//		_thread.addListener(_messenger);
-//		_thread.start();
 	}
-
 
 	@Override
 	public void onStop() {
-//		_thread.quit();
 		new Thread() {
 			@Override
 			public void run() {
@@ -160,14 +127,14 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.machine_option_menu_refresh:
-			updateState();
+			new UpdateMachineViewTask(_vmgr).execute(_machine);
 			return true;
 		case R.id.machine_option_menu_preferences:
 			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class), REQUEST_CODE_PREFERENCES);
 			return true;
 		case R.id.machine_option_menu_metrics:
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, MetricView.Implementation.valueOf(Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION)))
+				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION))
 				.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 				.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
@@ -238,18 +205,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == REQUEST_CODE_PREFERENCES) {
+		if(requestCode == REQUEST_CODE_PREFERENCES) 
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
-			if(_eventService==null && Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS))
-				getActivity().bindService(new Intent(getActivity(), EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr), localConnection, Service.BIND_AUTO_CREATE);
-			else if(_eventService!=null && !Utils.getBooleanPreference(getActivity(), PreferencesActivity.NOTIFICATIONS)) {
-				getActivity().unbindService(localConnection);
-			}
-		}
-	}
-	
-	private void updateState() {
-		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
 	
 	public VBoxApplication getApp() { 

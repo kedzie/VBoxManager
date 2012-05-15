@@ -18,7 +18,7 @@ public class MetricView extends LinearLayout {
 	private MetricRenderer _renderer;
 	
 	/** Metric View component implementations */
-	public enum Implementation { SURFACEVIEW, OPENGL; }
+	public enum Implementation { SURFACEVIEW, OPENGL, VIEW; }
 
 	public MetricView(Context context, String title, Implementation implementation,
 			int max, String []metrics, IPerformanceMetric pm) {
@@ -27,10 +27,13 @@ public class MetricView extends LinearLayout {
 
 		if(implementation.equals(Implementation.SURFACEVIEW)) {
 			view = new SurfaceView(getContext());
-			_renderer = new MetricRendererSurfaceView(getContext(), (SurfaceView) view, max, metrics, pm);
+			_renderer = new MetricRendererSurfaceView(getContext(), (SurfaceView) view, max, metrics);
 		} else if (implementation.equals(Implementation.OPENGL)) {
 			view = new GLSurfaceView(getContext());
-			_renderer = new MetricRendererGL(getContext(), (GLSurfaceView)view, max, metrics, pm);
+			_renderer = new MetricRendererGL(getContext(), (GLSurfaceView)view, max, metrics);
+		} else if(implementation.equals(Implementation.VIEW)) {
+			view = new MetricRendererView(getContext(), max, metrics);
+			_renderer = ((MetricRendererView)view).getRenderer();
 		}
 		TextView titletextView = new TextView(getContext());
 		titletextView.setText(title);

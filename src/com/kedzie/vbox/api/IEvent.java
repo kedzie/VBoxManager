@@ -7,7 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
-import com.kedzie.vbox.soap.Cacheable;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -29,7 +28,7 @@ public interface IEvent extends IManagedObjectRef, Parcelable {
 		}
 	};
 	
-	@Cacheable @KSOAP(prefix="IEvent") public VBoxEventType getType();
+	@KSOAP(cacheable=true, prefix="IEvent") public VBoxEventType getType();
 	@KSOAP(prefix="IEvent") public void setProcessed();
 	@KSOAP(prefix="IEvent")	public Boolean waitProcessed(@KSOAP(type="unsignedInt", value="timeout") int timeout);
 }

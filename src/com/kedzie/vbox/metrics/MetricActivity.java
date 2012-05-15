@@ -1,11 +1,9 @@
 package com.kedzie.vbox.metrics;
 
-import java.io.IOException;
 import java.lang.Thread.State;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -14,7 +12,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
-import com.kedzie.vbox.api.IPerformanceCollector;
 import com.kedzie.vbox.metrics.MetricView.Implementation;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
@@ -24,7 +21,6 @@ import com.kedzie.vbox.task.ConfigureMetricsTask;
  * @author Marek Kedzierski
  */
 public class MetricActivity extends SherlockActivity  {
-	private static final String TAG = MetricActivity.class.getSimpleName();
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	public static final String INTENT_TITLE="t",INTENT_OBJECT = "o",
 			INTENT_RAM_AVAILABLE = "ra", INTENT_RAM_METRICS="rm",
@@ -45,21 +41,16 @@ public class MetricActivity extends SherlockActivity  {
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		int ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
 		Implementation _i = Implementation.valueOf(getIntent().getStringExtra(INTENT_IMPLEMENTATION));
-		try {
-			IPerformanceCollector pc = _vmgr.getVBox().getPerformanceCollector();
-			cpuV = new MetricView(this, "CPU", _i, 100000, cpuMetrics, pc.getMetrics(cpuMetrics, _object).get(0));
-			ramV = new MetricView(this,"Memory", _i, ramAvailable*1000, ramMetrics, pc.getMetrics(ramMetrics, _object).get(0));
+		cpuV = new MetricView(this, "CPU", _i, 100000, cpuMetrics, null);
+		ramV = new MetricView(this,"Memory", _i, ramAvailable*1000, ramMetrics, null);
 
-			LinearLayout contentView = new LinearLayout(this);
-    		contentView.setOrientation(LinearLayout.VERTICAL);
-    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    		params.weight=.5f;
-    		contentView.addView(cpuV, params);
-    		contentView.addView(ramV, params);
-    		setContentView(contentView);
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
+		LinearLayout contentView = new LinearLayout(this);
+		contentView.setOrientation(LinearLayout.VERTICAL);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		params.weight=.5f;
+		contentView.addView(cpuV, params);
+		contentView.addView(ramV, params);
+		setContentView(contentView);
 	}
 
 	@Override
@@ -96,14 +87,14 @@ public class MetricActivity extends SherlockActivity  {
 			}.execute(Utils.getIntPreference(this, PreferencesActivity.PERIOD));
 		}
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
 		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, PreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
-	
+
 	@Override
 	protected void onPause() {
 		cpuV.pause(); ramV.pause();
@@ -115,7 +106,7 @@ public class MetricActivity extends SherlockActivity  {
 		super.onResume();
 		cpuV.resume(); ramV.resume();
 	}
-	
+
 	@Override 
 	protected void onStop() {
 		if(_thread!=null){

@@ -1,7 +1,7 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.soap.Cacheable;
+import com.kedzie.vbox.soap.KSOAP;
 
 public interface IGuest extends IManagedObjectRef {
-	@Cacheable  public Integer getMemoryBalloonSize();
+	@KSOAP(cacheable=true)  public Integer getMemoryBalloonSize();
 }

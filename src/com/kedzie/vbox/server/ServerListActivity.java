@@ -29,7 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
@@ -39,7 +39,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 
 
-public class ServerListActivity extends SherlockActivity implements AdapterView.OnItemClickListener {
+public class ServerListActivity extends SherlockFragmentActivity implements AdapterView.OnItemClickListener {
 	private static final String TAG = ServerListActivity.class.getName();
 	static final int REQUEST_CODE_ADD = 9303,REQUEST_CODE_EDIT = 9304, RESULT_CODE_SAVE = 1,RESULT_CODE_DELETE = 2;
 	private static final String FIRST_RUN_PREFERENCE = "first_run";
@@ -51,6 +51,7 @@ public class ServerListActivity extends SherlockActivity implements AdapterView.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setSupportProgressBarIndeterminateVisibility(false);
         
         listView = new ListView(this);
         setContentView(listView);

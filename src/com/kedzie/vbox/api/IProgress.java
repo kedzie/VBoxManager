@@ -2,7 +2,6 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import com.kedzie.vbox.soap.Cacheable;
 import com.kedzie.vbox.soap.KSOAP;
 
 public interface IProgress extends IManagedObjectRef {
@@ -11,22 +10,22 @@ public interface IProgress extends IManagedObjectRef {
 	public void waitForCompletion(@KSOAP(type="unsignedInt", value="operation") int operation, @KSOAP(type="int", value="timeout") int millseconds) throws IOException;
 	public void waitForAsyncProgressCompletion(@KSOAP("pProgressAsync") String pProgressAsync); 
 	
-	@Cacheable public Integer getTimeout() ;
-	@Cacheable public Integer getResultCode() ;
-	@Cacheable public IVirtualBoxErrorInfo getErrorInfo() ;
+	@KSOAP(cacheable=true) public Integer getTimeout() ;
+	@KSOAP(cacheable=true) public Integer getResultCode() ;
+	@KSOAP(cacheable=true) public IVirtualBoxErrorInfo getErrorInfo() ;
 	
-	@Cacheable public String getDescription() ;
-	@Cacheable public Integer getPercent() ;
-	@Cacheable public Integer getTimeRemaining() ;
-	@Cacheable public String getOperation() ;
-	@Cacheable public Integer getOperationCount() ;
-	@Cacheable public String getOperationDescription() ;
-	@Cacheable public Integer getOperationPercent() ;
-	@Cacheable public Integer getOperationWeight() ;
-	@Cacheable public String getInitiator() ;
-	@Cacheable public Boolean getCancelled() ;
-	@Cacheable public Boolean getCancelable() ;
-	@Cacheable public Boolean getCompleted() ;
+	@KSOAP(cacheable=true) public String getDescription() ;
+	@KSOAP(cacheable=true) public Integer getPercent() ;
+	@KSOAP(cacheable=true) public Integer getTimeRemaining() ;
+	@KSOAP(cacheable=true) public String getOperation() ;
+	@KSOAP(cacheable=true) public Integer getOperationCount() ;
+	@KSOAP(cacheable=true) public String getOperationDescription() ;
+	@KSOAP(cacheable=true) public Integer getOperationPercent() ;
+	@KSOAP(cacheable=true) public Integer getOperationWeight() ;
+	@KSOAP(cacheable=true) public String getInitiator() ;
+	@KSOAP(cacheable=true) public Boolean getCancelled() ;
+	@KSOAP(cacheable=true) public Boolean getCancelable() ;
+	@KSOAP(cacheable=true) public Boolean getCompleted() ;
 	
 	public void cancel() throws IOException;
 	public void setTimeout(@KSOAP(type="unsignedInt", value="timeout") int timeout) throws IOException;

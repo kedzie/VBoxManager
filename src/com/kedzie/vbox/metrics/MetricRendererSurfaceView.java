@@ -13,14 +13,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.task.LoopingThread;
 
 public class MetricRendererSurfaceView  extends MetricRenderer implements SurfaceHolder.Callback {
 	private RenderThread _thread;
 	
-	public MetricRendererSurfaceView(Context ctx, SurfaceView view, int max, String []metrics, IPerformanceMetric pm) {
-		super(ctx, max, metrics, pm);
+	public MetricRendererSurfaceView(Context ctx, SurfaceView view, int max, String []metrics) {
+		super(ctx, max, metrics);
 		view.getHolder().addCallback(this);
 		_thread = new RenderThread(view.getHolder());
 	}
@@ -92,7 +91,6 @@ public class MetricRendererSurfaceView  extends MetricRenderer implements Surfac
 				canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 				canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);
 			}
-			canvas.drawText(_max+""+_baseMetric.getUnit(), bounds.left+20, bounds.bottom-(float)(_max*vStep), textPaint);
 
 			for(String metric : _metrics) {
 				if(!data.containsKey(metric) || data.get(metric).isEmpty()) continue;
