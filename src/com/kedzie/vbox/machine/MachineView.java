@@ -31,9 +31,9 @@ public class MachineView extends LinearLayout {
 	}
 	
 	public void update(IMachine m) {
-		osIcon.setImageResource(_app.getDrawableResource("ic_list_os_"+m.getOSTypeId().toLowerCase()));
+		osIcon.setImageResource(_app.getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
 		nameText.setText(m.getName());
-		stateIcon.setImageResource( _app.getDrawableResource(m.getState()) );
+		stateIcon.setImageResource( _app.getDrawable(m.getState()) );
 		stateText.setText(m.getState().value());
 		if(m.getCurrentSnapshot()!=null)  
 			snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")" + (m.getCurrentStateModified() ? "*" : ""));

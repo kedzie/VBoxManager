@@ -9,8 +9,10 @@ import android.os.Parcelable;
 
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
+import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface ISession extends IManagedObjectRef, Parcelable {
 	
 	static ClassLoader loader = ISession.class.getClassLoader();
@@ -30,7 +32,7 @@ public interface ISession extends IManagedObjectRef, Parcelable {
 	};
 
 	public void unlockMachine() throws IOException;;
-	public IConsole getConsole() throws IOException;
+	@KSOAP(cacheable=true) public IConsole getConsole() throws IOException;
 	public SessionType getType() throws IOException;
 	public SessionState getState() throws IOException;
 }

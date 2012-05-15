@@ -18,13 +18,13 @@ import com.kedzie.vbox.task.MachineTask;
 
 public class TakeSnapshotFragment extends SherlockDialogFragment {
 
-	protected IMachine _machine;
-	protected VBoxSvc _vmgr;
-	protected View _view;
-	protected TextView snapshotName;
-	protected TextView snapshotDescription;
-	protected Button saveButton;
-	protected Button cancelButton;
+	private IMachine _machine;
+	private VBoxSvc _vmgr;
+	private View _view;
+	private TextView snapshotName;
+	private TextView snapshotDescription;
+	private Button saveButton;
+	private Button cancelButton;
 	
 	public static TakeSnapshotFragment getInstance(Bundle args) {
 		TakeSnapshotFragment f = new TakeSnapshotFragment();
@@ -36,7 +36,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_vmgr = BundleBuilder.getProxy(getArguments(), VBoxSvc.BUNDLE, VBoxSvc.class);
-		_machine = BundleBuilder.getProxy(getArguments(), "machine", IMachine.class);
+		_machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
 	}
 
 	@Override

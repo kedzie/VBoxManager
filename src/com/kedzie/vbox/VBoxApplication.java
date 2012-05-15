@@ -11,7 +11,7 @@ import android.preference.PreferenceManager;
 import com.kedzie.vbox.api.jaxb.MachineState;
 
 /**
- * 
+ * Stores a resource map storing OS Icons, Virtual Machine Action Icons, and Machine State Icons.
  * @author Marek Kedzierski
  */
 public class VBoxApplication extends Application {
@@ -77,6 +77,8 @@ public class VBoxApplication extends Application {
 		resources_color.put(VMAction.RESTORE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_c);
 		resources.put(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del);
 		resources_color.put(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del_c);
+		resources.put(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metric);
+		resources_color.put(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metric);
 	}
 
 	/**
@@ -91,7 +93,7 @@ public class VBoxApplication extends Application {
 	 * @param name name of resource
 	 * @return address of resource
 	 */
-	public int getDrawableResource(String name) {
+	public int getDrawable(String name) {
 		if(!getDrawables().containsKey(name)) {
 			int id = getResources().getIdentifier(name, "drawable", getPackageName());
 			getDrawables().put(name, id!=0 ? id : R.drawable.ic_list_os_other);
@@ -104,7 +106,7 @@ public class VBoxApplication extends Application {
 	 * @param name name of resource
 	 * @return address of resource
 	 */
-	public int getDrawableResource(VMAction name) {
+	public int getDrawable(VMAction name) {
 		return getDrawables().get(name.name());
 	}
 	
@@ -113,7 +115,7 @@ public class VBoxApplication extends Application {
 	 * @param state name of resource
 	 * @return address of resource
 	 */
-	public int getDrawableResource(MachineState state) {
+	public int getDrawable(MachineState state) {
 		return getDrawables().containsKey(state.name())  ? getDrawables().get(state.name()) : R.drawable.ic_list_start;	
 	}
 	

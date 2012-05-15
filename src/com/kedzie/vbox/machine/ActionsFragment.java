@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.CachedArrayAdapter;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
@@ -46,11 +46,21 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
+	/** VirtualBox API */
 	private VBoxSvc _vmgr;
+	
+	/** The Virtual Machine */
 	private IMachine _machine;
+	
 	private MachineView _headerView;
 	private ListView _listView;
+	
+	/** Local Broadcast Manager */
 	private LocalBroadcastManager lbm;
+	
+	private boolean _dualPane;
+	
+	/** Event-handling local broadcasts */
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -61,9 +71,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		}
 	};
 	
-	public static ActionsFragment getInstance(Bundle args) {
+	public static ActionsFragment getInstance(Bundle arguments) {
 		ActionsFragment f = new ActionsFragment();
-		f.setArguments(args);
+		f.setArguments(arguments);
 		return f;
 	}
 	
@@ -78,7 +88,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
         super.onCreate(savedInstanceState);
         _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
         _machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
-        setHasOptionsMenu(true);
+        _dualPane = getArguments().getBoolean("dualPane");
+        setHasOptionsMenu(!_dualPane);
     }
 
 	@Override
@@ -93,8 +104,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		new UpdateMachineViewTask(_vmgr).execute(_machine);
 		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
+		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
 
 	@Override
@@ -245,7 +256,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	 */
 	class HandleEventTask extends BaseTask<Bundle, ISessionStateChangedEvent> {
 		
-		public HandleEventTask(VBoxSvc vmgr) {  super( "HandleEventTask", getActivity(), vmgr, "Handling Event"); }
+		public HandleEventTask(VBoxSvc vmgr) {  
+			super( "HandleEventTask", getSherlockActivity(), vmgr, "Handling Event");
+		}
 
 		@Override
 		protected ISessionStateChangedEvent work(Bundle... params) throws Exception {
@@ -259,7 +272,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		protected void onPostExecute(ISessionStateChangedEvent result)	{
 			super.onPostExecute(result);
 			if(result!=null)	{
-				Utils.toast(getActivity(), "Session  changed State: "+result.getState());
+				Utils.toast(getActivity(), "Session changed State: "+result.getState());
 			}
 		}
 	}
@@ -267,21 +280,20 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	/**
 	 * List Adapter for Virtual Machine Actions 
 	 */
-	class MachineActionAdapter extends ArrayAdapter<VMAction> {
+	class MachineActionAdapter extends CachedArrayAdapter<VMAction> {
 		private final LayoutInflater _layoutInflater;
 		
 		public MachineActionAdapter(VMAction []actions) {
-			super(getActivity(), 0, actions);
+			super(getActivity(), actions);
 			_layoutInflater = LayoutInflater.from(getActivity());
 		}
 
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null) 
 				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-			((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position).toString());
-			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawableResource(getItem(position)));
+			((TextView)findViewById(view, R.id.action_item_text)).setText(getItem(position).toString());
+			((ImageView)findViewById(view, R.id.action_item_icon)).setImageResource( getApp().getDrawable(getItem(position)));
 			return view;
 		}
 	}
-	
 }

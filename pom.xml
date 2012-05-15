@@ -1,0 +1,207 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>virtualbox</groupId>
+	<artifactId>vbox-android</artifactId>
+	<version>2.0.0</version>
+
+	<packaging>apk</packaging>
+	<name>VirtualBox Manager</name>
+	<description>Manage/Monitor Virtual Machines on Android mobile device</description>
+
+	<scm>
+		<connection>scm:git:git://github.com/kedzie/VBoxManager.git</connection>
+		<developerConnection>scm:git:git://github.com/kedzie/VBoxManager.git</developerConnection>
+		<url>https://github.com/kedzie/VBoxManager</url>
+	</scm>
+
+	<properties>
+		<environment>development</environment>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>4.0.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>support-v4</artifactId>
+			<version>r7</version>
+		</dependency>
+
+        <dependency>
+			<groupId>pl.polidea.treeview</groupId>
+			<artifactId>treeview</artifactId>
+			<version>1.0.0</version>
+			<type>apklib</type>
+        </dependency>
+
+        <dependency>
+			<groupId>com.actionbarsherlock</groupId>
+			<artifactId>library</artifactId>
+			<version>4.0.3-SNAPSHOT</version>
+			<type>apklib</type>
+        </dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<directory>bin</directory>
+		<outputDirectory>bin/classes</outputDirectory>
+		<finalName>${project.artifactId}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+					<artifactId>android-maven-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestDebuggable>${android.debuggable}</manifestDebuggable>
+					<manifestVersionName/>
+					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
+					<sdk>
+						<platform>15</platform>
+					</sdk>
+					<genDirectory>${project.build.directory}/generated-sources/r</genDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>development</value>
+				</property>
+			</activation>
+			<properties>
+				<android.debuggable>true</android.debuggable>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>production</id> <!-- Signed/Zipaligned APK for Google Market Distribution -->
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>production</value>
+				</property>
+			</activation>
+			<properties>
+				<android.debuggable>false</android.debuggable>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<phase>package</phase>
+								<goals>
+								<goal>sign</goal>
+								<goal>verify</goal>
+								</goals>
+								<configuration>
+									<removeExistingSignatures>true</removeExistingSignatures>
+									<archive>${project.build.directory}/${project.artifactId}.apk</archive>
+									<keystore>android</keystore>
+									<storepass>android</storepass>
+									<keypass>android</keypass>
+									<alias>kedzieandroid</alias>
+									<verbose>true</verbose>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+						<artifactId>android-maven-plugin</artifactId>
+						<inherited>true</inherited>
+						<configuration>
+							<sign>
+								<debug>false</debug>
+							</sign>
+							<zipalign>
+								<verbose>true</verbose>
+								<inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
+            					<outputApk>${project.build.directory}/${project.artifactId}-signed-aligned.apk</outputApk>
+							</zipalign>
+						</configuration>
+						<executions>
+							<execution>
+								<id>zipalign</id>
+								<phase>package</phase>
+								<goals>
+									<goal>zipalign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>attach</id>
+								<phase>package</phase>
+								<goals><goal>attach-artifact</goal></goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-signed-aligned.apk</file>
+											<type>apk</type>
+											<classifier>signed-aligned</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>codehause</id>
+			<name>codehaus</name>
+			<url>http://repository.codehaus.org</url>
+		</repository>
+	</repositories>
+
+</project>

@@ -9,9 +9,11 @@ public class MachineFragmentActivity extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addTab("Actions", ActionsFragment.getInstance(getIntent().getExtras()));
-		addTab("Info", InfoFragment.getInstance(getIntent().getExtras()));
-		addTab("Log", LogFragment.getInstance(getIntent().getExtras()));
-		addTab("Snapshots", SnapshotFragment.getInstance(getIntent().getExtras()));
+		if(savedInstanceState==null) {
+			addTab("Actions", ActionsFragment.getInstance(getIntent().putExtra("dualPane", false).getExtras()));
+			addTab("Info", InfoFragment.getInstance(getIntent().getExtras()));
+			addTab("Log", LogFragment.getInstance(getIntent().getExtras()));
+			addTab("Snapshots", SnapshotFragment.getInstance(getIntent().getExtras()));
+		}
 	}
 }
