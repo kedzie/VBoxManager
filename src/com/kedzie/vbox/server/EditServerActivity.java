@@ -1,9 +1,6 @@
 package com.kedzie.vbox.server;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -11,31 +8,52 @@ import com.kedzie.vbox.R;
 
 public class EditServerActivity extends SherlockActivity {
 	public static final String INTENT_SERVER = "server";
-	
+
 	protected Server _server;
+
+	private TextView nameText;
+	private TextView hostText;
+	private TextView portText;
+	private TextView userText;
+	private TextView passText;
+
+	@Override
+	public void onCreate(Bundle state) {
+		super.onCreate(state);
+		setContentView(R.layout.server);
+		_server = (Server)(state==null ? 
+				getIntent().getParcelableExtra(INTENT_SERVER) 
+				: state.getParcelable(INTENT_SERVER));
+		nameText = (TextView)findViewById(R.id.server_name);
+		hostText = (TextView)findViewById(R.id.server_host);
+		portText = (TextView)findViewById(R.id.server_port);
+		userText = (TextView)findViewById(R.id.server_username);
+		passText = (TextView)findViewById(R.id.server_password);
+		nameText.setText(_server.getName());
+		hostText.setText(_server.getHost());
+		portText.setText(""+_server.getPort());
+		userText.setText(_server.getUsername());
+		passText.setText(_server.getPassword());
+	}
 	
-	@Override public Object onRetainNonConfigurationInstance() {
-		return _server;
+	private void populateServer() {
+		_server.setName( nameText.getText().toString() );
+		_server.setHost( hostText.getText().toString() );
+		_server.setPort( Integer.parseInt( portText.getText().toString()) );
+		_server.setUsername( userText.getText().toString() );
+		_server.setPassword( passText.getText().toString() );
 	}
 
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.server);
-       	_server = (Server)(getLastNonConfigurationInstance()==null ? getIntent().getParcelableExtra(INTENT_SERVER) : getLastNonConfigurationInstance());
-       	((TextView)findViewById(R.id.server_name)).setText(_server.getName());
-        ((TextView)findViewById(R.id.server_host)).setText(_server.getHost());
-        ((TextView)findViewById(R.id.server_port)).setText(""+_server.getPort());
-        ((TextView)findViewById(R.id.server_username)).setText(_server.getUsername());
-        ((TextView)findViewById(R.id.server_password)).setText(_server.getPassword());
-        ((ImageButton)findViewById(R.id.button_save)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { save(); } });
-        ((ImageButton)findViewById(R.id.button_delete)).setOnClickListener( new OnClickListener() { @Override public void onClick(View v) { delete(); } });
-    }
-	
+	protected void onSaveInstanceState(Bundle outState) {
+		populateServer();
+		outState.putParcelable(INTENT_SERVER, _server);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-			 getSupportMenuInflater().inflate(R.menu.server_options_menu, menu);
-			    return true;
+		getSupportMenuInflater().inflate(R.menu.server_options_menu, menu);
+		return true;
 	}
 
 	@Override
@@ -51,23 +69,20 @@ public class EditServerActivity extends SherlockActivity {
 			return true;
 		}
 	}
-	
-	@Override public void onBackPressed() {
+
+	@Override 
+	public void onBackPressed() {
 		setResult(ServerListActivity.RESULT_CANCELED);
 		super.onBackPressed();
 	}
 
 	private void save() {
-		_server.setName( ((TextView)findViewById(R.id.server_name)).getText().toString() );
-		_server.setHost( ((TextView)findViewById(R.id.server_host)).getText().toString() );
-		_server.setPort( Integer.parseInt( ((TextView)findViewById(R.id.server_port)).getText().toString()) );
-		_server.setUsername( ((TextView)findViewById(R.id.server_username)).getText().toString() );
-		_server.setPassword(((TextView)findViewById(R.id.server_password)).getText().toString() );
+		populateServer();
 		getIntent().putExtra(INTENT_SERVER, _server);
 		setResult(ServerListActivity.RESULT_CODE_SAVE, getIntent());
 		finish();
 	}
-	
+
 	private void delete() {
 		setResult(ServerListActivity.RESULT_CODE_DELETE, getIntent());
 		finish();

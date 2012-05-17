@@ -105,12 +105,12 @@ public class SnapshotFragment extends SherlockFragment {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		menu.add(Menu.NONE, R.id.context_menu_restore_snapshot, Menu.NONE, VMAction.RESTORE_SNAPSHOT.toString());
-		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, "Delete Snapshot");
+		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, VMAction.DELETE_SNAPSHOT.toString());
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		TreeNodeInfo<ISnapshot> nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+		TreeNodeInfo<ISnapshot> nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo)item.getMenuInfo()).position);
 		 ISnapshot snapshot = nodeinfo.getId();
 		  switch (item. getItemId()) {
 		  case R.id.context_menu_delete_snapshot:  

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,7 +24,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.CachedArrayAdapter;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
@@ -64,7 +64,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if(intent.getAction().equals(EventService.com_virtualbox_EVENT)) {
+			if(intent.getAction().equals(EventIntentService.com_virtualbox_EVENT)) {
 				Log.i(TAG, "Recieved Broadcast");
 				new UpdateMachineViewTask(_vmgr).execute(_machine);
 			}
@@ -104,7 +104,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
+		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
 		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
 
@@ -142,15 +142,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 			return true;
 		case R.id.machine_option_menu_preferences:
 			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class), REQUEST_CODE_PREFERENCES);
-			return true;
-		case R.id.machine_option_menu_metrics:
-			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-				.putExtra(MetricActivity.INTENT_IMPLEMENTATION, Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION))
-				.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
-				.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
-				.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
-				.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
-				.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 			return true;
 		default:
 			return true;
@@ -205,12 +196,19 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.TAKE_SNAPSHOT)) 	{
-			Bundle b = new BundleBuilder()
-								.putParcelable(VBoxSvc.BUNDLE, _vmgr)
-								.putProxy(IMachine.BUNDLE, _machine)
-								.create();
-			TakeSnapshotFragment.getInstance(b)
+			TakeSnapshotFragment.getInstance(new BundleBuilder()
+										.putParcelable(VBoxSvc.BUNDLE, _vmgr)
+										.putProxy(IMachine.BUNDLE, _machine)
+										.create())
 				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
+		} else if(action.equals(VMAction.VIEW_METRICS)) {
+			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION))
+					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
+					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
+					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
+					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
+					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 		}
 	}
 	
@@ -230,7 +228,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	class UpdateMachineViewTask extends BaseTask<IMachine, IMachine> {
 		
 		public UpdateMachineViewTask(VBoxSvc vmgr) {
-			super(UpdateMachineViewTask.class.getSimpleName(), getSherlockActivity(), vmgr, "Loading Machine");
+			super(UpdateMachineViewTask.class.getSimpleName(), getSherlockActivity(), vmgr);
 		}
 		
 		@Override 
@@ -257,12 +255,12 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	class HandleEventTask extends BaseTask<Bundle, ISessionStateChangedEvent> {
 		
 		public HandleEventTask(VBoxSvc vmgr) {  
-			super( "HandleEventTask", getSherlockActivity(), vmgr, "Handling Event");
+			super( "HandleEventTask", getSherlockActivity(), vmgr);
 		}
 
 		@Override
 		protected ISessionStateChangedEvent work(Bundle... params) throws Exception {
-			IEvent event = BundleBuilder.getProxy(params[0], EventThread.BUNDLE_EVENT, IEvent.class);
+			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
 			if(event instanceof ISessionStateChangedEvent)
 				return (ISessionStateChangedEvent) event;
 			return null;
@@ -280,20 +278,20 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	/**
 	 * List Adapter for Virtual Machine Actions 
 	 */
-	class MachineActionAdapter extends CachedArrayAdapter<VMAction> {
+	class MachineActionAdapter extends ArrayAdapter<VMAction> {
 		private final LayoutInflater _layoutInflater;
 		
 		public MachineActionAdapter(VMAction []actions) {
-			super(getActivity(), actions);
+			super(getActivity(), 0, actions);
 			_layoutInflater = LayoutInflater.from(getActivity());
 		}
 
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null) 
 				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-			((TextView)findViewById(view, R.id.action_item_text)).setText(getItem(position).toString());
-			((ImageView)findViewById(view, R.id.action_item_icon)).setImageResource( getApp().getDrawable(getItem(position)));
-			return view;
+			((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position).toString());
+			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawable(getItem(position)));
+			return view;                                                                                                                                                                                                                                                          
 		}
 	}
 }

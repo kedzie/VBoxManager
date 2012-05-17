@@ -18,6 +18,7 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 	
 	/** VirtualBox API */
 	private VBoxSvc _vmgr;
+	private EventIntentService _eventService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,15 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 		setContentView(R.layout.fragment_layout_support);
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+		startService(new Intent(this, EventIntentService.class)
+			.putExtra(VBoxSvc.BUNDLE, _vmgr));
+	}
+
+	@Override
+	protected void onDestroy() {
+		if(_eventService!=null)
+			stopService(new Intent(this, EventIntentService.class));
+		super.onDestroy();
 	}
 
 	@Override

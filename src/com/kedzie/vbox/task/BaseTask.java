@@ -87,12 +87,11 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 * @param vmgr VirtualBox API service
 	 * @param msg  operation description
 	 */
-	public BaseTask(String TAG, SherlockFragmentActivity ctx, VBoxSvc vmgr, String msg) {
+	public BaseTask(String TAG, SherlockFragmentActivity ctx, VBoxSvc vmgr) {
 		this.TAG = TAG;
 		this.context= ctx;
 		_sherlockActivity = ctx;
 		_vmgr=vmgr;
-		this.description=msg;
 	}
 	
 	@Override

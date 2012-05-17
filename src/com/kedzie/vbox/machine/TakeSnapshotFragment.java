@@ -23,8 +23,6 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 	private View _view;
 	private TextView snapshotName;
 	private TextView snapshotDescription;
-	private Button saveButton;
-	private Button cancelButton;
 	
 	public static TakeSnapshotFragment getInstance(Bundle args) {
 		TakeSnapshotFragment f = new TakeSnapshotFragment();
@@ -44,9 +42,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 		_view = inflater.inflate(R.layout.snapshot_dialog, null);
 		snapshotName = (TextView)_view.findViewById(R.id.snapshot_name);
 		snapshotDescription = (TextView)_view.findViewById(R.id.snapshot_description);
-		saveButton = (Button)_view.findViewById(R.id.button_save);
-		cancelButton = (Button)_view.findViewById(R.id.button_cancel);
-		saveButton.setOnClickListener( new View.OnClickListener() {
+		((Button)_view.findViewById(R.id.button_save)).setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				dismiss();
@@ -57,7 +53,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 				}.execute();	
 			}
 		});
-		cancelButton.setOnClickListener(new View.OnClickListener() { 
+		((Button)_view.findViewById(R.id.button_cancel)).setOnClickListener(new View.OnClickListener() { 
 			public void onClick(View v) { 
 				dismiss(); 
 			} 

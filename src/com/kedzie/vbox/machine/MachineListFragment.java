@@ -57,12 +57,11 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	private int _curCheckPosition;
 	private boolean _dualPane;
 	private SelectMachineListener _listener;
-	private EventService _eventService;
 	private LocalBroadcastManager lbm;
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if(intent.getAction().equals(EventService.com_virtualbox_EVENT)) {
+			if(intent.getAction().equals(EventIntentService.com_virtualbox_EVENT)) {
 				Log.i(TAG, "Recieved Broadcast");
 				new HandleEventTask(_vmgr).execute(intent.getExtras());
 			}
@@ -174,16 +173,12 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onStart() {
 		super.onStart();
-		lbm.registerReceiver(_receiver, new IntentFilter(EventService.com_virtualbox_EVENT));
-		if(_eventService==null ) 
-			getActivity().startService(new Intent(getActivity(), EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
 	}
 
 	@Override
 	public void onDestroy() {
 		try {  
-			if(_eventService!=null)
-				getActivity().stopService(new Intent(getActivity(), EventService.class));
 			if(_vmgr.getVBox()!=null)  
 				_vmgr.getVBox().logoff(); 
 		} catch (Exception e) { 
@@ -301,12 +296,12 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	class HandleEventTask extends BaseTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
-			super( "HandleEventTask", getSherlockActivity(), vmgr, "Handling Event");
+			super( "HandleEventTask", getSherlockActivity(), vmgr);
 		}
 
 		@Override
 		protected IMachine work(Bundle... params) throws Exception {
-			IEvent event = BundleBuilder.getProxy(params[0], EventThread.BUNDLE_EVENT, IEvent.class);
+			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
 			if(event instanceof IMachineStateChangedEvent) {
 				IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
 				m.getName();m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();

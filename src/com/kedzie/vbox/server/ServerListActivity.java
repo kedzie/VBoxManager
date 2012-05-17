@@ -38,29 +38,31 @@ import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 
-
-public class ServerListActivity extends SherlockFragmentActivity implements AdapterView.OnItemClickListener {
+public class ServerListActivity extends SherlockFragmentActivity {
 	private static final String TAG = ServerListActivity.class.getName();
-	static final int REQUEST_CODE_ADD = 9303,REQUEST_CODE_EDIT = 9304, RESULT_CODE_SAVE = 1,RESULT_CODE_DELETE = 2;
+	static final int REQUEST_CODE_ADD = 0xF000, REQUEST_CODE_EDIT = 0x0F00, RESULT_CODE_SAVE = 0x00F0, RESULT_CODE_DELETE = 0x000F;
 	private static final String FIRST_RUN_PREFERENCE = "first_run";
-	
-	private ServerDB _db = new ServerDB(this);
+
+	private ServerDB _db;
 	private ListView listView;
-	
+
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setSupportProgressBarIndeterminateVisibility(false);
-        
-        listView = new ListView(this);
-        setContentView(listView);
-        registerForContextMenu(listView);
-        listView.setOnItemClickListener(this);
-        
-        new LoadServersTask().execute();
-    }
-	
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		_db = new ServerDB(this);
+		listView = new ListView(this);
+		setContentView(listView);
+		registerForContextMenu(listView);
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				new LogonTask().execute(getAdapter().getItem(position));
+			}
+		});
+		new LoadServersTask().execute();
+	}
+
 	protected void checkIfFirstRun(Server s) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		if(!prefs.contains(FIRST_RUN_PREFERENCE)) {
@@ -81,105 +83,94 @@ public class ServerListActivity extends SherlockFragmentActivity implements Adap
 			.show();
 		}
 	}
-	
+
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		_db.close();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected ArrayAdapter<Server> getAdapter() {
 		return (ArrayAdapter<Server>)listView.getAdapter();
 	}
-	
+
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		new LogonTask().execute(getAdapter().getItem(position));
-	}
-	
-		@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-			 getSupportMenuInflater().inflate(R.menu.server_list_options_menu, menu);
-			    return true;
+		getSupportMenuInflater().inflate(R.menu.server_list_options_menu, menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
-		 switch (item.getItemId()) {
-		    case R.id.server_list_option_menu_add:
-		        addServer();
-		        return true;
-		    default:
-		        return true;
-		    }
+		switch (item.getItemId()) {
+		case R.id.server_list_option_menu_add:
+			addServer();
+			return true;
+		default:
+			return true;
+		}
 	}
 
-	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		getMenuInflater().inflate(R.menu.server_list_context_menu, menu);
-		menu.setHeaderTitle("VirtualBox Server");
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-	  int position = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
-	Server s = getAdapter().getItem(position);
-	  switch (item.getItemId()) {
-	  case R.id.server_list_context_menu_select:
-		  new LogonTask().execute(getAdapter().getItem(position));
-	        return true;
-	  case R.id.server_list_context_menu_edit:
-        startActivityForResult(new Intent(this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, s), REQUEST_CODE_EDIT);
-        return true;
-	  case R.id.server_list_context_menu_delete:
-		  _db.delete(s.getId());
-		  getAdapter().remove(s);
-		  getAdapter().notifyDataSetChanged();
-	    return true;
-	  }
-	  return true;
-	}
-	
- 	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
- 		if(data == null) return;
- 		Server s = data.getParcelableExtra(EditServerActivity.INTENT_SERVER);
-        switch(resultCode) {
-		case(RESULT_CODE_SAVE):
-			_db.insertOrUpdate(s);
-			if(requestCode==REQUEST_CODE_EDIT) {
-				int pos = getAdapter().getPosition(s);
-				getAdapter().setNotifyOnChange(false);
-				getAdapter().remove(s);
-				getAdapter().insert(s, pos);
-			} else if (requestCode == REQUEST_CODE_ADD) {
-				getAdapter().add(s);
-				checkIfFirstRun(s);
-			}
-			break;
-		case(RESULT_CODE_DELETE):
+		int position = ((AdapterContextMenuInfo)item.getMenuInfo()).position;
+		Server s = getAdapter().getItem(position);
+		switch (item.getItemId()) {
+		case R.id.server_list_context_menu_select:
+			new LogonTask().execute(getAdapter().getItem(position));
+			return true;
+		case R.id.server_list_context_menu_edit:
+			startActivityForResult(new Intent(this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, s), REQUEST_CODE_EDIT);
+			return true;
+		case R.id.server_list_context_menu_delete:
 			_db.delete(s.getId());
 			getAdapter().remove(s);
-			break;
-        }
-        getAdapter().notifyDataSetChanged();
-    }
- 	
- 	/**
+			getAdapter().notifyDataSetChanged();
+			return true;
+		}
+		return true;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(data == null) return;
+		Server s = data.getParcelableExtra(EditServerActivity.INTENT_SERVER);
+		if((requestCode&resultCode) == (REQUEST_CODE_EDIT&RESULT_CODE_DELETE)) {
+			_db.delete(s.getId());
+			getAdapter().remove(s);
+		} else if ((requestCode&resultCode) == (REQUEST_CODE_EDIT&RESULT_CODE_SAVE)) {
+			_db.update(s);
+			int pos = getAdapter().getPosition(s);
+			getAdapter().setNotifyOnChange(false);
+			getAdapter().remove(s);
+			getAdapter().insert(s, pos);
+		} else if ((requestCode&resultCode) == (REQUEST_CODE_ADD&RESULT_CODE_SAVE)) {
+			_db.insert(s);
+			getAdapter().add(s);
+			checkIfFirstRun(s);
+		}
+		getAdapter().notifyDataSetChanged();
+	}
+
+	/**
 	 * Launch activity to create a new Server
 	 */
 	protected void addServer() {
 		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", 18083, "", "")), REQUEST_CODE_ADD);
 	}
- 	
- 	/**
- 	 * Server list adapter
- 	 */
- 	class ServerListAdapter extends ArrayAdapter<Server> {
+
+	/**
+	 * Server list adapter
+	 */
+	class ServerListAdapter extends ArrayAdapter<Server> {
 		private final LayoutInflater _layoutInflater;
-		
+
 		public ServerListAdapter(Context context, List<Server> servers) {
 			super(context, 0, servers);
 			_layoutInflater = LayoutInflater.from(context);
@@ -193,22 +184,22 @@ public class ServerListActivity extends SherlockFragmentActivity implements Adap
 			return view;
 		}
 	}
- 	
- 	/**
- 	 * Logs on and launches MachineList Activity
- 	 */
- 	class LogonTask extends BaseTask<Server, IVirtualBox> {
-		
+
+	/**
+	 * Logs on and launches MachineList Activity
+	 */
+	class LogonTask extends BaseTask<Server, IVirtualBox> {
+
 		public LogonTask() { 
 			super( "LogonTask", ServerListActivity.this, null, "Connecting");
 		}
-		
+
 		@Override
 		protected IVirtualBox work(Server... params) throws Exception {
 			_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
-			 _vmgr.logon(params[0].getUsername(), params[0].getPassword());
-			 _vmgr.getVBox().getVersion();
-			 return _vmgr.getVBox();
+			_vmgr.logon(params[0].getUsername(), params[0].getPassword());
+			_vmgr.getVBox().getVersion();
+			return _vmgr.getVBox();
 		}
 
 		@Override protected void onPostExecute(IVirtualBox vbox) {
@@ -219,18 +210,18 @@ public class ServerListActivity extends SherlockFragmentActivity implements Adap
 			super.onPostExecute(vbox);
 		}
 	}
- 	
- 	/**
- 	 * Load Servers from DB
- 	 */
- 	class LoadServersTask extends BaseTask<Void, List<Server>>	{
- 		
- 		public LoadServersTask() {
- 			super("LoadServersTask", ServerListActivity.this,  null, "Loading Servers"); 
- 		}
+
+	/**
+	 * Load Servers from DB
+	 */
+	class LoadServersTask extends BaseTask<Void, List<Server>>	{
+
+		public LoadServersTask() {
+			super("LoadServersTask", ServerListActivity.this,  null); 
+		}
 		@Override 
 		protected List<Server> work(Void... params) throws Exception { 
-			return _db.getServers(); 
+			return _db.query(); 
 		}
 		@Override 
 		protected void onPostExecute(List<Server> result)	{
@@ -238,17 +229,17 @@ public class ServerListActivity extends SherlockFragmentActivity implements Adap
 			listView.setAdapter( new ServerListAdapter(ServerListActivity.this, result) );
 			if(result.isEmpty()) {
 				new AlertDialog.Builder(ServerListActivity.this)
-				.setTitle("Add new server")
-				.setMessage("You have no VirtualBox servers defined.  Would you like to add one?")
-				.setIcon(android.R.drawable.ic_menu_help)
-				.setPositiveButton("OK", new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						addServer();
-					}
-				})
-				.setCancelable(true)
-				.show();
+					.setTitle("Add new VirtualBox server?")
+					.setMessage("You have no servers defined.  Would you like to add one?")
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setPositiveButton("OK", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							addServer();
+						}
+					})
+					.setCancelable(true)
+					.show();
 			}
 		}
 	}
@@ -258,48 +249,53 @@ public class ServerListActivity extends SherlockFragmentActivity implements Adap
 	 */
 	class ServerDB extends SQLiteOpenHelper {
 		public ServerDB(Context context) { 
-	    	super(context, "vbox.db", null, 2);  
-	    }
-	    @Override
-	    public void onCreate(SQLiteDatabase db) { 
-	    	Log.i("ServerSQL", "Creating database schema");
-	    	db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, NAME TEXT, HOST TEXT, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
-	    }
-	    @Override
-	    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	        Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-	        db.execSQL("DROP TABLE IF EXISTS SERVERS");
-	        onCreate(db);
-	    }
-	    public void insertOrUpdate(Server s) {
-	    	ContentValues c = new ContentValues();
-	    	c.put("HOST", s.getHost());
-	    	c.put("NAME", s.getName());
-	    	c.put("PORT", s.getPort());
-	    	c.put("USERNAME", s.getUsername());
-	    	c.put("PASSWORD", s.getPassword());
-	    	if(s.getId()==-1) {
-				s.setId(getWritableDatabase().insert("SERVERS", null, c));
-			} else {
-				c.put("ID", s.getId());
-				getWritableDatabase().update("SERVERS", c, "ID  =  ?", new String[] {s.getId().toString()} );
-			}
-	    }
-	    public void delete(Long id) {
-	    	getWritableDatabase().delete("SERVERS", "ID =  ?", new String[] {id.toString()} );
-	    }
-	    public List<Server> getServers() {
-	    	Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "NAME", "HOST", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
-	    	List<Server> ret = new ArrayList<Server>();
-	    	for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
-	    		ret.add(new Server(
-	    				c.getLong(c.getColumnIndex("ID")),  
-	    				c.getString(c.getColumnIndex("NAME")), 
-	    				c.getString(c.getColumnIndex("HOST")),
-	    				c.getInt(c.getColumnIndex("PORT")),
-	    				c.getString(c.getColumnIndex("USERNAME")),
-	    				c.getString(c.getColumnIndex("PASSWORD"))));
-	    	return ret;
-	    }
+			super(context, "vbox.db", null, 2);  
+		}
+		@Override
+		public void onCreate(SQLiteDatabase db) { 
+			Log.i("ServerSQL", "Creating database schema");
+			db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, NAME TEXT, HOST TEXT, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
+		}
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Log.w(TAG, "DB upgrade [" + oldVersion + "-->" + newVersion + "], destroying data");
+			db.execSQL("DROP TABLE IF EXISTS SERVERS");
+			onCreate(db);
+		}
+		public List<Server> query() {
+			Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "NAME", "HOST", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
+			List<Server> ret = new ArrayList<Server>();
+			for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+				ret.add(new Server(
+						c.getLong(c.getColumnIndex("ID")),  
+						c.getString(c.getColumnIndex("NAME")), 
+						c.getString(c.getColumnIndex("HOST")),
+						c.getInt(c.getColumnIndex("PORT")),
+						c.getString(c.getColumnIndex("USERNAME")),
+						c.getString(c.getColumnIndex("PASSWORD"))));
+			return ret;
+		}
+		public void insert(Server s) {
+			ContentValues c = new ContentValues();
+			c.put("NAME", s.getName());
+			c.put("HOST", s.getHost());
+			c.put("PORT", s.getPort());
+			c.put("USERNAME", s.getUsername());
+			c.put("PASSWORD", s.getPassword());
+			s.setId(getWritableDatabase().insert( "SERVERS", null, c));
+		}
+		public void update(Server s) {
+			ContentValues c = new ContentValues();
+			c.put("ID", s.getId());
+			c.put("NAME", s.getName());
+			c.put("HOST", s.getHost());
+			c.put("PORT", s.getPort());
+			c.put("USERNAME", s.getUsername());
+			c.put("PASSWORD", s.getPassword());
+			getWritableDatabase().update( "SERVERS", c, "ID  =  ?", new String[] { s.getId().toString() } );
+		}
+		public void delete(Long id) {
+			getWritableDatabase().delete( "SERVERS", "ID =  ?", new String[] { id.toString() } );
+		}
 	}
 }

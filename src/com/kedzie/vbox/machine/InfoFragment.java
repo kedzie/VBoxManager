@@ -84,7 +84,7 @@ public class InfoFragment extends SherlockFragment {
 
 	class LoadInfoTask extends BaseTask<IMachine, IMachine> {
 
-		public LoadInfoTask() { super(LoadInfoTask.class.getSimpleName(), getSherlockActivity(), null, "Reading Machine Info"); }
+		public LoadInfoTask() { super(LoadInfoTask.class.getSimpleName(), getSherlockActivity(), null); }
 
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {

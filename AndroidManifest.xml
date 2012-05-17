@@ -25,5 +25,6 @@
 		<activity android:label="Preferences" android:name=".PreferencesActivity"/>
 		<activity android:label="Preferences" android:name=".metrics.MetricPreferencesActivity"/>
 		<service android:name=".machine.EventService"/>
+		<service android:name=".machine.EventIntentService"/>
     </application>
 </manifest>

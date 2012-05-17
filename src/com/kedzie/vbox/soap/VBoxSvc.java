@@ -41,7 +41,7 @@ import com.kedzie.vbox.metrics.MetricQuery;
  */
 public class VBoxSvc implements Parcelable {
 	private static final String TAG = "VBoxSvc";
-	protected static final int TIMEOUT = 60000;
+	protected static final int TIMEOUT = 20000;
 	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
 
 	protected String _url;

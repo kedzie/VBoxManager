@@ -17,7 +17,6 @@ public class LogFragment extends SherlockFragment {
 	private static final String TAG = LogFragment.class.getSimpleName();
 	private static final int MAX_LOG_SIZE=1024;
 
-	private View _view;
 	private TextView _logText;
 	private IMachine _machine;
 	private String _log;
@@ -31,37 +30,31 @@ public class LogFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState!=null)
-			_logText.setText(_log);
-		else
-			new LoadLogTask().execute(_machine);
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), "machine", IMachine.class);
-		if(savedInstanceState!=null)
+		_machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+		if(savedInstanceState!=null) {
 			_log = savedInstanceState.getString("log");
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.machine_log, null);
-		_logText = (TextView)_view.findViewById(R.id.logText);
-		return _view;
+			_logText.setText(_log);
+		} else {
+			new LoadLogTask().execute(_machine);
+		}
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		BundleBuilder.putProxy(outState, "machine", _machine);
 		outState.putString("log", _log);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.machine_log, null);
+		_logText = (TextView)view.findViewById(R.id.logText);
+		return view;
 	}
 
 	class LoadLogTask extends BaseTask<IMachine, String> {
 
 		public LoadLogTask() {
-			super(LoadLogTask.class.getSimpleName(), getSherlockActivity(), null, "Reading Log");
+			super(LoadLogTask.class.getSimpleName(), getSherlockActivity(), null);
 		}
 
 		@Override 

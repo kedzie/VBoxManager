@@ -30,9 +30,4 @@
     	<EditText android:id="@+id/server_password"  android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:inputType="textPassword"/>
     </LinearLayout>
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:gravity="center_horizontal">
-		<ImageButton  android:src="@drawable/ic_menu_save" android:id="@+id/button_save"  android:layout_weight="1" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-		<ImageButton  android:src="@drawable/ic_menu_delete" android:id="@+id/button_delete" android:layout_weight="1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="right"/>
-    </LinearLayout>
-	
 </LinearLayout>
