@@ -10,4 +10,8 @@ public class MetricQuery {
 	public int scale;
 	public String object;
 	public int[] values;
+	
+	public String toString() {
+		return "Metric Query - "+name+" - "+unit+" - "+scale+" - "+object+" - # values: " + values.length;
+	}
 }

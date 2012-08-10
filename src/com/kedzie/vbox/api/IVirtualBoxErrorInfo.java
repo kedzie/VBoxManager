@@ -4,9 +4,8 @@ import java.io.IOException;
 
 import com.kedzie.vbox.soap.KSOAP;
 
+@KSOAP(cacheable=true) 
 public interface IVirtualBoxErrorInfo extends IManagedObjectRef {
-
-	@KSOAP(cacheable=true) public Integer getResultCode() throws IOException;
-	@KSOAP(cacheable=true) public String getText() throws IOException;
-	
+	public Integer getResultCode() throws IOException;
+	public String getText() throws IOException;
 }

@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -141,19 +142,26 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(data == null) return;
 		Server s = data.getParcelableExtra(EditServerActivity.INTENT_SERVER);
-		if((requestCode&resultCode) == (REQUEST_CODE_EDIT&RESULT_CODE_DELETE)) {
-			_db.delete(s.getId());
-			getAdapter().remove(s);
-		} else if ((requestCode&resultCode) == (REQUEST_CODE_EDIT&RESULT_CODE_SAVE)) {
-			_db.update(s);
-			int pos = getAdapter().getPosition(s);
-			getAdapter().setNotifyOnChange(false);
-			getAdapter().remove(s);
-			getAdapter().insert(s, pos);
-		} else if ((requestCode&resultCode) == (REQUEST_CODE_ADD&RESULT_CODE_SAVE)) {
-			_db.insert(s);
-			getAdapter().add(s);
-			checkIfFirstRun(s);
+		switch(resultCode) {
+		case RESULT_CODE_DELETE:
+			if(requestCode==REQUEST_CODE_EDIT) {
+				_db.delete(s.getId());
+				getAdapter().remove(s);
+			}
+			break;
+		case RESULT_CODE_SAVE:
+			if(requestCode==REQUEST_CODE_EDIT) {
+				_db.update(s);
+				int pos = getAdapter().getPosition(s);
+				getAdapter().setNotifyOnChange(false);
+				getAdapter().remove(s);
+				getAdapter().insert(s, pos);
+			} else if (requestCode==REQUEST_CODE_ADD) {
+				_db.insert(s);
+				getAdapter().add(s);
+				checkIfFirstRun(s);
+			}
+			break;
 		}
 		getAdapter().notifyDataSetChanged();
 	}
@@ -205,7 +213,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		@Override protected void onPostExecute(IVirtualBox vbox) {
 			if(vbox!=null) {
 				Utils.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
 			}
 			super.onPostExecute(vbox);
 		}

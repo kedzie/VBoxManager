@@ -1,14 +1,20 @@
 package com.kedzie.vbox.harness;
 
+import java.io.Serializable;
+import java.util.List;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IHost;
+import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IPerformanceMetric;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
@@ -59,7 +65,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		@Override
 		protected void onPostExecute(IHost host) {
 			startActivity(new Intent(HarnessActivity.this, MetricActivity.class)
-			.putExtra(VBoxSvc.BUNDLE, _vmgr)
+			.putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 			.putExtra(MetricActivity.INTENT_IMPLEMENTATION, implementation.name())
 			.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 			.putExtra(MetricActivity.INTENT_OBJECT,host.getIdRef() )
@@ -85,7 +91,8 @@ public class HarnessActivity extends SherlockFragmentActivity {
 
 		@Override
 		protected void onPostExecute(VBoxSvc vmgr) {
-			startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, vmgr));
+			startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class)
+					.putExtra(VBoxSvc.BUNDLE, (Parcelable)vmgr));
 			super.onPostExecute(vmgr);
 		}
 	}

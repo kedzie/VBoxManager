@@ -40,18 +40,7 @@ public class MetricRendererSurfaceView  extends MetricRenderer implements Surfac
         _thread=null;
 	}
 	
-	@Override
-	public void pause() {
-		_thread._on=false;
-	}
-	
-	@Override
-	public void resume() {
-		_thread._on=true;
-	}
-	
 	class RenderThread extends LoopingThread {
-		boolean _on=true;
 		private SurfaceHolder _surfaceHolder;
 		private Rect bounds;
 		private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint();
@@ -111,10 +100,8 @@ public class MetricRendererSurfaceView  extends MetricRenderer implements Surfac
             try {
                 c = _surfaceHolder.lockCanvas(null);
                 synchronized (MetricRendererSurfaceView.this){
-                    if (_on) {
                     	update();
                     	onDraw(c);
-                    }
                 }
             } finally {
                 if (c != null) {

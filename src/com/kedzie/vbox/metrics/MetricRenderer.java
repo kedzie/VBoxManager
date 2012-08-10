@@ -30,6 +30,7 @@ public class MetricRenderer {
 	protected int hStep;
 	/** pixels/unit */
 	protected double vStep;
+	protected Map<String, MetricQuery> _queries;
 	/** pixels/second */
 	protected double pixelsPerSecond;
 	protected Map<String, LinkedList<Point2F>> data= new HashMap<String, LinkedList<Point2F>>();
@@ -52,6 +53,10 @@ public class MetricRenderer {
 			if(data.get(metric).size()>_count+EXTRA_POINTS)
 				data.get(metric).removeFirst();
 		}
+	}
+	
+	public void setQuery(Map<String, MetricQuery> q) {
+		_queries=q;
 	}
 	
 	protected void update() {

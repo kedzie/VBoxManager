@@ -66,7 +66,6 @@ public class TabActivity extends SherlockFragmentActivity {
 		getSupportActionBar().removeAllTabs();
 		_tabs.clear();
 	}
-	
 
 	protected class TabListener implements com.actionbarsherlock.app.ActionBar.TabListener {
         private Fragment _fragment;

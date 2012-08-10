@@ -18,7 +18,6 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 	
 	/** VirtualBox API */
 	private VBoxSvc _vmgr;
-	private EventIntentService _eventService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +26,14 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 		setContentView(R.layout.fragment_layout_support);
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-		startService(new Intent(this, EventIntentService.class)
-			.putExtra(VBoxSvc.BUNDLE, _vmgr));
+		startService(new Intent(this, EventIntentService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+		startService(new Intent(this, EventService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 	}
 
 	@Override
 	protected void onDestroy() {
-		if(_eventService!=null)
-			stopService(new Intent(this, EventIntentService.class));
+		stopService(new Intent(this, EventService.class));
+		stopService(new Intent(this, EventIntentService.class));
 		super.onDestroy();
 	}
 
@@ -52,7 +51,8 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 			addTab("Log", LogFragment.getInstance(b), R.id.details);
 			addTab("Snapshots", SnapshotFragment.getInstance(b), R.id.details);
 		} else {
-			Intent intent = new Intent(this, MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr);
+			Intent intent = new Intent(this, MachineFragmentActivity.class)
+									.putExtra(VBoxSvc.BUNDLE, _vmgr);
 			BundleBuilder.addProxy(intent, IMachine.BUNDLE, machine );
 			startActivity(intent);
 		}

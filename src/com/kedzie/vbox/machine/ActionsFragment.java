@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,18 +47,15 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
-	/** VirtualBox API */
-	private VBoxSvc _vmgr;
-	
-	/** The Virtual Machine */
-	private IMachine _machine;
-	
 	private MachineView _headerView;
 	private ListView _listView;
 	
+	/** VirtualBox API */
+	private VBoxSvc _vmgr;
+	/** The Virtual Machine */
+	private IMachine _machine;
 	/** Local Broadcast Manager */
 	private LocalBroadcastManager lbm;
-	
 	private boolean _dualPane;
 	
 	/** Event-handling local broadcasts */
@@ -110,6 +108,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 
 	@Override
 	public void onStop() {
+		lbm.unregisterReceiver(_receiver);
 		new Thread() {
 			@Override
 			public void run() {
@@ -150,6 +149,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	
 	@Override 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Utils.toast(getActivity(), String.format("Item Click #%d", position));
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
 		if(action.equals(VMAction.START))	
 			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);
@@ -202,7 +202,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 										.create())
 				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
 		} else if(action.equals(VMAction.VIEW_METRICS)) {
-			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION))
 					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )

@@ -48,11 +48,29 @@ public class VBoxSvc implements Parcelable {
 	protected IVirtualBox _vbox;
 	protected HttpTransportSE  _transport;
 
+	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
+		public VBoxSvc createFromParcel(Parcel in) {
+			VBoxSvc svc = new VBoxSvc(in.readString());
+			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString(), null);
+			return svc;
+		}
+		public VBoxSvc[] newArray(int size) {
+			return new VBoxSvc[size];
+		}
+	};
+	
+	/**
+	 * @param url	URL of VirtualBox webservice
+	 */
 	public VBoxSvc(String url) {
 		_url=url;
 		_transport = new HttpTransportSE(_url, TIMEOUT);
 	}
 
+	/**
+	 * Copy constructor
+	 * @param copy	The original {@link VBoxSvc} to copy
+	 */
 	public VBoxSvc(VBoxSvc copy) {
 		this(copy._url);
 		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
@@ -98,6 +116,35 @@ public class VBoxSvc implements Parcelable {
 	public IVirtualBox logon(String username, String password) throws IOException, XmlPullParserException {
 		return (_vbox = getProxy(IVirtualBox.class, null).logon(username, password));
 	}
+	
+	/**
+	 * Query metric data for specified {@link ManagedObject}
+	 * @param object object to get metrics for
+	 * @param metrics specify which metrics/accumulations to query. * for all
+	 * @return  {@link Map} from metric name to {@link MetricQuery}
+	 * @throws IOException
+	 */
+	public Map<String, MetricQuery> queryMetrics(String object, String...metrics) throws IOException {
+		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
+		
+		Map<String, MetricQuery> ret = new HashMap<String, MetricQuery>();
+		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
+			MetricQuery q = new MetricQuery();
+			q.name=(String)data.get("returnMetricNames").get(i);
+			q.object=(String)data.get("returnObjects").get(i);
+			q.scale=Integer.valueOf(data.get("returnScales").get(i));
+			q.unit=(String)data.get("returnUnits").get(i);
+			int start = Integer.valueOf( data.get("returnDataIndices").get(i));
+			int length = Integer.valueOf( data.get("returnDataLengths").get(i));
+			q.values= new int[length];
+			int j=0;
+			for(String s : data.get("returnval").subList(start, start+length)) 
+				q.values[j++] = Integer.valueOf(s)/q.scale;
+			Log.d(TAG, "Query: " + q);
+			ret.put(q.name, q);
+		}
+		return ret;
+	}
 
 	/**
 	 * Query metric data for specified {@link ManagedObject}
@@ -106,36 +153,20 @@ public class VBoxSvc implements Parcelable {
 	 * @return  {@link Map} from metric name to another {@link Map} containing metric data
 	 * @throws IOException
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public Map<String, Map<String,Object>> queryMetricsData(String object, String...metrics) throws IOException {
 		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
-
 		Map<String, Map<String,Object>> ret = new HashMap<String, Map<String, Object>>();
 		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
 			Map<String, Object> metric = new HashMap<String, Object>();
-			for(Map.Entry<String, List<String>> entry : data.entrySet()) {
+			for(Map.Entry<String, List<String>> entry : data.entrySet())
 				metric.put(entry.getKey().substring(6), entry.getValue().get(i) );
-			}
 			int start = Integer.valueOf(metric.remove("DataIndices").toString());
 			int length = Integer.valueOf(metric.remove("DataLengths").toString());
-			
-			MetricQuery q = new MetricQuery();
-			q.name=(String)data.get("returnMetricNames").get(i);
-			q.object=(String)data.get("returnObjects").get(i);
-			q.scale=Integer.valueOf(data.get("returnScales").get(i));
-			q.unit=(String)data.get("returnUnits").get(i);
-			start = Integer.valueOf( data.get("returnDataIndices").get(i));
-			length = Integer.valueOf( data.get("returnDataLengths").get(i));
-			q.values= new int[length];
-			int j=0;
-			for(String s : data.get("returnval").subList(start, start+length)) 
-				q.values[j++] = Integer.valueOf(s)/q.scale;
-			
 			metric.put("val", new ArrayList<Integer>(length) );
-			for(String s : data.get("returnval").subList(start, start+length)) {
+			for(String s : data.get("returnval").subList(start, start+length))
 				((List<Integer>)metric.get("val")).add(Integer.valueOf(s)/Integer.valueOf((String)metric.get("Scales")));
-			}
-			
 			ret.put(  metric.get("MetricNames").toString(), metric );
 		}
 		Log.d(TAG, "Metric query: " + ret);
@@ -149,6 +180,17 @@ public class VBoxSvc implements Parcelable {
 	public String getURL() {
 		return _url;
 	}
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(_url);
+		dest.writeString(_vbox.getIdRef());
+	}
 
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
@@ -157,52 +199,54 @@ public class VBoxSvc implements Parcelable {
 		private static final long serialVersionUID = 1L;
 		
 		/** managed object UIUD */
-		private String uiud;
+		private String _uiud;
 		/** type of {@link IManagedObjectRef} */
-		private Class<?> type;
+		private Class<?> _type;
 		/** cached property values */
-		private Map<String, Object> _cache = new HashMap<String, Object>();
+		private Map<String, Object> _cache;
 
 		public KSOAPInvocationHandler(String id, Class<?> type, Map<String,Object> cache) {
-			this.uiud=id;
-			this.type=type;
-			if(cache!=null)
-				_cache=cache;
+			_uiud=id;
+			_type=type;
+			_cache = cache!=null ? cache : new HashMap<String, Object>();
 		}
 
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 			synchronized( VBoxSvc.class ) {
-				if(method.getName().equals("getIdRef")) return this.uiud;
-				if(method.getName().equals("hashCode")) return uiud==null ? 0 : uiud.hashCode();
-				if(method.getName().equals("toString")) return type.getSimpleName() + "#" + uiud.toString();
-				if(method.getName().equals("getInterface")) return type;
+				if(method.getName().equals("getIdRef")) return this._uiud;
+				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
+				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
+				if(method.getName().equals("getInterface")) return _type;
 				if(method.getName().equals("equals")) {
-					if(!(args[0] instanceof IManagedObjectRef) || !type.isAssignableFrom(args[0].getClass())) return false;
-					return this.uiud.equals(((IManagedObjectRef)args[0]).getIdRef());
+					if(!(args[0] instanceof IManagedObjectRef) || !_type.isAssignableFrom(args[0].getClass())) 
+						return false;
+					return _uiud.equals(((IManagedObjectRef)args[0]).getIdRef());
 				}
 				if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
 				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
 				if(method.getName().equals("describeContents")) return 0;
+				if(method.getName().equals("getCache")) return _cache;
 				if(method.getName().equals("writeToParcel")) {
 					Parcel out = (Parcel)args[0];
-					out.writeSerializable(type);
+					out.writeSerializable(_type);
 					out.writeParcelable(VBoxSvc.this, 0);
-					out.writeString(uiud);
+					out.writeString(_uiud);
+					Log.d(TAG, "Parceling cache: " + _cache);
 					out.writeMap(_cache);
 					return null;
 				}
 
-				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
+				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? _type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 				
 				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(method.getName()))
 					return _cache.get(method.getName());
 				
-				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
+				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? _type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
 				if(methodKSOAP==null)
-					request.addProperty("_this", this.uiud);
+					request.addProperty("_this", this._uiud);
 				else if ( !"".equals(methodKSOAP.thisReference()))
-					request.addProperty(methodKSOAP.thisReference(), this.uiud);
+					request.addProperty(methodKSOAP.thisReference(), this._uiud);
 				if(args!=null) {
 					for(int i=0; i<args.length; i++)
 						marshal(request, getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
@@ -235,27 +279,37 @@ public class VBoxSvc implements Parcelable {
 		 */
 		private void marshal(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
 			if(obj==null) return;
-			if(clazz.isArray()) {
-				for(Object o : (Object[])obj)  marshal( request, ksoap, clazz.getComponentType(), gType,  o );
-			} else if(Collection.class.isAssignableFrom(clazz)) {
-				Class<?> pClazz = (Class<?>) ((ParameterizedType)gType).getActualTypeArguments()[0];
-				for(Object o : (List<?>)obj) marshal(request, ksoap,pClazz, gType,  o );
-			} else if(!ksoap.type().equals("")) {
+			if(clazz.isArray()) { //Arrays
+				for(Object o : (Object[])obj)  
+					marshal( request, ksoap, clazz.getComponentType(), gType,  o );
+			} else if(Collection.class.isAssignableFrom(clazz)) { //Collections
+				Class<?> pClazz = getTypeParameter(gType);
+				for(Object o : (List<?>)obj) 
+					marshal(request, ksoap, pClazz, gType,  o );
+			} else if(!ksoap.type().equals("")) //if annotation specifies SOAP datatype, i.e. unsignedint
 				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
-			} else if(IManagedObjectRef.class.isAssignableFrom(clazz)) {
+			else if(IManagedObjectRef.class.isAssignableFrom(clazz))
 				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
-			} else if(clazz.isEnum())	{
+			else if(clazz.isEnum())
 				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
-			} else {
+			else
 				request.addProperty(ksoap.value(), obj);
-			}
 		}
+	}
+	
+	/**
+	 * Get type parameter of Generic Type
+	 * @param genericType the generic {@link Type}
+	 * @return type parameter
+	 */
+	private Class<?> getTypeParameter(Type genericType) {
+		return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
 	}
 
 	/**
 	 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
 	 */
-	public class SerializationEnvelope extends SoapSerializationEnvelope {
+	class SerializationEnvelope extends SoapSerializationEnvelope {
 
 		public SerializationEnvelope() {
 			super(SoapEnvelope.VER11);
@@ -287,7 +341,7 @@ public class VBoxSvc implements Parcelable {
 				return map;
 			}
 			if(isCollection) {
-				Class<?> pClazz = (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
+				Class<?> pClazz = getTypeParameter(genericType);
 				Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
 				for (int i = 0; i < ks.getPropertyCount(); i++)
 					list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );
@@ -324,25 +378,5 @@ public class VBoxSvc implements Parcelable {
 			}
 			return ret;
 		}
-	}
-
-	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
-		public VBoxSvc createFromParcel(Parcel in) {
-			VBoxSvc svc = new VBoxSvc(in.readString());
-			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
-			return svc;
-		}
-		public VBoxSvc[] newArray(int size) {   return new VBoxSvc[size];  }
-	};
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(_url);
-		dest.writeString(_vbox.getIdRef());
 	}
 }

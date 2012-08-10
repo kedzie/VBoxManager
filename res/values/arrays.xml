@@ -27,11 +27,9 @@
     <string-array name="metric_implementation_entries" >
     	<item>SurfaceView</item>
     	<item>OpenGL</item>
-    	<item>View</item>
     </string-array>
     <string-array name="metric_implementation_entryValues">
     	<item>SURFACEVIEW</item>
     	<item>OPENGL</item>
-    	<item>VIEW</item>
     </string-array>
 </resources>

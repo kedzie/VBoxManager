@@ -33,7 +33,8 @@ import com.kedzie.vbox.soap.VBoxSvc;
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 	private final String TAG;
 	/** interval used to update progress bar for longing-running operation*/
-	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7, PROGRESS_INTERVAL = 100;
+	protected final static int PROGRESS_INTERVAL = 100;
+	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7;
 		
 	protected Context context;
 	protected SherlockFragmentActivity _sherlockActivity;
@@ -96,9 +97,9 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	
 	@Override
 	protected void onPreExecute()		{
-		if(_sherlockActivity==null)
+		if(pDialog!=null)
 			pDialog.show();
-		else
+		else if(_sherlockActivity!=null)
 			_sherlockActivity.setSupportProgressBarIndeterminateVisibility(true);
 	}
 
@@ -124,9 +125,9 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	
 	@Override
 	protected void onPostExecute(Output result)	{
-		if(_sherlockActivity==null)
+		if(pDialog!=null)
 			pDialog.dismiss();
-		else {
+		else if (_sherlockActivity!=null){
 			_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
 			_sherlockActivity.setSupportProgressBarVisibility(false);
 		}

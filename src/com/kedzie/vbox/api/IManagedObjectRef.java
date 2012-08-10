@@ -1,5 +1,7 @@
 package com.kedzie.vbox.api;
 
+import java.util.Map;
+
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -22,6 +24,11 @@ public interface IManagedObjectRef  {
 	 * Clear cached property values
 	 */
 	public void clearCache();
+	
+	/**
+	 * Get property cache
+	 */
+	public Map<String, Object> getCache();
 	
 	/**
 	 * @return VirtualBox JAXWS API

@@ -34,18 +34,31 @@ public class DataThread extends LoopingThread {
 		public void loop() {
 			try {
 				Map<String, Point2F> newData = new HashMap<String, Point2F>();
-				Map<String, Map<String, Object>> data = _vmgr.queryMetricsData(_object, "*:");
-				if(data.keySet().isEmpty()) return;
+				Map<String, MetricQuery> data = _vmgr.queryMetrics(_object, "*:");
+				
 				for(String metric : data.keySet()){
-					List<Integer> values = (List<Integer>)data.get(metric).get("val");
-					if(values==null || values.isEmpty()) continue;
-					Point2F datapoint = new Point2F( 0, values.get(0), System.currentTimeMillis()+1000*_period );
+					if(data.get(metric).values==null || data.get(metric).values.length==0) continue;
+					Point2F datapoint = new Point2F( 0, data.get(metric).values[0], System.currentTimeMillis()+1000*_period );
 					newData.put(metric, datapoint);
 				}
 				if(!newData.isEmpty()) {
-					for(MetricView v : _views)
+					for(MetricView v : _views) {
 						v.addData(newData);
+						v.setQueries(data);
+					}
 				}
+//				Map<String, Map<String, Object>> data = _vmgr.queryMetricsData(_object, "*:");
+//				if(data.keySet().isEmpty()) return;
+//				for(String metric : data.keySet()){
+//					List<Integer> values = (List<Integer>)data.get(metric).get("val");
+//					if(values==null || values.isEmpty()) continue;
+//					Point2F datapoint = new Point2F( 0, values.get(0), System.currentTimeMillis()+1000*_period );
+//					newData.put(metric, datapoint);
+//				}
+//				if(!newData.isEmpty()) {
+//					for(MetricView v : _views)
+//						v.addData(newData);
+//				}
 			} catch (Exception e) {
 				Log.e(TAG, "", e);
 			} finally {

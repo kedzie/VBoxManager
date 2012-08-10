@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -57,6 +58,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	private int _curCheckPosition;
 	private boolean _dualPane;
 	private SelectMachineListener _listener;
+	
 	private LocalBroadcastManager lbm;
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
@@ -81,9 +83,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		if(_dualPane)
 			_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
-		if(savedInstanceState==null)
-			new LoadMachinesTask(_vmgr).execute();
-		else  { 
+		if(savedInstanceState!=null)  { 
     		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
     		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
     		_listView.setAdapter(new MachineListAdapter(_machines));
@@ -91,6 +91,20 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
     	} 
 	}
 	
+	@Override
+	public void onStart() {
+		super.onStart();
+		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
+		if(_machines==null)
+			new LoadMachinesTask(_vmgr).execute();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		lbm.unregisterReceiver(_receiver);
+	}
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -125,7 +139,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			new LoadMachinesTask(_vmgr).execute();
 			return true;
 		case R.id.machine_list_option_menu_metrics:
-			Intent intent = new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+			Intent intent = new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 					.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
@@ -144,8 +158,9 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==REQUEST_CODE_PREFERENCES)
+		if(requestCode==REQUEST_CODE_PREFERENCES){
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -170,12 +185,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
         	_listener.onMachineSelected(getAdapter().getItem(index));
     }
 	
-	@Override
-	public void onStart() {
-		super.onStart();
-		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
-	}
-
 	@Override
 	public void onDestroy() {
 		try {  
