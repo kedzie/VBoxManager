@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+   <color name="METRIC_BACKGROUND">#ffffffff</color>
+   <color name="METRIC_BORDER">#ff0000ff</color>
+   <color name="METRIC_TEXT">#ff000088</color>
+   <color name="METRIC_GRID">#64000000</color>
+    
    <color name="CPU_Load_Kernel">#ff0000ff</color>
+   <color name="CPU_Load_Kernel_Fill">#ee0000ee</color>
+   
    <color name="CPU_Load_User">#ff00ff00</color>
-   <color name="Guest_CPU_Load_Kernel">#ff0000ff</color>
-   <color name="Guest_CPU_Load_User">#ff00ff00</color>
+   <color name="CPU_Load_User_Fill">#ee00ee00</color>
+   
    <color name="RAM_Usage_Used">#ffff0000</color>
-   <color name="Guest_RAM_Usage_Free">#ffff00ff</color>
-   <color name="Guest_RAM_Usage_Shared">#ffff0000</color>
-   <color name="Guest_RAM_Usage_Cache">#ffffff00</color>
-    <color name="Guest_RAM_Usage_Total">#ff00ffff</color>
+   <color name="RAM_Usage_Used_Fill">#eeee0000</color>
+   
+   <color name="RAM_Usage_Free">#ffff00ff</color>
+   <color name="RAM_Usage_Free_Fill">#eeee00ee</color>
+   
+   <color name="RAM_Usage_Shared">#ffff0000</color>
+   <color name="RAM_Usage_Shared_Fill">#eeee0000</color>
+   
+   <color name="RAM_Usage_Cache">#ffffff00</color>
+   <color name="RAM_Usage_Cache_Fill">#eeeeee00</color>
+   
+   <color name="RAM_Usage_Total">#ff00ffff</color>
+   <color name="RAM_Usage_Total_Fill">#ee00eeee</color>
 </resources>

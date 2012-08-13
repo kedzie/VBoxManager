@@ -12,19 +12,16 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
-import com.kedzie.vbox.metrics.MetricView.Implementation;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 /**
  * Activity to view metric graphs for Virtual Machine or Host
  * @author Marek Kedzierski
  */
 public class MetricActivity extends SherlockActivity  {
-	private static final int REQUEST_CODE_PREFERENCES = 6;
 	public static final String INTENT_TITLE="t",INTENT_OBJECT = "o",
 			INTENT_RAM_AVAILABLE = "ra", INTENT_RAM_METRICS="rm",
-			INTENT_CPU_METRICS="cm",INTENT_IMPLEMENTATION="i";
+			INTENT_CPU_METRICS="cm";
 
 	private MetricView cpuV, ramV;
 	private DataThread _thread;
@@ -40,13 +37,12 @@ public class MetricActivity extends SherlockActivity  {
 		String [] ramMetrics = getIntent().getStringArrayExtra(INTENT_RAM_METRICS);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		int ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
-		Implementation _i = Implementation.valueOf(getIntent().getStringExtra(INTENT_IMPLEMENTATION));
-		cpuV = new MetricView(this, "CPU", _i, 100000, cpuMetrics, null);
-		ramV = new MetricView(this,"Memory", _i, ramAvailable*1000, ramMetrics, null);
+		cpuV = new MetricView(this, "CPU", 100000, cpuMetrics);
+		ramV = new MetricView(this,"Memory", ramAvailable*1000, ramMetrics);
 
 		LinearLayout contentView = new LinearLayout(this);
 		contentView.setOrientation(LinearLayout.VERTICAL);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		params.weight=.5f;
 		contentView.addView(cpuV, params);
 		contentView.addView(ramV, params);
@@ -63,7 +59,7 @@ public class MetricActivity extends SherlockActivity  {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.metrics_option_menu_preferences:
-			startActivityForResult(new Intent(this, MetricPreferencesActivity.class),REQUEST_CODE_PREFERENCES);
+			startActivity(new Intent(this, MetricPreferencesActivity.class));
 			return true;
 		default:
 			return true;
@@ -76,18 +72,6 @@ public class MetricActivity extends SherlockActivity  {
 		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, PreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
-
-	@Override
-	protected void onPause() {
-		cpuV.pause(); ramV.pause();
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		cpuV.resume(); ramV.resume();
-	}
 
 	@Override 
 	protected void onStop() {

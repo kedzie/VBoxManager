@@ -28,6 +28,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
@@ -136,6 +137,7 @@ public class VBoxSvc implements Parcelable {
 			q.unit=(String)data.get("returnUnits").get(i);
 			int start = Integer.valueOf( data.get("returnDataIndices").get(i));
 			int length = Integer.valueOf( data.get("returnDataLengths").get(i));
+			
 			q.values= new int[length];
 			int j=0;
 			for(String s : data.get("returnval").subList(start, start+length)) 
@@ -143,33 +145,6 @@ public class VBoxSvc implements Parcelable {
 			Log.d(TAG, "Query: " + q);
 			ret.put(q.name, q);
 		}
-		return ret;
-	}
-
-	/**
-	 * Query metric data for specified {@link ManagedObject}
-	 * @param object object to get metrics for
-	 * @param metrics specify which metrics/accumulations to query. * for all
-	 * @return  {@link Map} from metric name to another {@link Map} containing metric data
-	 * @throws IOException
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public Map<String, Map<String,Object>> queryMetricsData(String object, String...metrics) throws IOException {
-		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
-		Map<String, Map<String,Object>> ret = new HashMap<String, Map<String, Object>>();
-		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
-			Map<String, Object> metric = new HashMap<String, Object>();
-			for(Map.Entry<String, List<String>> entry : data.entrySet())
-				metric.put(entry.getKey().substring(6), entry.getValue().get(i) );
-			int start = Integer.valueOf(metric.remove("DataIndices").toString());
-			int length = Integer.valueOf(metric.remove("DataLengths").toString());
-			metric.put("val", new ArrayList<Integer>(length) );
-			for(String s : data.get("returnval").subList(start, start+length))
-				((List<Integer>)metric.get("val")).add(Integer.valueOf(s)/Integer.valueOf((String)metric.get("Scales")));
-			ret.put(  metric.get("MetricNames").toString(), metric );
-		}
-		Log.d(TAG, "Metric query: " + ret);
 		return ret;
 	}
 

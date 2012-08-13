@@ -203,7 +203,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
 		} else if(action.equals(VMAction.VIEW_METRICS)) {
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
-					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION))
 					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _machine.getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )

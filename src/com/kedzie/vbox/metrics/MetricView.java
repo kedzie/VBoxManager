@@ -3,47 +3,41 @@ package com.kedzie.vbox.metrics;
 import java.util.Map;
 
 import android.content.Context;
-import android.opengl.GLSurfaceView;
-import android.view.SurfaceView;
-import android.view.View;
+import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.api.IPerformanceMetric;
 
 public class MetricView extends LinearLayout {
 
-	private View view;
 	private MetricRenderer _renderer;
 	
-	/** Metric View component implementations */
-	public enum Implementation { SURFACEVIEW, OPENGL; }
+	public MetricView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		init("Metric Name", 100, null);
+	}
 
-	public MetricView(Context context, String title, Implementation implementation,
-			int max, String []metrics, IPerformanceMetric pm) {
+	public MetricView(Context context, String title, int max, String []metrics) {
 		super(context);
+		init(title, max, metrics);
+	}
+	
+	private void init(String title, int max, String []metrics) {
 		setOrientation(LinearLayout.VERTICAL);
-
-		if(implementation.equals(Implementation.SURFACEVIEW)) {
-			view = new SurfaceView(getContext());
-			_renderer = new MetricRendererSurfaceView(getContext(), (SurfaceView) view, max, metrics);
-		} else if (implementation.equals(Implementation.OPENGL)) {
-			view = new GLSurfaceView(getContext());
-			_renderer = new MetricRendererGL(getContext(), (GLSurfaceView)view, max, metrics);
-		} 
+		_renderer = new MetricRenderer(getContext(), max, metrics);
 		TextView titletextView = new TextView(getContext());
 		titletextView.setText(title);
 		titletextView.setTextSize(16.f);
 		addView(titletextView,
 				new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.FILL_PARENT,
+						LinearLayout.LayoutParams.MATCH_PARENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT));
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.FILL_PARENT,
+				LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
 		params.weight=1.f;
-		addView(view, params);
+		addView(_renderer, params);
 		createMetricTextFields( metrics);
 	}
 
@@ -60,43 +54,11 @@ public class MetricView extends LinearLayout {
 					LinearLayout.LayoutParams.WRAP_CONTENT));
 		}
 		addView(ll, new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.FILL_PARENT,
+				LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT));
 	}
 
-	/**
-	 * Get X-coordinate of a specific point in time
-	 * @param width	width (pixels) of graph
-	 * @param pixelsPerSecond	how many pixels represent a second in time
-	 * @param stamp datapoint timestamp
-	 * @param current current timestamp
-	 * @return X coordinate of data point
-	 */
-	public static int getXPixelFromTimestamp(int width, double pixelsPerSecond, long stamp, long current) {
-		return width-(int)(((current-stamp)/1000.d)*pixelsPerSecond);
-	}
-
-	public void addData(Map<String, Point2F> d) {
-		_renderer.addData(d);
-	}
-	
 	public void setQueries(Map<String,MetricQuery> q) {
 		_renderer.setQuery(q);
-	}
-
-	public String[] getMetrics() {
-		return _renderer.getMetrics();
-	}
-
-	public void setMetricPreferences(int period, int count) {
-		_renderer.setMetricPreferences(period, count);
-	}
-
-	public void pause() {
-		_renderer.pause();
-	}
-
-	public void resume() {
-		_renderer.resume();
 	}
 }

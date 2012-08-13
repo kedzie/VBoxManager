@@ -139,14 +139,12 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			new LoadMachinesTask(_vmgr).execute();
 			return true;
 		case R.id.machine_list_option_menu_metrics:
-			Intent intent = new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
+			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 					.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
 					.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
-					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" })
-					.putExtra(MetricActivity.INTENT_IMPLEMENTATION, 	Utils.getStringPreference(getActivity(), PreferencesActivity.METRIC_IMPLEMENTATION));
-			startActivity(intent);
+					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
 			return true;
 		case R.id.machine_list_option_menu_preferences:
 			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class),REQUEST_CODE_PREFERENCES);
