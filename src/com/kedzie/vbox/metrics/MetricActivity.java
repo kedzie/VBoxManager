@@ -71,24 +71,6 @@ public class MetricActivity extends SherlockActivity  {
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==REQUEST_CODE_PREFERENCES) {
-			new ConfigureMetricsTask(this, _vmgr) {
-				@Override
-				protected void onPostExecute(Void result) {
-					super.onPostExecute(result);
-					cpuV.setMetricPreferences(
-							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.COUNT),
-							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.PERIOD));
-					ramV.setMetricPreferences(
-							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.COUNT),
-							Utils.getIntPreference(MetricActivity.this, PreferencesActivity.PERIOD));
-				}
-			}.execute(Utils.getIntPreference(this, PreferencesActivity.PERIOD));
-		}
-	}
-
-	@Override
 	protected void onStart() {
 		super.onStart();
 		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, PreferencesActivity.PERIOD), cpuV, ramV);
