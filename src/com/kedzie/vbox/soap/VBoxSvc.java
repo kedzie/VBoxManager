@@ -28,7 +28,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
@@ -142,7 +141,6 @@ public class VBoxSvc implements Parcelable {
 			int j=0;
 			for(String s : data.get("returnval").subList(start, start+length)) 
 				q.values[j++] = Integer.valueOf(s)/q.scale;
-			Log.d(TAG, "Query: " + q);
 			ret.put(q.name, q);
 		}
 		return ret;

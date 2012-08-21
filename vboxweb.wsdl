@@ -536,6 +536,7 @@
       <!-- enum: AdditionsFacilityType -
             None: 0 -
             VBoxGuestDriver: 20 -
+            AutoLogon: 90 -
             VBoxService: 100 -
             VBoxTrayClient: 101 -
             Seamless: 1000 -
@@ -546,6 +547,7 @@
         <xsd:restriction base="xsd:string">
           <xsd:enumeration value="None"/>
           <xsd:enumeration value="VBoxGuestDriver"/>
+          <xsd:enumeration value="AutoLogon"/>
           <xsd:enumeration value="VBoxService"/>
           <xsd:enumeration value="VBoxTrayClient"/>
           <xsd:enumeration value="Seamless"/>
@@ -627,6 +629,8 @@
             IgnoreOrphanedProcesses: 2 -
             Hidden: 4 -
             NoProfile: 8 -
+            WaitForStdOut: 16 -
+            WaitForStdErr: 32 -
             -->
       <xsd:simpleType name="ExecuteProcessFlag">
         <xsd:restriction base="xsd:string">
@@ -635,6 +639,8 @@
           <xsd:enumeration value="IgnoreOrphanedProcesses"/>
           <xsd:enumeration value="Hidden"/>
           <xsd:enumeration value="NoProfile"/>
+          <xsd:enumeration value="WaitForStdOut"/>
+          <xsd:enumeration value="WaitForStdErr"/>
         </xsd:restriction>
       </xsd:simpleType>
       <!-- enum: ExecuteProcessStatus -

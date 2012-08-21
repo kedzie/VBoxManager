@@ -1,8 +1,10 @@
 package com.kedzie.vbox.metrics;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
@@ -10,6 +12,7 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
@@ -21,17 +24,14 @@ import com.kedzie.vbox.VBoxApplication;
 public class MetricRenderer extends View {
 	private static String TAG = MetricRenderer.class.getSimpleName();
 	
-	protected Context _context;
 	/** Maximum Y Value */
 	protected int _max;
 	/** # of data points */
 	protected int _count;
 	/** Time interval between datapoints */
 	protected int _period;
-	/** width in pixels */
-	protected int _width;
-	/** height (pixels) */
-	protected int _height;
+	/** view size (pixels) */
+	protected int _width, _height;
 	/** Metric names to render */
 	protected String[] _metrics;
 	/** pixels/period */
@@ -39,7 +39,7 @@ public class MetricRenderer extends View {
 	/** pixels/unit */
 	protected double vStep;
 	/** Metric data */
-	protected Map<String, MetricQuery> _data;
+	protected Map<String, MetricQuery> _data = new HashMap<String, MetricQuery>();
 	
 	private Rect bounds = new Rect();
 	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint();
@@ -71,30 +71,44 @@ public class MetricRenderer extends View {
 		metricFill.setStyle(Style.FILL);
 	}
 
-	public MetricRenderer(Context context, int max, String []metrics) {
+	public MetricRenderer(Context context) {
 		super(context);
-		_context = context;
-		_max=max;
-		_metrics=metrics;
-		_count=Utils.getIntPreference(context, PreferencesActivity.COUNT);
-		_period=Utils.getIntPreference(context, PreferencesActivity.PERIOD);
-	}
-	
-	public void setSize(int width, int height) {
-		Log.i(TAG, "OnSizeChanged("+width+"," + height + ")");
-		_width=width;
-		_height=height;
-		vStep = (float)height/(float)_max;
-		hStep = _width/_count;
 	}
 
-	public void setQuery(Map<String, MetricQuery> q) {
+	public MetricRenderer(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
+	
+	public void init( int max, String []metrics) {
+		_max=max;
+		_metrics=metrics;
+		_count=Utils.getIntPreference(getContext(), PreferencesActivity.COUNT);
+		_period=Utils.getIntPreference(getContext(), PreferencesActivity.PERIOD);
+		updateSize();
+	}
+
+	public void updateSize() {
+		Log.i(TAG, "OnSizeChanged("+getWidth()+"," + getHeight() + ")");
+		_width=getWidth();
+		_height=getHeight();
+		vStep = (float)_height/(float)_max;
+		hStep = _width/_count;
+	}
+	
+	@Override
+	protected void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		updateSize();
+	}
+
+	public synchronized void setQuery(Map<String, MetricQuery> q) {
+		Log.i(TAG, "Received Metric data");
 		_data=q;
 		postInvalidate();
 	}
 	
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected synchronized  void onDraw(Canvas canvas) {
 		canvas.getClipBounds(bounds);
 		canvas.drawRect(bounds, bgPaint);
 		canvas.drawRect(bounds, borderPaint);

@@ -4,7 +4,7 @@ import java.lang.Thread.State;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.support.v4.view.ViewPager;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -31,22 +31,15 @@ public class MetricActivity extends SherlockActivity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		setTitle(getIntent().getStringExtra(INTENT_TITLE));
-		String []cpuMetrics = getIntent().getStringArrayExtra(INTENT_CPU_METRICS);
-		String [] ramMetrics = getIntent().getStringArrayExtra(INTENT_RAM_METRICS);
+		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		int ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
-		cpuV = new MetricView(this, "CPU", 100000, cpuMetrics);
-		ramV = new MetricView(this,"Memory", ramAvailable*1000, ramMetrics);
-
-		LinearLayout contentView = new LinearLayout(this);
-		contentView.setOrientation(LinearLayout.VERTICAL);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		params.weight=.5f;
-		contentView.addView(cpuV, params);
-		contentView.addView(ramV, params);
-		setContentView(contentView);
+		setContentView(R.layout.metrics);
+		cpuV = (MetricView) findViewById(R.id.cpu_metrics);
+		cpuV.init("CPU", 100000, getIntent().getStringArrayExtra(INTENT_CPU_METRICS));
+		ramV = (MetricView) findViewById(R.id.ram_metrics);
+		ramV.init("Memory", ramAvailable*1000, getIntent().getStringArrayExtra(INTENT_RAM_METRICS));
 	}
 
 	@Override

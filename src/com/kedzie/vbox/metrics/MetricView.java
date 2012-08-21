@@ -3,59 +3,38 @@ package com.kedzie.vbox.metrics;
 import java.util.Map;
 
 import android.content.Context;
-import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 
 public class MetricView extends LinearLayout {
 
 	private MetricRenderer _renderer;
+	private View _content;
 	
-	public MetricView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init("Metric Name", 100, null);
-	}
-
-	public MetricView(Context context, String title, int max, String []metrics) {
+	public MetricView(Context context) {
 		super(context);
-		init(title, max, metrics);
-	}
-	
-	private void init(String title, int max, String []metrics) {
-		setOrientation(LinearLayout.VERTICAL);
-		_renderer = new MetricRenderer(getContext(), max, metrics);
-		TextView titletextView = new TextView(getContext());
-		titletextView.setText(title);
-		titletextView.setTextSize(16.f);
-		addView(titletextView,
-				new LinearLayout.LayoutParams(
-						LinearLayout.LayoutParams.MATCH_PARENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT));
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT);
-		params.weight=1.f;
-		addView(_renderer, params);
-		createMetricTextFields( metrics);
+		_content = LayoutInflater.from(context).inflate(R.layout.metric_view, null);
 	}
 
-	protected void createMetricTextFields(String[] metrics) {
-		LinearLayout ll = new LinearLayout(getContext());
-		ll.setOrientation(LinearLayout.HORIZONTAL);
+	public void init(String title, int max, String []metrics) {
+		TextView titletextView = (TextView) _content.findViewById(R.id.title);
+		titletextView.setText(title);
+		_renderer = (MetricRenderer)_content.findViewById(R.id.renderer);
+		_renderer.init(max, metrics);
+		LinearLayout ll = (LinearLayout)_content.findViewById(R.id.metric_names);
+		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		for(String m : metrics) {
 			TextView textView = new TextView(getContext());
 			textView.setText(m);
 			textView.setTextColor(VBoxApplication.getColor(getContext(), m.replace('/', '_')));
-			textView.setPadding(0,0,8,0);
-			ll.addView(textView, new LinearLayout.LayoutParams(
-					LinearLayout.LayoutParams.WRAP_CONTENT,
-					LinearLayout.LayoutParams.WRAP_CONTENT));
+			textView.setPadding(0,2,8,0);
+			ll.addView(textView, p);
 		}
-		addView(ll, new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT));
 	}
 
 	public void setQueries(Map<String,MetricQuery> q) {

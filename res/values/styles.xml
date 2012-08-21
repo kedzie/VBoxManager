@@ -22,6 +22,6 @@
 
     <style name="HeaderText" parent="BoldText">
         <item name="android:textSize">20sp</item>
-        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
 </resources>

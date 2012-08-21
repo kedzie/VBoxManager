@@ -279,7 +279,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
 					Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
-					1, 
+					Utils.getIntPreference(context, PreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
 			return machines;
