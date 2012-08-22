@@ -166,9 +166,9 @@
 					<force>true</force>
 					<path>site</path>
 				</configuration>
-				<!--<executions>
-					<execution><phase>site</phase><goals><goal>site</goal></goals></execution>
-				</executions>-->
+ 				<executions>
+ 					<execution><phase>site</phase><goals><goal>site</goal></goals></execution>
+ 				</executions>
 			</plugin>
 		</plugins>
 	</build>
