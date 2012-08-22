@@ -15,7 +15,7 @@ import android.util.SparseArray;
 import com.kedzie.vbox.api.IManagedObjectRef;
 
 /**
- * Builder pattern for {@link Android.os.Bundle}.  
+ * Builder pattern for {@link Bundle}.  
  * Also contains functionality for wrapping VirtualBox remote proxies in Parcels
  */
 public class BundleBuilder {

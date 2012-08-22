@@ -7,10 +7,10 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import com.kedzie.vbox.soap.KSOAP;
 
 /**
- * <p>The IConsole interface represents an interface to control virtual machine execution.</p>
+ * <p>The <code>IConsole</code> interface represents an interface to control virtual machine execution.</p>
  * <p>A console object gets created when a machine has been locked for a particular session (client process) using {@link IMachine#lockMachine} or {@link IMachine#launchVMProcess}. The console object can then be found in the session's {@link ISession#console} attribute.
  * Methods of the {@link IConsole} interface allow the caller to query the current virtual machine execution state, pause the machine or power it down, save the machine state or take a snapshot, attach and detach removable media and so on.</p>
- * @see {@link com.kedzie.vbox.api.ISession}
+ * @see {@link ISession}
  */
 public interface IConsole extends IManagedObjectRef {
 

@@ -3,8 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="ksoap_src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="lib/android-support-v4.jar" sourcepath="/opt/android-sdk-linux/extras/android/support/v4/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

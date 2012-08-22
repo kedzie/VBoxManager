@@ -12,6 +12,12 @@ import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 
+/**
+ * The {@link IVirtualBox} interface represents the main interface exposed by the product that provides virtual machine management. 
+ * <p>An instance of {@link IVirtualBox} is required for the product to do anything useful. Even though the interface does not expose this, internally, {@link IVirtualBox} is implemented as a singleton and actually lives in the process of the VirtualBox server <code>(VBoxSVC.exe)</code>. This makes sure that {@link IVirtualBox} can track the state of all virtual machines on a particular host, regardless of which frontend started them.
+ * <p>To enumerate all the virtual machines on the host, use the {@link IVirtualBox.machines} attribute.
+ * <p><dl class="user" compact><dt><b>Interface ID:</b></dt><dd><code>{C28BE65F-1A8F-43B4-81F1-EB60CB516E66}</code> </dd></dl>
+ */
 public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	static ClassLoader loader = IVirtualBox.class.getClassLoader();
 	

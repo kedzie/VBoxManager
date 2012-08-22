@@ -30,21 +30,21 @@ import com.kedzie.vbox.soap.KSOAP;
  * </ul>
  * <p>The general sequence for collecting and retrieving the metrics is:</p>
  * <ul>
- * <li>Obtain an instance of {@link IPerformanceCollector} with {@link IVirtualBox::performanceCollector}</li>
+ * <li>Obtain an instance of {@link IPerformanceCollector} with {@link IVirtualBox#getPerformanceCollector}</li>
  * <li>Allocate and populate an array with references to objects the metrics will be collected for. Use references to IHost and IMachine objects.</li>
  * <li>Allocate and populate an array with base metric names the data will be collected for.</li>
  * <li>Call  {@link IPerformanceCollector#setupMetrics}. From now on the metric data will be collected and stored.</li>
  * <li>Wait for the data to get collected.</li>
  * <li>Allocate and populate an array with references to objects the metric values will be queried for. You can re-use the object array used for setting base metrics.</li>
  * <li>Allocate and populate an array with metric names the data will be collected for. Note that metric names differ from base metric names.</li>
- * <li>Call <code>IPerformanceCollector#queryMetricsData}. The data that have been collected so far are returned. Note that the values are still retained internally and data collection continues.</li>
+ * <li>Call {@link IPerformanceCollector#queryMetricsData}. The data that have been collected so far are returned. Note that the values are still retained internally and data collection continues.</li>
  * </ul>
  * <p>For an example of usage refer to the following files in VirtualBox SDK:</p>
  * <ul>
 * <li>Java: <code>bindings/webservice/java/jax-ws/samples/metrictest.java</code>  </li>
 * <li>Python: <code>bindings/xpcom/python/sample/shellcommon.py</code>  </li>
 * </ul>
- * @see {@link com.kedzie.vbox.api.ISession}
+ * @see {@link ISession}
  */
 public interface IPerformanceCollector extends IManagedObjectRef {
 

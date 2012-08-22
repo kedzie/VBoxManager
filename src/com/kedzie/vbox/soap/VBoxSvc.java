@@ -78,8 +78,8 @@ public class VBoxSvc implements Parcelable {
 
 	/**
 	 * Create remote-invocation proxy w/o cached properties
-	 * @param clazz 		type of {@link ManagedObjectRef}
-	 * @param id			UIUD of {@link ManagedObjectRef}
+	 * @param clazz 		type of {@link IManagedObjectRef}
+	 * @param id			UIUD of {@link IManagedObjectRef}
 	 * @return 				remote invocation proxy
 	 */
 	public <T> T getProxy(Class<T> clazz, String id) {
@@ -88,8 +88,8 @@ public class VBoxSvc implements Parcelable {
 
 	/**
 	 * Create remote-invocation proxy w/cached properties
-	 * @param clazz 		type of {@link ManagedObjectRef}
-	 * @param id 			UIUD of {@link ManagedObjectRef}
+	 * @param clazz 		type of {@link IManagedObjectRef}
+	 * @param id 			UIUD of {@link IManagedObjectRef}
 	 * @param 				cached properties
 	 * @return 				remote invocation proxy
 	 */
@@ -106,7 +106,7 @@ public class VBoxSvc implements Parcelable {
 	}
 
 	/**
-	 * Connect to {@link vboxwebsrv} & initialize the VBoxSvc API interface
+	 * Connect to <code>vboxwebsrv</code> & initialize the VBoxSvc API interface
 	 * @param username username
 	 * @param password password
 	 * @return initialized {@link IVirtualBox} API interface
@@ -118,7 +118,7 @@ public class VBoxSvc implements Parcelable {
 	}
 	
 	/**
-	 * Query metric data for specified {@link ManagedObject}
+	 * Query metric data for specified {@link IManagedObjectRef}
 	 * @param object object to get metrics for
 	 * @param metrics specify which metrics/accumulations to query. * for all
 	 * @return  {@link Map} from metric name to {@link MetricQuery}
