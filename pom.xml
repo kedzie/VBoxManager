@@ -63,11 +63,6 @@
 			<version>r7</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.code.ksoap2-android</groupId>
-			<artifactId>ksoap2-android</artifactId>
-			<version>3.0.0-RC.1</version>
-		</dependency>
-		<dependency>
 			<groupId>pl.polidea</groupId>
 			<artifactId>treeview</artifactId>
 			<version>1.0.0</version>
@@ -79,6 +74,11 @@
 			<version>4.1.0</version>
 			<type>apklib</type>
 		</dependency>
+ 		<dependency>
+ 			<groupId>com.google.code.ksoap2-android</groupId>
+ 			<artifactId>ksoap2-android</artifactId>
+ 			<version>3.0.0-RC.1</version>
+ 		</dependency>
 	</dependencies>
 
 	<build>
@@ -93,6 +93,18 @@
 				<version>2.3.2</version>
 				<configuration><source>1.6</source><target>1.6</target></configuration>
 			</plugin>
+			<!--plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals><goal>add-source</goal></goals>
+						<configuration><sources><source>ksoap-src</source></sources></configuration>
+					</execution>
+				</executions>
+			</plugin-->
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
@@ -119,7 +131,7 @@
 				<version>1.2</version>
 				<configuration>
 					<archive>${project.build.directory}/${project.artifactId}-${project.version}.apk</archive>
-					<keystore>android</keystore>
+					<keystore>android.keystore</keystore>
 					<storepass>android</storepass>
 					<alias>kedzieandroid</alias>
 					<keypass>android</keypass>
