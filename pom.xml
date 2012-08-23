@@ -47,6 +47,7 @@
 
 	<properties>
 		<android.debuggable>false</android.debuggable>
+		<github.global.server>github</github.global.server>
 		<github.global.repositoryName>VBoxManager</github.global.repositoryName>
 		<github.global.repositoryOwner>kedzie</github.global.repositoryOwner>
 	</properties>
@@ -150,25 +151,24 @@
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>downloads-maven-plugin</artifactId>
-				<version>0.4</version>
+				<version>0.6</version>
 				<configuration>
 					<description>${project.name} APK</description>
 					<override>true</override>
 				</configuration>
+				<executions><execution><phase>deploy</phase><goals><goal>upload</goal></goals></execution></executions>
 			</plugin>
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-
 					plugin</artifactId>
-				<version>0.5</version>
+				<version>0.7</version>
 				<configuration>
 					<message>Creating site for ${project.version}.</message>
 					<force>true</force>
 					<path>site</path>
 				</configuration>
- 				<executions>
- 					<execution><phase>site</phase><goals><goal>site</goal></goals></execution>
- 				</executions>
+ 				<executions><execution><phase>site</phase><goals><goal>site</goal></goals></execution></executions>
 			</plugin>
 		</plugins>
 	</build>
