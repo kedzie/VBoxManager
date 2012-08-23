@@ -1,6 +1,3 @@
-/target
+/bin
 /proguard
 /gen
-/bin
-/org
-/regexp.txt

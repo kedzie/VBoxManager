@@ -1,0 +1,29 @@
+Intent i = new Intent(Intent.ACTION_MAIN);
+ComponentName comp = new ComponentName("com.tux.client","com.tux.client.menus.ActFarmsList");	i.setComponent(comp);
+i.putExtra("External_Launch", true);
+i.putExtra("Save", false);
+i.putExtra("Server", "192.177.1.2");
+i.putExtra("UserName", "myUser@domain ");
+i.putExtra("Password", "pass ");
+startActivity(i);
+
+ResHeight (**)		int			Screen Resolution Height.
+ResWidth (**)		int			Screen Resolution width.
+DesktopBackground	boolean		Default is false.
+FontSmoothing		boolean		Default is false.
+WindowAnim			boolean		Referes to Menu and Windows animation. Default is false.
+DeskComp			boolean		Referes to Desktop Composition setting. Defalt is false.
+ShowDrag			boolean		Refers to the show content while dragging setting. Default is false.
+Themes				boolean		Default is false.
+BitmapCaching		boolean		Default is true.
+EnableCompression	boolean		Default is true.
+ConnectToConsole	boolean		Only applicable for standard RDP connections, 2X Connections will ignore this. Default is set to false.
+SoundRedirection	int			Default setting is 'do not play'.
+1: Do not play
+2: Play on remote computer
+3: Redirect to device
+ColorDepth			int			If not included, the default value is 16 bit.
+8: 256 Colors
+16: High Color (16 bit)
+24: True Color (24 bit)
+32: Highest Quality (32 bit)
