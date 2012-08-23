@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="bin/classes" path="src">
+	<classpathentry kind="src" path="src" output="bin/classes">
 		<attributes><attribute name="maven.pomderived" value="true"/></attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="bin/classes" path="test">
+	<classpathentry kind="src" path="ksoap_src" output="bin/classes" >
+	</classpathentry>
+	<classpathentry kind="src" path="test" output="bin/classes">
 		<attributes><attribute name="maven.pomderived" value="true"/></attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="gen" output="bin/classes" />
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+	<!--classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes><attribute name="maven.pomderived" value="true"/></attributes>
-	</classpathentry>
+	</classpathentry-->
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
