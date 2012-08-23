@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src" output="bin/classes">
-		<attributes><attribute name="maven.pomderived" value="true"/></attributes>
+	<classpathentry kind="src" output="bin/classes" path="src">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="ksoap_src" output="bin/classes" >
+	<classpathentry kind="src" output="bin/classes" path="ksoap_src"/>
+	<classpathentry kind="src" output="bin/classes" path="test">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="test" output="bin/classes">
-		<attributes><attribute name="maven.pomderived" value="true"/></attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="gen" output="bin/classes" />
+	<classpathentry kind="src" output="bin/classes" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<!--classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes><attribute name="maven.pomderived" value="true"/></attributes>
-	</classpathentry-->
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Android Support v4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
