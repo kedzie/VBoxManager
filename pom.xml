@@ -48,8 +48,6 @@
 	<properties>
 		<android.debuggable>false</android.debuggable>
 		<github.global.server>github</github.global.server>
-		<github.global.repositoryName>VBoxManager</github.global.repositoryName>
-		<github.global.repositoryOwner>kedzie</github.global.repositoryOwner>
 	</properties>
 
 	<dependencies>
@@ -138,7 +136,7 @@
 				<version>1.2</version>
 				<configuration>
 					<archive>${project.build.directory}/${project.artifactId}-${project.version}.apk</archive>
-					<keystore>android.keystore</keystore>
+					<keystore>doc/android.keystore</keystore>
 					<storepass>android</storepass>
 					<alias>kedzieandroid</alias>
 					<keypass>android</keypass>
@@ -151,7 +149,7 @@
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>downloads-maven-plugin</artifactId>
-				<version>0.6</version>
+				<version>0.7-SNAPSHOT</version>
 				<configuration>
 					<description>${project.name} APK</description>
 					<override>true</override>
@@ -160,9 +158,8 @@
 			</plugin>
 			<plugin>
 				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-
-					plugin</artifactId>
-				<version>0.7</version>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.8-SNAPSHOT</version>
 				<configuration>
 					<message>Creating site for ${project.version}.</message>
 					<force>true</force>
@@ -185,11 +182,11 @@
 				<artifactId>maven-changelog-plugin</artifactId>
 				<version>2.2</version>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.9.1</version>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-checkstyle-plugin</artifactId> -->
+<!-- 				<version>2.9.1</version> -->
+<!-- 			</plugin> -->
 			<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
        			<artifactId>maven-surefire-report-plugin</artifactId>
@@ -201,14 +198,14 @@
 				<version>2.8.1</version>
 				<configuration>
 				    <sourcepath>${basedir}/src/com/kedzie/vbox</sourcepath>
-<!-- 					<doclet>org.jboss.apiviz.APIviz</doclet> -->
-<!-- 					<docletArtifact> -->
-<!-- 						<groupId>org.jboss.apiviz</groupId> -->
-<!-- 						<artifactId>apiviz</artifactId> -->
-<!-- 						<version>1.3.1.GA</version> -->
-<!-- 					</docletArtifact> -->
-<!-- 					<useStandardDocletOptions>true</useStandardDocletOptions> -->
-<!-- 					<additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam> -->
+					<doclet>org.jboss.apiviz.APIviz</doclet>
+					<docletArtifact>
+						<groupId>org.jboss.apiviz</groupId>
+						<artifactId>apiviz</artifactId>
+						<version>1.3.1.GA</version>
+					</docletArtifact>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+					<additionalparam>-sourceclasspath ${project.build.outputDirectory}</additionalparam>
 					<charset>UTF-8</charset>
 					<encoding>UTF-8</encoding>
 					<docencoding>UTF-8</docencoding>
