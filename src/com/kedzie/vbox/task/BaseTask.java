@@ -33,7 +33,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 	private final String TAG;
 	/** interval used to update progress bar for longing-running operation*/
-	protected final static int PROGRESS_INTERVAL = 100;
+	protected final static int PROGRESS_INTERVAL = 200;
 	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7;
 		
 	protected Context context;
@@ -108,7 +108,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		try	{
 			return work(params);
 		} catch(SoapFault e) {
-			showAlert(TAG, -1, e.faultcode + " - " + e.faultstring);
+			showAlert(TAG, e);
 		} catch(Throwable e)	{
 			showAlert(TAG, e);
 		}

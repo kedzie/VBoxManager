@@ -85,7 +85,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 		@Override
 		protected IVirtualBox work(Server... params) throws Exception {
-			_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
+			MachineListFragment.this._vmgr = _vmgr =  new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
 			_vmgr.logon(params[0].getUsername(), params[0].getPassword());
 			_vmgr.getVBox().getVersion();
 			return _vmgr.getVBox();
