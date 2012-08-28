@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Server implements Parcelable {
+	public final static String BUNDLE = "server";
+	
 	 public static final Parcelable.Creator<Server> CREATOR = new Parcelable.Creator<Server>() {
 		 public Server createFromParcel(Parcel in) {  return new Server(in); }
 		 public Server[] newArray(int size) {  return new Server[size]; }

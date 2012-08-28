@@ -24,9 +24,8 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Harness created");
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setSupportProgressBarIndeterminateVisibility(false);
 		Server server = new Server(0L, null, "192.168.1.10",18083, "kedzie", "Mk0204$$" );
-		new MachineListTask().execute(server);
+		startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, server));
 	}
 
 	class MachineListTask extends  BaseTask<Server, VBoxSvc> {

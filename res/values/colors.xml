@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <color name="METRIC_BACKGROUND">#ffffffff</color>
-   <color name="METRIC_BORDER">#ff0000ff</color>
-   <color name="METRIC_TEXT">#ff000088</color>
-   <color name="METRIC_GRID">#64000000</color>
-    
    <color name="CPU_Load_Kernel">#ff0000ff</color>
    <color name="CPU_Load_Kernel_Fill">#ee0000ee</color>
    

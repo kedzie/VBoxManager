@@ -1,6 +1,8 @@
 package com.kedzie.vbox.server;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -20,6 +22,7 @@ public class EditServerActivity extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle state) {
 		super.onCreate(state);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.server);
 		_server = (Server)(state==null ? 
 				getIntent().getParcelableExtra(INTENT_SERVER) 
@@ -64,6 +67,10 @@ public class EditServerActivity extends SherlockActivity {
 			return true;
 		case R.id.server_list_option_menu_delete:
 			delete();
+			return true;
+		case android.R.id.home:
+			setResult(ServerListActivity.RESULT_CANCELED);
+			NavUtils.navigateUpTo(this, new Intent(this, ServerListActivity.class));
 			return true;
 		default: 
 			return true;

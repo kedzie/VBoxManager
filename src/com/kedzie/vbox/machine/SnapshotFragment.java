@@ -43,12 +43,6 @@ public class SnapshotFragment extends SherlockFragment {
 	/** Root of snapshot tree; retained on configuration change */
 	protected ISnapshot _rootSnapshot;
 	
-	public static SnapshotFragment getInstance(Bundle args) {
-		SnapshotFragment f = new SnapshotFragment();
-		f.setArguments(args);
-		return f;
-	}
-	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

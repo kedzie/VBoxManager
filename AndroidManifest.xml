@@ -5,26 +5,26 @@
     
     <uses-permission android:name="android.permission.INTERNET"/>
     
-    <application android:debuggable="false" android:icon="@drawable/vbox" android:label="@string/app_name" android:name=".VBoxApplication" android:theme="@style/Theme.Sherlock">
-		<activity android:label="Test Harness" android:name=".harness.HarnessActivity">
-			<intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-		<activity android:label="@string/app_name" android:name=".server.ServerListActivity">
+    <application  android:icon="@drawable/vbox" android:label="@string/app_name" android:name=".VBoxApplication" android:theme="@style/Theme.Sherlock">
+<!-- 		<activity android:label="Test Harness" android:name=".harness.HarnessActivity"> -->
+<!-- 			<intent-filter> -->
+<!--                 <action android:name="android.intent.action.MAIN"/> -->
+<!--                 <category android:name="android.intent.category.LAUNCHER"/> -->
+<!--             </intent-filter> -->
+<!--         </activity> -->
+		<activity android:label="@string/app_name" android:name=".server.ServerListActivity" android:configChanges="orientation"  android:uiOptions="splitActionBarWhenNarrow">
 			<intent-filter>
                 	<action android:name="android.intent.action.MAIN"/>
                 	<category android:name="android.intent.category.LAUNCHER"/>
             	</intent-filter>
         </activity>
-        <activity android:configChanges="orientation" android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity"/>
+        <activity android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity"  android:uiOptions="splitActionBarWhenNarrow" android:configChanges="orientation" />
         <activity android:label="Machine List" android:name=".machine.MachineListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow"/>
-        <activity android:label="Virtual Machine" android:name=".machine.MachineFragmentActivity" android:uiOptions="splitActionBarWhenNarrow"/>
-		<activity android:configChanges="orientation" android:label="Metrics" android:name=".metrics.MetricActivity"/>
-		<activity android:label="Preferences" android:name=".PreferencesActivity"/>
-		<activity android:label="Preferences" android:name=".metrics.MetricPreferencesActivity"/>
-		<service android:name=".machine.EventService"/>
+        <activity android:label="Virtual Machine" android:name=".machine.MachineFragmentActivity"  android:uiOptions="splitActionBarWhenNarrow" android:configChanges="orientation" />
+		<activity android:label="Metrics" android:name=".metrics.MetricActivity" android:uiOptions="splitActionBarWhenNarrow"  android:configChanges="orientation"/>
+		<activity android:label="Preferences" android:name=".PreferencesActivity" android:configChanges="orientation" />
+		<activity android:label="Preferences" android:name=".metrics.MetricPreferencesActivity" android:configChanges="orientation" />
+		<service android:name=".EventNotificationService"/>
 		<service android:name=".machine.EventIntentService"/>
     </application>
 </manifest>

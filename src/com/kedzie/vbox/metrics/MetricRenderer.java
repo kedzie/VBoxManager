@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
@@ -12,12 +11,10 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 import com.kedzie.vbox.PreferencesActivity;
-import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 
@@ -45,20 +42,21 @@ public class MetricRenderer extends View {
 	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint();
 	private Path path = new Path();
 	
-	{
+	public MetricRenderer(Context context, int bgColor, int gridColor, int textColor, int borderColor) {
+		super(context);
 		bgPaint.setStyle(Style.FILL);
-		bgPaint.setColor(getContext().getResources().getColor(R.color.METRIC_BACKGROUND));
+		bgPaint.setColor(bgColor);
 		
 		borderPaint.setStyle(Style.STROKE);
-		borderPaint.setColor(getContext().getResources().getColor(R.color.METRIC_BORDER));
+		borderPaint.setColor(borderColor);
 		borderPaint.setAntiAlias(true);
 		borderPaint.setStrokeWidth(2.0f);
 		
-		textPaint.setColor(getContext().getResources().getColor(R.color.METRIC_TEXT));
+		textPaint.setColor(textColor);
 		textPaint.setAntiAlias(true);
 		textPaint.setTextSize(18.0f);
 		
-		gridPaint.setColor(getContext().getResources().getColor(R.color.METRIC_GRID));
+		gridPaint.setColor(gridColor);
 		gridPaint.setAntiAlias(true);
 		gridPaint.setStrokeWidth(1.5f);
 		
@@ -71,23 +69,16 @@ public class MetricRenderer extends View {
 		metricFill.setStyle(Style.FILL);
 	}
 
-	public MetricRenderer(Context context) {
-		super(context);
-	}
-
-	public MetricRenderer(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-	
 	public void init( int max, String []metrics) {
 		_max=max;
 		_metrics=metrics;
 		_count=Utils.getIntPreference(getContext(), PreferencesActivity.COUNT);
 		_period=Utils.getIntPreference(getContext(), PreferencesActivity.PERIOD);
-		updateSize();
 	}
 
-	public void updateSize() {
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
 		Log.i(TAG, "OnSizeChanged("+getWidth()+"," + getHeight() + ")");
 		_width=getWidth();
 		_height=getHeight();
@@ -95,12 +86,6 @@ public class MetricRenderer extends View {
 		hStep = _width/_count;
 	}
 	
-	@Override
-	protected void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		updateSize();
-	}
-
 	public synchronized void setQuery(Map<String, MetricQuery> q) {
 		Log.i(TAG, "Received Metric data");
 		_data=q;
@@ -112,6 +97,9 @@ public class MetricRenderer extends View {
 		canvas.getClipBounds(bounds);
 		canvas.drawRect(bounds, bgPaint);
 		canvas.drawRect(bounds, borderPaint);
+		
+		if(this.isInEditMode())
+			return;
 		
 		int horiz = bounds.right;
 		for(int i=0; i<=_count; i+=5) {	//horizontal grid

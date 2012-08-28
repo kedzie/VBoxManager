@@ -51,6 +51,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		getSupportActionBar().setHomeButtonEnabled(false);
 		_db = new ServerDB(this);
 		listView = new ListView(this);
 		setContentView(listView);
@@ -58,7 +59,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				new LogonTask().execute(getAdapter().getItem(position));
+				connect(getAdapter().getItem(position));
 			}
 		});
 		new LoadServersTask().execute();
@@ -72,15 +73,15 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			editor.putBoolean(FIRST_RUN_PREFERENCE, false);
 			editor.commit();
 			new AlertDialog.Builder(this)
-			.setTitle("Welcome")
-			.setMessage(String.format("Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host %s --port %d", s.getHost(), s.getPort()))
-			.setIcon(android.R.drawable.ic_dialog_info)
-			.setPositiveButton("OK", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			})
+					.setTitle(R.string.firstrun_welcome)
+					.setMessage(String.format(getString(R.string.firstrun_message), s.getHost(), s.getPort()))
+					.setIcon(android.R.drawable.ic_dialog_info)
+					.setPositiveButton("OK", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					})
 			.show();
 		}
 	}
@@ -124,7 +125,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		Server s = getAdapter().getItem(position);
 		switch (item.getItemId()) {
 		case R.id.server_list_context_menu_select:
-			new LogonTask().execute(getAdapter().getItem(position));
+			connect(getAdapter().getItem(position));
 			return true;
 		case R.id.server_list_context_menu_edit:
 			startActivityForResult(new Intent(this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, s), REQUEST_CODE_EDIT);
@@ -136,6 +137,21 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			return true;
 		}
 		return true;
+	}
+	
+	/**
+	 * Launch activity to create a new Server
+	 */
+	private void addServer() {
+		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", 18083, "", "")), REQUEST_CODE_ADD);
+	}
+	
+	/**
+	 * Connect to server and launch application
+	 * @param server VirtualBox {@link Server} to connect to
+	 */
+	private void connect(Server server) {
+		startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class).putExtra(Server.BUNDLE, server));
 	}
 
 	@Override
@@ -167,13 +183,6 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	}
 
 	/**
-	 * Launch activity to create a new Server
-	 */
-	protected void addServer() {
-		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", 18083, "", "")), REQUEST_CODE_ADD);
-	}
-
-	/**
 	 * Server list adapter
 	 */
 	class ServerListAdapter extends ArrayAdapter<Server> {
@@ -196,6 +205,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	/**
 	 * Logs on and launches MachineList Activity
 	 */
+	@Deprecated
 	class LogonTask extends BaseTask<Server, IVirtualBox> {
 
 		public LogonTask() { 
@@ -212,7 +222,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 
 		@Override protected void onPostExecute(IVirtualBox vbox) {
 			if(vbox!=null) {
-				Utils.toast(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
+				Utils.toastLong(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
 				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
 			}
 			super.onPostExecute(vbox);

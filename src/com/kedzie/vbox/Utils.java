@@ -26,8 +26,17 @@ public class Utils {
 	 * @param ctx message {@link Context}
 	 * @param msg Message to show
 	 */
-	public static void toast(Context ctx, String msg) {
+	public static void toastLong(Context ctx, String msg) {
 		Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+	}
+	
+	/**
+	 * Show {@link Toast} notification
+	 * @param ctx message {@link Context}
+	 * @param msg Message to show
+	 */
+	public static void toastShort(Context ctx, String msg) {
+		Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
 	}
 	
 	public static boolean isNullString(String s) {

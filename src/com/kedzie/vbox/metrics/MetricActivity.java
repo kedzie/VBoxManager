@@ -26,19 +26,21 @@ public class MetricActivity extends SherlockActivity  {
 	private DataThread _thread;
 	private VBoxSvc _vmgr;
 	private String _object;
+	private int _ramAvailable;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setTitle(getIntent().getStringExtra(INTENT_TITLE));
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
-		int ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
+		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
 		setContentView(R.layout.metrics);
 		cpuV = (MetricView) findViewById(R.id.cpu_metrics);
-		cpuV.init("CPU", 100000, getIntent().getStringArrayExtra(INTENT_CPU_METRICS));
+		cpuV.init(100, getIntent().getStringArrayExtra(INTENT_CPU_METRICS));
 		ramV = (MetricView) findViewById(R.id.ram_metrics);
-		ramV.init("Memory", ramAvailable*1000, getIntent().getStringArrayExtra(INTENT_RAM_METRICS));
+		ramV.init( _ramAvailable*1000, getIntent().getStringArrayExtra(INTENT_RAM_METRICS));
 	}
 
 	@Override
@@ -53,9 +55,8 @@ public class MetricActivity extends SherlockActivity  {
 		case R.id.metrics_option_menu_preferences:
 			startActivity(new Intent(this, MetricPreferencesActivity.class));
 			return true;
-		default:
-			return true;
 		}
+		return true;
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class MetricActivity extends SherlockActivity  {
 		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, PreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
-
+	
 	@Override 
 	protected void onStop() {
 		if(_thread!=null){

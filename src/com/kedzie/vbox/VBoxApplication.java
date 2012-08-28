@@ -116,7 +116,7 @@ public class VBoxApplication extends Application {
 	 * @return address of resource
 	 */
 	public int getDrawable(MachineState state) {
-		return getDrawables().containsKey(state.name())  ? getDrawables().get(state.name()) : R.drawable.ic_list_start;	
+		return getDrawables().get(state.name());	
 	}
 	
 	/**
@@ -126,11 +126,7 @@ public class VBoxApplication extends Application {
 	 */
 	public static int getColor(Context ctx, String name) {
 		if(!metricColor.containsKey(name)) 
-			metricColor.put(name, ctx.getResources()
-						.getColor(
-								ctx.getResources().getIdentifier(name, 
-								"color", 
-								ctx.getPackageName())) );
+			metricColor.put(name, ctx.getResources().getColor( ctx.getResources().getIdentifier(name, "color", ctx.getPackageName())) );
 		return metricColor.get(name);
 	}
 }

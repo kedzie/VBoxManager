@@ -40,4 +40,12 @@
     <string name="pref_category_general">General</string>
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_category_metrics">Metrics</string>
+    <string name="firstrun_welcome">Welcome</string>
+    <string name="firstrun_message"  formatted="false">Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host %s --port %d</string>
+    <string name="snapshot_name">Name</string>
+    <string name="snapshot_description">Description</string>
+    <string name="tab_actions">Actions</string>
+    <string name="tab_info">Info</string>
+    <string name="tab_log">Log</string>
+    <string name="tab_snapshots">Snapshots</string>
 </resources>

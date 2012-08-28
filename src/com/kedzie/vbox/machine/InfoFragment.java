@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,32 +28,12 @@ public class InfoFragment extends SherlockFragment {
 	private TextView _accelerationVideoText;
 	private TextView _rdpPortText;
 	
-	public static InfoFragment getInstance(Bundle args) {
-		InfoFragment f = new InfoFragment();
-		f.setArguments(args);
-		return f;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState!=null) 
-			populateViews(_machine);
-		else
-			new LoadInfoTask().execute(_machine);
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
 	}
 	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_view = inflater.inflate(R.layout.machine_info, null);
@@ -69,6 +50,25 @@ public class InfoFragment extends SherlockFragment {
 		return _view;
 	}
 	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		if(savedInstanceState!=null) 
+			populateViews(_machine);
+		else 
+			new LoadInfoTask().execute(_machine);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
+	}
+
 	private void populateViews(IMachine m) {
 		_nameText.setText( m.getName()+"" );
 		_osTypeText.setText( m.getOSTypeId()+"" );

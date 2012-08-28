@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"   android:padding="12dip"    android:layout_centerVertical="true" android:layout_width="fill_parent" android:layout_height="fill_parent"   >
     <LinearLayout android:orientation="horizontal"  android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView 
-					android:text="Name"   
+		<TextView android:text="@string/snapshot_name"   
 					style="@style/BoldText"
 					android:layout_marginRight="8dip" 
 					android:layout_gravity="left"   
 					android:padding="8dp"/>
-		<EditText 
-					android:id="@+id/snapshot_name" 
+		<EditText android:id="@+id/snapshot_name" 
 					android:text="New Snapshot" 
 		    		android:layout_width="wrap_content" 
     				android:layout_height="wrap_content"
@@ -16,18 +14,15 @@
 	    	<requestFocus/>
 		</EditText>
     </LinearLayout>
-    <LinearLayout 
-    				android:orientation="horizontal"  
+    <LinearLayout android:orientation="horizontal"  
     				android:layout_width="fill_parent" 
     				android:layout_height="wrap_content">
-    	<TextView 
-    				android:text="Description"  
+    	<TextView android:text="@string/snapshot_description"  
     				style="@style/BoldText"
     				android:layout_marginRight="8dip" 
     				android:layout_gravity="left" 
     				android:padding="8dp"/>
-    	<EditText 
-    				android:id="@+id/snapshot_description"  
+    	<EditText android:id="@+id/snapshot_description"  
     				android:text="Snapshot Description" 
 					android:layout_width="wrap_content" 
     				android:layout_height="wrap_content"
@@ -35,19 +30,16 @@
 					android:lines="4"  />
     	</LinearLayout>
     	<LinearLayout android:orientation="horizontal"  android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<Button
-    			android:id="@+id/button_save"
-    			android:layout_width="wrap_content" 
-    				android:layout_height="wrap_content"
-    			android:text="Take Snapshot" 
-				android:layout_weight="1"   />
-		<Button 
-				android:layout_width="wrap_content" 
-    				android:layout_height="wrap_content"
-				android:text="Cancel" 
-				android:id="@+id/button_cancel" 
-				android:layout_weight="1"   
-				android:layout_gravity="right"/>
-    
-</LinearLayout>
+		    	<ImageButton android:id="@+id/button_save"
+		    	     	android:src="@drawable/ic_menu_camera"
+		    			android:layout_width="wrap_content" 
+		    			android:layout_height="wrap_content"
+						android:layout_weight="1"   />
+				<ImageButton android:id="@+id/button_cancel" 
+						android:layout_width="wrap_content" 
+		    			android:layout_height="wrap_content"
+						android:src="@drawable/ic_menu_revert" 
+						android:layout_weight="1"   
+						android:layout_gravity="right"/>
+		</LinearLayout>
 </LinearLayout>

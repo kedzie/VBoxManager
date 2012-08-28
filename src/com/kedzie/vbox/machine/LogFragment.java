@@ -21,12 +21,6 @@ public class LogFragment extends SherlockFragment {
 	private IMachine _machine;
 	private String _log;
 
-	public static LogFragment getInstance(Bundle args) {
-		LogFragment f = new LogFragment();
-		f.setArguments(args);
-		return f;
-	}
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);

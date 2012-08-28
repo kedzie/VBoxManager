@@ -1,7 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -41,7 +41,10 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.metrics.MetricActivity;
+import com.kedzie.vbox.server.Server;
+import com.kedzie.vbox.server.ServerListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
@@ -55,10 +58,12 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	private VBoxSvc _vmgr;
 	private List<IMachine> _machines;
 	private ListView _listView;
-	private int _curCheckPosition;
+	/** Selected item index. -1 means it was not set in a saved state. */
+	private int _curCheckPosition=-1;
+	/** Whether the  details {@link Fragment} is displayed */
 	private boolean _dualPane;
+	/** Handles selection of a VM in the list */
 	private SelectMachineListener _listener;
-	
 	private LocalBroadcastManager lbm;
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
@@ -70,33 +75,57 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		}
 	};
 	
+	/**
+	 * Log on to VirtualBox webservice
+	 */
+	class LogonTask extends BaseTask<Server, IVirtualBox> {
+		public LogonTask() { 
+			super( "LogonTask", getActivity(), null, "Connecting");
+		}
+
+		@Override
+		protected IVirtualBox work(Server... params) throws Exception {
+			_vmgr = new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
+			_vmgr.logon(params[0].getUsername(), params[0].getPassword());
+			_vmgr.getVBox().getVersion();
+			return _vmgr.getVBox();
+		}
+
+		@Override protected void onPostExecute(IVirtualBox vbox) {
+			if(vbox!=null) {
+				Utils.toastLong(getActivity(), "Connected to VirtualBox v." + vbox.getVersion());
+				new LoadMachinesTask(_vmgr).execute();
+			} else {
+				NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(), ServerListActivity.class));
+			}
+			super.onPostExecute(vbox);
+		}
+	}
+	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		_vmgr = getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
 		setHasOptionsMenu(true);
 		View detailsFrame = getActivity().findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-        
 		if(_dualPane)
 			_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 		if(savedInstanceState!=null)  { 
     		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
-    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
-    		_listView.setAdapter(new MachineListAdapter(_machines));
-    		showDetails(_curCheckPosition);
+//    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
+//    		_listView.setAdapter(new MachineListAdapter(_machines));
+//    		showDetails(_curCheckPosition);
     	} 
+		Server server  = getActivity().getIntent().getParcelableExtra(Server.BUNDLE);
+		new LogonTask().execute(server);
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
 		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
-		if(_machines==null)
-			new LoadMachinesTask(_vmgr).execute();
 	}
 
 	@Override
@@ -108,8 +137,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if(activity instanceof SelectMachineListener)
-			_listener = (SelectMachineListener)activity;
+		_listener = (SelectMachineListener)activity;
 	}
 
 	@Override
@@ -123,7 +151,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putSerializable("machines", 	(Serializable)_machines);
 		outState.putInt("curChoice", _curCheckPosition);
 	}
 	
@@ -156,7 +183,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==REQUEST_CODE_PREFERENCES){
+		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
 		}
 	}
@@ -187,7 +214,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	public void onDestroy() {
 		try {  
 			if(_vmgr.getVBox()!=null)  
-				_vmgr.getVBox().logoff(); 
+				new LogoffTask(_vmgr). execute();
 		} catch (Exception e) { 
 			Log.e(TAG, "error ", e); 
 		} 
@@ -297,10 +324,23 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		}
 	}
 	
+	private class LogoffTask extends BaseTask<Void, Void>	{
+		
+		public LogoffTask(VBoxSvc vmgr) { 
+			super( "LogoffTask", getSherlockActivity(), vmgr, "Logging Off");
+		}
+
+		@Override
+		protected Void work(Void... params) throws Exception {
+			_vmgr.getVBox().logoff();
+			return null;
+		}
+	}
+	
 	/**
 	 * Handle MachineStateChanged event
 	 */
-	class HandleEventTask extends BaseTask<Bundle, IMachine> {
+	private class HandleEventTask extends BaseTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
 			super( "HandleEventTask", getSherlockActivity(), vmgr);

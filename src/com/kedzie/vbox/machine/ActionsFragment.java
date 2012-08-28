@@ -69,12 +69,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		}
 	};
 	
-	public static ActionsFragment getInstance(Bundle arguments) {
-		ActionsFragment f = new ActionsFragment();
-		f.setArguments(arguments);
-		return f;
-	}
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -149,7 +143,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	
 	@Override 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Utils.toast(getActivity(), String.format("Item Click #%d", position));
+		Utils.toastLong(getActivity(), String.format("Item Click #%d", position));
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
 		if(action.equals(VMAction.START))	
 			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);
@@ -269,7 +263,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		protected void onPostExecute(ISessionStateChangedEvent result)	{
 			super.onPostExecute(result);
 			if(result!=null)	{
-				Utils.toast(getActivity(), "Session changed State: "+result.getState());
+				Utils.toastLong(getActivity(), "Session changed State: "+result.getState());
 			}
 		}
 	}
