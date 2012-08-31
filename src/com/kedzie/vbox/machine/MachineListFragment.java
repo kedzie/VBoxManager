@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -41,10 +40,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IProgress;
-import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.metrics.MetricActivity;
-import com.kedzie.vbox.server.Server;
-import com.kedzie.vbox.server.ServerListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
@@ -63,7 +59,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	/** Whether the  details {@link Fragment} is displayed */
 	private boolean _dualPane;
 	/** Handles selection of a VM in the list */
-	private SelectMachineListener _listener;
+	private SelectMachineListener _machineSelectedListener;
 	private LocalBroadcastManager lbm;
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
@@ -76,35 +72,106 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	};
 	
 	/**
-	 * Log on to VirtualBox webservice
+	 * Listener who is notified when a VirtualMachine is selected from the list
 	 */
-	class LogonTask extends BaseTask<Server, IVirtualBox> {
-		public LogonTask() { 
-			super( "LogonTask", getActivity(), null, "Connecting");
+	public static interface SelectMachineListener {
+		
+		/**
+		 * Virtual Machine has been selected from list
+		 * @param machine The selected {@link IMachine}
+		 */
+		public void onMachineSelected(IMachine machine);
+	}
+	
+	/** 
+	 * Load the Machines 
+	 */
+	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
+		public LoadMachinesTask(VBoxSvc vmgr) { 
+			super( "LoadMachinesTask", getActivity(), vmgr, "Loading Machines");
 		}
 
 		@Override
-		protected IVirtualBox work(Server... params) throws Exception {
-			MachineListFragment.this._vmgr = _vmgr =  new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
-			_vmgr.logon(params[0].getUsername(), params[0].getPassword());
+		protected List<IMachine> work(Void... params) throws Exception {
+			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
+			_vmgr.getVBox().getHost().getMemorySize();
+			for(IMachine m :  machines) {
+				//cache property values to avoid remote calls
+				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
+				m.getState();
+			}
+			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
+					Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
+					Utils.getIntPreference(context, PreferencesActivity.COUNT), 
+					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
-			return _vmgr.getVBox();
+			return machines;
 		}
 
-		@Override protected void onPostExecute(IVirtualBox vbox) {
-			if(vbox!=null) {
-				Utils.toastLong(getActivity(), "Connected to VirtualBox v." + vbox.getVersion());
-				new LoadMachinesTask(_vmgr).execute();
-			} else {
-				NavUtils.navigateUpTo(getActivity(), new Intent(getActivity(), ServerListActivity.class));
+		@Override
+		protected void onPostExecute(List<IMachine> result)	{
+			super.onPostExecute(result);
+			_machines = result;
+			if(result!=null)	{
+				getActivity().setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
+				_listView.setAdapter(new MachineListAdapter(result));
+				getAdapter().setNotifyOnChange(false);
 			}
-			super.onPostExecute(vbox);
+		}
+	}
+	
+	/**
+	 * Handle MachineStateChanged event
+	 */
+	private class HandleEventTask extends BaseTask<Bundle, IMachine> {
+		
+		public HandleEventTask(VBoxSvc vmgr) { 
+			super( "HandleEventTask", getSherlockActivity(), vmgr);
+		}
+
+		@Override
+		protected IMachine work(Bundle... params) throws Exception {
+			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
+			if(event instanceof IMachineStateChangedEvent) {
+				IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
+				m.getName();m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
+				m.getCurrentStateModified(); m.getOSTypeId();
+				return m;
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(IMachine result)	{
+			super.onPostExecute(result);
+			if(result!=null)	{
+				int pos = getAdapter().getPosition(result);
+				getAdapter().remove(result);
+				getAdapter().insert(result, pos);
+				getAdapter().notifyDataSetChanged();
+				Toast.makeText(getActivity(), result.getName() + "  changed State: " + result.getState(), Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+	
+	/**
+	 * List adapter for Virtual Machines
+	 */
+	class MachineListAdapter extends ArrayAdapter<IMachine> {
+		public MachineListAdapter(List<IMachine> machines) {
+			super(getActivity(), 0, machines);
+		}
+		public View getView(int position, View view, ViewGroup parent) {
+			if (view == null) view = new MachineView(getApp(), getActivity());
+			((MachineView)view).update(getItem(position));
+			return view;
 		}
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		_vmgr = (VBoxSvc)getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
 		setHasOptionsMenu(true);
 		View detailsFrame = getActivity().findViewById(R.id.details);
@@ -118,8 +185,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 //    		_listView.setAdapter(new MachineListAdapter(_machines));
 //    		showDetails(_curCheckPosition);
     	} 
-		Server server  = getActivity().getIntent().getParcelableExtra(Server.BUNDLE);
-		new LogonTask().execute(server);
+		new LoadMachinesTask(_vmgr).execute();
 	}
 	
 	@Override
@@ -137,7 +203,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		_listener = (SelectMachineListener)activity;
+		_machineSelectedListener = (SelectMachineListener)activity;
 	}
 
 	@Override
@@ -206,18 +272,12 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
         _curCheckPosition = index;
         if (_dualPane)
         	_listView.setItemChecked(index, true);
-        if(_listener != null) 
-        	_listener.onMachineSelected(getAdapter().getItem(index));
+        if(_machineSelectedListener != null) 
+        	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
     }
 	
 	@Override
 	public void onDestroy() {
-		try {  
-			if(_vmgr.getVBox()!=null)  
-				new LogoffTask(_vmgr). execute();
-		} catch (Exception e) { 
-			Log.e(TAG, "error ", e); 
-		} 
 		super.onDestroy();
 	}
 
@@ -285,110 +345,5 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		  break;
 	  }
 	  return true;
-	}
-	
-	/** 
-	 * Load the Machines 
-	 */
-	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
-		public LoadMachinesTask(VBoxSvc vmgr) { 
-			super( "LoadMachinesTask", getActivity(), vmgr, "Loading Machines");
-		}
-
-		@Override
-		protected List<IMachine> work(Void... params) throws Exception {
-			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
-			_vmgr.getVBox().getHost().getMemorySize();
-			for(IMachine m :  machines) {
-				//cache property values to avoid remote calls
-				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
-				m.getState();
-			}
-			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
-					Utils.getIntPreference(context, PreferencesActivity.COUNT), 
-					(IManagedObjectRef)null);
-			_vmgr.getVBox().getVersion();
-			return machines;
-		}
-
-		@Override
-		protected void onPostExecute(List<IMachine> result)	{
-			super.onPostExecute(result);
-			_machines = result;
-			if(result!=null)	{
-				getActivity().setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
-				_listView.setAdapter(new MachineListAdapter(result));
-				getAdapter().setNotifyOnChange(false);
-			}
-		}
-	}
-	
-	private class LogoffTask extends BaseTask<Void, Void>	{
-		
-		public LogoffTask(VBoxSvc vmgr) { 
-			super( "LogoffTask", getSherlockActivity(), vmgr, "Logging Off");
-		}
-
-		@Override
-		protected Void work(Void... params) throws Exception {
-			_vmgr.getVBox().logoff();
-			return null;
-		}
-	}
-	
-	/**
-	 * Handle MachineStateChanged event
-	 */
-	private class HandleEventTask extends BaseTask<Bundle, IMachine> {
-		
-		public HandleEventTask(VBoxSvc vmgr) { 
-			super( "HandleEventTask", getSherlockActivity(), vmgr);
-		}
-
-		@Override
-		protected IMachine work(Bundle... params) throws Exception {
-			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
-			if(event instanceof IMachineStateChangedEvent) {
-				IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
-				m.getName();m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
-				m.getCurrentStateModified(); m.getOSTypeId();
-				return m;
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(IMachine result)	{
-			super.onPostExecute(result);
-			if(result!=null)	{
-				int pos = getAdapter().getPosition(result);
-				getAdapter().remove(result);
-				getAdapter().insert(result, pos);
-				getAdapter().notifyDataSetChanged();
-				Toast.makeText(getActivity(), result.getName() + "  changed State: " + result.getState(), Toast.LENGTH_LONG).show();
-			}
-		}
-	}
-	
-	/**
-	 * List adapter for Virtual Machines
-	 */
-	class MachineListAdapter extends ArrayAdapter<IMachine> {
-		public MachineListAdapter(List<IMachine> machines) {
-			super(getActivity(), 0, machines);
-		}
-		public View getView(int position, View view, ViewGroup parent) {
-			if (view == null) view = new MachineView(getApp(), getActivity());
-			((MachineView)view).update(getItem(position));
-			return view;
-		}
-	}
-	
-	/**
-	 * Listener who is notified when a VirtualMachine is selected from the list
-	 */
-	public static interface SelectMachineListener {
-		public void onMachineSelected(IMachine machine);
 	}
 }

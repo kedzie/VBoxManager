@@ -18,6 +18,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
 import com.kedzie.vbox.tabs.ViewPagerTabSupport;
+import com.kedzie.vbox.task.BaseTask;
 
 public class MachineListFragmentActivity extends TabActivity implements SelectMachineListener {
 
@@ -28,37 +29,54 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 	/** {@link ActionBar} tabs */
 	private TabSupport _tabSupport;
 
+	private class LogoffTask extends BaseTask<Void, Void>	{
+		public LogoffTask(VBoxSvc vmgr) { 
+			super( "LogoffTask", MachineListFragmentActivity.this, vmgr, "Logging Off");
+		}
+		@Override
+		protected Void work(Void... params) throws Exception {
+			_vmgr.logoff();
+			return null;
+		}
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		setContentView(R.layout.machine_list);
+		getSupportActionBar().setTitle(_vmgr.getVBox().getVersion());
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane) {
 			_tabSupport = new ViewPagerTabSupport(this, (ViewPager)detailsFrame);
 //			_tabSupport = new FragmentTabSupport(this, R.id.details);
 		}
-		startService(new Intent(this, EventIntentService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 		startService(new Intent(this, EventNotificationService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+		startService(new Intent(this, EventIntentService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case android.R.id.home:
+			logoff();
 			NavUtils.navigateUpTo(this, new Intent(this, ServerListActivity.class));
 			break;
 		}
 		return true;
 	}
 
-	@Override
-	protected void onDestroy() {
+	public void logoff() {
 		stopService(new Intent(this, EventNotificationService.class));
 		stopService(new Intent(this, EventIntentService.class));
-		super.onDestroy();
+		if(_vmgr.getVBox()!=null)  
+			new LogoffTask(_vmgr). execute();
+	}
+	
+	@Override 
+	public void onBackPressed() {
+		logoff();
 	}
 
 	@Override

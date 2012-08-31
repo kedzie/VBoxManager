@@ -21,7 +21,7 @@ public class ViewPagerTabSupport implements TabSupport, ActionBar.TabListener, V
 	
 	private final SherlockFragmentActivity _activity;
     private final ViewPager _viewPager;
-    final List<TabFragmentInfo> _tabs = new ArrayList<TabFragmentInfo>();
+    final List<TabFragmentInfo<?>> _tabs = new ArrayList<TabFragmentInfo<?>>();
     private FragmentPagerAdapter _adapter;
 
     public ViewPagerTabSupport(SherlockFragmentActivity activity, ViewPager pager) {
@@ -32,7 +32,7 @@ public class ViewPagerTabSupport implements TabSupport, ActionBar.TabListener, V
         	public int getCount() { return _tabs.size(); }
         	@Override
         	public Fragment getItem(int position) {
-        		TabFragmentInfo info = _tabs.get(position);
+        		TabFragmentInfo<?> info = _tabs.get(position);
         		return Fragment.instantiate(_activity, info.clazz.getName(), info.args);
         	}
         };
@@ -41,8 +41,8 @@ public class ViewPagerTabSupport implements TabSupport, ActionBar.TabListener, V
     }
 
     @Override
-    public void addTab(String name, Class<? extends Fragment> clazz, Bundle args)  {
-        TabFragmentInfo info = new TabFragmentInfo(name, clazz, args);
+    public <T extends Fragment> void addTab(String name, Class<T> clazz, Bundle args)  {
+        TabFragmentInfo<T> info = new TabFragmentInfo<T>(name, clazz, args);
        _activity.getSupportActionBar().addTab( _activity.getSupportActionBar().newTab().setText(name) .setTag(info).setTabListener(this) );
         _tabs.add(info);
         _adapter.notifyDataSetChanged();
@@ -50,7 +50,7 @@ public class ViewPagerTabSupport implements TabSupport, ActionBar.TabListener, V
     
     @Override
 	public void removeTab(String name) {
-    	TabFragmentInfo info = new TabFragmentInfo(name, null, null);
+    	TabFragmentInfo<?> info = new TabFragmentInfo<Fragment>(name, null, null);
     	_activity.getSupportActionBar().removeTabAt( _tabs.indexOf(name) );
     	_tabs.remove(info);
     	_adapter.notifyDataSetChanged();

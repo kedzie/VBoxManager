@@ -43,7 +43,7 @@ public interface TabSupport {
 	 * @param clazz		type of Fragment
 	 * @param args		Arguments
 	 */
-	public void addTab(String name, Class<? extends Fragment> clazz, Bundle args) ;
+	public <T extends Fragment> void addTab(String name, Class<T> clazz, Bundle args) ;
 
 	/**
 	 * Remove a tab from the {@link ActionBar}

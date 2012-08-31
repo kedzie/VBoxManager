@@ -6,6 +6,9 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 
 import com.actionbarsherlock.view.MenuItem;
+import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
 import com.kedzie.vbox.tabs.ViewPagerTabSupport;
@@ -18,6 +21,9 @@ public class MachineFragmentActivity extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		IMachine m = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
+		getSupportActionBar().setLogo(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
+		getSupportActionBar().setTitle(m.getName());
 		if(savedInstanceState==null) {
 			ViewPager pager = new ViewPager(this);
 			pager.setId(99);

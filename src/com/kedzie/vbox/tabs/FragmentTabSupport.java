@@ -40,8 +40,8 @@ public class FragmentTabSupport implements TabSupport {
 	}
 	
 	@Override
-	public void addTab(String name, Class<? extends Fragment> clazz, Bundle args)  {
-        TabFragmentInfo info = new TabFragmentInfo(name, clazz, args);
+	public <T extends Fragment> void addTab(String name, Class<T > clazz, Bundle args)  {
+        TabFragmentInfo<T> info = new TabFragmentInfo<T>(name, clazz, args);
         Tab tab =  _actionBar.newTab().setText(name).setTag(name).setTabListener(new TabListener(info, name));
         _tabs.put(name,tab);
         _actionBar.addTab(tab);
@@ -59,12 +59,12 @@ public class FragmentTabSupport implements TabSupport {
 	}
 
 	private class TabListener implements ActionBar.TabListener {
-		private TabFragmentInfo _info;
+		private TabFragmentInfo<?> _info;
         private String _tag;
         /** Already created {@link Fragment} */
         private Fragment _fragment;
         
-        public TabListener(TabFragmentInfo info, String tag) {
+        public TabListener(TabFragmentInfo<?> info, String tag) {
             _info = info;
             _tag=tag;
             // if already fragment, probably from saved state, deactivate it because initial state tab isn't shown.

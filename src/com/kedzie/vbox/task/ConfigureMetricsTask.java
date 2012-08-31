@@ -20,7 +20,6 @@ public class ConfigureMetricsTask extends BaseTask<Void, Void> {
 
 	@Override
 	protected Void work(Void...v) throws Exception {
-		//if no period is specified then default to preferences
 		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
 				Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
 				Utils.getIntPreference(context, PreferencesActivity.COUNT), 

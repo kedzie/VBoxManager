@@ -45,6 +45,8 @@ public class VBoxSvc implements Parcelable {
 	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
 
 	protected String _url;
+	protected String _username;
+	protected String _password;
 	protected IVirtualBox _vbox;
 	protected HttpTransportSE  _transport;
 
@@ -104,6 +106,19 @@ public class VBoxSvc implements Parcelable {
 		}
 		return proxy;
 	}
+	
+	public IVirtualBox getVBox() {
+		if(_vbox==null) {
+			Log.i(TAG, "Not logged on to VirtualBox webservice.  Attempting to connect..");
+			try {
+				logon(_username, _password);
+			} catch (Exception e) {
+				Log.e(TAG, "Error logging on");
+				throw new RuntimeException("Couldn't log on to VirtualBox API", e);
+			} 
+		}
+		return _vbox;
+	}
 
 	/**
 	 * Connect to <code>vboxwebsrv</code> & initialize the VBoxSvc API interface
@@ -114,7 +129,18 @@ public class VBoxSvc implements Parcelable {
 	 * @throws XmlPullParserException
 	 */
 	public IVirtualBox logon(String username, String password) throws IOException, XmlPullParserException {
+		_username=username;
+		_password=password;
 		return (_vbox = getProxy(IVirtualBox.class, null).logon(username, password));
+	}
+	
+	/**
+	 * Logoff from VirtualBox API
+	 * @throws IOException 
+	 */
+	public void logoff() throws IOException {
+		_vbox.logoff();
+		_vbox=null;
 	}
 	
 	/**
@@ -144,10 +170,6 @@ public class VBoxSvc implements Parcelable {
 			ret.put(q.name, q);
 		}
 		return ret;
-	}
-
-	public IVirtualBox getVBox() {
-		return _vbox;
 	}
 
 	public String getURL() {
