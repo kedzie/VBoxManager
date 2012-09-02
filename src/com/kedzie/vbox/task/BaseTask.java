@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -51,7 +50,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			switch(msg.what) {
 			case WHAT_ERROR:
 				new AlertDialog.Builder(context)
-					.setIcon(R.drawable.ic_dialog_alert)
+					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle(msg.getData().getString("title"))
 					.setMessage(msg.getData().getString("msg"))
 					.setPositiveButton("OK", new OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { 	dialog.dismiss();}})
@@ -64,6 +63,15 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 			}
 		}
 	};
+	
+	/**
+	 * @param TAG LogCat tag
+	 * @param vmgr VirtualBox API service
+	 */
+	protected BaseTask(String TAG, VBoxSvc vmgr) {
+		this.TAG = TAG;
+		_vmgr=vmgr;
+	}
 
 	/**
 	 * @param TAG LogCat tag
