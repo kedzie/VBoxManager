@@ -14,9 +14,9 @@
    height="48"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
-   sodipodi:docname="running.svg"
-   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_start_c.png"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="start.svg"
+   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Color/ic_list_start.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    style="enable-background:new">
@@ -52,16 +52,6 @@
        y2="1049.3622"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.5333333,0,0,1.5333333,-0.53333333,-1581.0887)" />
-    <filter
-       inkscape:collect="always"
-       id="filter3806"
-       color-interpolation-filters="sRGB">
-      <feBlend
-         inkscape:collect="always"
-         mode="lighten"
-         in2="BackgroundImage"
-         id="feBlend3808" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -70,19 +60,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16.150801"
-     inkscape:cx="17.762859"
-     inkscape:cy="24.218374"
+     inkscape:zoom="12.24"
+     inkscape:cx="27.50071"
+     inkscape:cy="30.754394"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer3"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
-     inkscape:window-width="1906"
-     inkscape:window-height="951"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1113"
+     inkscape:window-height="865"
+     inkscape:window-x="78"
+     inkscape:window-y="68"
+     inkscape:window-maximized="0"
      inkscape:snap-nodes="true">
     <inkscape:grid
        type="xygrid"
@@ -105,11 +95,11 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Shape"
+     inkscape:label="Holo-Light"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1004.3622)"
-     style="display:inline">
+     style="display:none">
     <rect
        style="fill:#000000;fill-opacity:1"
        id="rect3866"
@@ -121,36 +111,35 @@
        rx="7.5"
        ry="2.7713852" />
     <path
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#00cc00;fill-opacity:1;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
-       d="m 27.066667,1005.3622 -9.2,7.6667 7.666666,9.2 -24.533333,0 0,12.2666 24.533333,0 -7.666666,9.2 9.2,7.6667 c 6.692633,-7.577 13.026113,-15.6165 19.933333,-23 -6.47847,-7.9235 -13.209558,-15.2849 -19.933333,-23 z"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#333333;fill-opacity:0.6;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+       d="m 26.400001,1010.3622 -7.2,6.0001 5.999998,7.2 -19.199999,0 0,9.5998 19.199999,0 -5.999998,7.2 7.2,6.0001 c 5.237712,-5.9298 10.194349,-12.2216 15.599999,-18 -5.070107,-6.201 -10.337915,-11.9621 -15.599999,-18 z"
        id="path4457-7-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccccc" />
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer4"
-     inkscape:label="Overlay"
-     style="opacity:0.65065505;display:inline;filter:url(#filter3806)"
-     transform="translate(0,16)">
+     id="layer2"
+     inkscape:label="Holo-Dark"
+     style="display:none">
     <path
+       transform="translate(0,-1004.3622)"
        sodipodi:nodetypes="cccccccccc"
        inkscape:connector-curvature="0"
-       id="path3764"
-       d="m 27.066667,-15 -9.2,7.6666667 7.666666,9.2 -24.533333,0 0,12.2666663 24.533333,0 -7.666666,9.2 9.2,7.666667 C 33.7593,23.423033 40.09278,15.38346 47,8 40.52153,0.0765 33.790442,-7.28488 27.066667,-15 z"
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:url(#linearGradient3773);fill-opacity:1;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
+       id="path3765"
+       d="m 26.400001,1010.3622 -7.2,6.0001 5.999998,7.2 -19.199999,0 0,9.5998 19.199999,0 -5.999998,7.2 7.2,6.0001 c 5.237712,-5.9298 10.194349,-12.2216 15.599999,-18 -5.070107,-6.201 -10.337915,-11.9621 -15.599999,-18 z"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:0.8;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Shadow"
-     style="opacity:0.56999966;display:inline"
-     transform="translate(0,16)">
+     inkscape:label="Color">
     <path
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
-       d="m 27.066667,-15 -9.2,7.6666667 7.666666,9.2 -24.533333,0 0,12.2666663 0.71875,-0.43125 0,-11.1166663 24.916667,0 -8.289584,-9.4875 9.247917,-7.5708337 z m -1.533334,29.133333 -7.666666,9.2 0.527083,0.43125 8.672917,-9.63125 z"
-       id="path4457-7"
+       transform="translate(0,-1004.3622)"
+       sodipodi:nodetypes="cccccccccc"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccccccccccc" />
+       id="path3763"
+       d="m 26.400001,1010.3622 -7.2,6.0001 5.999998,7.2 -19.199999,0 0,9.5998 19.199999,0 -5.999998,7.2 7.2,6.0001 c 5.237712,-5.9298 10.194349,-12.2216 15.599999,-18 -5.070107,-6.201 -10.337915,-11.9621 -15.599999,-18 z"
+       style="enable-background:accumulate;display:inline;font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#8bc53f;fill-opacity:1;stroke:none;stroke-width:8;marker:none;visibility:visible;overflow:visible;font-family:Sans;-inkscape-font-specification:Sans" />
   </g>
 </svg>

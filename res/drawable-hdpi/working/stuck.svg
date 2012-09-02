@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="stuck.svg"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Holo-Light/ic_list_stuck.png"
+   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Color/ic_list_stuck.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    style="enable-background:new">
@@ -125,16 +125,6 @@
        y2="31"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.5333333,0,0,1.5333333,-0.53333333,-16.533333)" />
-    <filter
-       inkscape:collect="always"
-       id="filter3799"
-       color-interpolation-filters="sRGB">
-      <feBlend
-         inkscape:collect="always"
-         mode="lighten"
-         in2="BackgroundImage"
-         id="feBlend3801" />
-    </filter>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3800"
@@ -154,10 +144,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.28"
-     inkscape:cx="29.993259"
+     inkscape:cx="10.327311"
      inkscape:cy="26.150258"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1278"
      inkscape:window-height="838"
@@ -193,7 +183,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1004.3622)"
-     style="display:inline">
+     style="display:none">
     <path
        style="fill:#333333;fill-opacity:0.6;stroke:none"
        d="m 8.3625,1010.3622 c -1.3159442,0 -2.3625,1.066 -2.3625,2.4001 l 0,31.1998 c 0,1.3341 1.0465558,2.4001 2.3625,2.4001 l 31.275,0 c 1.315944,0 2.3625,-1.066 2.3625,-2.4001 l 0,-31.1998 c 0,-1.3341 -1.046556,-2.4001 -2.3625,-2.4001 l -31.275,0 z m 6.037499,6.0001 3.225002,0 c 1.329599,0 2.399998,1.1455 2.399998,2.5499 l 0,19.2375 c 0,1.4045 -1.070399,2.5501 -2.399998,2.5501 l -3.225002,0 C 13.0704,1040.6998 12,1039.5542 12,1038.1497 l 0,-19.2375 c 0,-1.4044 1.0704,-2.5499 2.399999,-2.5499 z m 15.975,0 3.225002,0 c 1.329599,0 2.399998,1.1136 2.399998,2.5124 l 0,19.1999 c 0,1.399 -1.070399,2.5126 -2.399998,2.5126 l -3.225002,0 c -1.329599,0 -2.399998,-1.1136 -2.399998,-2.5126 l 0,-19.1999 c 0,-1.3988 1.070399,-2.5124 2.399998,-2.5124 z"
@@ -211,5 +201,17 @@
        id="path4450"
        d="m 8.3625,1010.3622 c -1.3159442,0 -2.3625,1.066 -2.3625,2.4001 l 0,31.1998 c 0,1.3341 1.0465558,2.4001 2.3625,2.4001 l 31.275,0 c 1.315944,0 2.3625,-1.066 2.3625,-2.4001 l 0,-31.1998 c 0,-1.3341 -1.046556,-2.4001 -2.3625,-2.4001 l -31.275,0 z m 6.037499,6.0001 3.225002,0 c 1.329599,0 2.399998,1.1455 2.399998,2.5499 l 0,19.2375 c 0,1.4045 -1.070399,2.5501 -2.399998,2.5501 l -3.225002,0 C 13.0704,1040.6998 12,1039.5542 12,1038.1497 l 0,-19.2375 c 0,-1.4044 1.0704,-2.5499 2.399999,-2.5499 z m 15.975,0 3.225002,0 c 1.329599,0 2.399998,1.1136 2.399998,2.5124 l 0,19.1999 c 0,1.399 -1.070399,2.5126 -2.399998,2.5126 l -3.225002,0 c -1.329599,0 -2.399998,-1.1136 -2.399998,-2.5126 l 0,-19.1999 c 0,-1.3988 1.070399,-2.5124 2.399998,-2.5124 z"
        style="fill:#ffffff;fill-opacity:0.8;stroke:none;display:inline;enable-background:new" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Color"
+     style="display:inline">
+    <path
+       transform="translate(0,-1004.3622)"
+       inkscape:connector-curvature="0"
+       id="path3776"
+       d="m 8.3625,1010.3622 c -1.3159442,0 -2.3625,1.066 -2.3625,2.4001 l 0,31.1998 c 0,1.3341 1.0465558,2.4001 2.3625,2.4001 l 31.275,0 c 1.315944,0 2.3625,-1.066 2.3625,-2.4001 l 0,-31.1998 c 0,-1.3341 -1.046556,-2.4001 -2.3625,-2.4001 l -31.275,0 z m 6.037499,6.0001 3.225002,0 c 1.329599,0 2.399998,1.1455 2.399998,2.5499 l 0,19.2375 c 0,1.4045 -1.070399,2.5501 -2.399998,2.5501 l -3.225002,0 C 13.0704,1040.6998 12,1039.5542 12,1038.1497 l 0,-19.2375 c 0,-1.4044 1.0704,-2.5499 2.399999,-2.5499 z m 15.975,0 3.225002,0 c 1.329599,0 2.399998,1.1136 2.399998,2.5124 l 0,19.1999 c 0,1.399 -1.070399,2.5126 -2.399998,2.5126 l -3.225002,0 c -1.329599,0 -2.399998,-1.1136 -2.399998,-2.5126 l 0,-19.1999 c 0,-1.3988 1.070399,-2.5124 2.399998,-2.5124 z"
+       style="fill:#eb1313;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
   </g>
 </svg>

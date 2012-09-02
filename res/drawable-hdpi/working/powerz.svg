@@ -14,12 +14,12 @@
    height="48"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="powerz.svg"
    style="enable-background:new"
-   inkscape:export-filename="/home/kedzie/workspace/VBoxManager/res/drawable-hdpi/ic_list_poweroff_c.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90"
+   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-mdpi/working/Color/ic_list_poweroff.png"
+   inkscape:export-xdpi="60"
+   inkscape:export-ydpi="60"
    enable-background="new">
   <defs
      id="defs4">
@@ -75,15 +75,6 @@
        y1="-15"
        x2="25"
        y2="31" />
-    <filter
-       inkscape:collect="always"
-       id="filter3774">
-      <feBlend
-         inkscape:collect="always"
-         mode="lighten"
-         in2="BackgroundImage"
-         id="feBlend3776" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -92,18 +83,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="13.323711"
-     inkscape:cx="19.131769"
-     inkscape:cy="24.791064"
+     inkscape:zoom="9.4236332"
+     inkscape:cx="30.84594"
+     inkscape:cy="20.546417"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer3"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="false"
-     inkscape:window-width="1682"
-     inkscape:window-height="875"
-     inkscape:window-x="127"
-     inkscape:window-y="52"
+     inkscape:window-width="1069"
+     inkscape:window-height="758"
+     inkscape:window-x="114"
+     inkscape:window-y="150"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -127,70 +118,46 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="Shape"
-     style="display:inline"
+     inkscape:label="Holo-Light"
+     style="display:none"
      transform="translate(0,16)">
     <path
        sodipodi:nodetypes="cccccccc"
        inkscape:connector-curvature="0"
        id="path3785"
-       d="m 32,31 -15.999999,-14 7,-9.0000003 L 14.000001,-12 32,-15 38,6.9999995 27.000001,18 z"
-       style="fill:#ff9900;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
+       d="M 42,26 18.990356,23.123437 23,12 6,-1 19,-10 35,6 31.254779,18.432633 z"
+       style="fill:#333333;fill-opacity:0.6;stroke:none;display:inline;enable-background:new" />
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer4"
-     inkscape:label="Overlay"
-     style="opacity:0.25;display:inline;filter:url(#filter3774)">
-    <path
-       sodipodi:nodetypes="cccccccc"
-       inkscape:connector-curvature="0"
-       id="path3771"
-       d="m 32,31 -15.999999,-14 7,-9.0000003 L 14.000001,-12 32,-15 38,6.9999995 27.000001,18 z"
-       style="fill:url(#linearGradient3801);fill-opacity:1;stroke:none;display:inline;enable-background:new"
-       transform="translate(0,16)" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer3"
-     inkscape:label="Gray"
+     id="layer1"
+     inkscape:label="Holo-Dark"
      style="display:none">
     <path
        transform="translate(0,16)"
-       style="fill:url(#linearGradient3801);fill-opacity:1;stroke:none;display:inline;enable-background:new"
-       d="m 32,31 -15.999999,-14 7,-9.0000003 L 14.000001,-12 32,-15 38,6.9999995 27.000001,18 z"
-       id="path3767"
+       style="fill:#ffffff;fill-opacity:0.8;stroke:none;display:inline;enable-background:new"
+       d="M 42,26 18.990356,23.123437 23,12 6,-1 19,-10 35,6 31.254779,18.432633 z"
+       id="path3770"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
   </g>
   <g
-     inkscape:label="Inner Shadow"
      inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0.5,-1004.8622)"
-     style="opacity:0.56999978;display:inline">
-    <rect
-       style="fill:#000000;fill-opacity:1"
-       id="rect3866"
-       width="3.6951802"
-       height="2.7713852"
-       x="130.2551"
-       y="86.945511"
-       transform="translate(0,796.36218)"
-       rx="7.5"
-       ry="2.7713852" />
+     id="layer3"
+     inkscape:label="Color">
     <path
-       style="fill:#000000;fill-opacity:1;stroke:none;display:inline;enable-background:new"
-       d="m 32,1 -18,3 9,20 -7,9 0.53125,0.4375 7,-9 -9,-20 L 32.125,1.5 32,1 z"
-       id="rect3787"
-       transform="translate(-0.5,1004.8622)"
-       inkscape:connector-curvature="0" />
+       transform="translate(0,16)"
+       style="enable-background:new;display:inline;fill:#eb1313;fill-opacity:1;stroke:none"
+       d="M 42,26 18.990356,23.123437 23,12 6,-1 19,-10 35,6 31.254779,18.432633 z"
+       id="path3765"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc" />
   </g>
 </svg>
