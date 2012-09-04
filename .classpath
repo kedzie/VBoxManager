@@ -5,7 +5,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="bin/classes" path="ksoap_src"/>
+	<classpathentry kind="src" path="ksoap_src"/>
 	<classpathentry kind="src" output="bin/classes" path="test">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -14,7 +14,6 @@
 	<classpathentry kind="src" output="bin/classes" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/android-support-v4.jar" sourcepath="/opt/android-sdk/extras/android/support/v4/src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

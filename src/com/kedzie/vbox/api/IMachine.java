@@ -26,16 +26,16 @@ Note that {@link IMachine} does not provide methods to control virtual machine e
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
 public interface IMachine extends IManagedObjectRef, Parcelable {
-	
-	static ClassLoader loader = IMachine.class.getClassLoader();
+	public static String BUNDLE = "machine";
+	static final ClassLoader LOADER = IMachine.class.getClassLoader();
 	
 	public static final Parcelable.Creator<IMachine> CREATOR = new Parcelable.Creator<IMachine>() {
 		public IMachine createFromParcel(Parcel in) {
 			Class<?> clazz = (Class<?>) in.readSerializable();
-			VBoxSvc vmgr =  in.readParcelable(loader);
+			VBoxSvc vmgr =  in.readParcelable(LOADER);
 			String id = in.readString();
 			Map<String, Object> cache = new HashMap<String, Object>();
-			in.readMap(cache, loader);
+			in.readMap(cache, LOADER);
 			return (IMachine) vmgr.getProxy(clazz, id, cache); 
 		}
 		public IMachine[] newArray(int size) {  
@@ -43,7 +43,6 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 		}
 	};
 	
-	public static String BUNDLE = "machine";
 	public static enum LaunchMode { headless, gui; }
 	
 	 /**

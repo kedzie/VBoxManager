@@ -36,7 +36,8 @@ import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.DialogTask;
 
 public class ServerListActivity extends SherlockFragmentActivity {
 	private static final String TAG = ServerListActivity.class.getName();
@@ -49,7 +50,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	/**
 	 * Log on to VirtualBox webservice
 	 */
-	class LogonTask extends BaseTask<Server, IVirtualBox> {
+	class LogonTask extends DialogTask<Server, IVirtualBox> {
 		public LogonTask() { 
 			super( "LogonTask", ServerListActivity.this, null, "Connecting");
 		}
@@ -65,7 +66,9 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		@Override protected void onPostExecute(IVirtualBox vbox) {
 			if(vbox!=null) {
 				Utils.toastLong(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class)
+							.putExtra(VBoxSvc.BUNDLE, _vmgr)
+							.putExtra(MachineListFragmentActivity.INTENT_VERSION, vbox.getVersion()));
 			}
 			super.onPostExecute(vbox);
 		}
@@ -74,7 +77,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	/**
 	 * Load Servers from DB
 	 */
-	class LoadServersTask extends BaseTask<Void, List<Server>>	{
+	class LoadServersTask extends ActionBarTask<Void, List<Server>>	{
 
 		public LoadServersTask() {
 			super("LoadServersTask", ServerListActivity.this,  null); 
@@ -86,7 +89,8 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		@Override 
 		protected void onPostExecute(List<Server> result)	{
 			super.onPostExecute(result);
-			listView.setAdapter( new ServerListAdapter(ServerListActivity.this, result) );
+			getAdapter().clear();
+			getAdapter().addAll(result);
 			if(result.isEmpty()) {
 				new AlertDialog.Builder(ServerListActivity.this)
 					.setTitle("Add new VirtualBox server?")
@@ -110,8 +114,8 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	class ServerListAdapter extends ArrayAdapter<Server> {
 		private final LayoutInflater _layoutInflater;
 
-		public ServerListAdapter(Context context, List<Server> servers) {
-			super(context, 0, servers);
+		public ServerListAdapter(Context context) {
+			super(context, 0, new ArrayList<Server>());
 			_layoutInflater = LayoutInflater.from(context);
 		}
 
@@ -186,6 +190,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		getSupportActionBar().setHomeButtonEnabled(false);
 		_db = new ServerDB(this);
 		listView = new ListView(this);
+		listView.setAdapter( new ServerListAdapter(ServerListActivity.this) );
 		setContentView(listView);
 		registerForContextMenu(listView);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -200,7 +205,6 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	protected void checkIfFirstRun(Server s) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		if(!prefs.contains(FIRST_RUN_PREFERENCE)) {
-			Log.i(TAG, "First execution detected");
 			Editor editor = prefs.edit();
 			editor.putBoolean(FIRST_RUN_PREFERENCE, false);
 			editor.commit();
@@ -223,9 +227,8 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		_db.close();
 	}
 
-	@SuppressWarnings("unchecked")
-	protected ArrayAdapter<Server> getAdapter() {
-		return (ArrayAdapter<Server>)listView.getAdapter();
+	protected ServerListAdapter getAdapter() {
+		return (ServerListAdapter)listView.getAdapter();
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.ActionBarTask;
 
 public class LogFragment extends SherlockFragment {
 	private static final String TAG = LogFragment.class.getSimpleName();
@@ -45,7 +45,7 @@ public class LogFragment extends SherlockFragment {
 		return view;
 	}
 
-	class LoadLogTask extends BaseTask<IMachine, String> {
+	class LoadLogTask extends ActionBarTask<IMachine, String> {
 
 		public LoadLogTask() {
 			super(LoadLogTask.class.getSimpleName(), getSherlockActivity(), null);

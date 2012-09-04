@@ -23,10 +23,6 @@ public class DataThread extends LoopingThread {
 			_views=views;
 		}
 
-		public void setPeriod(int period) {
-			_period = period;
-		}
-
 		@Override
 		public void loop() {
 			try {

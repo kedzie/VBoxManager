@@ -1,27 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <style name="Text" parent="@android:style/TextAppearance">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <style name="Text" parent="@android:style/TextAppearance.Holo">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dip</item>
+        <item name="android:padding">4dp</item>
     </style>
 
     <style name="SmallText" parent="Text">
         <item name="android:textSize">12sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="NormalText" parent="Text">
         <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="BoldText" parent="Text">
-        <item name="android:textSize">16sp</item>
+    <style name="MediumText" parent="Text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="BoldText" parent="MediumText">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="HeaderText" parent="BoldText">
-        <item name="android:textSize">20sp</item>
+    <style name="HeaderText" parent="Text">
+        <item name="android:textSize">22sp</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 </resources>

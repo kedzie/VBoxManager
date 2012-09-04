@@ -29,7 +29,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.DialogTask;
 import com.kedzie.vbox.task.MachineTask;
 
 public class SnapshotFragment extends SherlockFragment {
@@ -142,7 +142,7 @@ public class SnapshotFragment extends SherlockFragment {
 	/**
 	 *	Load complete snapshot tree.
 	 */
-	class LoadSnapshotsTask extends BaseTask<IMachine, ISnapshot>	{
+	class LoadSnapshotsTask extends DialogTask<IMachine, ISnapshot>	{
 		public LoadSnapshotsTask(VBoxSvc vmgr) { 
 			super( "LoadSnapshotsTask", getActivity(), vmgr, "Loading Snapshots"); 	
 		}

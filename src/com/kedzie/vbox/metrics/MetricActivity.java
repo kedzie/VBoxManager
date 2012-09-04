@@ -15,7 +15,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Activity to view metric graphs for Virtual Machine or Host
- * @author Marek Kedzierski
+ * @author Marek Kędzierski
  */
 public class MetricActivity extends SherlockActivity  {
 	public static final String INTENT_TITLE="t",INTENT_OBJECT = "o",
@@ -32,7 +32,9 @@ public class MetricActivity extends SherlockActivity  {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setTitle(getIntent().getStringExtra(INTENT_TITLE));
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_TITLE));
+		
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);

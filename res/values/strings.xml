@@ -48,4 +48,6 @@
     <string name="tab_info">Info</string>
     <string name="tab_log">Log</string>
     <string name="tab_snapshots">Snapshots</string>
+    <string name="host_metrics">Host Metrics</string>
+    <string name="machine_context_title">Machine Operations</string>
 </resources>

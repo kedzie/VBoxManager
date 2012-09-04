@@ -17,7 +17,7 @@ public class TabActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		 if (savedInstanceState != null) 
 	            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 	}

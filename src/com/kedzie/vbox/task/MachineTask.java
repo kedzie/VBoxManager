@@ -14,7 +14,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @author Marek Kedzierski
  * @Aug 8, 2011
  */
-public abstract class MachineTask<Input> extends BaseTask<Input, IMachine> {
+public abstract class MachineTask<Input> extends DialogTask<Input, IMachine> {
 
 		protected boolean indeterminate;
 		protected IMachine _machine;

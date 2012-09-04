@@ -2,35 +2,34 @@ package com.kedzie.vbox.task;
 
 
 /**
- * Looping-thread with safe shutdown (via quit())
+ * Invoke an operation repeatedly with hooks for initialization/teardown.
+ * @author Marek Kędzierski
  */
 public abstract class LoopingThread extends Thread {
-	/** thread is running */
-	protected  boolean _running=false;
-	protected boolean _paused=false;
+	
+	/** main loop is running */
+	protected  boolean _running=false; 
 	
 	public LoopingThread(String name) {
 		super(name);
 	}
 	
 	@Override
-	public void run() {
+	public final void run() {
 		_running=true;
 		preExecute();
-		while(_running) {
-			if(!_paused)
+		while(_running)
 				loop();
-		}
 		postExecute();
 	}
 	
 	/**
-	 * One time initialization
+	 * One time initialization before main loop
 	 */
 	public void preExecute() {}
 	
 	/**
-	 * cleaup
+	 * Performed after loop termination
 	 */
 	public void postExecute() {}
 
@@ -40,30 +39,23 @@ public abstract class LoopingThread extends Thread {
 	public abstract void loop();
 
 	/**
-	 * Pause execution
-	 */
-	public void pause() {
-		_paused=true;
-	}
-	
-	/**
-	 * Resume execution
-	 */
-	public void unpause() {
-		_paused=false;
-	}
-	
-	/**
 	 * Nicely shuts down the thread
+	 * <ol>
+	 * <li>Set {@link LoopingThread#_running} to false to exit the main loop.
+	 * <li>If Thread is waiting between iterations interupt it
+	 * <li>Repeatedly call {@link Thread#join} until successful
+	 * </ol>
 	 */
-	public void quit() {
+	public final void quit() {
 		boolean done = false;
         _running=false;
-        while (!done) {
+        while (!done) {  
             try {
-                join();
+            	if(getState().equals(State.WAITING) || getState().equals(State.TIMED_WAITING)) 
+            		interrupt();
+                join(); //if join is interrupted try again
                 done = true;
-            } catch (InterruptedException e) { }
+            } catch (InterruptedException e) { } 
         }
 	}
 }

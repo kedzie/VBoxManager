@@ -6,10 +6,15 @@ import android.content.Context;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+/**
+ * Shows progress in a modal dialog
+ * @param <Input>
+ * @param <Output>
+ * @author Marek Kędzierski
+ */
 public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> {
 
 	protected ProgressDialog pDialog;
-	protected String description;
 	
 	/**
 	 * @param TAG LogCat tag
@@ -18,11 +23,9 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 * @param msg  operation description
 	 */
 	public DialogTask(String TAG, Context ctx, VBoxSvc vmgr, String msg) {
-		super(TAG, vmgr);
-		this.context=ctx;
-		description=msg;
-		pDialog = new ProgressDialog(context);
-		pDialog.setMessage(description);
+		super(TAG, ctx, vmgr);
+		pDialog = new ProgressDialog(_context);
+		pDialog.setMessage(msg);
 		pDialog.setIndeterminate(true);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 	}
@@ -41,7 +44,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	protected void onProgressUpdate(IProgress... p) {
 		if(pDialog.isIndeterminate()) {	//Dismiss Indeterminate progress dialog and display the determinate one.
 			pDialog.dismiss();
-			pDialog = new ProgressDialog(this.context);
+			pDialog = new ProgressDialog(this._context);
 			pDialog.setTitle(p[0].getDescription());
 			pDialog.setIndeterminate(false);
 			pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);

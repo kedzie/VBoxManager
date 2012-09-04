@@ -11,7 +11,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.DialogTask;
 
 public class InfoFragment extends SherlockFragment {
 
@@ -82,9 +82,9 @@ public class InfoFragment extends SherlockFragment {
 		_descriptionText.setText( m.getDescription()+"" );
 	}
 
-	class LoadInfoTask extends BaseTask<IMachine, IMachine> {
+	class LoadInfoTask extends DialogTask<IMachine, IMachine> {
 
-		public LoadInfoTask() { super(LoadInfoTask.class.getSimpleName(), getSherlockActivity(), null); }
+		public LoadInfoTask() { super(LoadInfoTask.class.getSimpleName(), getSherlockActivity(), null, "Loading Info"); }
 
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {

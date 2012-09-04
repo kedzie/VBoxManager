@@ -12,7 +12,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.ActionBar.Tab;
 
-public class FragmentTabSupport implements TabSupport {
+public class TabSupportFragment implements TabSupport {
 	private static final String TAG = "FragmentTabSupport";
 
 	/** Keep track of tabs so they can be removed */
@@ -25,7 +25,7 @@ public class FragmentTabSupport implements TabSupport {
 	 * @param activity  The {@link SherlockFragmentActivity}
 	 * @param container target container for {@link Fragment}
 	 */
-	public FragmentTabSupport(SherlockFragmentActivity activity) {
+	public TabSupportFragment(SherlockFragmentActivity activity) {
 		this(activity, android.R.id.content);
 	}
 	
@@ -33,7 +33,7 @@ public class FragmentTabSupport implements TabSupport {
 	 * @param activity  The {@link SherlockFragmentActivity}
 	 * @param container target container for {@link Fragment}
 	 */
-	public FragmentTabSupport(SherlockFragmentActivity activity, int container) {
+	public TabSupportFragment(SherlockFragmentActivity activity, int container) {
 		_activity = activity;
 		_containerId=container;
 		_actionBar=activity.getSupportActionBar();

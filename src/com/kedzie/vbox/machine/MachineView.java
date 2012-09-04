@@ -41,4 +41,17 @@ public class MachineView extends LinearLayout {
 			snapshotText.setText("");
 	}
 
+	/**
+	 * Cache commonly used Machine properties
+	 * @param m
+	 */
+	public static void cacheProperties(IMachine m) {
+		m.clearCache();
+		m.getName();
+		m.getState();
+		m.getCurrentStateModified(); 
+		m.getOSTypeId();
+		if(m.getCurrentSnapshot()!=null) 
+			m.getCurrentSnapshot().getName();
+	}
 }

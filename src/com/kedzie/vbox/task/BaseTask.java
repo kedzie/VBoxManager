@@ -7,7 +7,6 @@ import java.io.StringWriter;
 import org.ksoap2.SoapFault;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -17,28 +16,26 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
- * VirtualBox API Asynchronous task with progress & error handling
+ * VirtualBox API Asynchronous task with progress & error handling.  
+ * Don't subclass this directly, instead use {@link ActionBarTask} or {@link DialogTask}
+ * 
  * @param <Input>  Operation input argument 
  * @param <Output> Operation output
  * @author Marek Kedzierski
  */
-public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
+abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 	private final String TAG;
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7;
 		
-	protected Context context;
-	protected SherlockFragmentActivity _sherlockActivity;
-	protected ProgressDialog pDialog;
-	protected String description;
+	protected Context _context;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
 	 protected boolean _indeterminate=true;
@@ -49,7 +46,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
 			case WHAT_ERROR:
-				new AlertDialog.Builder(context)
+				new AlertDialog.Builder(_context)
 					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle(msg.getData().getString("title"))
 					.setMessage(msg.getData().getString("msg"))
@@ -57,8 +54,7 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 					.show();
 				break;
 			case WHAT_CANCEL:
-				Toast.makeText(context, "Cancelling Operation...", Toast.LENGTH_LONG).show();
-				pDialog.dismiss();
+				Toast.makeText(_context, "Cancelling Operation...", Toast.LENGTH_LONG).show();
 				break;
 			}
 		}
@@ -68,47 +64,10 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
 	 */
-	protected BaseTask(String TAG, VBoxSvc vmgr) {
+	protected BaseTask(String TAG, Context ctx, VBoxSvc vmgr) {
 		this.TAG = TAG;
 		_vmgr=vmgr;
-	}
-
-	/**
-	 * @param TAG LogCat tag
-	 * @param ctx Android <code>Context</code>
-	 * @param vmgr VirtualBox API service
-	 * @param msg  operation description
-	 */
-	public BaseTask(String TAG, Context ctx, VBoxSvc vmgr, String msg) {
-		this.TAG = TAG;
-		this.context= ctx;
-		_vmgr=vmgr;
-		this.description=msg;
-		pDialog = new ProgressDialog(context);
-		pDialog.setMessage(description);
-		pDialog.setIndeterminate(true);
-		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-	}
-	
-	/**
-	 * @param TAG LogCat tag
-	 * @param ctx Android <code>Context</code>
-	 * @param vmgr VirtualBox API service
-	 * @param msg  operation description
-	 */
-	public BaseTask(String TAG, SherlockFragmentActivity ctx, VBoxSvc vmgr) {
-		this.TAG = TAG;
-		this.context= ctx;
-		_sherlockActivity = ctx;
-		_vmgr=vmgr;
-	}
-	
-	@Override
-	protected void onPreExecute()		{
-		if(pDialog!=null)
-			pDialog.show();
-		else if(_sherlockActivity!=null)
-			_sherlockActivity.setSupportProgressBarIndeterminateVisibility(true);
+		_context=ctx;
 	}
 
 	@Override
@@ -130,16 +89,6 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 * @throws <code>Exception</code> any exception thrown will be displayed to user in an Alert dialog
 	 */
 	protected abstract Output work(Input...params) throws Exception;
-	
-	@Override
-	protected void onPostExecute(Output result)	{
-		if(pDialog!=null)
-			pDialog.dismiss();
-		else if (_sherlockActivity!=null){
-			_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
-			_sherlockActivity.setSupportProgressBarVisibility(false);
-		}
-	}
 	
 	/**
 	 * Show an Alert dialog 
@@ -173,7 +122,10 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 * @throws IOException
 	 */
 	protected void handleProgress(IProgress p)  throws IOException {
-		if(p==null) return;
+		if(p==null) { //TODO remove this null check
+			Log.w(TAG, "Received NULL progress");
+			return;
+		}
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
@@ -195,33 +147,5 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); 
 		p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
 		p.getCompleted(); p.getResultCode(); p.getErrorInfo();
-	}
-
-	@Override
-	protected void onProgressUpdate(IProgress... p) {
-		if(_sherlockActivity==null) {
-			if(pDialog.isIndeterminate()) {	//Dismiss Indeterminate progress dialog and display the determinate one.
-				pDialog.dismiss();
-				pDialog = new ProgressDialog(this.context);
-				pDialog.setTitle(p[0].getDescription());
-				pDialog.setIndeterminate(false);
-				pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				pDialog.setCancelable(p[0].getCancelable()); 
-				pDialog.setCancelMessage(_handler.obtainMessage(WHAT_CANCEL));
-				pDialog.show();
-			}
-			pDialog.setMessage("Operation " + p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription() + " - " + p[0].getOperationPercent() + "%  remaining " + p[0].getTimeRemaining() + "secs");
-			pDialog.setProgress(p[0].getPercent());
-			pDialog.setSecondaryProgress(p[0].getOperationPercent());
-		} else {
-			if(_indeterminate) {
-				_indeterminate=false;
-				_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
-				_sherlockActivity.setSupportProgressBarIndeterminate(false);
-				_sherlockActivity.setSupportProgressBarVisibility(true);
-			}
-			_sherlockActivity.setSupportProgress(p[0].getPercent());
-			_sherlockActivity.setSupportSecondaryProgress(p[0].getOperationPercent());
-		}
 	}
 }

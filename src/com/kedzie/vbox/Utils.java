@@ -22,7 +22,7 @@ public class Utils {
 	}
 	
 	/**
-	 * Show {@link Toast} notification
+	 * Show {@link Toast} long notification
 	 * @param ctx message {@link Context}
 	 * @param msg Message to show
 	 */
@@ -31,12 +31,32 @@ public class Utils {
 	}
 	
 	/**
-	 * Show {@link Toast} notification
+	 * Show {@link Toast} long notification with {@link String#format}
+	 * @param ctx message {@link Context}
+	 * @param msg Message to show
+	 * @param formatting params
+	 */
+	public static void toastLong(Context ctx, String msg, Object...params) {
+		toastLong(ctx, String.format(msg, params));
+	}
+	
+	/**
+	 * Show {@link Toast} short notification
 	 * @param ctx message {@link Context}
 	 * @param msg Message to show
 	 */
 	public static void toastShort(Context ctx, String msg) {
 		Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+	}
+	
+	/**
+	 * Show {@link Toast} short notification with {@link String#format}
+	 * @param ctx message {@link Context}
+	 * @param msg Message to show
+	 * @param formatting params
+	 */
+	public static void toastShort(Context ctx, String msg, Object...params) {
+		toastShort(ctx, String.format(msg, params));
 	}
 	
 	public static boolean isNullString(String s) {

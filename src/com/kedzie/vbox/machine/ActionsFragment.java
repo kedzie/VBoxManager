@@ -33,12 +33,14 @@ import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.jaxb.SessionState;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
@@ -62,12 +64,81 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if(intent.getAction().equals(EventIntentService.com_virtualbox_EVENT)) {
-				Log.i(TAG, "Recieved Broadcast");
+			Log.i(TAG, "Recieved Broadcast: " + intent.getAction());
+			if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())) {
 				new UpdateMachineViewTask(_vmgr).execute(_machine);
+			} else if (intent.getAction().equals(VBoxEventType.ON_SESSION_STATE_CHANGED.name())) {
+				new HandleEventTask(_vmgr).execute(intent.getExtras());
 			}
 		}
 	};
+	
+	/**
+	 * Load Machine properties from web server
+	 */
+	class UpdateMachineViewTask extends ActionBarTask<IMachine, IMachine> {
+		
+		public UpdateMachineViewTask(VBoxSvc vmgr) {
+			super(UpdateMachineViewTask.class.getSimpleName(), getSherlockActivity(), vmgr);
+		}
+		
+		@Override 
+		protected IMachine work(IMachine... m) throws Exception {
+			MachineView.cacheProperties(m[0]);
+			m[0].getMemorySize();
+			return m[0];
+		}
+
+		@Override
+		protected void onPostExecute(IMachine result) {
+			super.onPostExecute(result);
+			_headerView.update(result);
+			_listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(_machine.getState())));
+		}
+	}
+	
+	/**
+	 * Handle MachineStateChanged event
+	 */
+	class HandleEventTask extends ActionBarTask<Bundle, ISessionStateChangedEvent> {
+		
+		public HandleEventTask(VBoxSvc vmgr) {  
+			super( "HandleEventTask", getSherlockActivity(), vmgr);
+		}
+
+		@Override
+		protected ISessionStateChangedEvent work(Bundle... params) throws Exception {
+			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
+			return (ISessionStateChangedEvent) event;
+		}
+
+		@Override
+		protected void onPostExecute(ISessionStateChangedEvent result)	{
+			super.onPostExecute(result);
+			if(result!=null)	
+				Utils.toastLong(getActivity(), "Session changed State: "+result.getState());
+		}
+	}
+	
+	/**
+	 * List Adapter for Virtual Machine Actions 
+	 */
+	class MachineActionAdapter extends ArrayAdapter<VMAction> {
+		private final LayoutInflater _layoutInflater;
+		
+		public MachineActionAdapter(VMAction []actions) {
+			super(getActivity(), 0, actions);
+			_layoutInflater = LayoutInflater.from(getActivity());
+		}
+
+		public View getView(int position, View view, ViewGroup parent) {
+			if (view == null) 
+				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
+			((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position).toString());
+			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawable(getItem(position)));
+			return view;                                                                                                                                                                                                                                                          
+		}
+	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -96,7 +167,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
+		IntentFilter filter = new IntentFilter(IMachineStateChangedEvent.class.getName());
+		filter.addAction(ISessionStateChangedEvent.class.getName());
+		lbm.registerReceiver(_receiver, filter);
 		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
 
@@ -208,83 +281,10 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == REQUEST_CODE_PREFERENCES) 
-			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
+			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute();
 	}
 	
 	public VBoxApplication getApp() { 
 		return (VBoxApplication)getActivity().getApplication(); 
-	}
-	
-	/**
-	 * Load Machine properties from web server
-	 */
-	class UpdateMachineViewTask extends BaseTask<IMachine, IMachine> {
-		
-		public UpdateMachineViewTask(VBoxSvc vmgr) {
-			super(UpdateMachineViewTask.class.getSimpleName(), getSherlockActivity(), vmgr);
-		}
-		
-		@Override 
-		protected IMachine work(IMachine... m) throws Exception {
-			_machine.clearCache();
-			m[0].getCurrentStateModified(); m[0].getOSTypeId(); m[0].getName(); m[0].getState();
-			if(m[0].getCurrentSnapshot()!=null)   
-				m[0].getCurrentSnapshot().getName(); 
-			m[0].getMemorySize();
-			return m[0];
-		}
-
-		@Override
-		protected void onPostExecute(IMachine result) {
-			super.onPostExecute(result);
-			_headerView.update(result);
-			_listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(_machine.getState())));
-		}
-	}
-	
-	/**
-	 * Handle MachineStateChanged event
-	 */
-	class HandleEventTask extends BaseTask<Bundle, ISessionStateChangedEvent> {
-		
-		public HandleEventTask(VBoxSvc vmgr) {  
-			super( "HandleEventTask", getSherlockActivity(), vmgr);
-		}
-
-		@Override
-		protected ISessionStateChangedEvent work(Bundle... params) throws Exception {
-			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
-			if(event instanceof ISessionStateChangedEvent)
-				return (ISessionStateChangedEvent) event;
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(ISessionStateChangedEvent result)	{
-			super.onPostExecute(result);
-			if(result!=null)	{
-				Utils.toastLong(getActivity(), "Session changed State: "+result.getState());
-			}
-		}
-	}
-	
-	/**
-	 * List Adapter for Virtual Machine Actions 
-	 */
-	class MachineActionAdapter extends ArrayAdapter<VMAction> {
-		private final LayoutInflater _layoutInflater;
-		
-		public MachineActionAdapter(VMAction []actions) {
-			super(getActivity(), 0, actions);
-			_layoutInflater = LayoutInflater.from(getActivity());
-		}
-
-		public View getView(int position, View view, ViewGroup parent) {
-			if (view == null) 
-				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-			((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position).toString());
-			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawable(getItem(position)));
-			return view;                                                                                                                                                                                                                                                          
-		}
 	}
 }

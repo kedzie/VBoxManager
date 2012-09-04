@@ -1,5 +1,7 @@
 package com.kedzie.vbox.machine;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -25,7 +26,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.BundleBuilder;
@@ -35,15 +35,15 @@ import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
+import com.kedzie.vbox.task.DialogTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
@@ -64,8 +64,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if(intent.getAction().equals(EventIntentService.com_virtualbox_EVENT)) {
-				Log.i(TAG, "Recieved Broadcast");
+			if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) {
+				Log.i(TAG, "Recieved Machine State Changed Event Broadcast");
 				new HandleEventTask(_vmgr).execute(intent.getExtras());
 			}
 		}
@@ -86,7 +86,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	/** 
 	 * Load the Machines 
 	 */
-	class LoadMachinesTask extends BaseTask<Void, List<IMachine>>	{
+	class LoadMachinesTask extends DialogTask<Void, List<IMachine>>	{
 		public LoadMachinesTask(VBoxSvc vmgr) { 
 			super( "LoadMachinesTask", getActivity(), vmgr, "Loading Machines");
 		}
@@ -97,12 +97,13 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			_vmgr.getVBox().getHost().getMemorySize();
 			for(IMachine m :  machines) {
 				//cache property values to avoid remote calls
-				m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
-				m.getState();
+				m.getState(); m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); 
+				if(m.getCurrentSnapshot()!=null) 
+					m.getCurrentSnapshot().getName();
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getIntPreference(context, PreferencesActivity.PERIOD), 
-					Utils.getIntPreference(context, PreferencesActivity.COUNT), 
+					Utils.getIntPreference(_context, PreferencesActivity.PERIOD), 
+					Utils.getIntPreference(_context, PreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
 			return machines;
@@ -113,7 +114,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			super.onPostExecute(result);
 			_machines = result;
 			if(result!=null)	{
-				getActivity().setTitle("VirtualBox v." + _vmgr.getVBox().getVersion());
 				_listView.setAdapter(new MachineListAdapter(result));
 				getAdapter().setNotifyOnChange(false);
 			}
@@ -123,7 +123,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	/**
 	 * Handle MachineStateChanged event
 	 */
-	private class HandleEventTask extends BaseTask<Bundle, IMachine> {
+	private class HandleEventTask extends ActionBarTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
 			super( "HandleEventTask", getSherlockActivity(), vmgr);
@@ -131,14 +131,9 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 		@Override
 		protected IMachine work(Bundle... params) throws Exception {
-			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
-			if(event instanceof IMachineStateChangedEvent) {
-				IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
-				m.getName();m.getState(); if(m.getCurrentSnapshot()!=null) m.getCurrentSnapshot().getName();
-				m.getCurrentStateModified(); m.getOSTypeId();
-				return m;
-			}
-			return null;
+			IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
+			MachineView.cacheProperties(m);
+			return m;
 		}
 
 		@Override
@@ -146,10 +141,11 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			super.onPostExecute(result);
 			if(result!=null)	{
 				int pos = getAdapter().getPosition(result);
+				getAdapter().setNotifyOnChange(false);
 				getAdapter().remove(result);
 				getAdapter().insert(result, pos);
 				getAdapter().notifyDataSetChanged();
-				Toast.makeText(getActivity(), result.getName() + "  changed State: " + result.getState(), Toast.LENGTH_LONG).show();
+				Utils.toastShort(getActivity(), "%s changed State: [%s]", result.getName(), result.getState());
 			}
 		}
 	}
@@ -169,11 +165,13 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		_vmgr = (VBoxSvc)getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
 		setHasOptionsMenu(true);
+		
 		View detailsFrame = getActivity().findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane)
@@ -181,17 +179,17 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		
 		if(savedInstanceState!=null)  { 
     		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
-//    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
-//    		_listView.setAdapter(new MachineListAdapter(_machines));
-//    		showDetails(_curCheckPosition);
-    	} 
-		new LoadMachinesTask(_vmgr).execute();
+    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
+    		_listView.setAdapter(new MachineListAdapter(_machines));
+    		showDetails(_curCheckPosition);
+    	} else
+    		new LoadMachinesTask(_vmgr).execute();
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
-		lbm.registerReceiver(_receiver, new IntentFilter(EventIntentService.com_virtualbox_EVENT));
+		lbm.registerReceiver(_receiver, new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
 	}
 
 	@Override
@@ -218,6 +216,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt("curChoice", _curCheckPosition);
+		outState.putSerializable("machines", (Serializable) _machines);
 	}
 	
 	@Override
@@ -232,8 +231,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			new LoadMachinesTask(_vmgr).execute();
 			return true;
 		case R.id.machine_list_option_menu_metrics:
-			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
-					.putExtra(MetricActivity.INTENT_TITLE, "Host Metrics")
+			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
+					.putExtra(MetricActivity.INTENT_TITLE, R.string.host_metrics)
 					.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
@@ -249,9 +248,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==REQUEST_CODE_PREFERENCES) {
-			new ConfigureMetricsTask(getActivity(), _vmgr).execute();
-		}
+		if(requestCode==REQUEST_CODE_PREFERENCES)
+			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -272,19 +270,13 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
         _curCheckPosition = index;
         if (_dualPane)
         	_listView.setItemChecked(index, true);
-        if(_machineSelectedListener != null) 
-        	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
+       	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
     }
 	
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
-	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.setHeaderTitle("Machine Operations");
+		menu.setHeaderTitle(R.string.machine_context_title);
 		IMachine m = getAdapter().getItem(((AdapterContextMenuInfo)menuInfo).position);
 		List<VMAction> actions = Arrays.asList(VMAction.getVMActions(m.getState()));
 		if(actions.contains(VMAction.START))

@@ -4,18 +4,23 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+/**
+ * Shows progress on the {@link ActionBar}
+ * @param <Input> task input
+ * @param <Output> task output
+ * @author Marek Kędzierski
+ */
 public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Output> {
 
 	protected SherlockFragmentActivity _sherlockActivity;
 	
 	/**
 	 * @param TAG LogCat tag
-	 * @param ctx Android <code>Context</code>
+	 * @param ctx calling Activity
 	 * @param vmgr VirtualBox API service
-	 * @param msg  operation description
 	 */
 	public ActionBarTask(String TAG, SherlockFragmentActivity ctx, VBoxSvc vmgr) {
-		super(TAG, vmgr);
+		super(TAG, ctx, vmgr);
 		_sherlockActivity = ctx;
 	}
 	

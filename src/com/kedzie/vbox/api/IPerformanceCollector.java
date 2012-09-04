@@ -10,7 +10,7 @@ import com.kedzie.vbox.soap.KSOAP;
 /**
  *<p>The {@link IPerformanceCollector} interface represents a service that collects and stores performance metrics data.
  * Performance metrics are associated with objects of interfaces like {@link IHost} and {@link IMachine}. Each object has a distinct set of performance metrics. The set can be obtained with {@link IPerformanceCollector#getMetrics}.</p>
- * <p>Metric data is collected at the specified intervals and is retained internally. The interval and the number of retained samples can be set with IPerformanceCollector::setupMetrics. Both metric data and collection settings are not persistent, they are discarded as soon as VBoxSVC process terminates. Moreover, metric settings and data associated with a particular VM only exist while VM is running. They disappear as soon as VM shuts down. It is not possible to set up metrics for machines that are powered off. One needs to start VM first, then set up metric collection parameters.</p>
+ * <p>Metric data is collected at the specified intervals and is retained internally. The interval and the number of retained samples can be set with {@link IPerformanceCollector#setupMetrics}. Both metric data and collection settings are not persistent, they are discarded as soon as VBoxSVC process terminates. Moreover, metric settings and data associated with a particular VM only exist while VM is running. They disappear as soon as VM shuts down. It is not possible to set up metrics for machines that are powered off. One needs to start VM first, then set up metric collection parameters.</p>
  * <p>Metrics are organized hierarchically, with each level separated by a slash (/) character. Generally, the scheme for metric names is like this:</p>
  * <p><code>Category/Metric[/SubMetric][:aggregation]</code></p>
  * <p>"<code>Category/Metric</code>" together form the base metric name. A base metric is the smallest unit for which a sampling interval and the number of retained samples can be set. Only base metrics can be enabled and disabled. All sub-metrics are collected when their base metric is collected. Collected values for any set of sub-metrics can be queried with {@link IPerformanceCollector#queryMetricsData}.</p>
@@ -47,6 +47,11 @@ import com.kedzie.vbox.soap.KSOAP;
  * @see {@link ISession}
  */
 public interface IPerformanceCollector extends IManagedObjectRef {
+	public static final String CPU_LOAD_USER = "CPU/Load/User";
+	public static final String CPU_LOAD_KERNEL = "CPU/Load/Kernel";
+	public static final String RAM_USAGE_USED = "RAM/Usage/Used";
+	public static final String GUEST_CPU_LOAD_USER = "Guest/CPU/Load/User";
+	public static final String GUEST_CPU_LOAD_KERNEL = "Guest/CPU/Load/Kernel";
 
 	/**
 	 * Returns parameters of specified metrics for a set of objects.
@@ -58,7 +63,7 @@ public interface IPerformanceCollector extends IManagedObjectRef {
 	 */
 	public List<IPerformanceMetric> getMetrics(
 			@KSOAP("metricNames")String []metrics, 
-			@KSOAP("objects")String...objects) throws IOException;
+			@KSOAP("objects")IManagedObjectRef...objects) throws IOException;
 	
 	/**
 	 * <p>Sets parameters of specified base metrics for a set of objects.</p>

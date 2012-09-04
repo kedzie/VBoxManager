@@ -17,11 +17,11 @@ import com.kedzie.vbox.server.ServerListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
-import com.kedzie.vbox.tabs.ViewPagerTabSupport;
-import com.kedzie.vbox.task.BaseTask;
+import com.kedzie.vbox.tabs.TabSupportViewPager;
+import com.kedzie.vbox.task.DialogTask;
 
 public class MachineListFragmentActivity extends TabActivity implements SelectMachineListener {
-
+	public final static String INTENT_VERSION = "version";
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
 	/** VirtualBox API */
@@ -29,7 +29,7 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 	/** {@link ActionBar} tabs */
 	private TabSupport _tabSupport;
 
-	private class LogoffTask extends BaseTask<Void, Void>	{
+	private class LogoffTask extends DialogTask<Void, Void>	{
 		public LogoffTask(VBoxSvc vmgr) { 
 			super( "LogoffTask", MachineListFragmentActivity.this, vmgr, "Logging Off");
 		}
@@ -45,40 +45,15 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 		super.onCreate(savedInstanceState);
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		setContentView(R.layout.machine_list);
-		getSupportActionBar().setTitle(_vmgr.getVBox().getVersion());
+		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_VERSION));
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-		if(_dualPane) {
-			_tabSupport = new ViewPagerTabSupport(this, (ViewPager)detailsFrame);
-//			_tabSupport = new FragmentTabSupport(this, R.id.details);
-		}
-		startService(new Intent(this, EventNotificationService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
-		startService(new Intent(this, EventIntentService.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+		if(_dualPane)
+			_tabSupport = new TabSupportViewPager(this, (ViewPager)detailsFrame);
+		startService(new Intent(this, EventNotificationService.class).putExtras(getIntent()));
+		startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-		case android.R.id.home:
-			logoff();
-			NavUtils.navigateUpTo(this, new Intent(this, ServerListActivity.class));
-			break;
-		}
-		return true;
-	}
-
-	public void logoff() {
-		stopService(new Intent(this, EventNotificationService.class));
-		stopService(new Intent(this, EventIntentService.class));
-		if(_vmgr.getVBox()!=null)  
-			new LogoffTask(_vmgr). execute();
-	}
-	
-	@Override 
-	public void onBackPressed() {
-		logoff();
-	}
-
 	@Override
 	public void onMachineSelected(IMachine machine) {
 		if (_dualPane) {
@@ -96,5 +71,28 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 			BundleBuilder.addProxy(intent, IMachine.BUNDLE, machine );
 			startActivity(intent);
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case android.R.id.home:
+			logoff();
+			NavUtils.navigateUpTo(this, new Intent(this, ServerListActivity.class));
+			break;
+		}
+		return false;
+	}
+
+	@Override 
+	public void onBackPressed() {
+		logoff();
+	}
+	
+	public void logoff() {
+		stopService(new Intent(this, EventNotificationService.class));
+		stopService(new Intent(this, EventIntentService.class));
+		if(_vmgr.getVBox()!=null)  
+			new LogoffTask(_vmgr). execute();
 	}
 }

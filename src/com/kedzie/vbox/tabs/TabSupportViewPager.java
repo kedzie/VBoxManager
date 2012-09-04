@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -17,17 +19,23 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
  * @author Marek Kedzierski
  */
-public class ViewPagerTabSupport implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
+public class TabSupportViewPager implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
+	private static final String TAG = "TabSupportViewPager";
 	
 	private final SherlockFragmentActivity _activity;
     private final ViewPager _viewPager;
     final List<TabFragmentInfo<?>> _tabs = new ArrayList<TabFragmentInfo<?>>();
     private FragmentPagerAdapter _adapter;
 
-    public ViewPagerTabSupport(SherlockFragmentActivity activity, ViewPager pager) {
+    public TabSupportViewPager(SherlockFragmentActivity activity, ViewPager pager) {
         _activity=activity;
         _viewPager=pager;
         _adapter = new FragmentPagerAdapter(_activity.getSupportFragmentManager()) {
+        	@Override
+        	public void destroyItem(ViewGroup container, int position, Object object) {
+        		super.destroyItem(container, position, object);
+        		Log.i(TAG, "destroyItem #"+position);
+        	}
     		@Override
         	public int getCount() { return _tabs.size(); }
         	@Override
@@ -43,7 +51,7 @@ public class ViewPagerTabSupport implements TabSupport, ActionBar.TabListener, V
     @Override
     public <T extends Fragment> void addTab(String name, Class<T> clazz, Bundle args)  {
         TabFragmentInfo<T> info = new TabFragmentInfo<T>(name, clazz, args);
-       _activity.getSupportActionBar().addTab( _activity.getSupportActionBar().newTab().setText(name) .setTag(info).setTabListener(this) );
+       _activity.getSupportActionBar().addTab( _activity.getSupportActionBar().newTab().setText(name).setTag(name).setTabListener(this) );
         _tabs.add(info);
         _adapter.notifyDataSetChanged();
     }

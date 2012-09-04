@@ -53,14 +53,14 @@ public class VBoxSvc implements Parcelable {
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
 		public VBoxSvc createFromParcel(Parcel in) {
 			VBoxSvc svc = new VBoxSvc(in.readString());
-			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString(), null);
+			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
 			return svc;
 		}
 		public VBoxSvc[] newArray(int size) {
 			return new VBoxSvc[size];
 		}
 	};
-	
+
 	/**
 	 * @param url	URL of VirtualBox webservice
 	 */
@@ -76,6 +76,25 @@ public class VBoxSvc implements Parcelable {
 	public VBoxSvc(VBoxSvc copy) {
 		this(copy._url);
 		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
+	}
+	
+	public IVirtualBox getVBox() {
+		return _vbox;
+	}
+	
+	public String getURL() {
+		return _url;
+	}
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(_url);
+		dest.writeString(_vbox.getIdRef());
 	}
 
 	/**
@@ -106,19 +125,6 @@ public class VBoxSvc implements Parcelable {
 		}
 		return proxy;
 	}
-	
-	public IVirtualBox getVBox() {
-		if(_vbox==null) {
-			Log.i(TAG, "Not logged on to VirtualBox webservice.  Attempting to connect..");
-			try {
-				logon(_username, _password);
-			} catch (Exception e) {
-				Log.e(TAG, "Error logging on");
-				throw new RuntimeException("Couldn't log on to VirtualBox API", e);
-			} 
-		}
-		return _vbox;
-	}
 
 	/**
 	 * Connect to <code>vboxwebsrv</code> & initialize the VBoxSvc API interface
@@ -128,7 +134,7 @@ public class VBoxSvc implements Parcelable {
 	 * @throws IOException
 	 * @throws XmlPullParserException
 	 */
-	public IVirtualBox logon(String username, String password) throws IOException, XmlPullParserException {
+	public IVirtualBox logon(String username, String password) throws IOException  {
 		_username=username;
 		_password=password;
 		return (_vbox = getProxy(IVirtualBox.class, null).logon(username, password));
@@ -172,21 +178,6 @@ public class VBoxSvc implements Parcelable {
 		return ret;
 	}
 
-	public String getURL() {
-		return _url;
-	}
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(_url);
-		dest.writeString(_vbox.getIdRef());
-	}
-
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
 	 */
@@ -227,7 +218,7 @@ public class VBoxSvc implements Parcelable {
 					out.writeSerializable(_type);
 					out.writeParcelable(VBoxSvc.this, 0);
 					out.writeString(_uiud);
-					Log.d(TAG, "Parceling cache: " + _cache);
+					Log.i(TAG, "Writing cache to parcel: " + _cache);
 					out.writeMap(_cache);
 					return null;
 				}
@@ -263,7 +254,7 @@ public class VBoxSvc implements Parcelable {
 					return (T)at;
 			return null;
 		}
-
+		
 		/**
 		 * Add an argument to a SOAP request
 		 * @param request  SOAP request
@@ -297,10 +288,10 @@ public class VBoxSvc implements Parcelable {
 	 * @param genericType the generic {@link Type}
 	 * @return type parameter
 	 */
-	private Class<?> getTypeParameter(Type genericType) {
+	Class<?> getTypeParameter(Type genericType) {
 		return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
 	}
-
+	
 	/**
 	 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
 	 */
