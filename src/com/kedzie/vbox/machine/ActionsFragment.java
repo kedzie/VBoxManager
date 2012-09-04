@@ -25,6 +25,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
@@ -219,7 +220,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		Utils.toastLong(getActivity(), String.format("Item Click #%d", position));
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
 		if(action.equals(VMAction.START))	
-			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);
+			new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(_machine);
 		else if(action.equals(VMAction.POWER_OFF))	
 			new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
 			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
@@ -281,7 +282,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == REQUEST_CODE_PREFERENCES) 
-			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute();
+			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
+					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.PERIOD),
+					 Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.COUNT));
 	}
 	
 	public VBoxApplication getApp() { 

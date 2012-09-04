@@ -72,8 +72,11 @@ public class MetricRenderer extends View {
 	public void init( int max, String []metrics) {
 		_max=max;
 		_metrics=metrics;
-		_count=Utils.getIntPreference(getContext(), PreferencesActivity.COUNT);
-		_period=Utils.getIntPreference(getContext(), PreferencesActivity.PERIOD);
+	}
+	
+	public void setMetricPrefs(int count, int period) {
+		_count=count;
+		_period=period;
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 	class MachineListTask extends  ActionBarTask<Server, VBoxSvc> {
 
 		public MachineListTask() {
-			super(TAG, HarnessActivity.this, null);
+			super(HarnessActivity.TAG, HarnessActivity.this, null);
 		}
 
 		@Override
@@ -54,7 +54,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 	}
 
 	class TestParcelTask extends  ActionBarTask<Server, VBoxSvc> {
-		public TestParcelTask() { super(TAG, HarnessActivity.this, null); }
+		public TestParcelTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
 
 		@Override
 		protected VBoxSvc work(Server... server) throws Exception {

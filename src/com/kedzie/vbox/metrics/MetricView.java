@@ -55,6 +55,10 @@ public class MetricView extends LinearLayout {
 			_metricNames.addView(textView, p);
 		}
 	}
+	
+	public void setMetricPrefs(int count, int period) {
+		_renderer.setMetricPrefs(count, period);
+	}
 
 	public void setQueries(Map<String,MetricQuery> q) {
 		_renderer.setQuery(q);

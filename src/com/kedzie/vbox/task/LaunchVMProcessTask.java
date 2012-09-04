@@ -2,7 +2,7 @@ package com.kedzie.vbox.task;
 
 import android.content.Context;
 
-import com.kedzie.vbox.PreferencesActivity;
+import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.SessionState;
@@ -20,7 +20,7 @@ public class LaunchVMProcessTask extends DialogTask<IMachine, IMachine> {
 			throw new RuntimeException("Machine session state is " + m[0].getSessionState());
 		handleProgress( m[0].launchVMProcess(_vmgr.getVBox().getSessionObject(), IMachine.LaunchMode.headless) );
 		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" },  
-				Utils.getIntPreference(_context, PreferencesActivity.PERIOD), 1, m[0]);
+				Utils.getIntPreference(_context, MetricPreferencesActivity.PERIOD), 1, m[0]);
 		return m[0];
 	}
 }

@@ -29,6 +29,7 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
@@ -102,8 +103,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 					m.getCurrentSnapshot().getName();
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getIntPreference(_context, PreferencesActivity.PERIOD), 
-					Utils.getIntPreference(_context, PreferencesActivity.COUNT), 
+					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.PERIOD), 
+					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
 			return machines;
@@ -249,7 +250,9 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==REQUEST_CODE_PREFERENCES)
-			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute();
+			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
+					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.PERIOD),
+					 Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.COUNT));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -298,7 +301,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	  IMachine m = getAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
 	  case R.id.machines_context_menu_start:  
-		  new LaunchVMProcessTask(getActivity(), _vmgr).execute(m);	  
+		  new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(m);	  
 		  break;
 	  case R.id.machines_context_menu_poweroff:   
 		  new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, m) {	

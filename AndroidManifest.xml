@@ -33,7 +33,7 @@
 	
 	<activity android:configChanges="orientation" android:label="Metrics" android:name=".metrics.MetricActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 	<activity android:configChanges="orientation" android:label="Preferences" android:name=".PreferencesActivity"/>
-	<activity android:configChanges="orientation" android:label="Preferences" android:name=".metrics.MetricPreferencesActivity"/>
+	<activity android:configChanges="orientation" android:label="Preferences" android:name=".MetricPreferencesActivity"/>
 	<service android:name=".EventNotificationService"/>
 	<service android:name=".machine.EventIntentService"/>
     </application>

@@ -30,7 +30,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @author Marek Kedzierski
  */
 abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
-	private final String TAG;
+	protected final String TAG;
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7;
