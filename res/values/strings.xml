@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">VirtualBox Manager</string>
     <string name="server_name">Display Name</string>
     <string name="server_host">Host/IP Address</string>
@@ -41,7 +41,7 @@
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_category_metrics">Metrics</string>
     <string name="firstrun_welcome">Welcome</string>
-    <string name="firstrun_message"  formatted="false">Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host %s --port %d</string>
+    <string name="firstrun_message" >Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host <xliff:g id="host">%1$s</xliff:g> --port <xliff:g id="port">%2$d</xliff:g></string>
     <string name="snapshot_name">Name</string>
     <string name="snapshot_description">Description</string>
     <string name="tab_actions">Actions</string>
@@ -50,4 +50,6 @@
     <string name="tab_snapshots">Snapshots</string>
     <string name="host_metrics">Host Metrics</string>
     <string name="machine_context_title">Machine Operations</string>
+    
+    <string name="appwidget_text_format"><xliff:g id="prefix">%1$s</xliff:g>: <xliff:g id="time">%2$s</xliff:g></string>
 </resources>

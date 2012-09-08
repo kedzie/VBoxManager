@@ -14,7 +14,6 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.task.ActionBarTask;
 
 public class LogFragment extends SherlockFragment {
-	private static final String TAG = LogFragment.class.getSimpleName();
 	private static final int MAX_LOG_SIZE=1024;
 
 	private TextView _logText;

@@ -7,21 +7,24 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.EventNotificationService;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.machine.MachineListFragment.SelectMachineListener;
 import com.kedzie.vbox.server.ServerListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
+import com.kedzie.vbox.tabs.TabSupportFragment;
 import com.kedzie.vbox.tabs.TabSupportViewPager;
 import com.kedzie.vbox.task.DialogTask;
 
-public class MachineListFragmentActivity extends TabActivity implements SelectMachineListener {
+public class MachineListFragmentActivity extends SherlockFragmentActivity implements SelectMachineListener {
 	public final static String INTENT_VERSION = "version";
+	
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
 	/** VirtualBox API */
@@ -48,11 +51,22 @@ public class MachineListFragmentActivity extends TabActivity implements SelectMa
 		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_VERSION));
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-		if(_dualPane)
-			_tabSupport = new TabSupportViewPager(this, (ViewPager)detailsFrame);
+		if(_dualPane) {
+			_tabSupport = VBoxApplication.VIEW_PAGER_TABS ? new TabSupportViewPager(this, (ViewPager)detailsFrame) : new TabSupportFragment(this, R.id.details);
+			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			getSupportActionBar().setDisplayShowTitleEnabled(false);
+			 if (savedInstanceState != null) 
+		            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+		}
 		startService(new Intent(this, EventNotificationService.class).putExtras(getIntent()));
 		startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
 	}
+	
+	@Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+    }
 	
 	@Override
 	public void onMachineSelected(IMachine machine) {

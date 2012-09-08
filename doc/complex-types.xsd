@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" name="VirtualBox"  targetNamespace="http://www.virtualbox.org/">
+
+<!-- interface IPciAddress as struct: -->
+      <xsd:complexType name="IPciAddress">
+        <xsd:sequence>
+          <xsd:element name="bus" type="xsd:short"/>
+          <xsd:element name="device" type="xsd:short"/>
+          <xsd:element name="devFunction" type="xsd:short"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface IPciDeviceAttachment as struct: -->
+      <xsd:complexType name="IPciDeviceAttachment">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="isPhysicalDevice" type="xsd:boolean"/>
+          <xsd:element name="hostAddress" type="xsd:int"/>
+          <xsd:element name="guestAddress" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface IVRDEServerInfo as struct: -->
+      <xsd:complexType name="IVRDEServerInfo">
+        <xsd:sequence>
+          <xsd:element name="active" type="xsd:boolean"/>
+          <xsd:element name="port" type="xsd:int"/>
+          <xsd:element name="numberOfClients" type="xsd:unsignedInt"/>
+          <xsd:element name="beginTime" type="xsd:long"/>
+          <xsd:element name="endTime" type="xsd:long"/>
+          <xsd:element name="bytesSent" type="xsd:long"/>
+          <xsd:element name="bytesSentTotal" type="xsd:long"/>
+          <xsd:element name="bytesReceived" type="xsd:long"/>
+          <xsd:element name="bytesReceivedTotal" type="xsd:long"/>
+          <xsd:element name="user" type="xsd:string"/>
+          <xsd:element name="domain" type="xsd:string"/>
+          <xsd:element name="clientName" type="xsd:string"/>
+          <xsd:element name="clientIP" type="xsd:string"/>
+          <xsd:element name="clientVersion" type="xsd:unsignedInt"/>
+          <xsd:element name="encryptionStyle" type="xsd:unsignedInt"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface IGuestOSType as struct: -->
+      <xsd:complexType name="IGuestOSType">
+        <xsd:sequence>
+          <xsd:element name="familyId" type="xsd:string"/>
+          <xsd:element name="familyDescription" type="xsd:string"/>
+          <xsd:element name="id" type="xsd:string"/>
+          <xsd:element name="description" type="xsd:string"/>
+          <xsd:element name="is64Bit" type="xsd:boolean"/>
+          <xsd:element name="recommendedIOAPIC" type="xsd:boolean"/>
+          <xsd:element name="recommendedVirtEx" type="xsd:boolean"/>
+          <xsd:element name="recommendedRAM" type="xsd:unsignedInt"/>
+          <xsd:element name="recommendedVRAM" type="xsd:unsignedInt"/>
+          <xsd:element name="recommendedHDD" type="xsd:long"/>
+          <xsd:element name="adapterType" type="vbox:NetworkAdapterType"/>
+          <xsd:element name="recommendedPae" type="xsd:boolean"/>
+          <xsd:element name="recommendedDvdStorageController" type="vbox:StorageControllerType"/>
+          <xsd:element name="recommendedDvdStorageBus" type="vbox:StorageBus"/>
+          <xsd:element name="recommendedHdStorageController" type="vbox:StorageControllerType"/>
+          <xsd:element name="recommendedHdStorageBus" type="vbox:StorageBus"/>
+          <xsd:element name="recommendedFirmware" type="vbox:FirmwareType"/>
+          <xsd:element name="recommendedUsbHid" type="xsd:boolean"/>
+          <xsd:element name="recommendedHpet" type="xsd:boolean"/>
+          <xsd:element name="recommendedUsbTablet" type="xsd:boolean"/>
+          <xsd:element name="recommendedRtcUseUtc" type="xsd:boolean"/>
+          <xsd:element name="recommendedChipset" type="vbox:ChipsetType"/>
+          <xsd:element name="recommendedAudioController" type="vbox:AudioControllerType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface IAdditionsFacility as struct: -->
+      <xsd:complexType name="IAdditionsFacility">
+        <xsd:sequence>
+          <xsd:element name="classType" type="vbox:AdditionsFacilityClass"/>
+          <xsd:element name="lastUpdated" type="xsd:long"/>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="status" type="vbox:AdditionsFacilityStatus"/>
+          <xsd:element name="type" type="vbox:AdditionsFacilityType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface IGuestDirEntry as struct: -->
+      <xsd:complexType name="IGuestDirEntry">
+        <xsd:sequence>
+          <xsd:element name="nodeId" type="xsd:long"/>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="type" type="vbox:GuestDirEntryType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface IMediumAttachment as struct: -->
+      <xsd:complexType name="IMediumAttachment">
+        <xsd:sequence>
+          <xsd:element name="medium" type="xsd:string"/>
+          <xsd:element name="controller" type="xsd:string"/>
+          <xsd:element name="port" type="xsd:int"/>
+          <xsd:element name="device" type="xsd:int"/>
+          <xsd:element name="type" type="vbox:DeviceType"/>
+          <xsd:element name="passthrough" type="xsd:boolean"/>
+          <xsd:element name="temporaryEject" type="xsd:boolean"/>
+          <xsd:element name="isEjected" type="xsd:boolean"/>
+          <xsd:element name="nonRotational" type="xsd:boolean"/>
+          <xsd:element name="bandwidthGroup" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <!-- interface ISharedFolder as struct: -->
+      <xsd:complexType name="ISharedFolder">
+        <xsd:sequence>
+          <xsd:element name="name" type="xsd:string"/>
+          <xsd:element name="hostPath" type="xsd:string"/>
+          <xsd:element name="accessible" type="xsd:boolean"/>
+          <xsd:element name="writable" type="xsd:boolean"/>
+          <xsd:element name="autoMount" type="xsd:boolean"/>
+          <xsd:element name="lastAccessError" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+</xsd:schema>

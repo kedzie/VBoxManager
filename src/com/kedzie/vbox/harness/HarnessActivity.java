@@ -10,6 +10,8 @@ import android.util.Log;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.ISession;
+import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.server.Server;
@@ -63,6 +65,8 @@ public class HarnessActivity extends SherlockFragmentActivity {
 			List<IMachine> machines = _vmgr.getVBox().getMachines();
 			IMachine m = machines.get(0);
 			MachineView.cacheProperties(m);
+			ISession session = _vmgr.getVBox().getSessionObject();
+			m.lockMachine(session, LockType.SHARED);
 			Bundle b = new Bundle();
 			b.putParcelable("mp", m);
 			IMachine mp = b.getParcelable("mp");

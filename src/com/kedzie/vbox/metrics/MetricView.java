@@ -24,9 +24,9 @@ public class MetricView extends LinearLayout {
 			setOrientation(LinearLayout.VERTICAL);
 			String header = a.getString(R.styleable.MetricView_header);
 			int bgColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
-			int gridColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
-			int textColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
-			int borderColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
+			int gridColor = a.getColor(R.styleable.MetricView_gridColor, android.R.color.black);
+			int textColor = a.getColor(R.styleable.MetricView_textColor, android.R.color.black);
+			int borderColor = a.getColor(R.styleable.MetricView_borderColor, android.R.color.holo_blue_dark);
 			LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			_titleTextView = new TextView(context);
 			_titleTextView.setText(header);

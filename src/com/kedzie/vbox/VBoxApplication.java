@@ -15,6 +15,7 @@ import com.kedzie.vbox.api.jaxb.MachineState;
  * @author Marek Kedzierski
  */
 public class VBoxApplication extends Application {
+	public final static boolean VIEW_PAGER_TABS = true;
 	
 	protected Map<String,Integer> resources = new HashMap<String, Integer>();
 	protected Map<String,Integer> resources_color = new HashMap<String, Integer>();

@@ -12,6 +12,7 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
+import com.kedzie.vbox.tabs.TabSupportFragment;
 import com.kedzie.vbox.tabs.TabSupportViewPager;
 
 public class MachineFragmentActivity extends TabActivity {
@@ -35,7 +36,7 @@ public class MachineFragmentActivity extends TabActivity {
 			ViewPager pager = new ViewPager(this);
 			pager.setId(99);
 			setContentView(pager);
-			_tabSupport = new TabSupportViewPager(this, pager);
+			_tabSupport = VBoxApplication.VIEW_PAGER_TABS ? new TabSupportViewPager(this, pager) : new TabSupportFragment(this, android.R.id.content);
 			_tabSupport.addTab("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras());
 			_tabSupport.addTab("Info", InfoFragment.class,getIntent().getExtras());
 			_tabSupport.addTab("Log", LogFragment.class, getIntent().getExtras());

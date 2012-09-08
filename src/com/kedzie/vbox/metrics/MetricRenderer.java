@@ -14,8 +14,6 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 
-import com.kedzie.vbox.PreferencesActivity;
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 
 public class MetricRenderer extends View {
@@ -122,7 +120,6 @@ public class MetricRenderer extends View {
 			int prevX=bounds.left, prevY=bounds.bottom-(int)(data[0]*vStep);
 			for(int i=1; i<data.length; i++) {
 				int x=prevX+hStep, y = bounds.bottom-(int)(data[i]*vStep);
-				canvas.drawLine(prevX, prevY, x, y, metricPaint);
 				path.reset();
 				path.moveTo(prevX, bounds.bottom);
 				path.lineTo(prevX, prevY);
@@ -130,6 +127,7 @@ public class MetricRenderer extends View {
 				path.lineTo(x, bounds.bottom);
 				path.close();
 				canvas.drawPath(path, metricFill);
+				canvas.drawLine(prevX, prevY, x, y, metricPaint);
 				prevX=x;prevY=y;
 			}
 		}

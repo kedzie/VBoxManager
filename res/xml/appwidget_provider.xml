@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="60dp"
+    android:minHeight="30dp"
+    android:updatePeriodMillis="86400000"
+    android:initialLayout="@layout/appwidget_provider"
+    android:configure="com.kedzie.vbox.widget.ConfigureActivity"
+    android:resizeMode="horizontal"
+    >
+</appwidget-provider>
+

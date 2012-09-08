@@ -210,7 +210,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			editor.commit();
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.firstrun_welcome)
-					.setMessage(String.format(getString(R.string.firstrun_message), s.getHost(), s.getPort()))
+					.setMessage(getString(R.string.firstrun_message, s.getHost(), s.getPort()))
 					.setIcon(android.R.drawable.ic_dialog_info)
 					.setPositiveButton("OK", new OnClickListener() {
 						@Override

@@ -11,6 +11,7 @@
 					android:layout_height="fill_parent"
 					android:scrollbars="vertical" 
 					android:smoothScrollbar="true" 
+					treeview:indent_width="2dp"
 					/>
 					
 </LinearLayout>
