@@ -1,6 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +7,37 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.task.DialogTask;
+import com.kedzie.vbox.task.ActionBarTask;
 
 public class InfoFragment extends SherlockFragment {
 
+	class LoadInfoTask extends ActionBarTask<IMachine, IMachine> {
+
+		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), null); }
+
+		@Override 
+		protected IMachine work(IMachine... m) throws Exception {
+			//cache values
+			m[0].getName(); m[0].getOSTypeId(); m[0].getMemorySize();
+			m[0].getCPUCount(); m[0].getVRAMSize(); m[0].getAccelerate2DVideoEnabled();
+			m[0].getAccelerate3DEnabled(); m[0].getDescription();
+			return m[0];
+		}
+
+		@Override
+		protected void onPostExecute(IMachine result) {
+			super.onPostExecute(result);
+			if(result!=null) {
+				_machine = result;
+				populateViews(result);
+			}
+		}
+	}
+	
 	private IMachine _machine;
 	private View _view;
 	private TextView _nameText;
@@ -31,6 +54,7 @@ public class InfoFragment extends SherlockFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
 	}
 	
@@ -48,11 +72,6 @@ public class InfoFragment extends SherlockFragment {
 		_accelerationVideoText = (TextView)_view.findViewById(R.id.accelerationVideo);
 		_rdpPortText = (TextView)_view.findViewById(R.id.rdpPort);
 		return _view;
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
 	}
 	
 	@Override
@@ -81,27 +100,21 @@ public class InfoFragment extends SherlockFragment {
 		_rdpPortText.setText( "NaN" );
 		_descriptionText.setText( m.getDescription()+"" );
 	}
+	
+	@Override
+	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.info_actions, menu);
+	}
 
-	class LoadInfoTask extends DialogTask<IMachine, IMachine> {
-
-		public LoadInfoTask() { super(LoadInfoTask.class.getSimpleName(), getSherlockActivity(), null, "Loading Info"); }
-
-		@Override 
-		protected IMachine work(IMachine... m) throws Exception {
-			//cache values
-			m[0].getName(); m[0].getOSTypeId(); m[0].getMemorySize();
-			m[0].getCPUCount(); m[0].getVRAMSize(); m[0].getAccelerate2DVideoEnabled();
-			m[0].getAccelerate3DEnabled(); m[0].getDescription();
-			return m[0];
-		}
-
-		@Override
-		protected void onPostExecute(IMachine result) {
-			super.onPostExecute(result);
-			if(result!=null) {
-				_machine = result;
-				populateViews(result);
-			}
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		switch(item.getItemId()) {
+		//TODO lock action
+		case R.id.option_menu_refresh:
+			new LoadInfoTask().execute(_machine);
+			return true;
+		default:
+			return true;
 		}
 	}
 }

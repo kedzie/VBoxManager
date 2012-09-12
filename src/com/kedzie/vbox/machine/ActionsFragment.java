@@ -21,12 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.MetricPreferencesActivity;
-import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
@@ -42,13 +38,11 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
 public class ActionsFragment extends SherlockFragment implements OnItemClickListener {
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
-	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
 	private MachineView _headerView;
 	private ListView _listView;
@@ -197,18 +191,10 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	}
 	
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.machine_options_menu, menu);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.machine_option_menu_refresh:
+		case R.id.option_menu_refresh:
 			new UpdateMachineViewTask(_vmgr).execute(_machine);
-			return true;
-		case R.id.machine_option_menu_preferences:
-			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class), REQUEST_CODE_PREFERENCES);
 			return true;
 		default:
 			return true;
@@ -220,7 +206,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		Utils.toastLong(getActivity(), String.format("Item Click #%d", position));
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
 		if(action.equals(VMAction.START))	
-			new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(_machine);
+			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);
 		else if(action.equals(VMAction.POWER_OFF))	
 			new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
 			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
@@ -277,14 +263,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 		}
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == REQUEST_CODE_PREFERENCES) 
-			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
-					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.PERIOD),
-					 Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.COUNT));
 	}
 	
 	public VBoxApplication getApp() { 

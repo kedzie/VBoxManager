@@ -26,6 +26,8 @@ public class EventIntentService extends IntentService {
 	private int _interval;
 	private boolean _running=true;
 	private LocalBroadcastManager _lbm;
+	private IEventSource evSource;
+	private IEventListener listener;
 	
 	public EventIntentService() {
 		super("VirtualBox Event Handler");
@@ -38,8 +40,8 @@ public class EventIntentService extends IntentService {
 		_interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
 		
 		IEvent event = null;
-		IEventSource evSource =  _vmgr.getVBox().getEventSource();
-		IEventListener listener = evSource.createListener();
+		evSource =  _vmgr.getVBox().getEventSource();
+		listener = evSource.createListener();
 		evSource.registerListener(listener, new VBoxEventType [] { VBoxEventType.ANY }, false);
 		while(_running) {
 			try {
@@ -56,8 +58,19 @@ public class EventIntentService extends IntentService {
 				Log.e(TAG, "Error", e);
 			} 
 		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		if(_running) {
+			_running=false;
+			Log.w(TAG, "Service is still in running state onDestroy!");
+		}
 		try { 
 			evSource.unregisterListener(listener);	
-		} catch(IOException e) {}
+		} catch(IOException e) {
+			Log.w("Error unregistering event listener",e);
+		}
+		super.onDestroy();
 	}
 }

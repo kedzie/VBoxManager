@@ -6,12 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     
     <application android:debuggable="true" android:icon="@drawable/vbox" android:label="@string/app_name" android:name=".VBoxApplication" android:theme="@style/Theme.Sherlock">
-<!-- 		<activity android:label="Test Harness" android:name=".harness.HarnessActivity"> -->
-<!-- 			<intent-filter> -->
-<!--                 <action android:name="android.intent.action.MAIN"/> -->
-<!--                 <category android:name="android.intent.category.LAUNCHER"/> -->
-<!--             </intent-filter> -->
-<!--         </activity> -->
+		<activity android:label="Test Harness" android:name=".harness.HarnessActivity">
+			<intent-filter>
+                		<action android:name="android.intent.action.MAIN"/>
+                		<category android:name="android.intent.category.LAUNCHER"/>
+            		</intent-filter>
+        	</activity>
 		<activity android:label="@string/app_name" android:name=".server.ServerListActivity" android:uiOptions="splitActionBarWhenNarrow" android:configChanges="orientation" >
 			<intent-filter>
                 	<action android:name="android.intent.action.MAIN"/>
@@ -34,7 +34,26 @@
 	<activity android:configChanges="orientation" android:label="Metrics" android:name=".metrics.MetricActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 	<activity android:configChanges="orientation" android:label="Preferences" android:name=".PreferencesActivity"/>
 	<activity android:configChanges="orientation" android:label="Preferences" android:name=".MetricPreferencesActivity"/>
-	<service android:name=".EventNotificationService"/>
 	<service android:name=".machine.EventIntentService"/>
+	
+	<receiver android:name=".widget.Provider">
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_provider" />
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".widget.ConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".widget.WidgetBroadcastReceiver" android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.ACTION_TIMEZONE_CHANGED" />
+                <action android:name="android.intent.ACTION_TIME" />
+            </intent-filter>
+        </receiver>	
     </application>
 </manifest>

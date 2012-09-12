@@ -1,5 +1,6 @@
 package com.kedzie.vbox.metrics;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -40,6 +43,14 @@ public class MetricRenderer extends View {
 	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint();
 	private Path path = new Path();
 	
+	private Handler _handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			Log.v(TAG, "Invalidate");
+			MetricRenderer.this.invalidate();
+		}
+	};
+	
 	public MetricRenderer(Context context, int bgColor, int gridColor, int textColor, int borderColor) {
 		super(context);
 		bgPaint.setStyle(Style.FILL);
@@ -68,6 +79,7 @@ public class MetricRenderer extends View {
 	}
 
 	public void init( int max, String []metrics) {
+		Log.i(TAG, String.format("Metrics initialized: Max=%1$d  Metrics=%s", max, Arrays.asList(metrics).toString() ));
 		_max=max;
 		_metrics=metrics;
 	}
@@ -75,6 +87,9 @@ public class MetricRenderer extends View {
 	public void setMetricPrefs(int count, int period) {
 		_count=count;
 		_period=period;
+		vStep = (float)_height/(float)_max;
+		hStep = _width/_count;
+		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%1$d\thStep/vStep: %3$d,%4$d",period, count, hStep, vStep ));
 	}
 
 	@Override
@@ -83,14 +98,12 @@ public class MetricRenderer extends View {
 		Log.i(TAG, "OnSizeChanged("+getWidth()+"," + getHeight() + ")");
 		_width=getWidth();
 		_height=getHeight();
-		vStep = (float)_height/(float)_max;
-		hStep = _width/_count;
 	}
 	
 	public synchronized void setQuery(Map<String, MetricQuery> q) {
 		Log.i(TAG, "Received Metric data");
 		_data=q;
-		postInvalidate();
+		_handler.obtainMessage().sendToTarget();
 	}
 	
 	@Override
@@ -106,7 +119,7 @@ public class MetricRenderer extends View {
 		for(int i=0; i<=_count; i+=5) {	//horizontal grid
 			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 			canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);
-			horiz-=hStep;
+			horiz-=i*hStep;
 		}
 
 		for(String metric : _metrics) {
@@ -117,9 +130,11 @@ public class MetricRenderer extends View {
 			metricFill.setColor(VBoxApplication.getColor(getContext(), colorName+"_Fill"));
 			
 			int[] data = _data.get(metric).values;
-			int prevX=bounds.left, prevY=bounds.bottom-(int)(data[0]*vStep);
-			for(int i=1; i<data.length; i++) {
-				int x=prevX+hStep, y = bounds.bottom-(int)(data[i]*vStep);
+			int prevX=bounds.right;
+			int prevY=bounds.bottom-(int)(data[data.length-1]*vStep);
+			for(int i=data.length-2; i>=0; i--) {
+				int x=prevX-hStep;
+				int y = bounds.bottom-(int)(data[i]*vStep);
 				path.reset();
 				path.moveTo(prevX, bounds.bottom);
 				path.lineTo(prevX, prevY);

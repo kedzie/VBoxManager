@@ -22,7 +22,7 @@ public class MachineView extends LinearLayout {
 	public MachineView(VBoxApplication app, Context context) {
 		super(context);
 		this._app=app;
-		LayoutInflater.from(context).inflate(R.layout.machine_list_item, this, true);
+		LayoutInflater.from(context).inflate(R.layout.machine_view, this, true);
 		osIcon = (ImageView)findViewById(R.id.machine_list_item_ostype);
 		nameText =(TextView)findViewById(R.id.machine_list_item_name);
 		stateIcon = (ImageView)findViewById(R.id.machine_list_item_state);

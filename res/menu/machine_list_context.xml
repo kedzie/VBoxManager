@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/machines_context_menu_start" 
+        android:title="@string/menu_context_machine_start"  
+        android:icon="@drawable/ic_list_start"
+        />
+    
+    <item android:id="@+id/machines_context_menu_poweroff" 
+        android:title="@string/menu_context_machine_poweroff" 
+        android:icon="@drawable/ic_list_poweroff"/>
+    
+	<item android:id="@+id/machines_context_menu_reset" 
+	    android:title="@string/menu_context_machine_reset" 
+	    android:icon="@drawable/ic_list_reset"/>
+	
+	<item android:id="@+id/machines_context_menu_pause" 
+	    android:title="@string/menu_context_machine_pause" 
+	    android:icon="@drawable/ic_list_pause" />
+	
+	<item android:id="@+id/machines_context_menu_resume" 
+	    android:title="@string/menu_context_machine_resume" 
+	    android:icon="@drawable/ic_list_start" />
+	
+	<item android:id="@+id/machines_context_menu_acpi" 
+	    android:title="@string/menu_context_machine_acpi" 
+	    android:icon="@drawable/ic_list_acpi" />
+	
+</menu>

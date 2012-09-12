@@ -1,16 +1,17 @@
 package com.kedzie.vbox.server;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 
 public class EditServerActivity extends SherlockActivity {
 	public static final String INTENT_SERVER = "server";
-
+	
 	protected Server _server;
 
 	private TextView nameText;
@@ -37,6 +38,33 @@ public class EditServerActivity extends SherlockActivity {
 		portText.setText(""+_server.getPort());
 		userText.setText(_server.getUsername());
 		passText.setText(_server.getPassword());
+		startActionMode(new ActionMode.Callback() {
+			@Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				mode.setTitle("Edit Server");
+				mode.getMenuInflater().inflate(R.menu.server_actions, menu);
+				return true;
+			}
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				return false;
+			}
+			@Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				switch(item.getItemId()) {
+				case R.id.server_list_option_menu_save:
+					save();
+					return true;
+				case R.id.server_list_option_menu_delete:
+					delete();
+					return true;
+				default: 
+					return true;
+				}
+			}
+			@Override
+			public void onDestroyActionMode(ActionMode mode) {	}
+		});
 	}
 	
 	private void populateServer() {
@@ -53,24 +81,24 @@ public class EditServerActivity extends SherlockActivity {
 		outState.putParcelable(INTENT_SERVER, _server);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.server_options_menu, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+//		getSupportMenuInflater().inflate(R.menu.server_actions, menu);
+//		return true;
+//	}
 
 	@Override
 	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.server_list_option_menu_save:
-			save();
-			return true;
-		case R.id.server_list_option_menu_delete:
-			delete();
-			return true;
+//		case R.id.server_list_option_menu_save:
+//			save();
+//			return true;
+//		case R.id.server_list_option_menu_delete:
+//			delete();
+//			return true;
 		case android.R.id.home:
 			setResult(ServerListActivity.RESULT_CANCELED);
-			NavUtils.navigateUpTo(this, new Intent(this, ServerListActivity.class));
+			finish();
 			return true;
 		default: 
 			return true;

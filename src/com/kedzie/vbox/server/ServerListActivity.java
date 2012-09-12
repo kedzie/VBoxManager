@@ -233,7 +233,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.server_list_options_menu, menu);
+		getSupportMenuInflater().inflate(R.menu.server_list_actions, menu);
 		return true;
 	}
 	
@@ -251,7 +251,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		getMenuInflater().inflate(R.menu.server_list_context_menu, menu);
+		getMenuInflater().inflate(R.menu.server_list_context, menu);
 	}
 
 	@Override

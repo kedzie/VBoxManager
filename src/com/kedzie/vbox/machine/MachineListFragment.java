@@ -103,8 +103,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 					m.getCurrentSnapshot().getName();
 			}
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.PERIOD), 
-					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.COUNT), 
+					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD), 
+					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
 			return machines;
@@ -222,13 +222,13 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	
 	@Override
 	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
-		inflater.inflate(R.menu.machine_list_options_menu, menu);
+		inflater.inflate(R.menu.machine_list_actions, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.machine_list_option_menu_refresh:
+		case R.id.option_menu_refresh:
 			new LoadMachinesTask(_vmgr).execute();
 			return true;
 		case R.id.machine_list_option_menu_metrics:
@@ -239,7 +239,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
 			return true;
-		case R.id.machine_list_option_menu_preferences:
+		case R.id.option_menu_preferences:
 			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class),REQUEST_CODE_PREFERENCES);
 			return true;
 		default:
@@ -251,8 +251,8 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode==REQUEST_CODE_PREFERENCES)
 			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
-					Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.PERIOD),
-					 Utils.getIntPreference(getActivity().getApplicationContext(), MetricPreferencesActivity.COUNT));
+					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD),
+					 Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT));
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:orientation="vertical"   
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    android:padding="8dp">
+	
+    <Button android:id="@+id/testParcelButton"
+        android:text="Test Parcel"
+        android:textStyle="@style/MediumText" />
+    
+    <Button android:id="@+id/machineListButton"
+        android:text="Machine List"
+        android:textStyle="@style/MediumText" />
+    
+    <Button android:id="@+id/hostMetricsButton"
+        android:text="Host Metrics"
+        android:textStyle="@style/MediumText" />
+    
+	
+</LinearLayout>

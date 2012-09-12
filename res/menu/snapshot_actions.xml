@@ -2,13 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     
     <item android:id="@+id/option_menu_add" 
-        android:icon="@drawable/ic_menu_camera" 
+        android:icon="@drawable/ic_list_snapshot_add" 
         android:title="@string/menu_options_snapshot_add"
-        android:showAsAction="ifRoom"/>
-    
-    <item android:id="@+id/option_menu_refresh" 
-        android:icon="@drawable/ic_menu_refresh" 
-        android:title="@string/menu_options_snapshot_refresh"
         android:showAsAction="ifRoom"/>
     
 </menu>

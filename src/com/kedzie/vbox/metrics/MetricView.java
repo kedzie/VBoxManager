@@ -27,18 +27,17 @@ public class MetricView extends LinearLayout {
 			int gridColor = a.getColor(R.styleable.MetricView_gridColor, android.R.color.black);
 			int textColor = a.getColor(R.styleable.MetricView_textColor, android.R.color.black);
 			int borderColor = a.getColor(R.styleable.MetricView_borderColor, android.R.color.holo_blue_dark);
-			LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			_titleTextView = new TextView(context);
 			_titleTextView.setText(header);
 			_titleTextView.setTextAppearance(context, R.style.HeaderText);
-			addView(_titleTextView, p);
+			addView(_titleTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 			_renderer = new MetricRenderer(context, bgColor, gridColor, textColor, borderColor);
+			LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 			p.weight=1;
 			addView(_renderer, p);
 			_metricNames = new LinearLayout(context);
 			_metricNames.setOrientation(LinearLayout.HORIZONTAL);
-			p.weight=0;
-			addView(_metricNames, p);
+			addView(_metricNames, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 		} finally {
 			a.recycle();
 		}

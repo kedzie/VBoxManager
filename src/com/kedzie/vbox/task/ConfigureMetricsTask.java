@@ -21,12 +21,13 @@ public class ConfigureMetricsTask extends ActionBarTask<Integer, Void> {
 
 	@Override
 	protected Void work(Integer...v) throws Exception {
-		int period = Utils.getIntPreference(_context, MetricPreferencesActivity.PERIOD);
-		int count = Utils.getIntPreference(_context, MetricPreferencesActivity.COUNT);
-		if(!Utils.isNullArray(v)) {
-			period = v[0];
-			count = v[1];
-		} 
+		int period, count;
+		if(Utils.isNullArray(v)) {
+			period = Utils.getIntPreference(_context, MetricPreferencesActivity.PERIOD);
+			count = Utils.getIntPreference(_context, MetricPreferencesActivity.COUNT);
+		}
+		period = v[0];
+		count = v[1];
 		Log.i(TAG, String.format("Configuring metrics: period = %d, count = %d", period, count));
 		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, period, count, (IManagedObjectRef)null);
 		return null;

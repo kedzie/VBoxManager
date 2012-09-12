@@ -1,8 +1,10 @@
 package com.kedzie.vbox.machine;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
@@ -10,10 +12,11 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.EventNotificationService;
+import com.kedzie.vbox.EventNotificationReceiver;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.machine.MachineListFragment.SelectMachineListener;
 import com.kedzie.vbox.server.ServerListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -31,6 +34,7 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 	private VBoxSvc _vmgr;
 	/** {@link ActionBar} tabs */
 	private TabSupport _tabSupport;
+	
 
 	private class LogoffTask extends DialogTask<Void, Void>	{
 		public LogoffTask(VBoxSvc vmgr) { 
@@ -47,8 +51,11 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
+		
 		setContentView(R.layout.machine_list);
-		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_VERSION));
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle("VirtualBox v." + getIntent().getStringExtra(INTENT_VERSION));
+		
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane) {
@@ -58,7 +65,8 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 			 if (savedInstanceState != null) 
 		            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
-		startService(new Intent(this, EventNotificationService.class).putExtras(getIntent()));
+		LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+				new EventNotificationReceiver(_vmgr) , new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
 		startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
 	}
 	
@@ -104,7 +112,6 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 	}
 	
 	public void logoff() {
-		stopService(new Intent(this, EventNotificationService.class));
 		stopService(new Intent(this, EventIntentService.class));
 		if(_vmgr.getVBox()!=null)  
 			new LogoffTask(_vmgr). execute();

@@ -20,7 +20,8 @@ public class LaunchVMProcessTask extends DialogTask<IMachine, IMachine> {
 			throw new RuntimeException("Machine session state is " + m[0].getSessionState());
 		handleProgress( m[0].launchVMProcess(_vmgr.getVBox().getSessionObject(), IMachine.LaunchMode.headless) );
 		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" },  
-				Utils.getIntPreference(_context, MetricPreferencesActivity.PERIOD), 1, m[0]);
+				Utils.getIntPreference(_context, MetricPreferencesActivity.PERIOD), 
+				Utils.getIntPreference(_context, MetricPreferencesActivity.COUNT), m[0]);
 		return m[0];
 	}
 }

@@ -6,18 +6,27 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.MetricPreferencesActivity;
+import com.kedzie.vbox.PreferencesActivity;
+import com.kedzie.vbox.R;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
 import com.kedzie.vbox.tabs.TabSupportFragment;
 import com.kedzie.vbox.tabs.TabSupportViewPager;
+import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 public class MachineFragmentActivity extends TabActivity {
-
+	private static final int REQUEST_CODE_PREFERENCES = 6;
+	
 	private TabSupport _tabSupport;
+	private VBoxSvc _vmgr;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,7 @@ public class MachineFragmentActivity extends TabActivity {
             return;
         }
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		IMachine m = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
 		getSupportActionBar().setTitle(m.getName());
@@ -45,12 +55,30 @@ public class MachineFragmentActivity extends TabActivity {
 	}
 	
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.machine_actions, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			break;
+		case R.id.option_menu_preferences:
+			startActivityForResult(new Intent(this, PreferencesActivity.class), REQUEST_CODE_PREFERENCES);
+			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == REQUEST_CODE_PREFERENCES) {
+			new ConfigureMetricsTask(this, _vmgr).execute(
+					Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD),
+					 Utils.getIntPreference(this, MetricPreferencesActivity.COUNT));
+		}
 	}
 }

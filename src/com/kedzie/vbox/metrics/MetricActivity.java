@@ -42,22 +42,25 @@ public class MetricActivity extends SherlockActivity  {
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
-		_count = Utils.getIntPreference(getApplicationContext(), MetricPreferencesActivity.COUNT);
-		_period = Utils.getIntPreference(getApplicationContext(), MetricPreferencesActivity.PERIOD);
-		
 		setContentView(R.layout.metrics);
+		
+		_count = Utils.getIntPreference(this, MetricPreferencesActivity.COUNT);
+		_period = Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD);
+		
 		cpuV = (MetricView) findViewById(R.id.cpu_metrics);
 		cpuV.init(100, getIntent().getStringArrayExtra(INTENT_CPU_METRICS));
+		cpuV.setMetricPrefs(_count, _period);
 		ramV = (MetricView) findViewById(R.id.ram_metrics);
 		ramV.init( _ramAvailable*1000, getIntent().getStringArrayExtra(INTENT_RAM_METRICS));
+		ramV.setMetricPrefs(_count, _period);
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFS) {
-			_count = Utils.getIntPreference(getApplicationContext(), MetricPreferencesActivity.COUNT);
-			_period = Utils.getIntPreference(getApplicationContext(), MetricPreferencesActivity.PERIOD);
+			_count = Utils.getIntPreference(this, MetricPreferencesActivity.COUNT);
+			_period = Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD);
 			cpuV.setMetricPrefs(_count, _period);
 			ramV.setMetricPrefs(_count, _period);
 		}
@@ -65,7 +68,7 @@ public class MetricActivity extends SherlockActivity  {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.metrics_options_menu, menu);
+		getSupportMenuInflater().inflate(R.menu.metric_actions, menu);
 		return true;
 	}
 

@@ -34,111 +34,6 @@ import com.kedzie.vbox.task.MachineTask;
 
 public class SnapshotFragment extends SherlockFragment {
 	
-	protected VBoxSvc _vmgr;
-	protected IMachine _machine;
-	protected View _view;
-	protected TreeViewList _treeView;
-	protected TreeStateManager<ISnapshot> _stateManager;
-	protected TreeBuilder<ISnapshot> _treeBuilder;
-	/** Root of snapshot tree; retained on configuration change */
-	protected ISnapshot _rootSnapshot;
-	
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
-        _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
-		if(savedInstanceState!=null)
-			_rootSnapshot = BundleBuilder.getProxy(savedInstanceState, "rootSnapshot", ISnapshot.class);
-    }
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.snapshot_tree, null);
-        _treeView = (TreeViewList)_view.findViewById(R.id.mainTreeView);
-        registerForContextMenu(_treeView);
-        _stateManager = new InMemoryTreeStateManager<ISnapshot>();
-        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
-        return _view;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if(_rootSnapshot==null) 
-			new LoadSnapshotsTask(_vmgr).execute(_machine);
-		else
-			populate(null, _rootSnapshot);
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		BundleBuilder.putProxy(outState, "rootSnapshot", _rootSnapshot);
-	}
-	
-	@Override
-	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.snapshots_menu, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		switch(item.getItemId()) {
-		case R.id.option_menu_add:
-			TakeSnapshotFragment.getInstance(getArguments())
-				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
-			return true;
-		case R.id.option_menu_refresh:
-			new LoadSnapshotsTask( _vmgr).execute(_machine);
-			return true;
-		default:
-			return true;
-		}
-	}
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		menu.add(Menu.NONE, R.id.context_menu_restore_snapshot, Menu.NONE, VMAction.RESTORE_SNAPSHOT.toString());
-		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, VMAction.DELETE_SNAPSHOT.toString());
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		TreeNodeInfo<ISnapshot> nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo)item.getMenuInfo()).position);
-		 ISnapshot snapshot = nodeinfo.getId();
-		  switch (item. getItemId()) {
-		  case R.id.context_menu_delete_snapshot:  
-			  new MachineTask<ISnapshot>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, snapshot.getMachine()) { 
-					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
-						return console.deleteSnapshot(s[0].getIdRef()); 
-					}
-				}.execute(snapshot);
-			  break;
-		  case R.id.context_menu_restore_snapshot:
-			  new MachineTask<ISnapshot>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, snapshot.getMachine()) { 
-					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
-						return console.restoreSnapshot(s[0].getName());
-					}
-				}.execute(snapshot);
-			  break;
-		  }
-		  return true;
-	}
-	
-	/**
-	 * Recursively populate the tree structure
-	 * @param parent
-	 * @param child
-	 */
-	protected void populate(ISnapshot parent, ISnapshot child) {
-		if(parent==null)
-			_treeBuilder.sequentiallyAddNextNode(child, 0);
-		else
-			_treeBuilder.addRelation(parent, child);
-		for(ISnapshot c : child.getChildren())
-			populate(child, c);	
-	}
-	
 	/**
 	 *	Load complete snapshot tree.
 	 */
@@ -205,5 +100,111 @@ public class SnapshotFragment extends SherlockFragment {
 			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_snapshot_c);
 			return view;
 		}
+	}
+	
+	protected VBoxSvc _vmgr;
+	protected IMachine _machine;
+	protected View _view;
+	protected TreeViewList _treeView;
+	protected TreeStateManager<ISnapshot> _stateManager;
+	protected TreeBuilder<ISnapshot> _treeBuilder;
+	/** Root of snapshot tree; retained on configuration change */
+	protected ISnapshot _rootSnapshot;
+	
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+        _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+		if(savedInstanceState!=null)
+			_rootSnapshot = BundleBuilder.getProxy(savedInstanceState, "rootSnapshot", ISnapshot.class);
+    }
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		_view = inflater.inflate(R.layout.snapshot_tree, null);
+        _treeView = (TreeViewList)_view.findViewById(R.id.mainTreeView);
+        registerForContextMenu(_treeView);
+        _stateManager = new InMemoryTreeStateManager<ISnapshot>();
+        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
+        return _view;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		if(_rootSnapshot==null) 
+			new LoadSnapshotsTask(_vmgr).execute(_machine);
+		else
+			populate(null, _rootSnapshot);
+	}
+	
+	/**
+	 * Recursively populate the tree structure
+	 * @param parent
+	 * @param child
+	 */
+	protected void populate(ISnapshot parent, ISnapshot child) {
+		if(parent==null)
+			_treeBuilder.sequentiallyAddNextNode(child, 0);
+		else
+			_treeBuilder.addRelation(parent, child);
+		for(ISnapshot c : child.getChildren())
+			populate(child, c);	
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		BundleBuilder.putProxy(outState, "rootSnapshot", _rootSnapshot);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.snapshot_actions, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.option_menu_add:
+			TakeSnapshotFragment.getInstance(getArguments())
+				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
+			return true;
+		case R.id.option_menu_refresh:
+			new LoadSnapshotsTask( _vmgr).execute(_machine);
+			return true;
+		default:
+			return true;
+		}
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		menu.add(Menu.NONE, R.id.context_menu_restore_snapshot, Menu.NONE, VMAction.RESTORE_SNAPSHOT.toString());
+		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, VMAction.DELETE_SNAPSHOT.toString());
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		TreeNodeInfo<ISnapshot> nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo)item.getMenuInfo()).position);
+		 ISnapshot snapshot = nodeinfo.getId();
+		  switch (item. getItemId()) {
+		  case R.id.context_menu_delete_snapshot:  
+			  new MachineTask<ISnapshot>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, snapshot.getMachine()) { 
+					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
+						return console.deleteSnapshot(s[0].getIdRef()); 
+					}
+				}.execute(snapshot);
+			  break;
+		  case R.id.context_menu_restore_snapshot:
+			  new MachineTask<ISnapshot>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, snapshot.getMachine()) { 
+					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
+						return console.restoreSnapshot(s[0].getName());
+					}
+				}.execute(snapshot);
+			  break;
+		  }
+		  return true;
 	}
 }
