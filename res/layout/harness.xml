@@ -7,15 +7,15 @@
 	
     <Button android:id="@+id/testParcelButton"
         android:text="Test Parcel"
-        android:textStyle="@style/MediumText" />
+        style="@style/MediumText" />
     
     <Button android:id="@+id/machineListButton"
         android:text="Machine List"
-        android:textStyle="@style/MediumText" />
+        style="@style/MediumText" />
     
     <Button android:id="@+id/hostMetricsButton"
-        android:text="Host Metrics"
-        android:textStyle="@style/MediumText" />
+        android:text="Host Metrics" 
+        style="@style/MediumText" />
     
 	
 </LinearLayout>

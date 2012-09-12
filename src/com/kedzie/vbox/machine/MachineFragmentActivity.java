@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.PreferencesActivity;
@@ -16,13 +19,12 @@ import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.tabs.TabActivity;
 import com.kedzie.vbox.tabs.TabSupport;
 import com.kedzie.vbox.tabs.TabSupportFragment;
 import com.kedzie.vbox.tabs.TabSupportViewPager;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 
-public class MachineFragmentActivity extends TabActivity {
+public class MachineFragmentActivity extends SherlockFragmentActivity {
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
 	private TabSupport _tabSupport;
@@ -36,11 +38,16 @@ public class MachineFragmentActivity extends TabActivity {
 			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
             return;
         }
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		IMachine m = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
+		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setProgressBarIndeterminateVisibility(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
 		getSupportActionBar().setTitle(m.getName());
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
 		if(savedInstanceState==null) {
 			ViewPager pager = new ViewPager(this);
@@ -51,8 +58,16 @@ public class MachineFragmentActivity extends TabActivity {
 			_tabSupport.addTab("Info", InfoFragment.class,getIntent().getExtras());
 			_tabSupport.addTab("Log", LogFragment.class, getIntent().getExtras());
 			_tabSupport.addTab("Snapshots", SnapshotFragment.class, getIntent().getExtras());
+		} else {
+			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
 	}
+	
+	@Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+    }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

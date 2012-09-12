@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <style name="Text" parent="@android:style/TextAppearance">
+
+    <style name="SmallText" parent="@android:style/TextAppearance.Small">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
     </style>
 
-    <style name="SmallText" parent="Text">
-        <item name="android:textSize">12sp</item>
+    <style name="NormalText" parent="@android:style/TextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dp</item>
     </style>
 
-    <style name="NormalText" parent="Text">
-        <item name="android:textSize">14sp</item>
-    </style>
-
-    <style name="MediumText" parent="Text">
-        <item name="android:textSize">18sp</item>
+    <style name="MediumText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dp</item>
     </style>
     
-    <style name="BoldText" parent="MediumText">
+    <style name="BoldText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="HeaderText" parent="Text">
-        <item name="android:textSize">22sp</item>
+    <style name="HeaderText" parent="@android:style/TextAppearance.Large">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">4dp</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 </resources>

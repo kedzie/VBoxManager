@@ -11,6 +11,7 @@ import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.EventNotificationReceiver;
 import com.kedzie.vbox.R;
@@ -18,7 +19,6 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.machine.MachineListFragment.SelectMachineListener;
-import com.kedzie.vbox.server.ServerListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.tabs.TabSupport;
 import com.kedzie.vbox.tabs.TabSupportFragment;
@@ -50,18 +50,21 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setProgressBarIndeterminateVisibility(false);
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		
 		setContentView(R.layout.machine_list);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle("VirtualBox v." + getIntent().getStringExtra(INTENT_VERSION));
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, getIntent().getStringExtra(INTENT_VERSION)));
 		
 		View detailsFrame = findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane) {
 			_tabSupport = VBoxApplication.VIEW_PAGER_TABS ? new TabSupportViewPager(this, (ViewPager)detailsFrame) : new TabSupportFragment(this, R.id.details);
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			getSupportActionBar().setDisplayShowTitleEnabled(false);
+//			getSupportActionBar().setDisplayShowTitleEnabled(false);
 			 if (savedInstanceState != null) 
 		            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
@@ -73,7 +76,8 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 	@Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+        if(_dualPane)
+        	outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
     }
 	
 	@Override
@@ -100,7 +104,7 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 		switch(item.getItemId()) {
 		case android.R.id.home:
 			logoff();
-			NavUtils.navigateUpTo(this, new Intent(this, ServerListActivity.class));
+			NavUtils.navigateUpFromSameTask(this);
 			break;
 		}
 		return false;

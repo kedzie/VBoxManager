@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
@@ -35,6 +36,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Harness created");
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.harness);
 		
 		final Server server = new Server(0L, null, "99.38.98.125",18083, "kedzie", "Mk0204$$" );
@@ -117,7 +119,8 @@ public class HarnessActivity extends SherlockFragmentActivity {
 			Bundle b = new Bundle();
 			b.putParcelable("mp", m);
 			IMachine mp = b.getParcelable("mp");
-			System.out.println("Machine cache: " + mp.getCache());
+			Utils.toastLong(HarnessActivity.this, "Machine cache: " + mp.getCache());
+			Utils.toastLong(HarnessActivity.this, "ISnapshot cache: " + mp.getCurrentSnapshot().getCache());
 			return _vmgr;
 		}
 	}
