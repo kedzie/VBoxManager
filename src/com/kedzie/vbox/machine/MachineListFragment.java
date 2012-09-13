@@ -18,16 +18,17 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.ActionMode;
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.PreferencesActivity;
@@ -43,12 +44,11 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
 import com.kedzie.vbox.task.DialogTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
-public class MachineListFragment extends SherlockFragment implements OnItemClickListener {
+public class MachineListFragment extends SherlockFragment {
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	protected static final String TAG = MachineListFragment.class.getSimpleName();
 	
@@ -166,6 +166,32 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	}
 	
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		_machineSelectedListener = (SelectMachineListener)activity;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		_listView = new ListView(getActivity());
+//		registerForContextMenu(_listView);
+		_listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				getSherlockActivity().startActionMode(new ActionCallback(getAdapter().getItem(position)));
+				return true;
+			}
+		});
+       	_listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				showDetails(position);
+			}
+		});
+       	return _listView;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -179,10 +205,11 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 			_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 		if(savedInstanceState!=null)  { 
-    		_curCheckPosition = savedInstanceState.getInt("curChoice", 0);
+    		_curCheckPosition = savedInstanceState.getInt("curChoice", -1);
     		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
     		_listView.setAdapter(new MachineListAdapter(_machines));
-    		showDetails(_curCheckPosition);
+    		if(_curCheckPosition>-1)
+    			showDetails(_curCheckPosition);
     	} else
     		new LoadMachinesTask(_vmgr).execute();
 	}
@@ -197,20 +224,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	public void onStop() {
 		super.onStop();
 		lbm.unregisterReceiver(_receiver);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		_machineSelectedListener = (SelectMachineListener)activity;
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_listView = new ListView(getActivity());
-		registerForContextMenu(_listView);
-       	_listView.setOnItemClickListener(this);
-       	return _listView;
 	}
 
 	@Override
@@ -247,14 +260,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		}
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode==REQUEST_CODE_PREFERENCES)
-			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
-					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD),
-					 Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT));
-	}
-	
 	@SuppressWarnings("unchecked")
 	protected ArrayAdapter<IMachine> getAdapter() {
 		return (ArrayAdapter<IMachine>)_listView.getAdapter();
@@ -262,11 +267,6 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 
 	public VBoxApplication getApp() { 
 		return (VBoxApplication)getActivity().getApplication(); 
-	}
-	
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		showDetails(position);
 	}
 	
 	void showDetails(int index) {
@@ -297,7 +297,7 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(android.view.MenuItem item) {
 	  IMachine m = getAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
 	  case R.id.machines_context_menu_start:  
@@ -340,5 +340,33 @@ public class MachineListFragment extends SherlockFragment implements OnItemClick
 		  break;
 	  }
 	  return true;
+	}
+	
+	class ActionCallback implements ActionMode.Callback {
+		private IMachine _machine;
+		
+		public ActionCallback(IMachine machine) {
+			_machine = machine;
+		}
+		
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
+			mode.getMenuInflater().inflate(R.menu.machine_list_context, menu);
+			return true;
+		}
+		
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
+			return false;
+		}
+		
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, com.actionbarsherlock.view.MenuItem item) {
+			return false;
+		}
+		
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+		}
 	}
 }

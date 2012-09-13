@@ -12,23 +12,18 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.tabs.TabSupport;
 import com.kedzie.vbox.tabs.TabSupportFragment;
 import com.kedzie.vbox.tabs.TabSupportViewPager;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 public class MachineFragmentActivity extends SherlockFragmentActivity {
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
 	private TabSupport _tabSupport;
-	private VBoxSvc _vmgr;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +33,11 @@ public class MachineFragmentActivity extends SherlockFragmentActivity {
 			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
             return;
         }
-		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		IMachine m = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
 		getSupportActionBar().setTitle(m.getName());
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -86,14 +79,5 @@ public class MachineFragmentActivity extends SherlockFragmentActivity {
 			return true;
 		}
 		return false;
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == REQUEST_CODE_PREFERENCES) {
-			new ConfigureMetricsTask(this, _vmgr).execute(
-					Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD),
-					 Utils.getIntPreference(this, MetricPreferencesActivity.COUNT));
-		}
 	}
 }

@@ -89,7 +89,7 @@ public class MetricRenderer extends View {
 		_period=period;
 		vStep = (float)_height/(float)_max;
 		hStep = _width/_count;
-		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%1$d\thStep/vStep: %3$d,%4$d",period, count, hStep, vStep ));
+		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%2$d\thStep/vStep: %3$d,%4$.2f",period, count, hStep, vStep ));
 	}
 
 	@Override

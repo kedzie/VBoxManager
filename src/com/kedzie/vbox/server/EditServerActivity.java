@@ -1,6 +1,7 @@
 package com.kedzie.vbox.server;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -10,6 +11,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 
 public class EditServerActivity extends SherlockActivity {
+	private static final String TAG = "EditServerActivity";
 	public static final String INTENT_SERVER = "server";
 	
 	protected Server _server;
@@ -23,11 +25,8 @@ public class EditServerActivity extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle state) {
 		super.onCreate(state);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.server);
-		_server = (Server)(state==null ? 
-				getIntent().getParcelableExtra(INTENT_SERVER) 
-				: state.getParcelable(INTENT_SERVER));
+		_server = (Server)(state==null ? getIntent().getParcelableExtra(INTENT_SERVER) : state.getParcelable(INTENT_SERVER));
 		nameText = (TextView)findViewById(R.id.server_name);
 		hostText = (TextView)findViewById(R.id.server_host);
 		portText = (TextView)findViewById(R.id.server_port);
@@ -51,19 +50,26 @@ public class EditServerActivity extends SherlockActivity {
 			}
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				Log.d(TAG, "ActionItemClicked: " + item);
 				switch(item.getItemId()) {
 				case R.id.server_list_option_menu_save:
-					save();
+					populateServer();
+					getIntent().putExtra(INTENT_SERVER, _server);
+					setResult(ServerListActivity.RESULT_CODE_SAVE, getIntent());
+					finish();
 					return true;
 				case R.id.server_list_option_menu_delete:
-					delete();
+					setResult(ServerListActivity.RESULT_CODE_DELETE, getIntent());
+					finish();
 					return true;
 				default: 
 					return true;
 				}
 			}
 			@Override
-			public void onDestroyActionMode(ActionMode mode) {	}
+			public void onDestroyActionMode(ActionMode mode) {	
+				
+			}
 		});
 	}
 	
@@ -81,45 +87,9 @@ public class EditServerActivity extends SherlockActivity {
 		outState.putParcelable(INTENT_SERVER, _server);
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-//		getSupportMenuInflater().inflate(R.menu.server_actions, menu);
-//		return true;
-//	}
-
-	@Override
-	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
-		switch(item.getItemId()) {
-//		case R.id.server_list_option_menu_save:
-//			save();
-//			return true;
-//		case R.id.server_list_option_menu_delete:
-//			delete();
-//			return true;
-		case android.R.id.home:
-			setResult(ServerListActivity.RESULT_CANCELED);
-			finish();
-			return true;
-		default: 
-			return true;
-		}
-	}
-
 	@Override 
 	public void onBackPressed() {
 		setResult(ServerListActivity.RESULT_CANCELED);
-		super.onBackPressed();
-	}
-
-	private void save() {
-		populateServer();
-		getIntent().putExtra(INTENT_SERVER, _server);
-		setResult(ServerListActivity.RESULT_CODE_SAVE, getIntent());
-		finish();
-	}
-
-	private void delete() {
-		setResult(ServerListActivity.RESULT_CODE_DELETE, getIntent());
 		finish();
 	}
 }

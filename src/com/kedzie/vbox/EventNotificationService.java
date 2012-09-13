@@ -20,7 +20,6 @@ public class EventNotificationService extends IntentService {
 
 	private static final String TAG = EventNotificationService.class.getSimpleName();
 	private static final int NOTIFICATION_ID=1;
-	private VBoxSvc _vmgr;
 	
 	public EventNotificationService() {
 		super("Event Notification Service");
@@ -29,13 +28,12 @@ public class EventNotificationService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		Log.i(TAG, "Sending notification");
-		_vmgr = intent.getParcelableExtra(VBoxSvc.BUNDLE);
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
-		Intent i = new Intent(EventNotificationService.this, MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr);
+		Intent i = new Intent(EventNotificationService.this, MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, eventMachine.getVBoxAPI());
 		BundleBuilder.addProxy(i, IMachine.BUNDLE, eventMachine);
 		Notification n =  new Notification.Builder(EventNotificationService.this)
-				.setContentTitle(String.format("%s is %s", eventMachine.getName(), eventMachine.getState()))
-				.setContentText(String.format("Virtual Machine %s changed state to [%s]", eventMachine.getName(), eventMachine.getState()))
+				.setContentTitle(String.format("%1$s is %2$s", eventMachine.getName(), eventMachine.getState()))
+				.setContentText(String.format("Virtual Machine %1$s changed state to [%2$s]", eventMachine.getName(), eventMachine.getState()))
 				.setWhen(System.currentTimeMillis())
 				.setSmallIcon(R.drawable.ic_notif_vbox)
 				.setLargeIcon(BitmapFactory.decodeResource(getResources(), ((VBoxApplication)getApplication()).getDrawable(eventMachine.getState())))

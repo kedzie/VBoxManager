@@ -60,21 +60,21 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		});
 	}
 	
-	class MachineListTask extends  ActionBarTask<Server, VBoxSvc> {
+	class MachineListTask extends  ActionBarTask<Server, String> {
 
 		public MachineListTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
 
 		@Override
-		protected VBoxSvc work(Server... server) throws Exception {
+		protected String work(Server... server) throws Exception {
 			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
 			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
-			return _vmgr;
+			return _vmgr.getVBox().getVersion();
 		}
 
 		@Override
-		protected void onPostExecute(VBoxSvc vmgr) {
-			startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, vmgr));
-			super.onPostExecute(vmgr);
+		protected void onPostExecute(String version) {
+			super.onPostExecute(version);
+			startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr).putExtra("version", version));
 		}
 	}
 	
@@ -104,11 +104,11 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	class TestParcelTask extends  ActionBarTask<Server, VBoxSvc> {
+	class TestParcelTask extends  ActionBarTask<Server, IMachine> {
 		public TestParcelTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
 
 		@Override
-		protected VBoxSvc work(Server... server) throws Exception {
+		protected IMachine work(Server... server) throws Exception {
 			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
 			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
 			List<IMachine> machines = _vmgr.getVBox().getMachines();
@@ -119,9 +119,14 @@ public class HarnessActivity extends SherlockFragmentActivity {
 			Bundle b = new Bundle();
 			b.putParcelable("mp", m);
 			IMachine mp = b.getParcelable("mp");
-			Utils.toastLong(HarnessActivity.this, "Machine cache: " + mp.getCache());
-			Utils.toastLong(HarnessActivity.this, "ISnapshot cache: " + mp.getCurrentSnapshot().getCache());
-			return _vmgr;
+			return mp;
+		}
+		
+		@Override
+		protected void onPostExecute(IMachine result) {
+			super.onPostExecute(result);
+			Utils.toastLong(HarnessActivity.this, "Machine cache: " + result.getCache());
+			Utils.toastLong(HarnessActivity.this, "ISnapshot cache: " + result.getCurrentSnapshot().getCache());
 		}
 	}
 }
