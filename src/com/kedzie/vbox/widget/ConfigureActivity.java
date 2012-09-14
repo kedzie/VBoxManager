@@ -1,6 +1,6 @@
 package com.kedzie.vbox.widget;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -20,46 +20,35 @@ public class ConfigureActivity extends Activity {
     private static final String PREFS_NAME = "com.kedzie.vbox.widget.AppWidgetProvider";
     private static final String PREF_PREFIX_KEY = "prefix_";
 
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    int mAppWidgetId;
     private EditText mAppWidgetPrefix;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setResult(RESULT_CANCELED);
-
         setContentView(R.layout.appwidget_configure);
         mAppWidgetPrefix = (EditText)findViewById(R.id.appwidget_prefix);
-        findViewById(R.id.save_button).setOnClickListener(mOnClickListener);
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null)
-            mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID)
-            finish();
-
+        
+        mAppWidgetId = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        
+        if(mAppWidgetId==AppWidgetManager.INVALID_APPWIDGET_ID)
+        	finish();
+        
         mAppWidgetPrefix.setText(loadTitlePref(ConfigureActivity.this, mAppWidgetId));
+        
+        findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String titlePrefix = mAppWidgetPrefix.getText().toString();
+                saveTitlePref(ConfigureActivity.this, mAppWidgetId, titlePrefix);
+
+                Provider.updateAppWidget(ConfigureActivity.this, AppWidgetManager.getInstance(ConfigureActivity.this), mAppWidgetId, titlePrefix);
+
+                setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
+                finish();
+            }
+        });
     }
-
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final Context context = ConfigureActivity.this;
-
-            String titlePrefix = mAppWidgetPrefix.getText().toString();
-            saveTitlePref(context, mAppWidgetId, titlePrefix);
-
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            Provider.updateAppWidget(context, appWidgetManager,
-                    mAppWidgetId, titlePrefix);
-
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
-        }
-    };
 
     static void saveTitlePref(Context context, int appWidgetId, String text) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
@@ -68,19 +57,14 @@ public class ConfigureActivity extends Activity {
     }
 
     static String loadTitlePref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String prefix = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (prefix != null) {
-            return prefix;
-        } else {
-            return "prefix";
-        }
+        String prefix = context.getSharedPreferences(PREFS_NAME, 0).getString(PREF_PREFIX_KEY + appWidgetId, null);
+        return prefix!=null ? prefix : "prefix";
     }
 
     static void deleteTitlePref(Context context, int appWidgetId) {
     }
 
-    static void loadAllTitlePrefs(Context context, ArrayList<Integer> appWidgetIds, ArrayList<String> texts) {
+    static void loadAllTitlePrefs(Context context, List<Integer> appWidgetIds, List<String> texts) {
     }
 }
 

@@ -72,8 +72,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		}
 
 		@Override
-		protected void onPostExecute(String version) {
-			super.onPostExecute(version);
+		protected void onResult(String version) {
 			startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr).putExtra("version", version));
 		}
 	}
@@ -92,7 +91,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		}
 
 		@Override
-		protected void onPostExecute(IHost host) {
+		protected void onResult(IHost host) {
 			startActivity(new Intent(HarnessActivity.this, MetricActivity.class)
 					.putExtra(VBoxSvc.BUNDLE, _vmgr)
 					.putExtra(MetricActivity.INTENT_TITLE, R.string.host_metrics)
@@ -100,7 +99,6 @@ public class HarnessActivity extends SherlockFragmentActivity {
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, host.getMemorySize())
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
-			super.onPostExecute(host);
 		}
 	}
 
@@ -123,8 +121,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		}
 		
 		@Override
-		protected void onPostExecute(IMachine result) {
-			super.onPostExecute(result);
+		protected void onResult(IMachine result) {
 			Utils.toastLong(HarnessActivity.this, "Machine cache: " + result.getCache());
 			Utils.toastLong(HarnessActivity.this, "ISnapshot cache: " + result.getCurrentSnapshot().getCache());
 		}

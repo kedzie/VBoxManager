@@ -111,13 +111,10 @@ public class MachineListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onPostExecute(List<IMachine> result)	{
-			super.onPostExecute(result);
+		protected void onResult(List<IMachine> result)	{
 			_machines = result;
-			if(result!=null)	{
-				_listView.setAdapter(new MachineListAdapter(result));
-				getAdapter().setNotifyOnChange(false);
-			}
+			_listView.setAdapter(new MachineListAdapter(result));
+			getAdapter().setNotifyOnChange(false);
 		}
 	}
 	
@@ -138,16 +135,13 @@ public class MachineListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onPostExecute(IMachine result)	{
-			super.onPostExecute(result);
-			if(result!=null)	{
+		protected void onResult(IMachine result)	{
 				int pos = getAdapter().getPosition(result);
 				getAdapter().setNotifyOnChange(false);
 				getAdapter().remove(result);
 				getAdapter().insert(result, pos);
 				getAdapter().notifyDataSetChanged();
 				Utils.toastShort(getActivity(), "%s changed State: [%s]", result.getName(), result.getState());
-			}
 		}
 	}
 	

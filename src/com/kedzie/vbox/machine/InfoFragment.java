@@ -29,12 +29,9 @@ public class InfoFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onPostExecute(IMachine result) {
-			super.onPostExecute(result);
-			if(result!=null) {
+		protected void onResult(IMachine result) {
 				_machine = result;
 				populateViews(result);
-			}
 		}
 	}
 	

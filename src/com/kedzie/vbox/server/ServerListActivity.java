@@ -63,14 +63,12 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			return _vmgr.getVBox();
 		}
 
-		@Override protected void onPostExecute(IVirtualBox vbox) {
-			if(vbox!=null) {
-				Utils.toastLong(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-				startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class)
-							.putExtra(VBoxSvc.BUNDLE, _vmgr)
-							.putExtra(MachineListFragmentActivity.INTENT_VERSION, vbox.getVersion()));
-			}
-			super.onPostExecute(vbox);
+		@Override 
+		protected void onResult(IVirtualBox vbox) {
+			Utils.toastLong(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
+			startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class)
+						.putExtra(VBoxSvc.BUNDLE, _vmgr)
+						.putExtra(MachineListFragmentActivity.INTENT_VERSION, vbox.getVersion()));
 		}
 	}
 	
@@ -87,8 +85,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			return _db.query(); 
 		}
 		@Override 
-		protected void onPostExecute(List<Server> result)	{
-			super.onPostExecute(result);
+		protected void onResult(List<Server> result)	{
 			getAdapter().clear();
 			getAdapter().addAll(result);
 			if(result.isEmpty()) {

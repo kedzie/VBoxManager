@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -137,7 +138,11 @@ public class VBoxSvc implements Parcelable {
 	public IVirtualBox logon(String username, String password) throws IOException  {
 		_username=username;
 		_password=password;
-		return (_vbox = getProxy(IVirtualBox.class, null).logon(username, password));
+		try {
+			return (_vbox = getProxy(IVirtualBox.class, null).logon(username, password));
+		} catch(SoapFault e) {
+			throw new ConnectException("Authentication Error");
+		}
 	}
 	
 	/**

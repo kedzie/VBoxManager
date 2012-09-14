@@ -1,8 +1,6 @@
 package com.kedzie.vbox.task;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import org.ksoap2.SoapFault;
 
@@ -17,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kedzie.vbox.BundleBuilder;
+import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -75,9 +74,9 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		try	{
 			return work(params);
 		} catch(SoapFault e) {
-			showAlert(TAG, e);
+			showAlert(e);
 		} catch(Throwable e)	{
-			showAlert(TAG, e);
+			showAlert(e);
 		}
 		return null;
 	}
@@ -90,25 +89,57 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 */
 	protected abstract Output work(Input...params) throws Exception;
 	
+	@Override
+	protected void onPostExecute(Output result) {
+		super.onPostExecute(result);
+		if(result!=null)
+			onResult(result);
+	}
+	
+	/**
+	 * Handle not-null result
+	 * @param result the result
+	 */
+	protected void onResult(Output result) {}
+	
 	/**
 	 * Show an Alert dialog 
 	 * @param e <code>Throwable</code> which caused the error
 	 */
-	protected void showAlert(String tag, Throwable e) {
-		Log.e(tag, "caught throwable", e);
-		while(e.getCause()!=null)
+	protected void showAlert(Throwable e) {
+		Log.e(TAG, "caught throwable", e);
+		while(Utils.isNullString(e.getMessage()) && e.getCause()!=null)
 			e = e.getCause();
-		StringWriter sw = new StringWriter();
-		e.printStackTrace(new PrintWriter(sw));
-		new BundleBuilder()
-				.putString("title", e.getClass().getSimpleName())
-				.putString("msg", e.getMessage())
-				.putString("stacktrace", sw.toString())
+		new BundleBuilder().putString("title", e.getClass().getSimpleName()).putString("msg", e.getMessage()).sendMessage(_handler, WHAT_ERROR);
+	}
+	
+	/**
+	 * Show an Alert dialog 
+	 * @param e <code>Throwable</code> which caused the error
+	 */
+	protected void showAlert(SoapFault e) {
+		Log.e(TAG, "caught SoapFault", e);
+		new BundleBuilder().putString("title", "Soap Fault")
+				.putString("msg", String.format("Code: %1$s\nActor: %2$s\nString: %3$s", e.faultcode, e.faultactor, e.faultstring))
 				.sendMessage(_handler, WHAT_ERROR);
 	}
 	
-	protected void showAlert(String tag, int code, String msg) {
-		Log.e(tag, "Alert error: " + msg);
+	/**
+	 * Show custom error message
+	 * @param title dialog title
+	 * @param message dialog text
+	 */
+	protected void showAlert(String title, String message) {
+		new BundleBuilder().putString("title", title).putString("msg", message).sendMessage(_handler, WHAT_ERROR);
+	}
+	
+	/**
+	 * Show {@link IVirtualBoxErrorInfo}
+	 * @param code result code
+	 * @param msg error text
+	 */
+	protected void showAlert(int code, String msg) {
+		Log.e(TAG, "Alert error: " + msg);
 		new BundleBuilder()
 				.putString("title", "VirtualBox error")
 				.putString("msg", "Result Code: " + code + " - " + msg)
@@ -134,7 +165,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		Log.i(TAG, "Operation Completed. result code: " + p.getResultCode());
 		if(p.getResultCode()!=0) {
 			IVirtualBoxErrorInfo info = p.getErrorInfo();
-			showAlert(TAG, p.getResultCode(), info != null ? info.getText() : "No Message");
+			showAlert(p.getResultCode(), info != null ? info.getText() : "No Message");
 			return;
 		}
 		cacheProgress(p);

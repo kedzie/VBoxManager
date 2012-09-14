@@ -63,13 +63,10 @@ public class SnapshotFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onPostExecute(ISnapshot result)	{
-			super.onPostExecute(result);
-			if(result!=null)	{
+		protected void onResult(ISnapshot result)	{
 				_treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
 				_rootSnapshot=result;
 				populate(null, _rootSnapshot);
-			}
 		}
 	}
 	

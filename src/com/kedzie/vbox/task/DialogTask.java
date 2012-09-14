@@ -36,8 +36,9 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	}
 	
 	@Override
-	protected void onPostExecute(Output result)	{
+	protected final void onPostExecute(Output result)	{
 			pDialog.dismiss();
+			super.onPostExecute(result);
 	}
 
 	@Override

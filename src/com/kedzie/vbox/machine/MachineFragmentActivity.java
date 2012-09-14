@@ -36,7 +36,6 @@ public class MachineFragmentActivity extends SherlockFragmentActivity {
 		IMachine m = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
 		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
 		getSupportActionBar().setTitle(m.getName());

@@ -85,8 +85,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		}
 
 		@Override
-		protected void onPostExecute(IMachine result) {
-			super.onPostExecute(result);
+		protected void onResult(IMachine result) {
 			_headerView.update(result);
 			_listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(_machine.getState())));
 		}
@@ -108,10 +107,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		}
 
 		@Override
-		protected void onPostExecute(ISessionStateChangedEvent result)	{
-			super.onPostExecute(result);
-			if(result!=null)	
-				Utils.toastLong(getActivity(), "Session changed State: "+result.getState());
+		protected void onResult(ISessionStateChangedEvent result)	{
+			Utils.toastLong(getActivity(), "Session changed State: "+result.getState());
 		}
 	}
 	

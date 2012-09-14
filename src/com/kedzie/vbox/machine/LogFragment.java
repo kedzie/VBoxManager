@@ -27,12 +27,9 @@ public class LogFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			if(result!=null) {
+		protected void onResult(String result) {
 				Log.i(TAG,"Log size: " + result.length());
 				_logText.setText(result);
-			}
 		}
 	}
 

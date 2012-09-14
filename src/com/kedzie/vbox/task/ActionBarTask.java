@@ -30,9 +30,10 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 	}
 	
 	@Override
-	protected void onPostExecute(Output result)	{
+	protected final void onPostExecute(Output result)	{
 		_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
 		_sherlockActivity.setSupportProgressBarVisibility(false);
+		super.onPostExecute(result);
 	}
 
 	@Override

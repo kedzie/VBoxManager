@@ -49,7 +49,6 @@ public class MachineListFragmentActivity extends SherlockFragmentActivity implem
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, getIntent().getStringExtra(INTENT_VERSION)));
 		
