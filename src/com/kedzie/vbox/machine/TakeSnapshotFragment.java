@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
@@ -42,7 +43,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 		_view = inflater.inflate(R.layout.snapshot_dialog, null);
 		snapshotName = (TextView)_view.findViewById(R.id.snapshot_name);
 		snapshotDescription = (TextView)_view.findViewById(R.id.snapshot_description);
-		((Button)_view.findViewById(R.id.button_save)).setOnClickListener( new View.OnClickListener() {
+		((ImageButton)_view.findViewById(R.id.button_save)).setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				dismiss();

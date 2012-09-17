@@ -79,9 +79,12 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {
-			MachineView.cacheProperties(m[0]);
-			m[0].getMemorySize();
-			return m[0];
+//			MachineView.cacheProperties(m[0]);
+//			m[0].getMemorySize();
+//			return m[0];
+			_machine.getCache().remove("getState");
+			_machine.getState();
+			return _machine;
 		}
 
 		@Override

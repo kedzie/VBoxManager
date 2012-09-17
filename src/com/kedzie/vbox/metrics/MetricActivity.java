@@ -35,7 +35,7 @@ public class MetricActivity extends SherlockActivity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_TITLE));
 		
@@ -85,7 +85,7 @@ public class MetricActivity extends SherlockActivity  {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		_thread = new DataThread(_vmgr, _object, _period, cpuV, ramV);
+		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
 	

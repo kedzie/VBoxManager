@@ -15,16 +15,7 @@
                 	android:defaultValue="true" />    	
         </PreferenceCategory>
         
-        <PreferenceCategory  android:title="@string/pref_category_metrics">
-            <ListPreference 
-                	android:key="metric_implementation"
-                	android:title="@string/pref_metric_implementation_title"
-                	android:summary="@string/pref_metric_implementation_summary"
-                	android:defaultValue="SURFACEVIEW"
-                	android:entries="@array/metric_implementation_entries"
-                	android:entryValues="@array/metric_implementation_entryValues"    
-                	android:dialogTitle="@string/pref_metric_implementation_title"        	
-                	/>	
+        <PreferenceCategory  android:title="@string/pref_category_metrics">	
         	<ListPreference  
             		android:key="metric_count"
             		android:title="@string/pref_metric_count_title"

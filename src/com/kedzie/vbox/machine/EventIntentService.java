@@ -66,11 +66,16 @@ public class EventIntentService extends IntentService {
 			_running=false;
 			Log.w(TAG, "Service is still in running state onDestroy!");
 		}
-		try { 
-			evSource.unregisterListener(listener);	
-		} catch(IOException e) {
-			Log.w("Error unregistering event listener",e);
-		}
+		new Thread() {
+			@Override
+			public void run() {
+				try { 
+					evSource.unregisterListener(listener);	
+				} catch(IOException e) {
+					Log.w("Error unregistering event listener",e);
+				}
+			}
+		}.start();
 		super.onDestroy();
 	}
 }

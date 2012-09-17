@@ -96,17 +96,12 @@ public class MachineListFragment extends SherlockFragment {
 		protected List<IMachine> work(Void... params) throws Exception {
 			List<IMachine> machines =_vmgr.getVBox().getMachines(); 
 			_vmgr.getVBox().getHost().getMemorySize();
-			for(IMachine m :  machines) {
-				//cache property values to avoid remote calls
-				m.getState(); m.getName();  m.getOSTypeId(); m.getCurrentStateModified(); 
-				if(m.getCurrentSnapshot()!=null) 
-					m.getCurrentSnapshot().getName();
-			}
+			for(IMachine m :  machines)
+				MachineView.cacheProperties(m);
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
 					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD), 
 					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
-			_vmgr.getVBox().getVersion();
 			return machines;
 		}
 
@@ -130,16 +125,19 @@ public class MachineListFragment extends SherlockFragment {
 		@Override
 		protected IMachine work(Bundle... params) throws Exception {
 			IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
-			MachineView.cacheProperties(m);
+//			MachineView.cacheProperties(m);
+			IMachine machine = getAdapter().getItem(getAdapter().getPosition(m));
+			machine.getCache().remove("getState");
+			machine.getState();
 			return m;
 		}
 
 		@Override
 		protected void onResult(IMachine result)	{
-				int pos = getAdapter().getPosition(result);
-				getAdapter().setNotifyOnChange(false);
-				getAdapter().remove(result);
-				getAdapter().insert(result, pos);
+//				int pos = getAdapter().getPosition(result);
+//				getAdapter().setNotifyOnChange(false);
+//				getAdapter().remove(result);
+//				getAdapter().insert(result, pos);
 				getAdapter().notifyDataSetChanged();
 				Utils.toastShort(getActivity(), "%s changed State: [%s]", result.getName(), result.getState());
 		}
@@ -292,45 +290,45 @@ public class MachineListFragment extends SherlockFragment {
 
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
-	  IMachine m = getAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
+	  IMachine _machine = getAdapter().getItem( ((AdapterContextMenuInfo) item.getMenuInfo()).position);
 	  switch (item. getItemId()) {
 	  case R.id.machines_context_menu_start:  
-		  new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(m);	  
+		  new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(_machine);	  
 		  break;
 	  case R.id.machines_context_menu_poweroff:   
-		  new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, m) {	
+		  new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
 			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  return console.powerDown();
 			  }
-		  }.execute(m);
+		  }.execute(_machine);
 		  break;
 	  case R.id.machines_context_menu_reset:	 
-		  new MachineTask<IMachine>("ResetTask", getActivity(), _vmgr, "Resetting", true, m) {	
+		  new MachineTask<IMachine>("ResetTask", getActivity(), _vmgr, "Resetting", true, _machine) {	
 			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.reset(); 
 			  }
-			  }.execute(m);
+			  }.execute(_machine);
 		  break;
 	  case R.id.machines_context_menu_resume:	  
-		  new MachineTask<IMachine>("ResumeTask", getActivity(), _vmgr, "Resuming", true, m) {	
+		  new MachineTask<IMachine>("ResumeTask", getActivity(), _vmgr, "Resuming", true, _machine) {	
 			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.resume(); 
 			  }
-		  }.execute(m);
+		  }.execute(_machine);
 		  break;
 	  case R.id.machines_context_menu_pause:	  
-		  new MachineTask<IMachine>("PauseTask", getActivity(), _vmgr, "Pausing", true, m) {	
+		  new MachineTask<IMachine>("PauseTask", getActivity(), _vmgr, "Pausing", true, _machine) {	
 			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
 				  console.pause();	
 			  }
-		  }.execute(m);
+		  }.execute(_machine);
 		  break;
 	  case R.id.machines_context_menu_acpi:	  
-		  new MachineTask<IMachine>("ACPITask", getActivity(), _vmgr, "ACPI Power Down", true, m) {
+		  new MachineTask<IMachine>("ACPITask", getActivity(), _vmgr, "ACPI Power Down", true, _machine) {
 			  protected void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
 				  console.powerButton(); 	
 			  }
-		  }.execute(m);
+		  }.execute(_machine);
 		  break;
 	  }
 	  return true;
@@ -345,22 +343,78 @@ public class MachineListFragment extends SherlockFragment {
 		
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
+			_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			_listView.setItemChecked(getAdapter().getPosition(_machine), true);
 			mode.getMenuInflater().inflate(R.menu.machine_list_context, menu);
 			return true;
 		}
 		
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
-			return false;
+			List<VMAction> actions = Arrays.asList(VMAction.getVMActions(_machine.getState()));
+			if(actions.contains(VMAction.START))
+				menu.add(Menu.NONE, R.id.machines_context_menu_start, Menu.NONE, VMAction.START.toString());
+			if(actions.contains(VMAction.POWER_OFF))
+				menu.add(Menu.NONE, R.id.machines_context_menu_poweroff, Menu.NONE, VMAction.POWER_OFF.toString());
+			if(actions.contains(VMAction.POWER_BUTTON))	
+				menu.add(Menu.NONE, R.id.machines_context_menu_acpi, Menu.NONE, VMAction.POWER_BUTTON.toString());
+			if(actions.contains(VMAction.RESET))
+				menu.add(Menu.NONE, R.id.machines_context_menu_reset, Menu.NONE, VMAction.RESET.toString());
+			if(actions.contains(VMAction.PAUSE))
+				menu.add(Menu.NONE, R.id.machines_context_menu_pause, Menu.NONE, VMAction.PAUSE.toString());
+			if(actions.contains(VMAction.RESUME))
+				menu.add(Menu.NONE, R.id.machines_context_menu_resume, Menu.NONE, VMAction.RESUME.toString());
+			return true;
 		}
 		
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, com.actionbarsherlock.view.MenuItem item) {
-			return false;
+			switch (item. getItemId()) {
+			  case R.id.machines_context_menu_start:  
+				  new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(_machine);	  
+				  break;
+			  case R.id.machines_context_menu_poweroff:   
+				  new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
+					  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+						  return console.powerDown();
+					  }
+				  }.execute(_machine);
+				  break;
+			  case R.id.machines_context_menu_reset:	 
+				  new MachineTask<IMachine>("ResetTask", getActivity(), _vmgr, "Resetting", true, _machine) {	
+					  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+						  console.reset(); 
+					  }
+					  }.execute(_machine);
+				  break;
+			  case R.id.machines_context_menu_resume:	  
+				  new MachineTask<IMachine>("ResumeTask", getActivity(), _vmgr, "Resuming", true, _machine) {	
+					  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+						  console.resume(); 
+					  }
+				  }.execute(_machine);
+				  break;
+			  case R.id.machines_context_menu_pause:	  
+				  new MachineTask<IMachine>("PauseTask", getActivity(), _vmgr, "Pausing", true, _machine) {	
+					  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
+						  console.pause();	
+					  }
+				  }.execute(_machine);
+				  break;
+			  case R.id.machines_context_menu_acpi:	  
+				  new MachineTask<IMachine>("ACPITask", getActivity(), _vmgr, "ACPI Power Down", true, _machine) {
+					  protected void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
+						  console.powerButton(); 	
+					  }
+				  }.execute(_machine);
+				  break;
+			  }
+			  return true;
 		}
 		
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
+			_listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
 		}
 	}
 }

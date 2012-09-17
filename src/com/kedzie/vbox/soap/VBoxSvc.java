@@ -44,6 +44,149 @@ public class VBoxSvc implements Parcelable {
 	private static final String TAG = "VBoxSvc";
 	protected static final int TIMEOUT = 20000;
 	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
+	
+	/**
+	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
+	 */
+	public class KSOAPInvocationHandler implements InvocationHandler, Serializable {
+		private static final long serialVersionUID = 1L;
+		
+		/** managed object UIUD */
+		private String _uiud;
+		/** type of {@link IManagedObjectRef} */
+		private Class<?> _type;
+		/** cached property values */
+		private Map<String, Object> _cache;
+
+		public KSOAPInvocationHandler(String id, Class<?> type, Map<String,Object> cache) {
+			_uiud=id;
+			_type=type;
+			_cache = cache!=null ? cache : new HashMap<String, Object>();
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+			synchronized( VBoxSvc.class ) {
+				if(method.getName().equals("getIdRef")) return this._uiud;
+				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
+				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
+				if(method.getName().equals("getInterface")) return _type;
+				if(method.getName().equals("equals")) {
+					if(!(args[0] instanceof IManagedObjectRef) || !_type.isAssignableFrom(args[0].getClass())) 
+						return false;
+					return _uiud.equals(((IManagedObjectRef)args[0]).getIdRef());
+				}
+				if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
+				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
+				if(method.getName().equals("describeContents")) return 0;
+				if(method.getName().equals("getCache")) return _cache;
+				if(method.getName().equals("writeToParcel")) {
+					Parcel out = (Parcel)args[0];
+					out.writeSerializable(_type);
+					out.writeParcelable(VBoxSvc.this, 0);
+					out.writeString(_uiud);
+					Log.i(TAG, "Writing cache to parcel: " + _cache);
+					out.writeMap(_cache);
+					return null;
+				}
+				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? _type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
+				
+				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(method.getName()))
+					return _cache.get(method.getName());
+				
+				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? _type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
+				if(methodKSOAP==null)
+					request.addProperty("_this", this._uiud);
+				else if ( !"".equals(methodKSOAP.thisReference()))
+					request.addProperty(methodKSOAP.thisReference(), this._uiud);
+				if(args!=null) {
+					for(int i=0; i<args.length; i++)
+						marshal(request, getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
+				}
+				SerializationEnvelope envelope = new SerializationEnvelope();
+				envelope.setOutputSoapObject(request);
+				_transport.call(NAMESPACE+request.getName(), envelope);
+				Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
+				if(methodKSOAP!=null && methodKSOAP.cacheable()) 
+					_cache.put(method.getName(), ret);
+				return ret;
+			}
+		}
+	}
+		
+		/**
+		 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
+		 */
+		class SerializationEnvelope extends SoapSerializationEnvelope {
+
+			public SerializationEnvelope() {
+				super(SoapEnvelope.VER11);
+			}
+
+			/**
+			 * Unmarshall SoapEnvelope to correct type
+			 * @param returnType   type to umarshall
+			 * @param genericType  parameterized type
+			 * @return  unmarshalled return value
+			 * @throws SoapFault
+			 */
+			public Object getResponse(Class<?> returnType, Type genericType) throws SoapFault {
+				if (bodyIn instanceof SoapFault) throw (SoapFault) bodyIn;
+				boolean isCollection = Collection.class.isAssignableFrom(returnType);
+				boolean isMap = Map.class.isAssignableFrom(returnType);
+				KvmSerializable ks = (KvmSerializable) bodyIn;
+				if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
+					return null;
+				if(isMap) {
+					Map<String, List<String>> map = new HashMap<String, List<String>>();
+					PropertyInfo info = new PropertyInfo();
+					for (int i = 0; i < ks.getPropertyCount(); i++) {
+						ks.getPropertyInfo(i, null, info);
+						if (!map.containsKey(info.getName()))
+							map.put(info.getName(), new ArrayList<String>());
+						map.get(info.getName()).add(   ks.getProperty(i).toString() );
+					}
+					return map;
+				}
+				if(isCollection) {
+					Class<?> pClazz = getTypeParameter(genericType);
+					Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
+					for (int i = 0; i < ks.getPropertyCount(); i++)
+						list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );
+					return list;
+				}
+				return unmarshal(returnType, genericType, ks.getProperty(0));
+			}
+
+			/**
+			 * convert string return value to correct type
+			 * @param returnType remote method return type
+			 * @param genericType remote method return type (parameterized)
+			 * @param ret  marshalled value
+			 * @return unmarshalled return value
+			 */
+			private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
+				if(ret==null) return null;
+				if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
+					return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
+				if(returnType.equals(Boolean.class))
+					return Boolean.valueOf(ret.toString());
+				else if(returnType.equals(Integer.class))
+					return Integer.valueOf(ret.toString());
+				else if(returnType.equals(Long.class))
+					return Long.valueOf(ret.toString());
+				else if(returnType.equals(String.class))
+					return ret.toString();
+				else if(IManagedObjectRef.class.isAssignableFrom(returnType))
+					return getProxy(returnType, ret.toString());
+				else if(returnType.isEnum()) {
+					for( Object element : returnType.getEnumConstants())
+						if( element.toString().equals( ret.toString() ) )
+							return element;
+				}
+				return ret;
+			}
+		}
 
 	protected String _url;
 	protected String _username;
@@ -183,75 +326,6 @@ public class VBoxSvc implements Parcelable {
 		return ret;
 	}
 
-	/**
-	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
-	 */
-	public class KSOAPInvocationHandler implements InvocationHandler, Serializable {
-		private static final long serialVersionUID = 1L;
-		
-		/** managed object UIUD */
-		private String _uiud;
-		/** type of {@link IManagedObjectRef} */
-		private Class<?> _type;
-		/** cached property values */
-		private Map<String, Object> _cache;
-
-		public KSOAPInvocationHandler(String id, Class<?> type, Map<String,Object> cache) {
-			_uiud=id;
-			_type=type;
-			_cache = cache!=null ? cache : new HashMap<String, Object>();
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
-			synchronized( VBoxSvc.class ) {
-				if(method.getName().equals("getIdRef")) return this._uiud;
-				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
-				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
-				if(method.getName().equals("getInterface")) return _type;
-				if(method.getName().equals("equals")) {
-					if(!(args[0] instanceof IManagedObjectRef) || !_type.isAssignableFrom(args[0].getClass())) 
-						return false;
-					return _uiud.equals(((IManagedObjectRef)args[0]).getIdRef());
-				}
-				if(method.getName().equals("clearCache")) { _cache.clear(); return null; }
-				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
-				if(method.getName().equals("describeContents")) return 0;
-				if(method.getName().equals("getCache")) return _cache;
-				if(method.getName().equals("writeToParcel")) {
-					Parcel out = (Parcel)args[0];
-					out.writeSerializable(_type);
-					out.writeParcelable(VBoxSvc.this, 0);
-					out.writeString(_uiud);
-					Log.i(TAG, "Writing cache to parcel: " + _cache);
-					out.writeMap(_cache);
-					return null;
-				}
-
-				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? _type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
-				
-				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(method.getName()))
-					return _cache.get(method.getName());
-				
-				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? _type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
-				if(methodKSOAP==null)
-					request.addProperty("_this", this._uiud);
-				else if ( !"".equals(methodKSOAP.thisReference()))
-					request.addProperty(methodKSOAP.thisReference(), this._uiud);
-				if(args!=null) {
-					for(int i=0; i<args.length; i++)
-						marshal(request, getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
-				}
-				SerializationEnvelope envelope = new SerializationEnvelope();
-				envelope.setOutputSoapObject(request);
-				_transport.call(NAMESPACE+request.getName(), envelope);
-				Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
-				if(methodKSOAP!=null && methodKSOAP.cacheable()) 
-					_cache.put(method.getName(), ret);
-				return ret;
-			}
-		}
-		
 		@SuppressWarnings("unchecked")
 		public <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
 			for(Annotation at : a)
@@ -286,7 +360,6 @@ public class VBoxSvc implements Parcelable {
 			else
 				request.addProperty(ksoap.value(), obj);
 		}
-	}
 	
 	/**
 	 * Get type parameter of Generic Type
@@ -295,79 +368,5 @@ public class VBoxSvc implements Parcelable {
 	 */
 	Class<?> getTypeParameter(Type genericType) {
 		return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
-	}
-	
-	/**
-	 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
-	 */
-	class SerializationEnvelope extends SoapSerializationEnvelope {
-
-		public SerializationEnvelope() {
-			super(SoapEnvelope.VER11);
-		}
-
-		/**
-		 * Unmarshall SoapEnvelope to correct type
-		 * @param returnType   type to umarshall
-		 * @param genericType  parameterized type
-		 * @return  unmarshalled return value
-		 * @throws SoapFault
-		 */
-		public Object getResponse(Class<?> returnType, Type genericType) throws SoapFault {
-			if (bodyIn instanceof SoapFault) throw (SoapFault) bodyIn;
-			boolean isCollection = Collection.class.isAssignableFrom(returnType);
-			boolean isMap = Map.class.isAssignableFrom(returnType);
-			KvmSerializable ks = (KvmSerializable) bodyIn;
-			if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
-				return null;
-			if(isMap) {
-				Map<String, List<String>> map = new HashMap<String, List<String>>();
-				PropertyInfo info = new PropertyInfo();
-				for (int i = 0; i < ks.getPropertyCount(); i++) {
-					ks.getPropertyInfo(i, null, info);
-					if (!map.containsKey(info.getName()))
-						map.put(info.getName(), new ArrayList<String>());
-					map.get(info.getName()).add(   ks.getProperty(i).toString() );
-				}
-				return map;
-			}
-			if(isCollection) {
-				Class<?> pClazz = getTypeParameter(genericType);
-				Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
-				for (int i = 0; i < ks.getPropertyCount(); i++)
-					list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );
-				return list;
-			}
-			return unmarshal(returnType, genericType, ks.getProperty(0));
-		}
-
-		/**
-		 * convert string return value to correct type
-		 * @param returnType remote method return type
-		 * @param genericType remote method return type (parameterized)
-		 * @param ret  marshalled value
-		 * @return unmarshalled return value
-		 */
-		private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
-			if(ret==null) return null;
-			if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
-				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
-			if(returnType.equals(Boolean.class))
-				return Boolean.valueOf(ret.toString());
-			else if(returnType.equals(Integer.class))
-				return Integer.valueOf(ret.toString());
-			else if(returnType.equals(Long.class))
-				return Long.valueOf(ret.toString());
-			else if(returnType.equals(String.class))
-				return ret.toString();
-			else if(IManagedObjectRef.class.isAssignableFrom(returnType))
-				return getProxy(returnType, ret.toString());
-			else if(returnType.isEnum()) {
-				for( Object element : returnType.getEnumConstants())
-					if( element.toString().equals( ret.toString() ) )
-						return element;
-			}
-			return ret;
-		}
 	}
 }

@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.Utils;
@@ -53,7 +52,13 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 					.show();
 				break;
 			case WHAT_CANCEL:
-				Toast.makeText(_context, "Cancelling Operation...", Toast.LENGTH_LONG).show();
+				Utils.toastLong(_context, "Cancelling Operation...");
+				IProgress progress = BundleBuilder.getProxy(msg.getData(), "progress", IProgress.class);
+				try {
+					progress.cancel();
+				} catch (IOException e) {
+					Log.e(TAG, "Error cancelling operation", e);
+				}
 				break;
 			}
 		}
@@ -125,15 +130,6 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	}
 	
 	/**
-	 * Show custom error message
-	 * @param title dialog title
-	 * @param message dialog text
-	 */
-	protected void showAlert(String title, String message) {
-		new BundleBuilder().putString("title", title).putString("msg", message).sendMessage(_handler, WHAT_ERROR);
-	}
-	
-	/**
 	 * Show {@link IVirtualBoxErrorInfo}
 	 * @param code result code
 	 * @param msg error text
@@ -153,10 +149,6 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @throws IOException
 	 */
 	protected void handleProgress(IProgress p)  throws IOException {
-		if(p==null) { //TODO remove this null check
-			Log.w(TAG, "Received NULL progress");
-			return;
-		}
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
@@ -177,6 +169,6 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		p.clearCache();
 		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); 
 		p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
-		p.getCompleted(); p.getResultCode(); p.getErrorInfo();
+		p.getCompleted(); p.getResultCode(); p.getErrorInfo();p.getCancelable();
 	}
 }

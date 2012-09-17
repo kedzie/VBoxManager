@@ -62,13 +62,14 @@ public class EditServerActivity extends SherlockActivity {
 					setResult(ServerListActivity.RESULT_CODE_DELETE, getIntent());
 					finish();
 					return true;
-				default: 
+				default:
 					return true;
 				}
 			}
 			@Override
 			public void onDestroyActionMode(ActionMode mode) {	
-				
+				setResult(ServerListActivity.RESULT_CANCELED, getIntent());
+				finish();
 			}
 		});
 	}

@@ -2,7 +2,9 @@ package com.kedzie.vbox.task;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Message;
 
+import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -50,7 +52,11 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 			pDialog.setIndeterminate(false);
 			pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			pDialog.setCancelable(p[0].getCancelable()); 
-			pDialog.setCancelMessage(_handler.obtainMessage(WHAT_CANCEL));
+			if(p[0].getCancelable()) {
+				Message cancelMessage = _handler.obtainMessage(WHAT_CANCEL);
+				cancelMessage.setData(new BundleBuilder().putProxy("progress", p[0]).create());
+				pDialog.setCancelMessage(cancelMessage);
+			}
 			pDialog.show();
 		}
 		pDialog.setMessage("Operation " + p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription() + " - " + p[0].getOperationPercent() + "%  remaining " + p[0].getTimeRemaining() + "secs");
