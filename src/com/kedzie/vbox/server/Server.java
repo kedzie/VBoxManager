@@ -26,11 +26,11 @@ public class Server implements Parcelable {
 	};
 
 	private Long id=-1L;
-	private String name;
+	private String name="";
 	private Integer port=18083;
-	private String host;
-	private String username;
-	private String password;
+	private String host="";
+	private String username="";
+	private String password="";
 	private boolean ssl;
 	
 	public Server() {}
@@ -43,6 +43,10 @@ public class Server implements Parcelable {
 		this.host = host;
 		this.username = username;
 		this.password=password;
+	}
+	
+	public Server(String name, String host, Boolean ssl, Integer port, String username, String password) {
+		this(-1L, name, host, ssl, port, username, password);
 	}
 	
 	@Override

@@ -48,7 +48,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		setContentView(R.layout.harness);
 		imageFrame = (FrameLayout)findViewById(R.id.imageFrame);
 		
-		final Server server = new Server(0L, null, "99.38.98.125", true, 18083, "kedzie", "Mk0204$$" );
+		final Server server = new Server(null, "99.38.98.125", true, 18083, "kedzie", "Mk0204$$" );
 		((Button)findViewById(R.id.testParcelButton)).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

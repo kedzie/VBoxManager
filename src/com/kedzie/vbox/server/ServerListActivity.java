@@ -278,7 +278,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	 * Launch activity to create a new Server
 	 */
 	private void addServer() {
-		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", false, 18083, "", "")), REQUEST_CODE_ADD);
+		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server()), REQUEST_CODE_ADD);
 	}
 	
 	/**
