@@ -12,12 +12,19 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.util.Log;
 import android.view.View;
 
 import com.kedzie.vbox.VBoxApplication;
 
 public class MetricRenderer extends View {
+	/**  */
+	private static final int GRID_LINES_VERT = 10;
+
+	/**  */
+	private static final int GRID_LINES_HORIZ = 10;
+
 	private static String TAG = MetricRenderer.class.getSimpleName();
 	
 	/** Maximum Y Value */
@@ -50,7 +57,7 @@ public class MetricRenderer extends View {
 		borderPaint.setStyle(Style.STROKE);
 		borderPaint.setColor(borderColor);
 		borderPaint.setAntiAlias(true);
-		borderPaint.setStrokeWidth(2.0f);
+		borderPaint.setStrokeWidth(4.0f);
 		
 		textPaint.setColor(textColor);
 		textPaint.setAntiAlias(true);
@@ -59,12 +66,12 @@ public class MetricRenderer extends View {
 		gridPaint.setColor(gridColor);
 		gridPaint.setAntiAlias(true);
 		gridPaint.setStrokeWidth(1.5f);
-		
+
 		metricPaint.setStrokeWidth(2.0f);
 		metricPaint.setStrokeJoin(Join.MITER);
 		metricPaint.setStrokeCap(Cap.ROUND);
 		metricPaint.setAntiAlias(true);
-		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0xdd000000);
+		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0x96000000);
 		
 		metricFill.setStyle(Style.FILL);
 	}
@@ -96,7 +103,6 @@ public class MetricRenderer extends View {
 		_unit=q.get(_metrics[0]).unit;
 		_data=q;
 		postInvalidate();
-//		_handler.obtainMessage().sendToTarget();
 	}
 	
 	@Override
@@ -107,20 +113,26 @@ public class MetricRenderer extends View {
 		if(this.isInEditMode())
 			return;
 		
+		int hGridStep = _count/GRID_LINES_HORIZ*_period;
+		int hPixelStep = hGridStep*hStep;
 		int horiz = bounds.right;
-		for(int i=5; i<=_count; i+=5) {	//horizontal grid
-			horiz-=i*hStep;
+		int seconds = 0;
+		for(int i=1; i<=GRID_LINES_HORIZ; i++) {	//horizontal grid
+			horiz -= hPixelStep;
+			seconds += hGridStep;
 			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
-			canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);
+			canvas.drawText(seconds+" sec", horiz, bounds.bottom-20, textPaint);
 		}
 		
-		int gridLines = 5;
-		int gridPoints = _max/gridLines;
-		for( int i=1; i<=gridLines; i++) {
-			int yVal = gridPoints*i;
-			int y = bounds.bottom-yVal;
-			canvas.drawLine(bounds.left, y, bounds.right, y, gridPaint);
-			canvas.drawText(yVal*vStep+_unit, bounds.left+10, y+4, textPaint); 
+		int yVal = 0;
+		int vert = bounds.bottom;
+		int vValStep = _max/GRID_LINES_VERT;
+		int vPixelStep = (int)(vValStep*vStep);
+		for( int i=1; i<=GRID_LINES_VERT; i++) {
+			yVal += vValStep;
+			vert -= vPixelStep;
+			canvas.drawLine(bounds.left, vert, bounds.right, vert, gridPaint);
+			canvas.drawText(yVal+_unit, bounds.left+10, vert+4, textPaint);
 		}
 
 		for(String metric : _metrics) {

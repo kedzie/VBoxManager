@@ -12,7 +12,7 @@
         android:layout_weight=".5"
         vbox:header="CPU"
         vbox:backgroundColor="#ffffffff"
-        vbox:gridColor="#ff000000"
+        vbox:gridColor="#96000000"
         vbox:textColor="#ff000000"
         vbox:borderColor="#ff0000ff"
         />
@@ -24,7 +24,7 @@
          android:layout_weight=".5"
          vbox:header="Memory"
          vbox:backgroundColor="#ffffffff"
-        vbox:gridColor="#ff000000"
+        vbox:gridColor="#96000000"
         vbox:textColor="#ff000000"
         vbox:borderColor="#ff0000ff"
         />

@@ -20,8 +20,6 @@ import org.ksoap2.transport.ServiceConnection;
 
 import android.util.Log;
 
-import com.kedzie.vbox.app.Utils;
-
 /**
  * Accepts untrusted server certificates.
  * @author Marek Kedzierski
@@ -38,10 +36,8 @@ public class TrustedHttpsServiceConnection implements ServiceConnection {
     	            return null;
     	        }
     	        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        	Log.i(TAG, String.format("checkClientTrusted( %1$s, %2$s )", Utils.arrayToString(certs), authType));
     	        }
     	        public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        	Log.i(TAG, String.format("checkServerTrusted( %1$s, %2$s )", Utils.arrayToString(certs), authType));
     	        }
     	    }
     	};

@@ -200,8 +200,7 @@ public class MachineListFragment extends SherlockFragment {
 		
 		View detailsFrame = getActivity().findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-		if(_dualPane)
-			_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		_listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
 		
 		if(savedInstanceState!=null)  { 
 			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, savedInstanceState.getString("version")));
@@ -215,6 +214,30 @@ public class MachineListFragment extends SherlockFragment {
 		
 		lbm.registerReceiver(_notificationReceiver, new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("curChoice", _curCheckPosition);
+		outState.putSerializable("machines", (Serializable) _machines);
+		outState.putString("version", _vmgr.getVBox().getVersion());
+	}
+	
+	protected MachineListAdapter getAdapter() {
+		return (MachineListAdapter)_listView.getAdapter();
+	}
+
+	public VBoxApplication getApp() { 
+		return (VBoxApplication)getActivity().getApplication(); 
+	}
+	
+	void showDetails(int index) {
+		if(_curCheckPosition==index) return;
+        _curCheckPosition = index;
+        if (_dualPane)
+        	_listView.setItemChecked(index, true);
+       	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
+    }
 	
 	@Override
 	public void onStart() {
@@ -234,13 +257,6 @@ public class MachineListFragment extends SherlockFragment {
 		super.onDestroy();
 	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt("curChoice", _curCheckPosition);
-		outState.putSerializable("machines", (Serializable) _machines);
-		outState.putString("version", _vmgr.getVBox().getVersion());
-	}
 	
 	@Override
 	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
@@ -278,22 +294,6 @@ public class MachineListFragment extends SherlockFragment {
 					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT) );
 		}
 	}
-
-	protected MachineListAdapter getAdapter() {
-		return (MachineListAdapter)_listView.getAdapter();
-	}
-
-	public VBoxApplication getApp() { 
-		return (VBoxApplication)getActivity().getApplication(); 
-	}
-	
-	void showDetails(int index) {
-		if(_curCheckPosition==index) return;
-        _curCheckPosition = index;
-        if (_dualPane)
-        	_listView.setItemChecked(index, true);
-       	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
-    }
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -396,9 +396,9 @@ public class MachineListFragment extends SherlockFragment {
 		
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, com.actionbarsherlock.view.MenuItem item) {
-			switch (item. getItemId()) {
+			switch (item.getItemId()) {
 			  case R.id.machines_context_menu_start:  
-				  new LaunchVMProcessTask(getActivity().getApplicationContext(), _vmgr).execute(_machine);	  
+				  new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);	  
 				  break;
 			  case R.id.machines_context_menu_poweroff:   
 				  new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
