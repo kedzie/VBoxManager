@@ -2,6 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	
+
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android</artifactId>
 	<version>3.0.0</version>
@@ -46,7 +48,7 @@
 	</issueManagement>
 
 	<properties>
-		<android.debuggable>false</android.debuggable>
+		<environment>development</environment>
 		<github.global.server>github</github.global.server>
 	</properties>
 
@@ -77,13 +79,13 @@
  		<dependency>
  			<groupId>com.google.code.ksoap2-android</groupId>
  			<artifactId>ksoap2-android</artifactId>
- 			<version>3.0.0-RC.1</version>
+ 			<version>2.6.5</version>
  		</dependency>
  		<dependency>
- 		    <groupId>junit</groupId>
- 		    <artifactId>junit</artifactId>
- 		    <version>4.10</version>
- 		    <scope>test</scope>
+ 			<groupId>junit</groupId>
+ 			<artifactId>junit</artifactId>
+ 			<version>4.10</version>
+ 			<scope>test</scope>
  		</dependency>
 	</dependencies>
 
@@ -118,32 +120,13 @@
 				<version>3.3.0</version>
 				<extensions>true</extensions>
 				<configuration>
-					<manifestDebuggable>${android.debuggable}</manifestDebuggable>
+					<manifestVersionName></manifestVersionName>
+					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
+					<manifestDebuggable>true</manifestDebuggable>
 					<sdk><platform>15</platform></sdk>
-					<sign><debug>false</debug></sign>
-					<zipalign>
-						<inputApk>${project.build.directory}/${project.build.finalName}.apk</inputApk>
-						<outputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</outputApk>
-					</zipalign>
 				</configuration>
 				<executions>
 					<execution><id>manifest</id><phase>process-resources</phase><goals><goal>manifest-update</goal></goals></execution>
-					<execution><id>zip</id><phase>package</phase><goals><goal>zipalign</goal></goals></execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jarsigner-plugin</artifactId>
-				<version>1.2</version>
-				<configuration>
-					<archive>${project.build.directory}/${project.artifactId}-${project.version}.apk</archive>
-					<keystore>doc/android.keystore</keystore>
-					<storepass>android</storepass>
-					<alias>kedzieandroid</alias>
-					<keypass>android</keypass>
-					<verbose>true</verbose>
-				</configuration>
-				<executions>
-					<execution><phase>package</phase><goals><goal>sign</goal></goals></execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -154,7 +137,7 @@
 					<description>${project.name} APK</description>
 					<override>true</override>
 				</configuration>
-				<executions><execution><phase>deploy</phase><goals><goal>upload</goal></goals></execution></executions>
+				<executions><execution><phase>site</phase><goals><goal>upload</goal></goals></execution></executions>
 			</plugin>
 			<plugin>
 				<groupId>com.github.github</groupId>
@@ -168,7 +151,88 @@
  				<executions><execution><phase>site</phase><goals><goal>site</goal></goals></execution></executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+										<artifactId>android-maven-plugin</artifactId>
+										<versionRange>[3.3.0,)</versionRange>
+										<goals><goal>manifest-update</goal></goals>
+									</pluginExecutionFilter>
+									<action><ignore></ignore></action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation><property><name>environment</name><value>!production</value></property></activation>
+			<properties>
+				<deployment.stage>In Development</deployment.stage>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation><property><name>environment</name><value>production</value></property></activation>
+			<properties>
+				<deployment.stage>In Production</deployment.stage>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>1.2</version>
+						<configuration>
+							<removeExistingSignatures>true</removeExistingSignatures>
+							<archive>${project.build.directory}/${project.build.finalName}.apk</archive>
+							<keystore>doc/android.keystore</keystore>
+							<storepass>android</storepass>
+							<alias>kedzieandroid</alias>
+							<keypass>android</keypass>
+						</configuration>
+						<executions>
+							<execution><phase>package</phase><goals><goal>sign</goal></goals></execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+						<artifactId>android-maven-plugin</artifactId>
+						<version>3.3.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<manifestDebuggable>false</manifestDebuggable>
+							<sdk><platform>15</platform></sdk>
+							<sign><debug>false</debug></sign>
+							<zipalign>
+								<skip>false</skip>
+								<inputApk>${project.build.directory}/${project.build.finalName}.apk</inputApk>
+								<outputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</outputApk>
+							</zipalign>
+						</configuration>
+						<executions>
+							<execution><id>manifest</id><phase>process-resources</phase><goals><goal>manifest-update</goal></goals></execution>
+							<execution><id>zip</id><phase>package</phase><goals><goal>zipalign</goal></goals></execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<reporting>
 		<plugins>
@@ -219,10 +283,10 @@
 	</reporting>
 
 	<repositories>
-    	<repository>
-      		<id>googlecode-ksoap2-android</id><name>googlecode-ksoap2-android</name>
-      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
-    	</repository>
+	    	<repository>
+	      		<id>googlecode-ksoap2-android</id><name>googlecode-ksoap2-android</name>
+	      		<url>http://ksoap2-android.googlecode.com/svn/m2-repo</url>
+	    	</repository>
 		<repository>
 			<id>jboss.releases</id><name>JBoss releases</name>
 			<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>

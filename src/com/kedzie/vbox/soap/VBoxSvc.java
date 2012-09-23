@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
@@ -35,7 +34,9 @@ import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricQuery;
+import com.kedzie.vbox.server.Server;
 
 /**
  * VirtualBox JAX-WS API
@@ -44,6 +45,16 @@ public class VBoxSvc implements Parcelable {
 	private static final String TAG = "VBoxSvc";
 	protected static final int TIMEOUT = 20000;
 	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
+	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
+		public VBoxSvc createFromParcel(Parcel in) {
+			VBoxSvc svc = new VBoxSvc((Server)in.readParcelable(VBoxSvc.class.getClassLoader()));
+			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
+			return svc;
+		}
+		public VBoxSvc[] newArray(int size) {
+			return new VBoxSvc[size];
+		}
+	};
 	
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
@@ -66,7 +77,6 @@ public class VBoxSvc implements Parcelable {
 
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
-			synchronized( VBoxSvc.class ) {
 				if(method.getName().equals("getIdRef")) return this._uiud;
 				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
 				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
@@ -105,112 +115,127 @@ public class VBoxSvc implements Parcelable {
 				}
 				SerializationEnvelope envelope = new SerializationEnvelope();
 				envelope.setOutputSoapObject(request);
+				envelope.setAddAdornments(false);
 				_transport.call(NAMESPACE+request.getName(), envelope);
 				Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
 				if(methodKSOAP!=null && methodKSOAP.cacheable()) 
 					_cache.put(method.getName(), ret);
 				return ret;
 			}
-		}
-	}
 		
 		/**
-		 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
+		 * Add an argument to a SOAP request
+		 * @param request  SOAP request
+		 * @param ksoap   parameter annotation with marshalling configuration
+		 * @param clazz     {@link Class} of parameter
+		 * @param gType   Generic type of parameter
+		 * @param obj  object to marshall
 		 */
-		class SerializationEnvelope extends SoapSerializationEnvelope {
-
-			public SerializationEnvelope() {
-				super(SoapEnvelope.VER11);
-			}
-
-			/**
-			 * Unmarshall SoapEnvelope to correct type
-			 * @param returnType   type to umarshall
-			 * @param genericType  parameterized type
-			 * @return  unmarshalled return value
-			 * @throws SoapFault
-			 */
-			public Object getResponse(Class<?> returnType, Type genericType) throws SoapFault {
-				if (bodyIn instanceof SoapFault) throw (SoapFault) bodyIn;
-				boolean isCollection = Collection.class.isAssignableFrom(returnType);
-				boolean isMap = Map.class.isAssignableFrom(returnType);
-				KvmSerializable ks = (KvmSerializable) bodyIn;
-				if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
-					return null;
-				if(isMap) {
-					Map<String, List<String>> map = new HashMap<String, List<String>>();
-					PropertyInfo info = new PropertyInfo();
-					for (int i = 0; i < ks.getPropertyCount(); i++) {
-						ks.getPropertyInfo(i, null, info);
-						if (!map.containsKey(info.getName()))
-							map.put(info.getName(), new ArrayList<String>());
-						map.get(info.getName()).add(   ks.getProperty(i).toString() );
-					}
-					return map;
-				}
-				if(isCollection) {
-					Class<?> pClazz = getTypeParameter(genericType);
-					Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
-					for (int i = 0; i < ks.getPropertyCount(); i++)
-						list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );
-					return list;
-				}
-				return unmarshal(returnType, genericType, ks.getProperty(0));
-			}
-
-			/**
-			 * convert string return value to correct type
-			 * @param returnType remote method return type
-			 * @param genericType remote method return type (parameterized)
-			 * @param ret  marshalled value
-			 * @return unmarshalled return value
-			 */
-			private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
-				if(ret==null) return null;
-				if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
-					return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
-				if(returnType.equals(Boolean.class))
-					return Boolean.valueOf(ret.toString());
-				else if(returnType.equals(Integer.class))
-					return Integer.valueOf(ret.toString());
-				else if(returnType.equals(Long.class))
-					return Long.valueOf(ret.toString());
-				else if(returnType.equals(String.class))
-					return ret.toString();
-				else if(IManagedObjectRef.class.isAssignableFrom(returnType))
-					return getProxy(returnType, ret.toString());
-				else if(returnType.isEnum()) {
-					for( Object element : returnType.getEnumConstants())
-						if( element.toString().equals( ret.toString() ) )
-							return element;
-				}
-				return ret;
-			}
+		private void marshal(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
+			if(obj==null) return;
+			if(clazz.isArray()) { //Arrays
+				for(Object o : (Object[])obj)  
+					marshal( request, ksoap, clazz.getComponentType(), gType,  o );
+			} else if(Collection.class.isAssignableFrom(clazz)) { //Collections
+				Class<?> pClazz = Utils.getTypeParameter(gType);
+				for(Object o : (List<?>)obj) 
+					marshal(request, ksoap, pClazz, gType,  o );
+			} else if(!ksoap.type().equals("")) //if annotation specifies SOAP datatype, i.e. unsignedint
+				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
+			else if(IManagedObjectRef.class.isAssignableFrom(clazz))
+				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
+			else if(clazz.isEnum())
+				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
+			else
+				request.addProperty(ksoap.value(), obj);
 		}
-
-	protected String _url;
-	protected String _username;
-	protected String _password;
-	protected IVirtualBox _vbox;
-	protected HttpTransportSE  _transport;
-
-	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
-		public VBoxSvc createFromParcel(Parcel in) {
-			VBoxSvc svc = new VBoxSvc(in.readString());
-			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
-			return svc;
-		}
-		public VBoxSvc[] newArray(int size) {
-			return new VBoxSvc[size];
-		}
-	};
+	}
 
 	/**
-	 * @param url	URL of VirtualBox webservice
+	 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
 	 */
-	public VBoxSvc(String url) {
-		_url=url;
-		_transport = new HttpTransportSE(_url, TIMEOUT);
+	class SerializationEnvelope extends SoapSerializationEnvelope {
+
+		public SerializationEnvelope() {
+			super(SoapEnvelope.VER11);
+		}
+
+		/**
+		 * Unmarshall SoapEnvelope to correct type
+		 * @param returnType   type to umarshall
+		 * @param genericType  parameterized type
+		 * @return  unmarshalled return value
+		 * @throws SoapFault
+		 */
+		public Object getResponse(Class<?> returnType, Type genericType) throws SoapFault {
+			if (bodyIn instanceof SoapFault) throw (SoapFault) bodyIn;
+			boolean isCollection = Collection.class.isAssignableFrom(returnType);
+			boolean isMap = Map.class.isAssignableFrom(returnType);
+			KvmSerializable ks = (KvmSerializable) bodyIn;
+			if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
+				return null;
+			if(isMap) {
+				Map<String, List<String>> map = new HashMap<String, List<String>>();
+				PropertyInfo info = new PropertyInfo();
+				for (int i = 0; i < ks.getPropertyCount(); i++) {
+					ks.getPropertyInfo(i, null, info);
+					if (!map.containsKey(info.getName()))
+						map.put(info.getName(), new ArrayList<String>());
+					map.get(info.getName()).add(   ks.getProperty(i).toString() );
+				}
+				return map;
+			}
+			if(isCollection) {
+				Class<?> pClazz = Utils.getTypeParameter(genericType);
+				Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
+				for (int i = 0; i < ks.getPropertyCount(); i++)
+					list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );
+				return list;
+			}
+			return unmarshal(returnType, genericType, ks.getProperty(0));
+		}
+
+		/**
+		 * convert string return value to correct type
+		 * @param returnType remote method return type
+		 * @param genericType remote method return type (parameterized)
+		 * @param ret  marshalled value
+		 * @return unmarshalled return value
+		 */
+		private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
+			if(ret==null) return null;
+			if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
+				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
+			if(returnType.equals(Boolean.class))
+				return Boolean.valueOf(ret.toString());
+			else if(returnType.equals(Integer.class))
+				return Integer.valueOf(ret.toString());
+			else if(returnType.equals(Long.class))
+				return Long.valueOf(ret.toString());
+			else if(returnType.equals(String.class))
+				return ret.toString();
+			else if(IManagedObjectRef.class.isAssignableFrom(returnType))
+				return getProxy(returnType, ret.toString());
+			else if(returnType.isEnum()) {
+				for( Object element : returnType.getEnumConstants())
+					if( element.toString().equals( ret.toString() ) )
+						return element;
+			}
+			return ret;
+		}
+	}
+
+	protected Server _server;
+	protected IVirtualBox _vbox;
+	protected HttpTransportSE  _transport;
+	
+	/**
+	 * @param server	VirtualBox webservice server
+	 */
+	public VBoxSvc(Server server) {
+		_server=server;
+		_transport = server.isSSL() ? new TrustedHttpsTransport(server.getHost(), server.getPort(), "", TIMEOUT) : 
+					new HttpTransportSE("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
 	}
 
 	/**
@@ -218,16 +243,12 @@ public class VBoxSvc implements Parcelable {
 	 * @param copy	The original {@link VBoxSvc} to copy
 	 */
 	public VBoxSvc(VBoxSvc copy) {
-		this(copy._url);
+		this(copy._server);
 		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
 	}
 	
 	public IVirtualBox getVBox() {
 		return _vbox;
-	}
-	
-	public String getURL() {
-		return _url;
 	}
 	
 	@Override
@@ -237,7 +258,7 @@ public class VBoxSvc implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(_url);
+		dest.writeParcelable(_server, 0);
 		dest.writeString(_vbox.getIdRef());
 	}
 
@@ -278,11 +299,9 @@ public class VBoxSvc implements Parcelable {
 	 * @throws IOException
 	 * @throws XmlPullParserException
 	 */
-	public IVirtualBox logon(String username, String password) throws IOException  {
-		_username=username;
-		_password=password;
+	public IVirtualBox logon() throws IOException  {
 		try {
-			return (_vbox = getProxy(IVirtualBox.class, null).logon(username, password));
+			return (_vbox = getProxy(IVirtualBox.class, null).logon(_server.getUsername(), _server.getPassword()));
 		} catch(SoapFault e) {
 			throw new ConnectException("Authentication Error");
 		}
@@ -333,40 +352,4 @@ public class VBoxSvc implements Parcelable {
 					return (T)at;
 			return null;
 		}
-		
-		/**
-		 * Add an argument to a SOAP request
-		 * @param request  SOAP request
-		 * @param ksoap   parameter annotation with marshalling configuration
-		 * @param clazz     {@link Class} of parameter
-		 * @param gType   Generic type of parameter
-		 * @param obj  object to marshall
-		 */
-		private void marshal(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
-			if(obj==null) return;
-			if(clazz.isArray()) { //Arrays
-				for(Object o : (Object[])obj)  
-					marshal( request, ksoap, clazz.getComponentType(), gType,  o );
-			} else if(Collection.class.isAssignableFrom(clazz)) { //Collections
-				Class<?> pClazz = getTypeParameter(gType);
-				for(Object o : (List<?>)obj) 
-					marshal(request, ksoap, pClazz, gType,  o );
-			} else if(!ksoap.type().equals("")) //if annotation specifies SOAP datatype, i.e. unsignedint
-				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
-			else if(IManagedObjectRef.class.isAssignableFrom(clazz))
-				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
-			else if(clazz.isEnum())
-				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
-			else
-				request.addProperty(ksoap.value(), obj);
-		}
-	
-	/**
-	 * Get type parameter of Generic Type
-	 * @param genericType the generic {@link Type}
-	 * @return type parameter
-	 */
-	Class<?> getTypeParameter(Type genericType) {
-		return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
-	}
 }

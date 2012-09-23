@@ -4,8 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Message;
 
-import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**

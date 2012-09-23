@@ -1,24 +1,31 @@
 package com.kedzie.vbox.harness;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.Utils;
+import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.jaxb.LockType;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
-import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -31,19 +38,21 @@ import com.kedzie.vbox.task.ActionBarTask;
 public class HarnessActivity extends SherlockFragmentActivity {
 	private static final String TAG = HarnessActivity.class.getSimpleName();
 
+	FrameLayout imageFrame;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Harness created");
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.harness);
+		imageFrame = (FrameLayout)findViewById(R.id.imageFrame);
 		
-		final Server server = new Server(0L, null, "99.38.98.125",18083, "kedzie", "Mk0204$$" );
+		final Server server = new Server(0L, null, "99.38.98.125", true, 18083, "kedzie", "Mk0204$$" );
 		((Button)findViewById(R.id.testParcelButton)).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new TestParcelTask().execute(server);
+				new TestApiTask().execute(server);
 			}
 		});
 		((Button)findViewById(R.id.machineListButton)).setOnClickListener(new OnClickListener() {
@@ -60,14 +69,20 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		});
 	}
 	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		setProgressBarIndeterminateVisibility(false);
+	}
+	
 	class MachineListTask extends  ActionBarTask<Server, String> {
 
 		public MachineListTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
 
 		@Override
 		protected String work(Server... server) throws Exception {
-			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
-			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
+			_vmgr = new VBoxSvc(server[0]);
+			_vmgr.logon();
 			return _vmgr.getVBox().getVersion();
 		}
 
@@ -83,8 +98,8 @@ public class HarnessActivity extends SherlockFragmentActivity {
 
 		@Override
 		protected IHost work(Server... server) throws Exception {
-			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
-			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
+			_vmgr = new VBoxSvc(server[0]);
+			_vmgr.logon();
 			IHost host = _vmgr.getVBox().getHost();
 			host.getMemorySize();
 			return host;
@@ -102,28 +117,32 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	class TestParcelTask extends  ActionBarTask<Server, IMachine> {
-		public TestParcelTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
+	class TestApiTask extends  ActionBarTask<Server, byte[]> {
+		public TestApiTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
 
 		@Override
-		protected IMachine work(Server... server) throws Exception {
-			_vmgr = new VBoxSvc("http://"+server[0].getHost()+":"+server[0].getPort());
-			_vmgr.logon(server[0].getUsername(), server[0].getPassword());
-			List<IMachine> machines = _vmgr.getVBox().getMachines();
-			IMachine m = machines.get(0);
-			MachineView.cacheProperties(m);
+		protected byte[] work(Server... server) throws Exception {
+			_vmgr = new VBoxSvc(server[0]);
+			_vmgr.logon();
+			IMachine m = _vmgr.getVBox().getMachines().get(0);
 			ISession session = _vmgr.getVBox().getSessionObject();
 			m.lockMachine(session, LockType.SHARED);
-			Bundle b = new Bundle();
-			b.putParcelable("mp", m);
-			IMachine mp = b.getParcelable("mp");
-			return mp;
+			IConsole console = session.getConsole();
+			IDisplay display = console.getDisplay();
+			Map<String, List<String>> res = display.getScreenResolution(0);
+			byte[] screenshot = display.takeScreenShotPNGToArray(0, new Integer(res.get("width").get(0)), new Integer(res.get("height").get(0)));
+			session.unlockMachine();
+			_vmgr.logoff();
+			return screenshot;
 		}
 		
 		@Override
-		protected void onResult(IMachine result) {
-			Utils.toastLong(HarnessActivity.this, "Machine cache: " + result.getCache());
-			Utils.toastLong(HarnessActivity.this, "ISnapshot cache: " + result.getCurrentSnapshot().getCache());
+		protected void onResult(byte[] result) {
+			Bitmap screenshot = BitmapFactory.decodeStream(new ByteArrayInputStream(result));
+			Utils.toastShort( HarnessActivity.this, String.format("Screenshot size %1$dx%2$d", screenshot.getWidth(), screenshot.getHeight()) );
+			ImageView view = new ImageView(HarnessActivity.this);
+			view.setImageBitmap(screenshot);
+			imageFrame.addView(view, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 		}
 	}
 }

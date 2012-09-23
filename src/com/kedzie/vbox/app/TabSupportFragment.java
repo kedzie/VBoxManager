@@ -1,4 +1,4 @@
-package com.kedzie.vbox.tabs;
+package com.kedzie.vbox.app;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,7 @@ import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.kedzie.vbox.R;
 
 /**
  * Attaches/Detaches Fragments
@@ -32,17 +33,18 @@ public class TabSupportFragment implements TabSupport {
             _definition = info;
             _tag=tag;
             // if fragment exists remove it.. might be from previous machine
-//            if ((_fragment=_activity.getSupportFragmentManager().findFragmentByTag(_tag)) != null) {
-//            	Log.w(TAG, "Detaching existing Fragment for tab: " + _tag);
-//                FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
-//                ft.remove(_fragment);
-//                ft.commit();
-//                _fragment=null;
-//            }
+            if ((_fragment=_activity.getSupportFragmentManager().findFragmentByTag(_tag)) != null) {
+            	Log.w(TAG, "Detaching existing Fragment for tab: " + _tag);
+                FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
+                ft.remove(_fragment);
+                ft.commit();
+                _fragment=null;
+            }
         }
 
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
+        	ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         	if (_fragment==null) {
         		Log.i(TAG, String.format(" Instantiating new fragment [%s]", _tag));
                 _fragment = Fragment.instantiate(_activity, _definition.clazz.getName(), _definition.args);
@@ -55,6 +57,7 @@ public class TabSupportFragment implements TabSupport {
 
         @Override
         public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+        	ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         	ft.detach(_fragment);
         }
 
@@ -89,17 +92,12 @@ public class TabSupportFragment implements TabSupport {
 	@Override
 	public void removeTab(String name) {
 		_activity.getSupportActionBar().removeTab(_tabs.remove(name));
-		Fragment f = _activity.getSupportFragmentManager().findFragmentByTag(name);
-		FragmentTransaction t = _manager.beginTransaction();
-		t.remove(f);
-		t.commit();
-		Log.d(TAG, "removed Fragment from Manager: " + name);
 	}
 	
 	@Override
 	public void removeAllTabs() {
-		for(String tab : _tabs.keySet())
-			removeTab(tab);
+		_activity.getSupportActionBar().removeAllTabs();
+		_tabs.clear();
 	}
 }
 

@@ -4,20 +4,22 @@ import java.lang.Thread.State;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.kedzie.vbox.MetricPreferencesActivity;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.Utils;
+import com.kedzie.vbox.app.BaseActivity;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Activity to view metric graphs for Virtual Machine or Host
  * @author Marek Kedzierski
  */
-public class MetricActivity extends SherlockActivity  {
+public class MetricActivity extends BaseActivity  {
+	private static final String TAG = "MetricActivity";
+	
 	private static final int REQUEST_CODE_PREFS = 1;
 
 	public static final String INTENT_TITLE="t",INTENT_OBJECT = "o",
@@ -34,9 +36,9 @@ public class MetricActivity extends SherlockActivity  {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.i(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_TITLE));
 		
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
@@ -57,6 +59,7 @@ public class MetricActivity extends SherlockActivity  {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i(TAG, "onActivityResult");
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFS) {
 			_count = Utils.getIntPreference(this, MetricPreferencesActivity.COUNT);
@@ -84,6 +87,7 @@ public class MetricActivity extends SherlockActivity  {
 
 	@Override
 	protected void onStart() {
+		Log.i(TAG, "onStart");
 		super.onStart();
 		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
@@ -91,6 +95,7 @@ public class MetricActivity extends SherlockActivity  {
 	
 	@Override 
 	protected void onStop() {
+		Log.i(TAG, "onStop");
 		if(_thread!=null){
 			if(_thread.getState().equals(State.TIMED_WAITING))
 				_thread.interrupt();

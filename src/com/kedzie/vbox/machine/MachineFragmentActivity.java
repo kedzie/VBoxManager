@@ -7,23 +7,25 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.PreferencesActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.tabs.TabSupport;
-import com.kedzie.vbox.tabs.TabSupportFragment;
-import com.kedzie.vbox.tabs.TabSupportViewPager;
+import com.kedzie.vbox.app.BaseActivity;
+import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.TabSupport;
+import com.kedzie.vbox.app.TabSupportFragment;
+import com.kedzie.vbox.app.TabSupportViewPager;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.metrics.MetricPreferencesActivity;
+import com.kedzie.vbox.task.ConfigureMetricsTask;
 
-public class MachineFragmentActivity extends SherlockFragmentActivity {
+public class MachineFragmentActivity extends BaseActivity {
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
 	private TabSupport _tabSupport;
+	private IMachine _machine;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +35,22 @@ public class MachineFragmentActivity extends SherlockFragmentActivity {
 			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
             return;
         }
-		IMachine m = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
+		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
-		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
-		getSupportActionBar().setTitle(m.getName());
+		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+_machine.getOSTypeId().toLowerCase()));
+		getSupportActionBar().setTitle(_machine.getName());
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
 		if(savedInstanceState==null) {
-			ViewPager pager = new ViewPager(this);
-			pager.setId(99);
-			setContentView(pager);
-			_tabSupport = VBoxApplication.VIEW_PAGER_TABS ? new TabSupportViewPager(this, pager) : new TabSupportFragment(this, android.R.id.content);
+			if(VBoxApplication.VIEW_PAGER_TABS) {
+				ViewPager pager = new ViewPager(this);
+				pager.setId(99);
+				setContentView(pager);
+				_tabSupport = new TabSupportViewPager(this, pager);
+			} else {
+				_tabSupport = new TabSupportFragment(this, android.R.id.content);
+			}
 			_tabSupport.addTab("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras());
 			_tabSupport.addTab("Info", InfoFragment.class,getIntent().getExtras());
 			_tabSupport.addTab("Log", LogFragment.class, getIntent().getExtras());
@@ -78,5 +83,15 @@ public class MachineFragmentActivity extends SherlockFragmentActivity {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode==REQUEST_CODE_PREFERENCES) {
+			new ConfigureMetricsTask(this, _machine.getVBoxAPI()).execute(
+					Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD),	
+					Utils.getIntPreference(this, MetricPreferencesActivity.COUNT) );
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.kedzie.vbox.tabs;
+package com.kedzie.vbox.app;
 
 import android.content.Context;
 import android.os.Bundle;

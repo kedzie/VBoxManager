@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.event;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.machine.MachineFragmentActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 

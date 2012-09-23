@@ -1,46 +1,57 @@
 package com.kedzie.vbox.server;
 
+import com.kedzie.vbox.app.Utils;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Server implements Parcelable {
 	public final static String BUNDLE = "server";
-	
-	 public static final Parcelable.Creator<Server> CREATOR = new Parcelable.Creator<Server>() {
-		 public Server createFromParcel(Parcel in) {  return new Server(in); }
-		 public Server[] newArray(int size) {  return new Server[size]; }
-	 };
-	 
+
+	public static final Parcelable.Creator<Server> CREATOR = new Parcelable.Creator<Server>() {
+		public Server createFromParcel(Parcel in) {  
+			Server s = new Server();
+			s.setId(in.readLong());
+			s.setName(in.readString());
+			s.setHost(in.readString());
+			boolean []tmp = new boolean[1];
+			in.readBooleanArray(tmp);
+			s.setSSL(tmp[0]);
+			s.setPort(in.readInt());
+			s.setUsername(in.readString());
+			s.setPassword(in.readString());
+			return s;
+		}
+		public Server[] newArray(int size) {  return new Server[size]; }
+	};
+
 	private Long id=-1L;
 	private String name;
 	private Integer port=18083;
 	private String host;
 	private String username;
 	private String password;
-
+	private boolean ssl;
+	
 	public Server() {}
-	public Server(Long id, String name, String host, Integer port, String username, String password) {
+	
+	public Server(Long id, String name, String host, Boolean ssl, Integer port, String username, String password) {
 		this.id=id;
+		this.name=name;
+		this.ssl=ssl;
 		this.port = port;
 		this.host = host;
 		this.username = username;
 		this.password=password;
-	}
-	public Server(Parcel p) {
-		id = p.readLong();
-		name=p.readString();
-		port = p.readInt();
-		host = p.readString(); 
-		username = p.readString();
-		password = p.readString();
 	}
 	
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(id);
 		dest.writeString(name);
-		dest.writeInt(port);
 		dest.writeString(host); 
+		dest.writeBooleanArray(new boolean[] { ssl });
+		dest.writeInt(port);
 		dest.writeString(username);
 		dest.writeString(password);
 	}
@@ -74,6 +85,12 @@ public class Server implements Parcelable {
 	public void setHost(String host) {
 		this.host = host;
 	}
+	public boolean isSSL() {
+		return ssl;
+	}
+	public void setSSL(boolean ssl) {
+		this.ssl = ssl;
+	}
 	public String getUsername() {
 		return username;
 	}
@@ -87,7 +104,7 @@ public class Server implements Parcelable {
 		this.password = password;
 	}
 	public String toString() {
-		return (name!=null && !name.equals("")) ? name : getHost() + ":" + getPort();
+		return !Utils.isNullString(name) ? name : (ssl ? "https://" : "http://") + getHost() + ":" + getPort();
 	}
 	@Override
 	public int hashCode() {
@@ -97,7 +114,7 @@ public class Server implements Parcelable {
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (obj == null  || getClass() != obj.getClass()) return false;
-		Server other = (Server) obj;
-		return id.equals(other.id);
+		Server that = (Server) obj;
+		return id.equals(that.id);
 	}
 }

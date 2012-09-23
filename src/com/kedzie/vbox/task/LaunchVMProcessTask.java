@@ -2,10 +2,10 @@ package com.kedzie.vbox.task;
 
 import android.content.Context;
 
-import com.kedzie.vbox.MetricPreferencesActivity;
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.SessionState;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class LaunchVMProcessTask extends DialogTask<IMachine, IMachine> {

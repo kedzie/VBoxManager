@@ -1,4 +1,7 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.app;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
@@ -22,22 +25,13 @@ public class Utils {
 	}
 	
 	/**
-	 * Show {@link Toast} long notification
-	 * @param ctx message {@link Context}
-	 * @param msg Message to show
-	 */
-	public static void toastLong(Context ctx, String msg) {
-		Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
-	}
-	
-	/**
 	 * Show {@link Toast} long notification with {@link String#format}
 	 * @param ctx message {@link Context}
 	 * @param msg Message to show
 	 * @param formatting params
 	 */
 	public static void toastLong(Context ctx, String msg, Object...params) {
-		toastLong(ctx, String.format(msg, params));
+		Toast.makeText(ctx, isNullArray(params) ? msg : String.format(msg, params), Toast.LENGTH_LONG).show();
 	}
 	
 	/**
@@ -45,18 +39,8 @@ public class Utils {
 	 * @param ctx message {@link Context}
 	 * @param msg Message to show
 	 */
-	public static void toastShort(Context ctx, String msg) {
-		Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
-	}
-	
-	/**
-	 * Show {@link Toast} short notification with {@link String#format}
-	 * @param ctx message {@link Context}
-	 * @param msg Message to show
-	 * @param formatting params
-	 */
 	public static void toastShort(Context ctx, String msg, Object...params) {
-		toastShort(ctx, String.format(msg, params));
+		Toast.makeText(ctx, isNullArray(params) ? msg : String.format(msg, params), Toast.LENGTH_SHORT).show();
 	}
 	
 	public static boolean isNullString(String s) {
@@ -65,5 +49,23 @@ public class Utils {
 	
 	public static boolean isNullArray(Object []array) {
 		return array==null || array.length==0;
+	}
+	
+	public static String arrayToString(Object []array) {
+		StringBuilder sb = new StringBuilder("{ ");
+		for(int i=0; i<array.length; i++) {
+			sb.append(array[i].toString());
+			if(i<array.length-1)	sb.append(", ");
+		}
+		return sb.append(" }").toString();
+	}
+	
+	/**
+	 * Get type parameter of Generic Type
+	 * @param genericType the generic {@link Type}
+	 * @return type parameter
+	 */
+	public static Class<?> getTypeParameter(Type genericType) {
+		return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
 	}
 }

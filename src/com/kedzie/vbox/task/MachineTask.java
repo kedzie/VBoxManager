@@ -30,13 +30,16 @@ public abstract class MachineTask<Input> extends DialogTask<Input, IMachine> {
 			ISession session = _vmgr.getVBox().getSessionObject();
 			if( session.getState().equals(SessionState.UNLOCKED)) 
 				_machine.lockMachine(session, LockType.SHARED);
-			if(indeterminate)
-				work(_machine, session.getConsole(), inputs);
-			else
-				handleProgress( workWithProgress(_machine, session.getConsole(), inputs) );
-			if(session.getState().equals(SessionState.LOCKED)) 
-				session.unlockMachine();
-			return _machine;
+			try {
+				if(indeterminate)
+					work(_machine, session.getConsole(), inputs);
+				else
+					handleProgress( workWithProgress(_machine, session.getConsole(), inputs) );
+				return _machine;
+			} finally {
+				if(session.getState().equals(SessionState.LOCKED)) 
+					session.unlockMachine();
+			}
 		}
 
 		protected void work(IMachine m, IConsole console, Input...inputs) throws Exception {};

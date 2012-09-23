@@ -1,7 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import java.io.IOException;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,19 +20,19 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
-import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -95,23 +93,23 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	}
 	
 	/**
-	 * Handle MachineStateChanged event
+	 * Handle SessionStateChanged event
 	 */
-	class HandleEventTask extends ActionBarTask<Bundle, ISessionStateChangedEvent> {
+	class HandleEventTask extends ActionBarTask<Bundle, SessionState> {
 		
 		public HandleEventTask(VBoxSvc vmgr) {  
 			super( "HandleEventTask", getSherlockActivity(), vmgr);
 		}
 
 		@Override
-		protected ISessionStateChangedEvent work(Bundle... params) throws Exception {
-			IEvent event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
-			return (ISessionStateChangedEvent) event;
+		protected SessionState work(Bundle... params) throws Exception {
+			ISessionStateChangedEvent event = (ISessionStateChangedEvent)BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
+			return event.getState();
 		}
 
 		@Override
-		protected void onResult(ISessionStateChangedEvent result)	{
-			Utils.toastLong(getActivity(), "Session changed State: "+result.getState());
+		protected void onResult(SessionState result)	{
+			Utils.toastLong(getActivity(), "Session changed State: "+result);
 		}
 	}
 	
@@ -162,8 +160,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(IMachineStateChangedEvent.class.getName());
-		filter.addAction(ISessionStateChangedEvent.class.getName());
+		IntentFilter filter = new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name());
+		filter.addAction(VBoxEventType.ON_SESSION_STATE_CHANGED.name());
 		lbm.registerReceiver(_receiver, filter);
 		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
@@ -171,17 +169,17 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStop() {
 		lbm.unregisterReceiver(_receiver);
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
-						_vmgr.getVBox().getSessionObject().unlockMachine();
-				} catch (IOException e) {
-					Log.e(TAG, "Exception unlocking machine", e);
-				}
-			}
-		}.start();
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
+//						_vmgr.getVBox().getSessionObject().unlockMachine();
+//				} catch (IOException e) {
+//					Log.e(TAG, "Exception unlocking machine", e);
+//				}
+//			}
+//		}.start();
 		super.onStop();
 	}
 
@@ -203,7 +201,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	
 	@Override 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Utils.toastLong(getActivity(), String.format("Item Click #%d", position));
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
 		if(action.equals(VMAction.START))	
 			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);

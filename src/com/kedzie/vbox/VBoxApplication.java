@@ -9,14 +9,15 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.PreferencesActivity;
 
 /**
  * Stores a resource map storing OS Icons, Virtual Machine Action Icons, and Machine State Icons.
  * @author Marek Kedzierski
  */
 public class VBoxApplication extends Application {
-	public final static boolean VIEW_PAGER_TABS = true;
-	
+	public static final boolean VIEW_PAGER_TABS = false;
 	protected Map<String,Integer> resources = new HashMap<String, Integer>();
 	protected Map<String,Integer> resources_color = new HashMap<String, Integer>();
 	protected static Map<String, Integer> metricColor = new HashMap<String, Integer>();

@@ -99,6 +99,8 @@ public interface IConsole extends IManagedObjectRef {
 	 */
 	public IDisplay getDisplay() throws IOException;
 	
+	public IGuest getGuest() throws IOException;
+	
 	/**
 	 * @param name
 	 * @param description

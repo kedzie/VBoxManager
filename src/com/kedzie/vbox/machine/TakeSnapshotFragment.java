@@ -4,16 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.MachineTask;
 
@@ -54,7 +53,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 				}.execute();	
 			}
 		});
-		((Button)_view.findViewById(R.id.button_cancel)).setOnClickListener(new View.OnClickListener() { 
+		((ImageButton)_view.findViewById(R.id.button_cancel)).setOnClickListener(new View.OnClickListener() { 
 			public void onClick(View v) { 
 				dismiss(); 
 			} 

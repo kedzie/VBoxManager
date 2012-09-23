@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.app;
 
 import java.io.Serializable;
 import java.util.ArrayList;

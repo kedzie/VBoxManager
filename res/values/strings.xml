@@ -3,6 +3,7 @@
     <string name="app_name">VirtualBox Manager</string>
     <string name="server_name">Display Name</string>
     <string name="server_host">Host/IP Address</string>
+    <string name="server_ssl">Use SSL</string>
     <string name="server_port">Port</string>
     <string name="server_username">Username</string>
     <string name="server_password">Password</string>

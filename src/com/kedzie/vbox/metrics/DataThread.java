@@ -4,8 +4,8 @@ import java.util.Map;
 
 import android.util.Log;
 
+import com.kedzie.vbox.app.LoopingThread;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.LoopingThread;
 
 public class DataThread extends LoopingThread {
 		private static final String TAG = "MetricDataThread";

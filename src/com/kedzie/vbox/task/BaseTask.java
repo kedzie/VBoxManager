@@ -13,10 +13,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.kedzie.vbox.BundleBuilder;
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
+import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
@@ -160,8 +160,6 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 			showAlert(p.getResultCode(), info != null ? info.getText() : "No Message");
 			return;
 		}
-		cacheProgress(p);
-		publishProgress(p);
 		return;
 	}
 	

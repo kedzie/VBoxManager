@@ -21,15 +21,27 @@
 
 package org.ksoap2.transport;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.ksoap2.HeaderProperty;
+
+import android.util.Log;
 
 /**
  * Connection for J2SE environments.
@@ -61,6 +73,21 @@ public class ServiceConnectionSE implements ServiceConnection {
     	this(null, url, timeout);
     }
 
+    TrustManager []trustAll =  new TrustManager[]{
+    	    new X509TrustManager() {
+    	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+    	        	Log.i("ServiceConnectionSE", "getAcceptedIssuers");
+    	            return null;
+    	        }
+    	        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType) {
+    	        	Log.i("ServiceConnectionSE", "checkClientTrusted");
+    	        }
+    	        public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType) {
+    	        	Log.i("ServiceConnectionSE", "checkServerTrusted");
+    	        }
+    	    }
+    	};
+    
     public ServiceConnectionSE(Proxy proxy, String url, int timeout) throws IOException {
         connection = (proxy == null)
             ? (HttpURLConnection) new URL(url).openConnection()

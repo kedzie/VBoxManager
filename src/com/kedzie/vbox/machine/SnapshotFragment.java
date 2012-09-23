@@ -21,13 +21,13 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
-import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 import com.kedzie.vbox.task.MachineTask;
@@ -64,9 +64,9 @@ public class SnapshotFragment extends SherlockFragment {
 
 		@Override
 		protected void onResult(ISnapshot result)	{
-				_treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
-				_rootSnapshot=result;
-				populate(null, _rootSnapshot);
+			_treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
+			_rootSnapshot=result;
+			populate(null, _rootSnapshot);
 		}
 	}
 	
@@ -172,7 +172,7 @@ public class SnapshotFragment extends SherlockFragment {
 			new LoadSnapshotsTask( _vmgr).execute(_machine);
 			return true;
 		default:
-			return true;
+			return false;
 		}
 	}
 	
@@ -188,14 +188,14 @@ public class SnapshotFragment extends SherlockFragment {
 		 ISnapshot snapshot = nodeinfo.getId();
 		  switch (item. getItemId()) {
 		  case R.id.context_menu_delete_snapshot:  
-			  new MachineTask<ISnapshot>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, snapshot.getMachine()) { 
+			  new MachineTask<ISnapshot>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, _machine) { 
 					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 						return console.deleteSnapshot(s[0].getIdRef()); 
 					}
 				}.execute(snapshot);
 			  break;
 		  case R.id.context_menu_restore_snapshot:
-			  new MachineTask<ISnapshot>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, snapshot.getMachine()) { 
+			  new MachineTask<ISnapshot>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, _machine) { 
 					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 						return console.restoreSnapshot(s[0].getName());
 					}

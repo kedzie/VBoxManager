@@ -32,8 +32,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.Utils;
 import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -57,8 +57,8 @@ public class ServerListActivity extends SherlockFragmentActivity {
 
 		@Override
 		protected IVirtualBox work(Server... params) throws Exception {
-			_vmgr =  new VBoxSvc("http://"+params[0].getHost()+":"+params[0].getPort());
-			_vmgr.logon(params[0].getUsername(), params[0].getPassword());
+			_vmgr = new VBoxSvc(params[0]);
+			_vmgr.logon();
 			_vmgr.getVBox().getVersion();
 			return _vmgr.getVBox();
 		}
@@ -130,12 +130,12 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	 */
 	class ServerDB extends SQLiteOpenHelper {
 		public ServerDB(Context context) { 
-			super(context, "vbox.db", null, 2);  
+			super(context, "vbox.db", null, 3);  
 		}
 		@Override
 		public void onCreate(SQLiteDatabase db) { 
 			Log.i("ServerSQL", "Creating database schema");
-			db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, NAME TEXT, HOST TEXT, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
+			db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, NAME TEXT, HOST TEXT, SSL INTEGER, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
 		}
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -144,13 +144,14 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			onCreate(db);
 		}
 		public List<Server> query() {
-			Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "NAME", "HOST", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
+			Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "NAME", "HOST", "SSL", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
 			List<Server> ret = new ArrayList<Server>();
 			for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 				ret.add(new Server(
 						c.getLong(c.getColumnIndex("ID")),  
 						c.getString(c.getColumnIndex("NAME")), 
 						c.getString(c.getColumnIndex("HOST")),
+						c.getInt(c.getColumnIndex("SSL"))>0,
 						c.getInt(c.getColumnIndex("PORT")),
 						c.getString(c.getColumnIndex("USERNAME")),
 						c.getString(c.getColumnIndex("PASSWORD"))));
@@ -160,6 +161,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			ContentValues c = new ContentValues();
 			c.put("NAME", s.getName());
 			c.put("HOST", s.getHost());
+			c.put("SSL", s.isSSL());
 			c.put("PORT", s.getPort());
 			c.put("USERNAME", s.getUsername());
 			c.put("PASSWORD", s.getPassword());
@@ -170,6 +172,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			c.put("ID", s.getId());
 			c.put("NAME", s.getName());
 			c.put("HOST", s.getHost());
+			c.put("SSL", s.isSSL());
 			c.put("PORT", s.getPort());
 			c.put("USERNAME", s.getUsername());
 			c.put("PASSWORD", s.getPassword());
@@ -275,7 +278,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 	 * Launch activity to create a new Server
 	 */
 	private void addServer() {
-		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", 18083, "", "")), REQUEST_CODE_ADD);
+		startActivityForResult(new Intent(ServerListActivity.this, EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, new Server(-1L, "", "", false, 18083, "", "")), REQUEST_CODE_ADD);
 	}
 	
 	/**

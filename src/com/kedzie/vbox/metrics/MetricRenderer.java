@@ -12,8 +12,6 @@ import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -38,18 +36,11 @@ public class MetricRenderer extends View {
 	protected double vStep;
 	/** Metric data */
 	protected Map<String, MetricQuery> _data = new HashMap<String, MetricQuery>();
+	protected String _unit;
 	
 	private Rect bounds = new Rect();
 	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint();
 	private Path path = new Path();
-	
-	private Handler _handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			Log.v(TAG, "Invalidate");
-			MetricRenderer.this.invalidate();
-		}
-	};
 	
 	public MetricRenderer(Context context, int bgColor, int gridColor, int textColor, int borderColor) {
 		super(context);
@@ -79,7 +70,7 @@ public class MetricRenderer extends View {
 	}
 
 	public void init( int max, String []metrics) {
-		Log.i(TAG, String.format("Metrics initialized: Max=%1$d  Metrics=%s", max, Arrays.asList(metrics).toString() ));
+		Log.i(TAG, String.format("Metrics initialized: Max=%1$d  Metrics=%2$s", max, Arrays.asList(metrics).toString() ));
 		_max=max;
 		_metrics=metrics;
 	}
@@ -98,12 +89,14 @@ public class MetricRenderer extends View {
 		Log.i(TAG, "OnSizeChanged("+getWidth()+"," + getHeight() + ")");
 		_width=getWidth();
 		_height=getHeight();
+		setMetricPrefs(_count, _period);
 	}
 	
 	public synchronized void setQuery(Map<String, MetricQuery> q) {
-		Log.i(TAG, "Received Metric data");
+		_unit=q.get(_metrics[0]).unit;
 		_data=q;
-		_handler.obtainMessage().sendToTarget();
+		postInvalidate();
+//		_handler.obtainMessage().sendToTarget();
 	}
 	
 	@Override
@@ -111,15 +104,23 @@ public class MetricRenderer extends View {
 		canvas.getClipBounds(bounds);
 		canvas.drawRect(bounds, bgPaint);
 		canvas.drawRect(bounds, borderPaint);
-		
 		if(this.isInEditMode())
 			return;
 		
 		int horiz = bounds.right;
-		for(int i=0; i<=_count; i+=5) {	//horizontal grid
+		for(int i=5; i<=_count; i+=5) {	//horizontal grid
+			horiz-=i*hStep;
 			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 			canvas.drawText(i*_period+"sec", horiz, bounds.bottom-20, textPaint);
-			horiz-=i*hStep;
+		}
+		
+		int gridLines = 5;
+		int gridPoints = _max/gridLines;
+		for( int i=1; i<=gridLines; i++) {
+			int yVal = gridPoints*i;
+			int y = bounds.bottom-yVal;
+			canvas.drawLine(bounds.left, y, bounds.right, y, gridPaint);
+			canvas.drawText(yVal*vStep+_unit, bounds.left+10, y+4, textPaint); 
 		}
 
 		for(String metric : _metrics) {

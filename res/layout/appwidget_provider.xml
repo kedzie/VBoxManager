@@ -5,6 +5,8 @@
 <TextView android:id="@+id/appwidget_text"
     android:background="#ffff00ff"
     android:textColor="#ff000000" 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
 	android:text="Widget"/>
 	
 </LinearLayout>

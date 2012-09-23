@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.kedzie.vbox.BundleBuilder;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
 
 public class LogFragment extends SherlockFragment {

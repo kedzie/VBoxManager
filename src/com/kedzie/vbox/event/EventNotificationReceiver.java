@@ -1,4 +1,4 @@
-package com.kedzie.vbox;
+package com.kedzie.vbox.event;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.PreferencesActivity;
 
 /**
  * Create notifications from Machine State change events
@@ -17,7 +19,8 @@ public class EventNotificationReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.i(TAG, "Recieved Broadcast: " + intent.getAction());
-		if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())) 
+		if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())
+				&& Utils.getBooleanPreference(context, PreferencesActivity.NOTIFICATIONS)) 
 			context.startService(new Intent(context, EventNotificationService.class).putExtras(intent));
 	}
 }
