@@ -67,8 +67,7 @@ public class ServerListActivity extends SherlockFragmentActivity {
 		protected void onResult(IVirtualBox vbox) {
 			Utils.toastLong(ServerListActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
 			startActivity(new Intent(ServerListActivity.this, MachineListFragmentActivity.class)
-						.putExtra(VBoxSvc.BUNDLE, _vmgr)
-						.putExtra(MachineListFragmentActivity.INTENT_VERSION, vbox.getVersion()));
+						.putExtra(VBoxSvc.BUNDLE, _vmgr));
 		}
 	}
 	

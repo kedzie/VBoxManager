@@ -104,12 +104,14 @@ public class MachineListFragment extends SherlockFragment {
 					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD), 
 					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
+			_vmgr.getVBox().getVersion();
 			return machines;
 		}
 
 		@Override
 		protected void onResult(List<IMachine> result)	{
 			_machines = result;
+			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
 			_listView.setAdapter(new MachineListAdapter(result));
 		}
 	}
@@ -202,6 +204,7 @@ public class MachineListFragment extends SherlockFragment {
 			_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 		if(savedInstanceState!=null)  { 
+			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, savedInstanceState.getString("version")));
     		_curCheckPosition = savedInstanceState.getInt("curChoice", -1);
     		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
     		_listView.setAdapter(new MachineListAdapter(_machines));
@@ -236,6 +239,7 @@ public class MachineListFragment extends SherlockFragment {
 		super.onSaveInstanceState(outState);
 		outState.putInt("curChoice", _curCheckPosition);
 		outState.putSerializable("machines", (Serializable) _machines);
+		outState.putString("version", _vmgr.getVBox().getVersion());
 	}
 	
 	@Override

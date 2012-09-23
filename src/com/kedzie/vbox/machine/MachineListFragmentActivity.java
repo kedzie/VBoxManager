@@ -48,7 +48,6 @@ public class MachineListFragmentActivity extends BaseActivity implements SelectM
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
-		getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, getIntent().getStringExtra(INTENT_VERSION)));
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		
 		setContentView(R.layout.machine_list);

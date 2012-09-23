@@ -167,6 +167,6 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		p.clearCache();
 		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); 
 		p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
-		p.getCompleted(); p.getResultCode(); p.getErrorInfo();p.getCancelable();
+		p.getCompleted(); p.getErrorInfo();p.getCancelable();
 	}
 }

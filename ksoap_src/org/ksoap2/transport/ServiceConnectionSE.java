@@ -72,21 +72,6 @@ public class ServiceConnectionSE implements ServiceConnection {
     public ServiceConnectionSE(String url, int timeout) throws IOException {
     	this(null, url, timeout);
     }
-
-    TrustManager []trustAll =  new TrustManager[]{
-    	    new X509TrustManager() {
-    	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-    	        	Log.i("ServiceConnectionSE", "getAcceptedIssuers");
-    	            return null;
-    	        }
-    	        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        	Log.i("ServiceConnectionSE", "checkClientTrusted");
-    	        }
-    	        public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        	Log.i("ServiceConnectionSE", "checkServerTrusted");
-    	        }
-    	    }
-    	};
     
     public ServiceConnectionSE(Proxy proxy, String url, int timeout) throws IOException {
         connection = (proxy == null)

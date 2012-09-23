@@ -36,7 +36,7 @@ public class TrustedHttpsTransport extends HttpTransportSE{
      * @see org.ksoap2.transport.HttpsTransportSE#getServiceConnection()
      */
     public ServiceConnection getServiceConnection() throws IOException {
-        if (serviceConnection == null) 
+//        if (serviceConnection == null) 
             serviceConnection = new TrustedHttpsServiceConnection(host, port, file, timeout);
         return serviceConnection;
     }
