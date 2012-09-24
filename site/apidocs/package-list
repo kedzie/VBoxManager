@@ -1,0 +1,12 @@
+com.kedzie.vbox
+com.kedzie.vbox.api
+com.kedzie.vbox.api.jaxb
+com.kedzie.vbox.app
+com.kedzie.vbox.event
+com.kedzie.vbox.harness
+com.kedzie.vbox.machine
+com.kedzie.vbox.metrics
+com.kedzie.vbox.server
+com.kedzie.vbox.soap
+com.kedzie.vbox.task
+com.kedzie.vbox.widget
