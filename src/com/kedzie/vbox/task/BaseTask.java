@@ -77,6 +77,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected Output doInBackground(Input... params)	{
 		try	{
+			Log.i(TAG, "Performing work...");
 			return work(params);
 		} catch(SoapFault e) {
 			showAlert(e);
@@ -149,6 +150,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @throws IOException
 	 */
 	protected void handleProgress(IProgress p)  throws IOException {
+		Log.i(TAG, "Handling progress");
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
@@ -167,6 +169,6 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		p.clearCache();
 		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); 
 		p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
-		p.getCompleted(); p.getErrorInfo();p.getCancelable();
+		p.getCompleted(); p.getCancelable();
 	}
 }

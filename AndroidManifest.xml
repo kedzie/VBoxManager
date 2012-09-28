@@ -36,24 +36,19 @@
 	<activity android:configChanges="orientation" android:label="Preferences" android:name=".metrics.MetricPreferencesActivity"/>
 	<service android:name=".event.EventIntentService"/>
 	<service android:name=".event.EventNotificationService"/>
+	
 	<receiver android:name=".widget.Provider">
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_provider"/>
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
         </receiver>
-
         <activity android:name=".widget.ConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-
-        <receiver android:enabled="false" android:name=".widget.WidgetBroadcastReceiver">
-            <intent-filter>
-                <action android:name="android.intent.ACTION_TIMEZONE_CHANGED"/>
-                <action android:name="android.intent.ACTION_TIME"/>
-            </intent-filter>
-        </receiver>	
-    </application>
+	<service android:name=".widget.UpdateWidgetService"/>
+	
+</application>
 </manifest>

@@ -100,7 +100,7 @@ public interface IPerformanceCollector extends IManagedObjectRef {
 	
 	/**
 	 * <p>Turns on collecting specified base metrics.</p>
-	* <p>Returns an array of IPerformanceMetric describing the metrics have been affected.</p>
+	* <p>Returns an array of {@link IPerformanceMetric} describing the metrics have been affected.</p>
 	* <dl><dt>Note:</dt><dd>Null or empty metric name array means all metrics. Null or empty object array means all existing objects. If metric name array contains a single element and object array contains many, the single metric name array element is applied to each object array element to form metric/object pairs.</dd></dl>
 	 * @param metrics	Metric name filter. Comma-separated list of metrics with wildcard support.
 	 * @param objects		Set of objects to enable metrics for.
@@ -113,7 +113,7 @@ public interface IPerformanceCollector extends IManagedObjectRef {
 
 	/**
 	 * <p>Turns off collecting specified base metrics.
-	 * <p>Returns an array of IPerformanceMetric describing the metrics have been affected.
+	 * <p>Returns an array of {@link IPerformanceMetric} describing the metrics have been affected.
 	 * <dl><dt>Note:</dt><dd>Null or empty metric name array means all metrics. Null or empty object array means all existing objects. If metric name array contains a single element and object array contains many, the single metric name array element is applied to each object array element to form metric/object pairs.</dd></dl>
 	 * @param metrics	Metric name filter. Comma-separated list of metrics with wildcard support.
 	 * @param objects	Set of objects to disable metrics for.

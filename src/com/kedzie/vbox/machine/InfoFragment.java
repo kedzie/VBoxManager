@@ -110,8 +110,7 @@ public class InfoFragment extends SherlockFragment {
 		case R.id.option_menu_refresh:
 			new LoadInfoTask().execute(_machine);
 			return true;
-		default:
-			return true;
 		}
+		return false;
 	}
 }

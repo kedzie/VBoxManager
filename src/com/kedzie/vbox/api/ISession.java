@@ -48,8 +48,21 @@ public interface ISession extends IManagedObjectRef, Parcelable {
 		}
 	};
 
-	public void unlockMachine() throws IOException;;
-	@KSOAP(cacheable=true) public IConsole getConsole() throws IOException;
+	public void unlockMachine() throws IOException;
+	
+	public IConsole getConsole() throws IOException;
+	
+	/**
+	 * @cached false
+	 * @return
+	 * @throws IOException
+	 */
 	public SessionType getType() throws IOException;
+	
+	/**
+	 * @cached false
+	 * @return
+	 * @throws IOException
+	 */
 	public SessionState getState() throws IOException;
 }

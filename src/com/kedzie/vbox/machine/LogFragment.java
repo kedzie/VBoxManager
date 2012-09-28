@@ -14,7 +14,7 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
 
 public class LogFragment extends SherlockFragment {
-	private static final int MAX_LOG_SIZE=2048;
+	private static final int MAX_LOG_SIZE=4096;
 	
 	class LoadLogTask extends ActionBarTask<IMachine, String> {
 		public LoadLogTask() {
@@ -72,8 +72,7 @@ public class LogFragment extends SherlockFragment {
 		case R.id.option_menu_refresh:
 			new LoadLogTask().execute(_machine);
 			return true;
-		default:
-			return true;
 		}
+		return false;
 	}
 }

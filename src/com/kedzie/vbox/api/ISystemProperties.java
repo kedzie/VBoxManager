@@ -2,11 +2,12 @@ package com.kedzie.vbox.api;
 
 import com.kedzie.vbox.soap.KSOAP;
 
+@KSOAP(cacheable=true) 
 public interface ISystemProperties extends IManagedObjectRef {
-	@KSOAP(cacheable=true) public Integer getMinGuestRAM();
-	@KSOAP(cacheable=true) public Integer getMaxGuestRam();
-	@KSOAP(cacheable=true) public Integer getMinGuestCPUCount();
-	@KSOAP(cacheable=true) public Integer getMaxGuestCPUCount();
-	@KSOAP(cacheable=true) public Integer getMinGuestMonitors();
-	@KSOAP(cacheable=true) public Integer getMaxGuestMonitors();
+	public Integer getMinGuestRAM();
+	public Integer getMaxGuestRam();
+	public Integer getMinGuestCPUCount();
+	public Integer getMaxGuestCPUCount();
+	public Integer getMinGuestMonitors();
+	public Integer getMaxGuestMonitors();
 }

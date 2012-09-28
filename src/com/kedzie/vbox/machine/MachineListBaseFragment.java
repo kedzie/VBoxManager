@@ -27,13 +27,13 @@ import com.kedzie.vbox.task.DialogTask;
 public class MachineListBaseFragment extends SherlockFragment {
 	protected static final String TAG = MachineListBaseFragment.class.getSimpleName();
 	
-	private VBoxSvc _vmgr;
-	private List<IMachine> _machines;
-	private ListView _listView;
+	protected VBoxSvc _vmgr;
+	protected List<IMachine> _machines;
+	protected ListView _listView;
 	/** Selected item index. -1 means it was not set in a saved state. */
-	private int _curCheckPosition=-1;
+	protected int _curCheckPosition=-1;
 	/** Handles selection of a VM in the list */
-	private SelectMachineListener _machineSelectedListener;
+	protected SelectMachineListener _machineSelectedListener;
 	
 	/**
 	 * Listener who is notified when a VirtualMachine is selected from the list
@@ -87,8 +87,8 @@ public class MachineListBaseFragment extends SherlockFragment {
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null) {
 				view = new MachineView(getApp(), getActivity());
-				((MachineView)view).update(getItem(position));
 			}
+			((MachineView)view).update(getItem(position));
 			return view;
 		}
 	}

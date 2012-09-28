@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,13 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 	}
 	
 	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.setTitle("New Snapshot");
+		return dialog;
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_vmgr = BundleBuilder.getProxy(getArguments(), VBoxSvc.BUNDLE, VBoxSvc.class);
@@ -46,7 +54,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 			@Override
 			public void onClick(View arg0) {
 				dismiss();
-				new MachineTask<Void>("TakeSnapshotTask", getActivity(), _vmgr, "Taking Snapshot", false, _machine) {	
+				new MachineTask<Void, Void>("TakeSnapshotTask", getActivity(), _vmgr, "Taking Snapshot", false, _machine) {	
 					protected IProgress workWithProgress(IMachine m, IConsole console, Void...i) throws Exception { 	
 						return console.takeSnapshot( snapshotName.getText().toString(),  snapshotDescription.getText().toString()); 
 					}

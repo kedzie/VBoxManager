@@ -1,5 +1,8 @@
 package com.kedzie.vbox.machine;
 
+import java.util.List;
+import java.util.Map;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +27,7 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
@@ -59,7 +63,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		public void onReceive(Context context, Intent intent) {
 			Log.i(TAG, "Recieved Broadcast: " + intent.getAction());
 			if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())) {
-				new UpdateMachineViewTask(_vmgr).execute(_machine);
+				IMachine m = BundleBuilder.getProxy(intent.getExtras(), IMachine.BUNDLE, IMachine.class);
+				new UpdateMachineViewTask(_vmgr).execute(m);
 			} else if (intent.getAction().equals(VBoxEventType.ON_SESSION_STATE_CHANGED.name())) {
 				new HandleEventTask(_vmgr).execute(intent.getExtras());
 			}
@@ -77,18 +82,16 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {
-//			MachineView.cacheProperties(m[0]);
-//			m[0].getMemorySize();
-//			return m[0];
-			_machine.getCache().remove("getState");
-			_machine.getState();
-			return _machine;
+			MachineView.cacheProperties(m[0]);
+			m[0].getMemorySize();
+			return m[0];
 		}
 
 		@Override
 		protected void onResult(IMachine result) {
+			_machine=result;
 			_headerView.update(result);
-			_listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(_machine.getState())));
+			_listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(result.getState())));
 		}
 	}
 	
@@ -194,9 +197,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		case R.id.option_menu_refresh:
 			new UpdateMachineViewTask(_vmgr).execute(_machine);
 			return true;
-		default:
-			return true;
 		}
+		return false;
 	}
 	
 	@Override 
@@ -205,45 +207,50 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		if(action.equals(VMAction.START))	
 			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);
 		else if(action.equals(VMAction.POWER_OFF))	
-			new MachineTask<IMachine>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
+			new MachineTask<IMachine, Void>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {	
 			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  return console.powerDown();
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.RESET))
-			new MachineTask<IMachine>("ResetTask", getActivity(), _vmgr, "Resetting", true, _machine) {	
-			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+			new MachineTask<IMachine, Void>("ResetTask", getActivity(), _vmgr, "Resetting", true, _machine) {	
+			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.reset(); 
+				  return null;
 			  }
 			  }.execute(_machine);
 		else if(action.equals(VMAction.PAUSE)) 	
-			new MachineTask<IMachine>("PauseTask", getActivity(), _vmgr, "Pausing", true, _machine) {	
-			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
+			new MachineTask<IMachine, Void>("PauseTask", getActivity(), _vmgr, "Pausing", true, _machine) {	
+			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
 				  console.pause();	
+				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.RESUME)) 
-			new MachineTask<IMachine>("ResumeTask", getActivity(), _vmgr, "Resuming", true, _machine) {	
-			  protected void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
-				  console.resume(); 
+			new MachineTask<IMachine, Void>("ResumeTask", getActivity(), _vmgr, "Resuming", true, _machine) {	
+			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
+				  console.resume();
+				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.POWER_BUTTON)) 	
-			new MachineTask<IMachine>("ACPITask", getActivity(), _vmgr, "ACPI Power Down", true, _machine) {
-			  protected void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
+			new MachineTask<IMachine, Void>("ACPITask", getActivity(), _vmgr, "ACPI Power Down", true, _machine) {
+			  protected Void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
 				  console.powerButton(); 	
+				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.SAVE_STATE)) 	
-			new MachineTask<IMachine>("SaveStateTask", getActivity(), _vmgr, "Saving State", false, _machine) { 
+			new MachineTask<IMachine, Void>("SaveStateTask", getActivity(), _vmgr, "Saving State", false, _machine) { 
 				protected IProgress workWithProgress(IMachine m, IConsole console, IMachine...i) throws Exception { 	
 					return console.saveState(); 
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.DISCARD_STATE)) 	
-			new MachineTask<IMachine>("DiscardStateTask", getActivity(), _vmgr, "Discarding State", true, _machine) { 
-				protected void work(IMachine m, IConsole console, IMachine...i) throws Exception { 	
+			new MachineTask<IMachine, Void>("DiscardStateTask", getActivity(), _vmgr, "Discarding State", true, _machine) { 
+				protected Void work(IMachine m, IConsole console, IMachine...i) throws Exception { 	
 					console.discardSavedState(true); 
+					return null;
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.TAKE_SNAPSHOT)) 	{
@@ -259,7 +266,21 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
-		}
+		} else if(action.equals(VMAction.TAKE_SCREENSHOT)) 	
+			new MachineTask<Void, byte []>("TakeScreenshotTask", getActivity(), _vmgr, "Taking Screenshot", true, _machine) { 
+				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
+					IDisplay display = console.getDisplay();
+					Map<String, List<String>> res = display.getScreenResolution(0);
+					return display.takeScreenShotPNGToArray(0, new Integer(res.get("width").get(0)), new Integer(res.get("height").get(0)));
+				}
+				@Override
+				protected void onResult(byte[] result) {
+					super.onResult(result);
+					ScreenshotDialogFragment.getInstance(
+							new BundleBuilder().putByteArray(ScreenshotDialogFragment.BUNDLE_BYTES, result).create())
+							.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
+				}
+			}.execute();
 	}
 	
 	public VBoxApplication getApp() { 

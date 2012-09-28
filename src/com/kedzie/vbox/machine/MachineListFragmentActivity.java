@@ -18,7 +18,7 @@ import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportFragment;
 import com.kedzie.vbox.app.TabSupportViewPager;
 import com.kedzie.vbox.event.EventIntentService;
-import com.kedzie.vbox.machine.MachineListFragment.SelectMachineListener;
+import com.kedzie.vbox.machine.MachineListBaseFragment.SelectMachineListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -49,8 +49,8 @@ public class MachineListFragmentActivity extends BaseActivity implements SelectM
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
-		
 		setContentView(R.layout.machine_list);
+
 		FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane) {
@@ -101,7 +101,7 @@ public class MachineListFragmentActivity extends BaseActivity implements SelectM
 		case android.R.id.home:
 			logoff();
 			NavUtils.navigateUpFromSameTask(this);
-			break;
+			return true;
 		}
 		return false;
 	}

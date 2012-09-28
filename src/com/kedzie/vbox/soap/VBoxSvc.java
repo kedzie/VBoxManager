@@ -77,6 +77,7 @@ public class VBoxSvc implements Parcelable {
 
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+			synchronized(VBoxSvc.this) {
 				if(method.getName().equals("getIdRef")) return this._uiud;
 				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
 				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
@@ -95,7 +96,6 @@ public class VBoxSvc implements Parcelable {
 					out.writeSerializable(_type);
 					out.writeParcelable(VBoxSvc.this, 0);
 					out.writeString(_uiud);
-					Log.i(TAG, "Writing cache to parcel: " + _cache);
 					out.writeMap(_cache);
 					return null;
 				}
@@ -122,6 +122,7 @@ public class VBoxSvc implements Parcelable {
 					_cache.put(method.getName(), ret);
 				return ret;
 			}
+		}
 		
 		/**
 		 * Add an argument to a SOAP request
@@ -235,7 +236,7 @@ public class VBoxSvc implements Parcelable {
 	public VBoxSvc(Server server) {
 		_server=server;
 		_transport = server.isSSL() ? new TrustedHttpsTransport(server.getHost(), server.getPort(), "", TIMEOUT) : 
-					new HttpTransportSE("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
+					new HttpTransport("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
 	}
 
 	/**
@@ -249,6 +250,10 @@ public class VBoxSvc implements Parcelable {
 	
 	public IVirtualBox getVBox() {
 		return _vbox;
+	}
+	
+	public Server getServer() {
+		return _server;
 	}
 	
 	@Override
@@ -303,6 +308,7 @@ public class VBoxSvc implements Parcelable {
 		try {
 			return (_vbox = getProxy(IVirtualBox.class, null).logon(_server.getUsername(), _server.getPassword()));
 		} catch(SoapFault e) {
+			Log.e(TAG, "Logon error", e);
 			throw new ConnectException("Authentication Error");
 		}
 	}
@@ -312,7 +318,8 @@ public class VBoxSvc implements Parcelable {
 	 * @throws IOException 
 	 */
 	public void logoff() throws IOException {
-		_vbox.logoff();
+		if(_vbox!=null)
+			_vbox.logoff();
 		_vbox=null;
 	}
 	

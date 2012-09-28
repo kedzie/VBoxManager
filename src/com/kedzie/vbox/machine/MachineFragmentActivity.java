@@ -1,7 +1,6 @@
 package com.kedzie.vbox.machine;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -30,7 +29,7 @@ public class MachineFragmentActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//TODO make better
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		if (getResources().getConfiguration().screenWidthDp >= 600) {
 			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
             return;
         }
@@ -72,7 +71,7 @@ public class MachineFragmentActivity extends BaseActivity {
 		switch(item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
-			break;
+			return true;
 		case R.id.option_menu_preferences:
 			startActivityForResult(new Intent(this, PreferencesActivity.class), REQUEST_CODE_PREFERENCES);
 			return true;

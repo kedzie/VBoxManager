@@ -10,6 +10,7 @@ import android.os.Parcelable;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP(cacheable=true)
 public interface ISnapshot extends IManagedObjectRef, Parcelable {
 
 static ClassLoader loader = ISession.class.getClassLoader();
@@ -27,12 +28,14 @@ static ClassLoader loader = ISession.class.getClassLoader();
 			return new ISnapshot[size]; 
 		}
 	};
+
 	
-	@KSOAP(cacheable=true) public String getName();
-	@KSOAP(cacheable=true) public String getDescription();
-	@KSOAP(cacheable=true) public Long getTimestamp();
-	@KSOAP(cacheable=true) public Boolean getOnline();
-	@KSOAP(cacheable=true) public ISnapshot getParent();
-	@KSOAP(cacheable=true) public List<ISnapshot> getChildren();
-	@KSOAP(cacheable=true) public IMachine getMachine();
+	public String getName();
+	public String getId();
+	public String getDescription();
+	public Long getTimestamp();
+	public Boolean getOnline();
+	public ISnapshot getParent();
+	public List<ISnapshot> getChildren();
+	public IMachine getMachine();
 }

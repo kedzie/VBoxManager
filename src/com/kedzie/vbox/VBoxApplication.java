@@ -81,6 +81,8 @@ public class VBoxApplication extends Application {
 		resources_color.put(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del_c);
 		resources.put(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metric);
 		resources_color.put(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metric);
+		resources.put(VMAction.TAKE_SCREENSHOT.name(), R.drawable.ic_list_snapshot_add);
+		resources_color.put(VMAction.TAKE_SCREENSHOT.name(), R.drawable.ic_list_snapshot_add_c);
 	}
 
 	/**

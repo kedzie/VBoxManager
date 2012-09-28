@@ -22,7 +22,8 @@ public enum VMAction {
 	DISCARD_STATE("Discard State"),
 	POWER_BUTTON("Power Button"),
 	POWER_OFF("Power Off"),
-	VIEW_METRICS("View Metrics");
+	VIEW_METRICS("View Metrics"),
+	TAKE_SCREENSHOT("Take Screenshot");
 	
 	private String _val;
 	
@@ -40,7 +41,7 @@ public enum VMAction {
 	 * @return actions which can be performed
 	 */
 	public static VMAction[] getVMActions(MachineState state) {
-		if(state.equals(MachineState.RUNNING)) return new VMAction[] { PAUSE, RESET, POWER_OFF , POWER_BUTTON, SAVE_STATE, TAKE_SNAPSHOT, VIEW_METRICS };
+		if(state.equals(MachineState.RUNNING)) return new VMAction[] { PAUSE, RESET, POWER_OFF , POWER_BUTTON, SAVE_STATE, TAKE_SNAPSHOT, VIEW_METRICS, TAKE_SCREENSHOT };
 		 else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new VMAction[] { START,  TAKE_SNAPSHOT };
 		else if (state.equals(MachineState.PAUSED))	return new VMAction[] { RESUME, RESET, POWER_OFF, TAKE_SNAPSHOT };
 		 else if (state.equals(MachineState.SAVED))	return new VMAction[] { RESTORE_STATE, DISCARD_STATE };

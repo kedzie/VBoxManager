@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
@@ -29,7 +30,7 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.DialogTask;
+import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
 
 public class SnapshotFragment extends SherlockFragment {
@@ -37,9 +38,9 @@ public class SnapshotFragment extends SherlockFragment {
 	/**
 	 *	Load complete snapshot tree.
 	 */
-	class LoadSnapshotsTask extends DialogTask<IMachine, ISnapshot>	{
+	class LoadSnapshotsTask extends ActionBarTask<IMachine, ISnapshot>	{
 		public LoadSnapshotsTask(VBoxSvc vmgr) { 
-			super( "LoadSnapshotsTask", getActivity(), vmgr, "Loading Snapshots"); 	
+			super( "LoadSnapshotsTask", getSherlockActivity(), vmgr); 	
 		}
 
 		@Override
@@ -64,8 +65,8 @@ public class SnapshotFragment extends SherlockFragment {
 
 		@Override
 		protected void onResult(ISnapshot result)	{
-			_treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
 			_rootSnapshot=result;
+			_treeBuilder.clear();
 			populate(null, _rootSnapshot);
 		}
 	}
@@ -94,7 +95,7 @@ public class SnapshotFragment extends SherlockFragment {
 		@Override 
 		public View updateView(View view, TreeNodeInfo<ISnapshot> treeNodeInfo) {
 			((TextView)view.findViewById(R.id.action_item_text)).setText(treeNodeInfo.getId().getName());
-			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( R.drawable.ic_list_snapshot_c);
+			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawable(VMAction.RESTORE_SNAPSHOT) );
 			return view;
 		}
 	}
@@ -125,6 +126,7 @@ public class SnapshotFragment extends SherlockFragment {
         registerForContextMenu(_treeView);
         _stateManager = new InMemoryTreeStateManager<ISnapshot>();
         _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
+        _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
         return _view;
 	}
 	
@@ -156,6 +158,10 @@ public class SnapshotFragment extends SherlockFragment {
 		BundleBuilder.putProxy(outState, "rootSnapshot", _rootSnapshot);
 	}
 	
+	private VBoxApplication getApp() {
+		return (VBoxApplication)getActivity().getApplication();
+	}
+	
 	@Override
 	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.snapshot_actions, menu);
@@ -170,10 +176,9 @@ public class SnapshotFragment extends SherlockFragment {
 			return true;
 		case R.id.option_menu_refresh:
 			new LoadSnapshotsTask( _vmgr).execute(_machine);
-			return true;
-		default:
 			return false;
 		}
+		return false;
 	}
 	
 	@Override
@@ -184,24 +189,35 @@ public class SnapshotFragment extends SherlockFragment {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		TreeNodeInfo<ISnapshot> nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo)item.getMenuInfo()).position);
-		 ISnapshot snapshot = nodeinfo.getId();
-		  switch (item. getItemId()) {
-		  case R.id.context_menu_delete_snapshot:  
-			  new MachineTask<ISnapshot>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, _machine) { 
-					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
-						return console.deleteSnapshot(s[0].getIdRef()); 
-					}
-				}.execute(snapshot);
-			  break;
-		  case R.id.context_menu_restore_snapshot:
-			  new MachineTask<ISnapshot>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, _machine) { 
-					protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
-						return console.restoreSnapshot(s[0].getName());
-					}
-				}.execute(snapshot);
-			  break;
-		  }
-		  return true;
+		TreeNodeInfo<ISnapshot> nodeinfo = null;
+		ISnapshot snapshot = null;
+		switch (item. getItemId()) {
+		case R.id.context_menu_delete_snapshot:  
+			nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo)item.getMenuInfo()).position);
+			snapshot = nodeinfo.getId();
+			new MachineTask<ISnapshot, Void>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, _machine) { 
+				protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
+					return console.deleteSnapshot(s[0].getId()); 
+				}
+
+                @Override
+                protected void onResult(Void result) {
+                    super.onResult(result);
+                    _treeBuilder.
+                }
+				
+			}.execute(snapshot);
+			return true;
+		case R.id.context_menu_restore_snapshot:
+			nodeinfo = ((SnapshotTreeAdapter)_treeView.getAdapter()).getTreeNodeInfo(((AdapterContextMenuInfo)item.getMenuInfo()).position);
+			snapshot = nodeinfo.getId();
+			new MachineTask<ISnapshot, Void>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, _machine) { 
+				protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
+					return console.restoreSnapshot(s[0]);
+				}
+			}.execute(snapshot);
+			return true;
+		}
+		return false;
 	}
 }

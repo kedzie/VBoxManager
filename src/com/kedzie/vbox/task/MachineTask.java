@@ -14,7 +14,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @author Marek Kedzierski
  * @Aug 8, 2011
  */
-public abstract class MachineTask<Input> extends DialogTask<Input, IMachine> {
+public abstract class MachineTask<Input, Output> extends DialogTask<Input, Output> {
 
 		protected boolean indeterminate;
 		protected IMachine _machine;
@@ -26,23 +26,23 @@ public abstract class MachineTask<Input> extends DialogTask<Input, IMachine> {
 		}
 		
 		@Override
-		protected IMachine work(Input...inputs) throws Exception {
+		protected Output work(Input...inputs) throws Exception {
 			ISession session = _vmgr.getVBox().getSessionObject();
 			if( session.getState().equals(SessionState.UNLOCKED)) 
 				_machine.lockMachine(session, LockType.SHARED);
 			try {
 				if(indeterminate)
-					work(_machine, session.getConsole(), inputs);
+					return work(_machine, session.getConsole(), inputs);
 				else
 					handleProgress( workWithProgress(_machine, session.getConsole(), inputs) );
-				return _machine;
+				return null;
 			} finally {
 				if(session.getState().equals(SessionState.LOCKED)) 
 					session.unlockMachine();
 			}
 		}
 
-		protected void work(IMachine m, IConsole console, Input...inputs) throws Exception {};
+		protected Output work(IMachine m, IConsole console, Input...inputs) throws Exception {return null;};
 		
 		protected IProgress workWithProgress(IMachine m, IConsole console, Input...inputs) throws Exception { return null; };
 }

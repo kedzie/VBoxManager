@@ -2,12 +2,12 @@ package com.kedzie.vbox.api;
 
 import com.kedzie.vbox.soap.KSOAP;
 
-
+@KSOAP(cacheable=true)  
 public interface IPerformanceMetric extends IManagedObjectRef {
-	@KSOAP(cacheable=true)  public String getMetricName();
-	@KSOAP(cacheable=true)  public String getDescription();
-	@KSOAP(cacheable=true)  public Integer getMinimumValue();
-	@KSOAP(cacheable=true)  public Integer getMaximumValue();
-	@KSOAP(cacheable=true)  public String getUnit();
-	@KSOAP(cacheable=true)  public String getObject();
+	public String getMetricName();
+	public String getDescription();
+	public Integer getMinimumValue();
+	public Integer getMaximumValue();
+	public String getUnit();
+	public String getObject();
 }

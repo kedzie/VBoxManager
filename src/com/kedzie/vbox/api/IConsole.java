@@ -2,8 +2,6 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-
 import com.kedzie.vbox.soap.KSOAP;
 
 /**
@@ -18,7 +16,7 @@ public interface IConsole extends IManagedObjectRef {
 	 * <p>Starts the virtual machine execution using the current machine state (that is, its current execution state, current settings and current storage devices).</p>
 	 * <ul>
 	 * <li>If the machine is powered off or aborted, the execution will start from the beginning (as if the real hardware were just powered on).</li>
-	 * <li>If the machine is in the <code>MachineState_Saved</code> state, it will continue its execution the point where the state has been saved.</li>
+	 * <li>If the machine is in the @{link MachineState#Saved} state, it will continue its execution the point where the state has been saved.</li>
 	 * <li>If the machine {@link IMachine#teleporterEnabled} property is enabled on the machine being powered up, the machine will wait for an incoming teleportation in the <code>MachineState_TeleportingIn</code> state. The returned progress object will have at least three operations where the last three are defined as: (1) powering up and starting TCP server, (2) waiting for incoming teleportations, and (3) perform teleportation. These operations will be reflected as the last three operations of the progress objected returned by IMachine::launchVMProcess as well.</li>
 	 * </ul>
 	 * <p>Expected result codes:</p>
@@ -114,12 +112,12 @@ public interface IConsole extends IManagedObjectRef {
 	 * @return
 	 * @throws IOException
 	 */
-	public IProgress deleteSnapshot(@KSOAP(namespace=SoapSerializationEnvelope.XSD, type="string", value="id") String id) throws IOException;
+	public IProgress deleteSnapshot(@KSOAP(value="id") String snapshot) throws IOException;
 	
 	/**
 	 * @param name
 	 * @return
 	 * @throws IOException
 	 */
-	public IProgress restoreSnapshot(@KSOAP("name") String name) throws IOException;
+	public IProgress restoreSnapshot(@KSOAP("snapshot") ISnapshot snapshot) throws IOException;
 }
