@@ -4,6 +4,7 @@ package com.kedzie.vbox.app;
 /**
  * Invoke an operation repeatedly with hooks for initialization/teardown.
  * @author Marek Kędzierski
+ * @apiviz.stereotype utility
  */
 public abstract class LoopingThread extends Thread {
 	

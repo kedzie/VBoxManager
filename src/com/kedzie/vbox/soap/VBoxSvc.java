@@ -32,6 +32,8 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
+import com.kedzie.vbox.api.ISnapshotDeletedEvent;
+import com.kedzie.vbox.api.ISnapshotTakenEvent;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
@@ -40,6 +42,14 @@ import com.kedzie.vbox.server.Server;
 
 /**
  * VirtualBox JAX-WS API
+ * @apiviz.landmark
+ * @apiviz.stereotype service
+ * @apiviz.owns com.kedzie.vbox.api.IVirtualBox
+ * @apiviz.owns com.kedzie.vbox.soap.HttpTransport
+ * @apiviz.owns com.kedzie.vbox.soap.TrustedHttpsTransport
+ * @apiviz.owns com.kedzie.vbox.server.Server
+ * @apiviz.uses com.kedzie.vbox.soap.KSOAP
+ * @apiviz.composedOf com.kedzie.vbox.soap.VBoxSvc$KSOAPInvocationHandler
  */
 public class VBoxSvc implements Parcelable {
 	private static final String TAG = "VBoxSvc";
@@ -176,15 +186,26 @@ public class VBoxSvc implements Parcelable {
 			if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
 				return null;
 			if(isMap) {
-				Map<String, List<String>> map = new HashMap<String, List<String>>();
-				PropertyInfo info = new PropertyInfo();
-				for (int i = 0; i < ks.getPropertyCount(); i++) {
-					ks.getPropertyInfo(i, null, info);
-					if (!map.containsKey(info.getName()))
-						map.put(info.getName(), new ArrayList<String>());
-					map.get(info.getName()).add(   ks.getProperty(i).toString() );
-				}
-				return map;
+			    Class<?> valueClazz = Utils.getTypeParameter(genericType, 1);
+			    if(Collection.class.isAssignableFrom(valueClazz)) {  //Map<String, List<String>>
+			        Map<String, List<String>> map = new HashMap<String, List<String>>();
+	                PropertyInfo info = new PropertyInfo();
+	                for (int i = 0; i < ks.getPropertyCount(); i++) {
+	                    ks.getPropertyInfo(i, null, info);
+	                    if (!map.containsKey(info.getName()))
+	                        map.put(info.getName(), new ArrayList<String>());
+	                    map.get(info.getName()).add(   ks.getProperty(i).toString() );
+	                }
+	                return map;
+			    } else {
+			        Map<String, String> map = new HashMap<String, String>();
+			        PropertyInfo info = new PropertyInfo();
+                    for (int i = 0; i < ks.getPropertyCount(); i++) {
+                        ks.getPropertyInfo(i, null, info);
+                        map.put(info.getName(), ks.getProperty(i).toString());
+                    }
+                    return map;
+			    }
 			}
 			if(isCollection) {
 				Class<?> pClazz = Utils.getTypeParameter(genericType);
@@ -292,6 +313,10 @@ public class VBoxSvc implements Parcelable {
 				return clazz.cast(getProxy( IMachineStateChangedEvent.class, id, cache ));
 			else if(type.equals(VBoxEventType.ON_SESSION_STATE_CHANGED))
 				return clazz.cast(getProxy( ISessionStateChangedEvent.class, id, cache ));
+			else if(type.equals(VBoxEventType.ON_SNAPSHOT_DELETED))
+                return clazz.cast(getProxy( ISnapshotDeletedEvent.class, id, cache ));
+			else if(type.equals(VBoxEventType.ON_SNAPSHOT_TAKEN))
+                return clazz.cast(getProxy( ISnapshotTakenEvent.class, id, cache ));
 		}
 		return proxy;
 	}

@@ -6,6 +6,11 @@ import android.support.v4.app.Fragment;
 
 import com.actionbarsherlock.app.ActionBar;
 
+/**
+ * Actionbar tab navigation interface for different possible implementations
+ * @author Marek Kędzierski
+ * @apiviz.stereotype android
+ */
 public interface TabSupport {
 	
 	/**

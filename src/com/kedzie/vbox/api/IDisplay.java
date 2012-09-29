@@ -1,6 +1,5 @@
 package com.kedzie.vbox.api;
 
-import java.util.List;
 import java.util.Map;
 
 import com.kedzie.vbox.soap.KSOAP;
@@ -14,7 +13,7 @@ import com.kedzie.vbox.soap.KSOAP;
 
 public interface IDisplay extends IManagedObjectRef {
 	@KSOAP
-	public Map<String, List<String>> getScreenResolution(@KSOAP(type="unsignedInt", value="screenId") int screenId);
+	public Map<String, String> getScreenResolution(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	@KSOAP
 	public byte[] takeScreenShotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId, @KSOAP(type="unsignedInt", value="width") int width, @KSOAP(type="unsignedInt", value="height") int height);

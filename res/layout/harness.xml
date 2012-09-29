@@ -5,7 +5,7 @@
     android:layout_height="match_parent" 
     android:padding="8dp">
 	
-    <Button android:id="@+id/testParcelButton"
+    <Button android:id="@+id/testApiButton"
         android:text="Test API"
         style="@style/MediumText" />
     
@@ -16,11 +16,6 @@
     <Button android:id="@+id/hostMetricsButton"
         android:text="Host Metrics" 
         style="@style/MediumText" />
-    
-    <FrameLayout android:id="@+id/imageFrame"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1.0" />
     
 	
 </LinearLayout>

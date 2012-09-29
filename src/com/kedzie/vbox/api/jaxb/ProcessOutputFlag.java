@@ -1,44 +1,18 @@
-
-
-
-
-
-
-
-
 package com.kedzie.vbox.api.jaxb;
 
-
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
 public enum ProcessOutputFlag {
-
-        NONE("None"),
-        STD_ERR("StdErr");
+    NONE("None"),
+    STD_ERR("StdErr");
     private final String value;
-
+    public String toString() {
+        return value;
+    }
     ProcessOutputFlag(String v) {
         value = v;
     }
-
     public String value() {
         return value;
     }
-
     public static ProcessOutputFlag fromValue(String v) {
         for (ProcessOutputFlag c: ProcessOutputFlag.values()) {
             if (c.value.equals(v)) {
@@ -47,5 +21,4 @@ public enum ProcessOutputFlag {
         }
         throw new IllegalArgumentException(v);
     }
-
 }

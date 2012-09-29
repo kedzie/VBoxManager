@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 /**
  * Android Utilities
+ * @apiviz.stereotype utility
  */
 public class Utils {
 
@@ -66,6 +67,16 @@ public class Utils {
 	 * @return type parameter
 	 */
 	public static Class<?> getTypeParameter(Type genericType) {
-		return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[0];
+		return getTypeParameter(genericType, 0);
 	}
+	
+	/**
+     * Get type parameter of Generic Type
+     * @param genericType the generic {@link Type}
+     * @param index which parameter
+     * @return type parameter
+     */
+    public static Class<?> getTypeParameter(Type genericType, int index) {
+        return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[index];
+    }
 }

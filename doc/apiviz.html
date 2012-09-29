@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>API Viz Doclet Reference</title>
+</head>
+<body>
+	<h1>
+		<a name="Doclet_Tags"></a>Doclet Tags<a href="#Doclet_Tags"
+			class="section_anchor"></a>
+	</h1>
+	<p>APIviz automatically discovers the relationship between packages
+		and classes and their stereotype by default. Additionally, you can use
+		the following doclet tags to add more relationships or to make the
+		generated diagram look cleaner.</p>
+	<p>
+	<table class="wikitable">
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><strong>Tag</strong>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;"><strong>Target</strong>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;"><strong>Description</strong>
+			</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.stereotype
+					&lt;stereotype&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class / <tt>package-info.java</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Assigns a
+				stereotype to the target</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.landmark</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class / <tt>package-info.java</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Highlights the
+				target by filling it with a bright color</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.category
+					&lt;categoryname&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class / <tt>package-info.java</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">(Since 1.3)
+				Assigns a category to the target. Each category is automatically
+				colored with pre-defined fill- and line- color. Alternatively, you
+				can specify the color of a category as a Javadoc command line
+				option. (e.g. <tt>javadoc ... -category beginner:white:green
+					-category advanced:#CCCCCC:red ...</tt>)
+			</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.exclude</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class / <tt>package-info.java</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Hides the
+				target from the package summary page or the overview summary page</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.exclude
+					&lt;regex&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class / <tt>package-info.java</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Hides the
+				classes that matches the regular expression from the target class
+				diagram or the target package summary page</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.excludeSubtypes</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class only</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Hides the
+				subtypes of the target from the class diagram</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.inherit</tt>
+			</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class only</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Hides the
+				classes which matches the exclusion regular expression of the
+				package where the target belongs from the class diagram</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.uses
+					&lt;FQCN&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class only</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Adds a
+				dependency relationship</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.has
+					&lt;FQCN&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class only</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Adds a
+				navigability relationship</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.owns
+					&lt;FQCN&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class only</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Adds an
+				aggregation relationship</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ccc; padding: 5px;"><tt>@apiviz.composedOf
+					&lt;FQCN&gt;</tt></td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Class only</td>
+			<td style="border: 1px solid #ccc; padding: 5px;">Adds a
+				composition relationship</td>
+		</tr>
+	</table>
+	</p>
+</body>
+</html>

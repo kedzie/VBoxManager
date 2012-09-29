@@ -74,50 +74,28 @@ public interface IConsole extends IManagedObjectRef {
 	 */
 	public IProgress saveState() throws IOException;
 	
-	/**
-	 * @param saveStateFile
-	 * @throws IOException
-	 */
 	public void adoptSavedState(@KSOAP("saveStateFile") String saveStateFile) throws IOException;
-	/**
-	 * @param removeFile
-	 * @throws IOException
-	 */
+
 	public void discardSavedState( @KSOAP("fRemoveFile") boolean removeFile) throws IOException;
 	
-	/**
-	 * @return
-	 * @throws IOException
-	 */
 	public IEventSource getEventSource() throws IOException;
 	
-	/**
-	 * @return
-	 * @throws IOException
-	 */
 	public IDisplay getDisplay() throws IOException;
 	
 	public IGuest getGuest() throws IOException;
 	
 	/**
-	 * @param name
-	 * @param description
-	 * @return
-	 * @throws IOException
+	 * 
 	 */
 	public IProgress takeSnapshot(@KSOAP("name") String name, @KSOAP("description") String description) throws IOException;
 	
 	/**
-	 * @param id  id of snapshot to be deleted
-	 * @return
-	 * @throws IOException
+	 * 
 	 */
 	public IProgress deleteSnapshot(@KSOAP(value="id") String snapshot) throws IOException;
 	
 	/**
-	 * @param name
-	 * @return
-	 * @throws IOException
+	 * 
 	 */
 	public IProgress restoreSnapshot(@KSOAP("snapshot") ISnapshot snapshot) throws IOException;
 }

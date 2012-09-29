@@ -1,6 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import java.util.List;
 import java.util.Map;
 
 import android.content.BroadcastReceiver;
@@ -270,8 +269,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 			new MachineTask<Void, byte []>("TakeScreenshotTask", getActivity(), _vmgr, "Taking Screenshot", true, _machine) { 
 				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
 					IDisplay display = console.getDisplay();
-					Map<String, List<String>> res = display.getScreenResolution(0);
-					return display.takeScreenShotPNGToArray(0, new Integer(res.get("width").get(0)), new Integer(res.get("height").get(0)));
+					Map<String, String> res = display.getScreenResolution(0);
+					return display.takeScreenShotPNGToArray(0, new Integer(res.get("width")), new Integer(res.get("height")));
 				}
 				@Override
 				protected void onResult(byte[] result) {

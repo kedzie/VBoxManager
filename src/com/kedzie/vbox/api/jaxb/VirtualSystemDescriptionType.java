@@ -1,54 +1,6 @@
-
-
-
-
-
-
-
-
 package com.kedzie.vbox.api.jaxb;
 
-
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
 public enum VirtualSystemDescriptionType {
-
     IGNORE("Ignore"),
     OS("OS"),
     NAME("Name"),
@@ -74,22 +26,21 @@ public enum VirtualSystemDescriptionType {
     SOUND_CARD("SoundCard"),
     SETTINGS_FILE("SettingsFile");
     private final String value;
-
+    public String toString() {
+        return value;
+    }
     VirtualSystemDescriptionType(String v) {
         value = v;
     }
-
     public String value() {
         return value;
     }
-
     public static VirtualSystemDescriptionType fromValue(String v) {
-        for (VirtualSystemDescriptionType c: VirtualSystemDescriptionType.values()) {
+        for (VirtualSystemDescriptionType c : VirtualSystemDescriptionType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }
         }
         throw new IllegalArgumentException(v);
     }
-
 }

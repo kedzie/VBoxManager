@@ -1,19 +1,13 @@
 package com.kedzie.vbox.harness;
 
-import java.io.ByteArrayInputStream;
-import java.util.List;
 import java.util.Map;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
@@ -38,18 +32,15 @@ import com.kedzie.vbox.task.ActionBarTask;
 public class HarnessActivity extends SherlockFragmentActivity {
 	private static final String TAG = HarnessActivity.class.getSimpleName();
 
-	FrameLayout imageFrame;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Harness created");
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.harness);
-		imageFrame = (FrameLayout)findViewById(R.id.imageFrame);
 		
-		final Server server = new Server(null, "99.38.98.125", true, 18083, "kedzie", "Mk0204$$" );
-		((Button)findViewById(R.id.testParcelButton)).setOnClickListener(new OnClickListener() {
+		final Server server = new Server(null, "192.168.2.3", false, 18083, "kedzie", "Mk0204$$" );
+		((Button)findViewById(R.id.testApiButton)).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new TestApiTask().execute(server);
@@ -117,11 +108,11 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	class TestApiTask extends  ActionBarTask<Server, byte[]> {
+	class TestApiTask extends  ActionBarTask<Server, String> {
 		public TestApiTask() { super(HarnessActivity.TAG, HarnessActivity.this, null); }
 
 		@Override
-		protected byte[] work(Server... server) throws Exception {
+		protected String work(Server... server) throws Exception {
 			_vmgr = new VBoxSvc(server[0]);
 			_vmgr.logon();
 			IMachine m = _vmgr.getVBox().getMachines().get(0);
@@ -129,20 +120,15 @@ public class HarnessActivity extends SherlockFragmentActivity {
 			m.lockMachine(session, LockType.SHARED);
 			IConsole console = session.getConsole();
 			IDisplay display = console.getDisplay();
-			Map<String, List<String>> res = display.getScreenResolution(0);
-			byte[] screenshot = display.takeScreenShotPNGToArray(0, new Integer(res.get("width").get(0)), new Integer(res.get("height").get(0)));
+			Map<String, String> res = display.getScreenResolution(0);
 			session.unlockMachine();
 			_vmgr.logoff();
-			return screenshot;
+			return res.get("width") + "x" + res.get("height");
 		}
 		
 		@Override
-		protected void onResult(byte[] result) {
-			Bitmap screenshot = BitmapFactory.decodeStream(new ByteArrayInputStream(result));
-			Utils.toastShort( HarnessActivity.this, String.format("Screenshot size %1$dx%2$d", screenshot.getWidth(), screenshot.getHeight()) );
-			ImageView view = new ImageView(HarnessActivity.this);
-			view.setImageBitmap(screenshot);
-			imageFrame.addView(view, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+		protected void onResult(String result) {
+			Utils.toastShort( HarnessActivity.this, result );
 		}
 	}
 }

@@ -44,7 +44,7 @@ public class TabSupportFragment implements TabSupport {
 
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        	ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        	ft.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit);
         	if (_fragment==null) {
         		Log.i(TAG, String.format(" Instantiating new fragment [%s]", _tag));
                 _fragment = Fragment.instantiate(_activity, _definition.clazz.getName(), _definition.args);
@@ -57,7 +57,7 @@ public class TabSupportFragment implements TabSupport {
 
         @Override
         public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-        	ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        	ft.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit);
         	ft.detach(_fragment);
         }
 

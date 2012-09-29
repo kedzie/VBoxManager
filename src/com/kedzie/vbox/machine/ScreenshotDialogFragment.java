@@ -75,14 +75,16 @@ public class ScreenshotDialogFragment extends SherlockDialogFragment {
 	
 	class SaveScreenshotTask extends ActionBarTask<Bitmap, Void> {
 
+	    private String filename;
+	    
 		public SaveScreenshotTask() {
 			super("SaveScreenshotTask", getSherlockActivity(), null);
+			filename =  "screenshot_"+DateFormat.format("yyyyMMdd_hmmssaa", new Date())+".jpg";
 		}
-
+		
 		@Override
 		protected Void work(Bitmap... params) throws Exception {
-			File file = new File(Environment.getExternalStorageDirectory().toString(), 
-					"screenshot"+DateFormat.format("MM/dd/yy h:mmaa", new Date())+".jpg");
+			File file = new File(Environment.getExternalStorageDirectory().toString(), filename);
 			OutputStream fOut = new FileOutputStream(file);
 			params[0].compress(Bitmap.CompressFormat.JPEG, 85, fOut);
 			fOut.flush();

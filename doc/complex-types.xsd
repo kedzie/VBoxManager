@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?> 
 
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" name="VirtualBox"  targetNamespace="http://www.virtualbox.org/">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" targetNamespace="http://www.virtualbox.org/">
+
+	<xsd:import namespace="http://www.virtualbox.org/" schemaLocation="enums.xsd"/>
+
   <!-- interface IPCIAddress as struct: -->
       <xsd:complexType name="IPCIAddress">
         <xsd:sequence>

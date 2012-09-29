@@ -1,48 +1,20 @@
-
-
-
-
-
-
-
-
 package com.kedzie.vbox.api.jaxb;
 
-
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
 public enum VirtualSystemDescriptionValueType {
-
     REFERENCE("Reference"),
     ORIGINAL("Original"),
     AUTO("Auto"),
     EXTRA_CONFIG("ExtraConfig");
     private final String value;
-
+    public String toString() {
+        return value;
+    }
     VirtualSystemDescriptionValueType(String v) {
         value = v;
     }
-
     public String value() {
         return value;
     }
-
     public static VirtualSystemDescriptionValueType fromValue(String v) {
         for (VirtualSystemDescriptionValueType c: VirtualSystemDescriptionValueType.values()) {
             if (c.value.equals(v)) {
@@ -51,5 +23,4 @@ public enum VirtualSystemDescriptionValueType {
         }
         throw new IllegalArgumentException(v);
     }
-
 }

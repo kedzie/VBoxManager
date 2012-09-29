@@ -1,51 +1,19 @@
-
-
-
-
-
-
-
-
 package com.kedzie.vbox.api.jaxb;
 
-
-
-
-
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-
-
 public enum LockType {
-
-    
     WRITE("Write"),
-    
-    SHARED("Shared");
+    SHARED("Shared"),
+    VM("VM");
     private final String value;
-
+    public String toString() {
+        return value;
+    }
     LockType(String v) {
         value = v;
     }
-
     public String value() {
         return value;
     }
-    public String toString() { return value; }
     public static LockType fromValue(String v) {
         for (LockType c: LockType.values()) {
             if (c.value.equals(v)) {
@@ -54,5 +22,4 @@ public enum LockType {
         }
         throw new IllegalArgumentException(v);
     }
-
 }

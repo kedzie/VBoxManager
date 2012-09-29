@@ -29,10 +29,10 @@ public class MachineFragmentActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//TODO make better
-		if (getResources().getConfiguration().screenWidthDp >= 600) {
-			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
-            return;
-        }
+//		if (getResources().getConfiguration().screenWidthDp >= 600) {
+//			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
+//            return;
+//        }
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		

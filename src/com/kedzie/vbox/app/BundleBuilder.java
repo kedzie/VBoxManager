@@ -17,6 +17,7 @@ import com.kedzie.vbox.api.IManagedObjectRef;
 /**
  * Builder pattern for {@link Bundle}.  
  * Also contains functionality for wrapping VirtualBox remote proxies in Parcels
+ * @apiviz.stereotype utility
  */
 public class BundleBuilder {
 	private Bundle b = new Bundle();
