@@ -44,6 +44,11 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class SnapshotFragment extends SherlockFragment {
     
 	/**
@@ -246,8 +251,9 @@ public class SnapshotFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_add:
-			TakeSnapshotFragment.getInstance(getArguments())
-				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
+		    Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), 
+		                        "snapshotDialog", 
+		                        TakeSnapshotFragment.getInstance(getArguments()) );
 			return true;
 		case R.id.option_menu_refresh:
 			new LoadSnapshotsTask( _vmgr).execute(_machine);

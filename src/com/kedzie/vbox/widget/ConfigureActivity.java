@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.server.Server;
 
 public class ConfigureActivity extends Activity {
     static final String TAG = "ConfigureActivity";
@@ -61,6 +63,13 @@ public class ConfigureActivity extends Activity {
     	prefs.remove(appWidgetId+KEY_SERVER);
     	prefs.remove(appWidgetId+KEY_IDREF);
     	prefs.commit();
+    }
+    
+    static void savePrefs(Context context, IMachine machine, Server server, int appWidgetId) {
+        savePref(context, appWidgetId, KEY_IDREF, machine.getIdRef());
+        savePref(context, appWidgetId, KEY_SERVER, server.getId().toString());
+        savePref(context, appWidgetId, KEY_NAME, machine.getName());
+        Provider.updateAppWidget(context, AppWidgetManager.getInstance(context), appWidgetId, machine);
     }
 }
 

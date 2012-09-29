@@ -10,6 +10,11 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype view
+ */
 public class MachineView extends LinearLayout {
 
 	private ImageView osIcon;
@@ -31,7 +36,7 @@ public class MachineView extends LinearLayout {
 	}
 	
 	public void update(IMachine m) {
-		osIcon.setImageResource(_app.getDrawable("ic_list_os_"+m.getOSTypeId().toLowerCase()));
+		osIcon.setImageResource(_app.getOSDrawable(m.getOSTypeId()));
 		nameText.setText(m.getName());
 		stateIcon.setImageResource( _app.getDrawable(m.getState()) );
 		stateText.setText(m.getState().value());

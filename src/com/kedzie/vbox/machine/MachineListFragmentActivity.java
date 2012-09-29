@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
@@ -18,12 +17,18 @@ import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportFragment;
 import com.kedzie.vbox.app.TabSupportViewPager;
 import com.kedzie.vbox.event.EventIntentService;
-import com.kedzie.vbox.machine.MachineListBaseFragment.SelectMachineListener;
+import com.kedzie.vbox.machine.MachineListBaseFragment.OnSelectMachineListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
-public class MachineListFragmentActivity extends BaseActivity implements SelectMachineListener {
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype activity
+ */
+public class MachineListFragmentActivity extends BaseActivity implements OnSelectMachineListener {
 	public final static String INTENT_VERSION = "version";
+	public static final boolean VIEW_PAGER_TABS = false;
 	
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
@@ -55,7 +60,7 @@ public class MachineListFragmentActivity extends BaseActivity implements SelectM
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			if(VBoxApplication.VIEW_PAGER_TABS) {
+			if(VIEW_PAGER_TABS) {
 				 ViewPager pager = new ViewPager(this);
 				 pager.setId(99);
 				 detailsFrame.addView(pager);

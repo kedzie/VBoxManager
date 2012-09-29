@@ -42,6 +42,11 @@ import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class ActionsFragment extends SherlockFragment implements OnItemClickListener {
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
 	
@@ -171,17 +176,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStop() {
 		lbm.unregisterReceiver(_receiver);
-//		new Thread() {
-//			@Override
-//			public void run() {
-//				try {
-//					if(_vmgr.getVBox().getSessionObject().getState().equals(SessionState.LOCKED)) 
-//						_vmgr.getVBox().getSessionObject().unlockMachine();
-//				} catch (IOException e) {
-//					Log.e(TAG, "Exception unlocking machine", e);
-//				}
-//			}
-//		}.start();
 		super.onStop();
 	}
 
@@ -253,11 +247,12 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.TAKE_SNAPSHOT)) 	{
-			TakeSnapshotFragment.getInstance(new BundleBuilder()
+		    Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), 
+                    "snapshotDialog", 
+                    TakeSnapshotFragment.getInstance(new BundleBuilder()
 										.putParcelable(VBoxSvc.BUNDLE, _vmgr)
 										.putProxy(IMachine.BUNDLE, _machine)
-										.create())
-				.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
+										.create()) );
 		} else if(action.equals(VMAction.VIEW_METRICS)) {
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
@@ -275,9 +270,10 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				@Override
 				protected void onResult(byte[] result) {
 					super.onResult(result);
-					ScreenshotDialogFragment.getInstance(
-							new BundleBuilder().putByteArray(ScreenshotDialogFragment.BUNDLE_BYTES, result).create())
-							.show(getSherlockActivity().getSupportFragmentManager(), "dialog");
+					Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), 
+		                    "screenshotDialog", 
+					        ScreenshotDialogFragment.getInstance(
+					            new BundleBuilder().putByteArray(ScreenshotDialogFragment.BUNDLE_BYTES, result).create()) );
 				}
 			}.execute();
 	}

@@ -5,7 +5,7 @@
     android:minHeight="30dp"
     android:updatePeriodMillis="5000"
     android:initialLayout="@layout/appwidget_provider"
-    android:configure="com.kedzie.vbox.widget.ConfigureActivity"
+    android:configure="com.kedzie.vbox.widget.ServerListPickActivity"
     android:resizeMode="horizontal"
     >
 </appwidget-provider>

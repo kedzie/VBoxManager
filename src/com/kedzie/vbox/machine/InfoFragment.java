@@ -13,6 +13,11 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class InfoFragment extends SherlockFragment {
 
 	class LoadInfoTask extends ActionBarTask<IMachine, IMachine> {

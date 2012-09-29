@@ -5,6 +5,10 @@ import java.lang.reflect.Type;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
 /**
@@ -78,5 +82,20 @@ public class Utils {
      */
     public static Class<?> getTypeParameter(Type genericType, int index) {
         return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[index];
+    }
+    
+    /**
+     * Show a DialogFragment with Back Stack
+     * @param manager   FragmentManager
+     * @param tag           tag for Fragment
+     * @param dialog        the DialogFragment implementation
+     */
+    public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
+        FragmentTransaction tx = manager.beginTransaction();
+        Fragment prev = manager.findFragmentByTag(tag);
+        if(prev!=null)
+            tx.remove(prev);
+        tx.addToBackStack(null);
+        dialog.show(tx, tag);
     }
 }

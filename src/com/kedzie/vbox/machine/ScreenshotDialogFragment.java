@@ -26,6 +26,7 @@ import com.kedzie.vbox.task.ActionBarTask;
 /**
  * 
  * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
  */
 public class ScreenshotDialogFragment extends SherlockDialogFragment {
 	public static final String BUNDLE_BYTES = "bytes";

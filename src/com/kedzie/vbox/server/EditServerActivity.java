@@ -25,6 +25,7 @@ public class EditServerActivity extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle state) {
 		super.onCreate(state);
+		setResult(ServerListActivity.RESULT_CANCELED);
 		setContentView(R.layout.server);
 		_server = (Server)(state==null ? getIntent().getParcelableExtra(INTENT_SERVER) : state.getParcelable(INTENT_SERVER));
 		nameText = (TextView)findViewById(R.id.server_name);
@@ -88,11 +89,5 @@ public class EditServerActivity extends SherlockActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		populateServer();
 		outState.putParcelable(INTENT_SERVER, _server);
-	}
-
-	@Override 
-	public void onBackPressed() {
-		setResult(ServerListActivity.RESULT_CANCELED);
-		finish();
 	}
 }

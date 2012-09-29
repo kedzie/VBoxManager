@@ -8,11 +8,16 @@ import android.support.v4.app.FragmentTransaction;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.machine.MachineListBaseFragment;
-import com.kedzie.vbox.machine.MachineListBaseFragment.SelectMachineListener;
+import com.kedzie.vbox.machine.MachineListBaseFragment.OnSelectMachineListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
-public class MachineListFragmentActivity extends BaseActivity implements SelectMachineListener {
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype activity
+ */
+public class MachineListPickActivity extends BaseActivity implements OnSelectMachineListener {
 	
 	/** VirtualBox API */
 	private VBoxSvc _vmgr;
@@ -34,10 +39,7 @@ public class MachineListFragmentActivity extends BaseActivity implements SelectM
 	
 	@Override
 	public void onMachineSelected(IMachine machine) {
-		ConfigureActivity.savePref(this, mAppWidgetId, ConfigureActivity.KEY_IDREF, machine.getIdRef());
-		ConfigureActivity.savePref(this, mAppWidgetId, ConfigureActivity.KEY_SERVER, _vmgr.getServer().getId().toString());
-		ConfigureActivity.savePref(this, mAppWidgetId, ConfigureActivity.KEY_NAME, machine.getName());
-		Provider.updateAppWidget(this, AppWidgetManager.getInstance(this), mAppWidgetId, machine);
+	    ConfigureActivity.savePrefs(this, machine, _vmgr.getServer(), mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
         finish();
 	}
@@ -52,7 +54,7 @@ public class MachineListFragmentActivity extends BaseActivity implements SelectM
 	
 	private class LogoffTask extends DialogTask<Void, Void>	{
 		public LogoffTask(VBoxSvc vmgr) { 
-			super( "LogoffTask", MachineListFragmentActivity.this, vmgr, "Logging Off");
+			super( "LogoffTask", MachineListPickActivity.this, vmgr, "Logging Off");
 		}
 		@Override
 		protected Void work(Void... params) throws Exception {

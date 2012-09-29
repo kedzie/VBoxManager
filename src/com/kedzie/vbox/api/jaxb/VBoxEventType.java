@@ -1,3 +1,4 @@
+
 package com.kedzie.vbox.api.jaxb;
 
 public enum VBoxEventType {
@@ -51,21 +52,23 @@ public enum VBoxEventType {
     ON_CLIPBOARD_MODE_CHANGED("OnClipboardModeChanged"),
     ON_DRAG_AND_DROP_MODE_CHANGED("OnDragAndDropModeChanged"),
     LAST("Last");
+    
     private final String value;
-    public String toString() {
-        return value;
-    }
+
     VBoxEventType(String v) {
         value = v;
     }
+
     public String value() {
         return value;
     }
+
     public String toString() {
         return value;
     }
+
     public static VBoxEventType fromValue(String v) {
-        for (VBoxEventType c: VBoxEventType.values()) {
+        for (VBoxEventType c : VBoxEventType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

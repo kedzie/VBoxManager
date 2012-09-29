@@ -35,6 +35,11 @@ import com.kedzie.vbox.task.ConfigureMetricsTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class MachineListFragment extends MachineListBaseFragment {
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	

@@ -13,6 +13,11 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class LogFragment extends SherlockFragment {
 	private static final int MAX_LOG_SIZE=4096;
 	

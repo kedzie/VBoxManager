@@ -14,7 +14,7 @@
     <string name="menu_options_host_metrics">Host Metrics</string>
     <string name="menu_options_machine_metrics">Machine Metrics</string>
     <string name="menu_options_preferences">Preferences</string>
-    <string name="menu_context_machine_start">Start</string>
+ <string name="menu_context_machine_start">Start</string>
     <string name="menu_context_machine_reset">Reset</string>
     <string name="menu_context_machine_poweroff">Power Off</string>
     <string name="menu_context_machine_pause">Pause</string>
@@ -42,14 +42,14 @@
     <string name="pref_category_metrics">Metrics</string>
     <string name="firstrun_welcome">Welcome</string>
     <string name="firstrun_message" >Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
+    <string name="add_server_question_title">Add new VirtualBox server?</string>
+    <string name="add_server_question">You have no servers defined.  Would you like to add one?</string>
     <string name="snapshot_name">Name</string>
     <string name="snapshot_description">Description</string>
+    <string name="host_metrics">Host Metrics</string>
+    <string name="vbox_version">VirtualBox v.<ff:g id="version">%1$s</ff:g></string>
     <string name="tab_actions">Actions</string>
     <string name="tab_info">Info</string>
     <string name="tab_log">Log</string>
     <string name="tab_snapshots">Snapshots</string>
-    <string name="host_metrics">Host Metrics</string>
-    <string name="machine_context_title">Machine Operations</string>
-    <string name="appwidget_text_format"><ff:g id="prefix">%1$s</ff:g>: <ff:g id="time">%2$s</ff:g></string>
-    <string name="vbox_version">VirtualBox v.<ff:g id="version">%1$s</ff:g></string>
 </resources>

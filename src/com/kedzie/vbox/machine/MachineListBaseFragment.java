@@ -1,11 +1,11 @@
 package com.kedzie.vbox.machine;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +24,11 @@ import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class MachineListBaseFragment extends SherlockFragment {
 	protected static final String TAG = MachineListBaseFragment.class.getSimpleName();
 	
@@ -33,12 +38,12 @@ public class MachineListBaseFragment extends SherlockFragment {
 	/** Selected item index. -1 means it was not set in a saved state. */
 	protected int _curCheckPosition=-1;
 	/** Handles selection of a VM in the list */
-	protected SelectMachineListener _machineSelectedListener;
+	protected OnSelectMachineListener _machineSelectedListener;
 	
 	/**
 	 * Listener who is notified when a VirtualMachine is selected from the list
 	 */
-	public static interface SelectMachineListener {
+	public static interface OnSelectMachineListener {
 		/**
 		 * Virtual Machine has been selected from list
 		 * @param machine The selected {@link IMachine}
@@ -96,12 +101,13 @@ public class MachineListBaseFragment extends SherlockFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		_machineSelectedListener = (SelectMachineListener)activity;
+		_machineSelectedListener = (OnSelectMachineListener)activity;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_listView = new ListView(getActivity());
+		_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
        	_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,15 +118,16 @@ public class MachineListBaseFragment extends SherlockFragment {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		_vmgr = (VBoxSvc)getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
-		_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		_vmgr = (VBoxSvc)((getArguments() != null && getArguments().containsKey(VBoxSvc.BUNDLE)) ? 
+		            getArguments().getParcelable(VBoxSvc.BUNDLE)
+		            : getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE) );
+		
 		if(savedInstanceState!=null)  { 
 			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, savedInstanceState.getString("version")));
     		_curCheckPosition = savedInstanceState.getInt("curChoice", -1);
-    		_machines = (ArrayList<IMachine>)savedInstanceState.getSerializable("machines");
+    		_machines = savedInstanceState.getParcelableArrayList("machines");
     		_listView.setAdapter(new MachineListAdapter(_machines));
     		if(_curCheckPosition>-1)
     			showDetails(_curCheckPosition);
@@ -132,7 +139,7 @@ public class MachineListBaseFragment extends SherlockFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt("curChoice", _curCheckPosition);
-		outState.putSerializable("machines", (Serializable) _machines);
+		outState.putParcelableArrayList("machines", (ArrayList<? extends Parcelable>) _machines);
 		outState.putString("version", _vmgr.getVBox().getVersion());
 	}
 	

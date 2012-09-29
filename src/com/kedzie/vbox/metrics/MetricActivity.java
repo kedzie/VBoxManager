@@ -16,6 +16,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 /**
  * Activity to view metric graphs for Virtual Machine or Host
  * @author Marek Kedzierski
+ * @apiviz.stereotype activity
  */
 public class MetricActivity extends BaseActivity  {
 	private static final String TAG = "MetricActivity";

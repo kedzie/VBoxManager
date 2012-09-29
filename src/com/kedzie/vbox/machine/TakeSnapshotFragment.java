@@ -17,6 +17,11 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.MachineTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype fragment
+ */
 public class TakeSnapshotFragment extends SherlockDialogFragment {
 
 	private IMachine _machine;

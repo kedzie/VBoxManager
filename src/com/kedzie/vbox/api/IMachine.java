@@ -110,11 +110,6 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	 */
 	@KSOAP(cacheable=true) public Integer getMonitorCount();
 
-//	/**
-//	 * @return Object containing all BIOS settings. 
-//	 */
-//	@KSOAP(cacheable=true) public BIOSSettings getBIOSSettings();
-	
 	/**
 	 * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM. 
 	 */
@@ -134,6 +129,11 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 //	 * @return  VirtualBox Remote Desktop Extension (VRDE) server object. 
 //	 */
 //	@KSOAP(cacheable=true) public  IVRDEServer 	getVRDEServer();
+	
+//  /**
+//  * @return Object containing all BIOS settings. 
+//  */
+// @KSOAP(cacheable=true) public BIOSSettings getBIOSSettings();
 	
  	/**
  	 * @return Current session state for this machine. 
@@ -175,22 +175,22 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	 * <p>Locks the machine for the given session to enable the caller to make changes to the machine or start the VM or control VM execution.</p> 
 	 * <p>There are two ways to lock a machine for such uses:<p>
 	 * <ul>
-	 * <li>If you want to make changes to the machine settings, you must obtain an exclusive write lock on the machine by setting <em>lockType</em> to <code>Write</code>.<p>
+	 * <li>If you want to make changes to the machine settings, you must obtain an exclusive write lock on the machine by setting {@link LockType} to {@link LockType.Write}.<p>
 	 * This will only succeed if no other process has locked the machine to prevent conflicting changes. Only after an exclusive write lock has been obtained using this method, one can change all VM settings or execute the VM in the process space of the session object. (Note that the latter is only of interest if you actually want to write a new front-end for virtual machines; but this API gets called internally by the existing front-ends such as VBoxHeadless and the VirtualBox GUI to acquire a write lock on the machine that they are running.)<p>
-	 * On success, write-locking the machine for a session creates a second copy of the IMachine object. It is this second object upon which changes can be made; in VirtualBox terminology, the second copy is "mutable". It is only this second, mutable machine object upon which you can call methods that change the machine state. After having called this method, you can obtain this second, mutable machine object using the ISession::machine attribute.  </li>
-	 * <li> If you only want to check the machine state or control machine execution without actually changing machine settings (e.g. to get access to VM statistics or take a snapshot or save the machine state), then set the <em>lockType</em> argument to <code>Shared</code>.<p>
+	 * On success, write-locking the machine for a session creates a second copy of the IMachine object. It is this second object upon which changes can be made; in VirtualBox terminology, the second copy is "mutable". It is only this second, mutable machine object upon which you can call methods that change the machine state. After having called this method, you can obtain this second, mutable machine object using the {@link ISession#getMachine} attribute.  </li>
+	 * <li> If you only want to check the machine state or control machine execution without actually changing machine settings (e.g. to get access to VM statistics or take a snapshot or save the machine state), then set the {@link LockType} argument to <code>Shared</code>.<p>
 	 * If no other session has obtained a lock, you will obtain an exclusive write lock as described above. However, if another session has already obtained such a lock, then a link to that existing session will be established which allows you to control that existing session.<p>
-	 * To find out which type of lock was obtained, you can inspect ISession::type, which will have been set to either <code>WriteLock</code> or <code>Shared</code>.  </li>
+	 * To find out which type of lock was obtained, you can inspect {@link ISession#getType}, which will have been set to either {@link LockType.WriteLock} or {@link LockType.Shared}.  </li>
 	 * </ul>
-	 * <p>In either case, you can get access to the IConsole object which controls VM execution.<p>
-	 * Also in all of the above cases, one must always call ISession::unlockMachine to release the lock on the machine, or the machine's state will eventually be set to "Aborted".<p>
+	 * <p>In either case, you can get access to the {@link IConsole} object which controls VM execution.<p>
+	 * Also in all of the above cases, one must always call {@link ISession#unlockMachine} to release the lock on the machine, or the machine's state will eventually be set to "Aborted".<p>
 	 * To change settings on a machine, the following sequence is typically performed:<p>
 	 * <ol>
 	 * <li>Call this method to obtain an exclusive write lock for the current session. </li>
-	 * <li>Obtain a mutable <IMachine</a> object from ISession::machine. </li>
-	 * <li>Change the settings of the machine by invoking IMachine</a> methods. </li>
-	 * <li>Call IMachine::saveSettings. </li>
-	 * <li>Release the write lock by calling ISession::unlockMachine. </li>
+	 * <li>Obtain a mutable {@link IMachine}</a> object from {@link ISession#getMachine}. </li>
+	 * <li>Change the settings of the machine by invoking {@link IMachine}</a> methods. </li>
+	 * <li>Call {@link IMachine#saveSettings}. </li>
+	 * <li>Release the write lock by calling {@link ISession#unlockMachine}. </li>
 	 * </ol>
 	 * <dl><dt><b>Expected result codes:</b></dt><dd><table border="1" cellspacing="3" cellpadding="3">
 	 * <tr><td>E_UNEXPECTED</td><td>Virtual machine not registered.   </td></tr>
@@ -200,7 +200,7 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	 * </table>
 	 * </dd></dl>
 	 * @param s  Session object for which the machine will be locked.
-	 * @param lockType	If set to <code>Write</code>, then attempt to acquire an exclusive write lock or fail. If set to <code>Shared</code>, then either acquire an exclusive write lock or establish a link to an existing session.
+	 * @param lockType	If set to {@link LockType.Write}, then attempt to acquire an exclusive write lock or fail. If set to {@link LockType.Shared}, then either acquire an exclusive write lock or establish a link to an existing session.
 	 * @throws IOException
 	 */
 	public void lockMachine(@KSOAP("session")ISession s, @KSOAP("lockType")LockType lockType) throws IOException;
@@ -208,11 +208,11 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	/**
 	 * <p>Spawns a new process that will execute the virtual machine and obtains a shared lock on the machine for the calling session. 
 	 * <p>If launching the VM succeeds, the new VM process will create its own session and write-lock the machine for it, preventing conflicting changes from other processes. If the machine is already locked (because it is already running or because another session has a write lock), launching the VM process will therefore fail. Reversely, future attempts to obtain a write lock will also fail while the machine is running.<p>
-	 * The caller's session object remains separate from the session opened by the new VM process. It receives its own IConsole object which can be used to control machine execution, but it cannot be used to change all VM settings which would be available after a lockMachine call.<p>
-	 * The caller must eventually release the session's shared lock by calling ISession::unlockMachine on the local session object once this call has returned. However, the session's state @see {@linkI Session::state}) will not return to "Unlocked" until the remote session has also unlocked the machine (i.e. the machine has stopped running).<p>
-	 * Launching a VM process can take some time (a new VM is started in a new process, for which memory and other resources need to be set up). Because of this, an IProgress object is returned to allow the caller to wait for this asynchronous operation to be completed. Until then, the caller's session object remains in the "Unlocked" state, and its ISession::machine and ISession::console attributes cannot be accessed. It is recommended to use IProgress::waitForCompletion or similar calls to wait for completion. Completion is signalled when the VM is powered on. If launching the VM fails, error messages can be queried via the progress object, if available.<p>
-	 * The progress object will have at least 2 sub-operations. The first operation covers the period up to the new VM process calls powerUp. The subsequent operations mirror the IConsole::powerUp progress object. Because IConsole::powerUp may require some extra sub-operations, the IProgress::operationCount may change at the completion of operation.<p>
-	 * For details on the teleportation progress operation, see IConsole::powerUp.<p>
+	 * The caller's session object remains separate from the session opened by the new VM process. It receives its own {@link IConsole} object which can be used to control machine execution, but it cannot be used to change all VM settings which would be available after a {@link IMachine#lockMachine} call.<p>
+	 * The caller must eventually release the session's shared lock by calling {@link ISession#unlockMachine} on the local session object once this call has returned. However, the session's state {@link Session#getState}) will not return to {@link SessionState.Unlocked} until the remote session has also unlocked the machine (i.e. the machine has stopped running).<p>
+	 * Launching a VM process can take some time (a new VM is started in a new process, for which memory and other resources need to be set up). Because of this, an {@link IProgress} object is returned to allow the caller to wait for this asynchronous operation to be completed. Until then, the caller's session object remains in the {@link ISessionState#Unlocked} state, and its {@link ISession#getMachine} and {@link ISession#getConsole} attributes cannot be accessed. It is recommended to use {@link IProgress#waitForCompletion} or similar calls to wait for completion. Completion is signalled when the VM is powered on. If launching the VM fails, error messages can be queried via the progress object, if available.<p>
+	 * The progress object will have at least 2 sub-operations. The first operation covers the period up to the new VM process calls powerUp. The subsequent operations mirror the {@link IConsole#powerUp} progress object. Because {@link IConsole#powerUp} may require some extra sub-operations, the {@link IProgress#getOperationCount} may change at the completion of operation.<p>
+	 * For details on the teleportation progress operation, see {@link IConsole#powerUp}.<p>
 	 * The <em>environment</em> argument is a string containing definitions of environment variables in the following format: 
 	 * <pre>
 	 *      NAME[=VALUE]<br>
@@ -228,7 +228,7 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	 * <tr><td>VBOX_E_VM_ERROR Failed to assign machine to session.</td></tr>
 	 * </table>
 	 * </dd></dl>
-	 * @param session	Client session object to which the VM process will be connected (this must be in "Unlocked" state).
+	 * @param session	Client session object to which the VM process will be connected (this must be in {@link SessionState.Unlocked} state).
 	 * @param type	Front-end to use for the new VM process. The following are currently supported: <ul>
 	 * <li><code>"gui"</code>: VirtualBox Qt GUI front-end </li>
 	 * <li><code>"headless"</code>: VBoxHeadless (VRDE Server) front-end </li>
@@ -242,41 +242,39 @@ public interface IMachine extends IManagedObjectRef, Parcelable {
 	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") LaunchMode type) throws IOException;
 	
 	/**
-	 * @param screenId
-	 * @return
+	 * 
 	 */
 	public Map<String, List<String>> querySavedThumbnailSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	/**
-	 * @param screenId
-	 * @return
+	 * 
 	 */
 	public Map<String, List<String>> readSavedThumbnailPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	/**
-	 * @param screenId
-	 * @return
+	 * 
 	 */
 	public Map<String, List<String>> querySavedScreenshotPNGSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	/**
-	 * @param screenId
-	 * @return
+	 * 
 	 */
 	@Deprecated
 	public Map<String, List<String>> readSavedScreenshotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	/**
-	 * @param idx
-	 * @return
+	 * 
 	 */
 	public String queryLogFilename(@KSOAP(type="unsignedInt", value="idx") int idx);
 	
 	/**
-	 * @param idx
-	 * @param offset
-	 * @param size
-	 * @return
+	 * 
 	 */
 	public byte[] readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size);
+	
+	/**
+	 * <p>Array of machine group names of which this machine is a member. </p>
+	 * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
+	 */
+	@KSOAP(cacheable=true) public List<String> getGroups();
 }

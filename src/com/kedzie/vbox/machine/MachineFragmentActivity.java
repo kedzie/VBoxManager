@@ -19,6 +19,11 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype activity
+ */
 public class MachineFragmentActivity extends BaseActivity {
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 	
@@ -28,15 +33,10 @@ public class MachineFragmentActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//TODO make better
-//		if (getResources().getConfiguration().screenWidthDp >= 600) {
-//			NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
-//            return;
-//        }
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
-		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getDrawable("ic_list_os_"+_machine.getOSTypeId().toLowerCase()));
+		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getOSDrawable(_machine.getOSTypeId()));
 		getSupportActionBar().setTitle(_machine.getName());
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		

@@ -4,19 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -39,12 +34,16 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
 
+/**
+ * 
+ * @author Marek Kędzierski
+ * @apiviz.stereotype activity
+ */
 public class ServerListActivity extends SherlockFragmentActivity {
-	private static final String TAG = ServerListActivity.class.getName();
 	static final int REQUEST_CODE_ADD = 0xF000, REQUEST_CODE_EDIT = 0x0F00, RESULT_CODE_SAVE = 0x00F0, RESULT_CODE_DELETE = 0x000F;
 	private static final String FIRST_RUN_PREFERENCE = "first_run";
 
-	private ServerDB _db;
+	private ServerSQlite _db;
 	private ListView listView;
 	
 	/**
@@ -123,71 +122,13 @@ public class ServerListActivity extends SherlockFragmentActivity {
 			return view;
 		}
 	}
-
-	/**
-	 * Table for VirtualBox Servers
-	 */
-	class ServerDB extends SQLiteOpenHelper {
-		public ServerDB(Context context) { 
-			super(context, "vbox.db", null, 3);  
-		}
-		@Override
-		public void onCreate(SQLiteDatabase db) { 
-			Log.i("ServerSQL", "Creating database schema");
-			db.execSQL("CREATE TABLE SERVERS (ID INTEGER PRIMARY KEY, NAME TEXT, HOST TEXT, SSL INTEGER, PORT INTEGER, USERNAME TEXT, PASSWORD TEXT);");    
-		}
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w(TAG, "DB upgrade [" + oldVersion + "-->" + newVersion + "], destroying data");
-			db.execSQL("DROP TABLE IF EXISTS SERVERS");
-			onCreate(db);
-		}
-		public List<Server> query() {
-			Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "NAME", "HOST", "SSL", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
-			List<Server> ret = new ArrayList<Server>();
-			for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
-				ret.add(new Server(
-						c.getLong(c.getColumnIndex("ID")),  
-						c.getString(c.getColumnIndex("NAME")), 
-						c.getString(c.getColumnIndex("HOST")),
-						c.getInt(c.getColumnIndex("SSL"))>0,
-						c.getInt(c.getColumnIndex("PORT")),
-						c.getString(c.getColumnIndex("USERNAME")),
-						c.getString(c.getColumnIndex("PASSWORD"))));
-			return ret;
-		}
-		public void insert(Server s) {
-			ContentValues c = new ContentValues();
-			c.put("NAME", s.getName());
-			c.put("HOST", s.getHost());
-			c.put("SSL", s.isSSL());
-			c.put("PORT", s.getPort());
-			c.put("USERNAME", s.getUsername());
-			c.put("PASSWORD", s.getPassword());
-			s.setId(getWritableDatabase().insert( "SERVERS", null, c));
-		}
-		public void update(Server s) {
-			ContentValues c = new ContentValues();
-			c.put("ID", s.getId());
-			c.put("NAME", s.getName());
-			c.put("HOST", s.getHost());
-			c.put("SSL", s.isSSL());
-			c.put("PORT", s.getPort());
-			c.put("USERNAME", s.getUsername());
-			c.put("PASSWORD", s.getPassword());
-			getWritableDatabase().update( "SERVERS", c, "ID  =  ?", new String[] { s.getId().toString() } );
-		}
-		public void delete(Long id) {
-			getWritableDatabase().delete( "SERVERS", "ID =  ?", new String[] { id.toString() } );
-		}
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		getSupportActionBar().setHomeButtonEnabled(false);
-		_db = new ServerDB(this);
+		_db = new ServerSQlite(this);
 		listView = new ListView(this);
 		listView.setAdapter( new ServerListAdapter(ServerListActivity.this) );
 		setContentView(listView);

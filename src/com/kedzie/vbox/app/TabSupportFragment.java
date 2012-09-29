@@ -34,7 +34,7 @@ public class TabSupportFragment implements TabSupport {
             _tag=tag;
             // if fragment exists remove it.. might be from previous machine
             if ((_fragment=_activity.getSupportFragmentManager().findFragmentByTag(_tag)) != null) {
-            	Log.w(TAG, "Detaching existing Fragment for tab: " + _tag);
+            	Log.w(TAG, "Removing existing Fragment for tab: " + _tag);
                 FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
                 ft.remove(_fragment);
                 ft.commit();
