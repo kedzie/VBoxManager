@@ -30,7 +30,7 @@ public class MachineListPickActivity extends BaseActivity implements OnSelectMac
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		 mAppWidgetId = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-		if (savedInstanceState != null) {
+		if (savedInstanceState==null) {
 			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
 			tx.add(android.R.id.content, new MachineListBaseFragment());
 			tx.commit();
@@ -39,7 +39,7 @@ public class MachineListPickActivity extends BaseActivity implements OnSelectMac
 	
 	@Override
 	public void onMachineSelected(IMachine machine) {
-	    ConfigureActivity.savePrefs(this, machine, _vmgr.getServer(), mAppWidgetId);
+	    Provider.savePrefs(this, machine, _vmgr.getServer(), mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
         finish();
 	}

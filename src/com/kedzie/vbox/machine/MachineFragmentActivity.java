@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -9,7 +10,6 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
@@ -33,29 +33,31 @@ public class MachineFragmentActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE 
+		        && getResources().getConfiguration().smallestScreenWidthDp>=600) {
+            finish();
+            return;
+        }
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
-		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
-		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getOSDrawable(_machine.getOSTypeId()));
-		getSupportActionBar().setTitle(_machine.getName());
+//		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getOSDrawable(_machine.getOSTypeId()));
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		ViewPager pager = new ViewPager(this);
+		pager.setId(99);
+		setContentView(pager);
+		_tabSupport = new TabSupportViewPager(this, pager);
+		_tabSupport.addTab("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras());
+		_tabSupport.addTab("Details", InfoFragment.class,getIntent().getExtras());
+		_tabSupport.addTab("Log", LogFragment.class, getIntent().getExtras());
+		_tabSupport.addTab("Snapshots", SnapshotFragment.class, getIntent().getExtras());
 		
-		if(savedInstanceState==null) {
-			ViewPager pager = new ViewPager(this);
-			pager.setId(99);
-			setContentView(pager);
-			_tabSupport = new TabSupportViewPager(this, pager);
-			_tabSupport.addTab("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras());
-			_tabSupport.addTab("Info", InfoFragment.class,getIntent().getExtras());
-			_tabSupport.addTab("Log", LogFragment.class, getIntent().getExtras());
-			_tabSupport.addTab("Snapshots", SnapshotFragment.class, getIntent().getExtras());
-		} else {
-			getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
-		}
+		if(savedInstanceState!=null)
+		    getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 	}
-	
+
 	@Override
-    protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
     }

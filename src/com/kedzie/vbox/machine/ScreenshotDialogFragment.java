@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +91,11 @@ public class ScreenshotDialogFragment extends SherlockDialogFragment {
 			params[0].compress(Bitmap.CompressFormat.JPEG, 85, fOut);
 			fOut.flush();
 			fOut.close();
-			MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+			try {
+                MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception storing in MediaStore", e);
+            }
 			return null;
 		}
 	}

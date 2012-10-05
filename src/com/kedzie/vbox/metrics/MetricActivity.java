@@ -1,10 +1,15 @@
 package com.kedzie.vbox.metrics;
 
-import java.lang.Thread.State;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -19,14 +24,13 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @apiviz.stereotype activity
  */
 public class MetricActivity extends BaseActivity  {
-	private static final String TAG = "MetricActivity";
-	
 	private static final int REQUEST_CODE_PREFS = 1;
-
+	static final String ACTION_METRIC_QUERY = "com.kedzie.vbox.METRIC_QUERY";
 	public static final String INTENT_TITLE="t",INTENT_OBJECT = "o",
 			INTENT_RAM_AVAILABLE = "ra", INTENT_RAM_METRICS="rm",
 			INTENT_CPU_METRICS="cm";
 
+	private ViewPager _flipper;
 	private MetricView cpuV, ramV;
 	private DataThread _thread;
 	private VBoxSvc _vmgr;
@@ -37,30 +41,39 @@ public class MetricActivity extends BaseActivity  {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_TITLE));
-		
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
-		setContentView(R.layout.metrics);
-		
 		_count = Utils.getIntPreference(this, MetricPreferencesActivity.COUNT);
-		_period = Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD);
-		
-		cpuV = (MetricView) findViewById(R.id.cpu_metrics);
-		cpuV.init(100, getIntent().getStringArrayExtra(INTENT_CPU_METRICS));
-		cpuV.setMetricPrefs(_count, _period);
-		ramV = (MetricView) findViewById(R.id.ram_metrics);
-		ramV.init( _ramAvailable*1000, getIntent().getStringArrayExtra(INTENT_RAM_METRICS));
-		ramV.setMetricPrefs(_count, _period);
+        _period = Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD);
+        
+        View content = LayoutInflater.from(this).inflate(R.layout.metrics, null);
+        cpuV = (MetricView) content.findViewById(R.id.cpu_metrics);
+        cpuV.init(100, getIntent().getStringArrayExtra(INTENT_CPU_METRICS));
+        cpuV.setMetricPrefs(_count, _period);
+        ramV = (MetricView) content.findViewById(R.id.ram_metrics);
+        ramV.init( _ramAvailable*1000, getIntent().getStringArrayExtra(INTENT_RAM_METRICS));
+        ramV.setMetricPrefs(_count, _period);
+        
+        //for large devices show both metric graphs on same page
+        if(getResources().getConfiguration().smallestScreenWidthDp>=600) {
+            setContentView(content);
+        } else { //for smaller devices show a single metric graph on the page
+            MetricViewPagerAdapter adapter = new MetricViewPagerAdapter();
+            adapter.addView(cpuV);
+            adapter.addView(ramV);
+            _flipper = new ViewPager(this);
+            _flipper.setId(99);
+            _flipper.setAdapter(adapter);
+            setContentView(_flipper);
+        }
 	}
 	
-	@Override
+    @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.i(TAG, "onActivityResult");
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFS) {
 			_count = Utils.getIntPreference(this, MetricPreferencesActivity.COUNT);
@@ -88,20 +101,50 @@ public class MetricActivity extends BaseActivity  {
 
 	@Override
 	protected void onStart() {
-		Log.i(TAG, "onStart");
 		super.onStart();
-		_thread = new DataThread(_vmgr, _object, Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD), cpuV, ramV);
+		_thread = new DataThread(this, _vmgr, _object, Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
 	
 	@Override 
 	protected void onStop() {
-		Log.i(TAG, "onStop");
-		if(_thread!=null){
-			if(_thread.getState().equals(State.TIMED_WAITING))
-				_thread.interrupt();
+		if(_thread!=null)
 			_thread.quit();
-		}
 		super.onStop();
 	}
+	
+    class MetricViewPagerAdapter extends PagerAdapter {
+        private List<MetricView> _views = new ArrayList<MetricView>();
+        
+        public void addView(MetricView view) {
+            _views.add(view);
+        }
+        
+        @Override
+        public int getCount() {
+            return _views.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return _views.get(position).getHeader();
+        }
+        
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view.equals(object);
+        }
+        
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            MetricView view = _views.get(position);
+            container.addView(view);
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View)object);
+        }
+    }
 }

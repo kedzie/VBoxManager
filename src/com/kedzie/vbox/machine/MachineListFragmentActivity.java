@@ -36,7 +36,7 @@ public class MachineListFragmentActivity extends BaseActivity implements OnSelec
 	private VBoxSvc _vmgr;
 	/** {@link ActionBar} tabs */
 	private TabSupport _tabSupport;
-	
+	private ViewPager _pager;
 
 	private class LogoffTask extends DialogTask<Void, Void>	{
 		public LogoffTask(VBoxSvc vmgr) { 
@@ -61,10 +61,10 @@ public class MachineListFragmentActivity extends BaseActivity implements OnSelec
 		if(_dualPane) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 			if(VIEW_PAGER_TABS) {
-				 ViewPager pager = new ViewPager(this);
-				 pager.setId(99);
-				 detailsFrame.addView(pager);
-				 _tabSupport = new TabSupportViewPager(this, pager);
+				 _pager = new ViewPager(this);
+				 _pager.setId(99);
+				 detailsFrame.addView(_pager);
+				 _tabSupport = new TabSupportViewPager(this, _pager);
 			} else {
 				_tabSupport = new TabSupportFragment(this, R.id.details);
 			}
@@ -85,6 +85,7 @@ public class MachineListFragmentActivity extends BaseActivity implements OnSelec
 	public void onMachineSelected(IMachine machine) {
 		if (_dualPane) {
 			_tabSupport.removeAllTabs();
+//			_tabSupport = new TabSupportViewPager(this, _pager);
 			Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr)
 															.putProxy(IMachine.BUNDLE, machine)
 															.putBoolean("dualPane", true)

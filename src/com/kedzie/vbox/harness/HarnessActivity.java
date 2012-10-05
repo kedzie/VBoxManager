@@ -1,6 +1,6 @@
 package com.kedzie.vbox.harness;
 
-import java.util.Map;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,12 +12,8 @@ import android.widget.Button;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.ISession;
-import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
@@ -39,7 +35,7 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.harness);
 		
-		final Server server = new Server(null, "192.168.2.3", false, 18083, "kedzie", "Mk0204$$" );
+		final Server server = new Server(null, "192.168.1.99", false, 18083, "kedzie", "Mk0204$$" );
 		((Button)findViewById(R.id.testApiButton)).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -115,15 +111,20 @@ public class HarnessActivity extends SherlockFragmentActivity {
 		protected String work(Server... server) throws Exception {
 			_vmgr = new VBoxSvc(server[0]);
 			_vmgr.logon();
-			IMachine m = _vmgr.getVBox().getMachines().get(0);
-			ISession session = _vmgr.getVBox().getSessionObject();
-			m.lockMachine(session, LockType.SHARED);
-			IConsole console = session.getConsole();
-			IDisplay display = console.getDisplay();
-			Map<String, String> res = display.getScreenResolution(0);
-			session.unlockMachine();
+			String result = "";
+			IMachine m = _vmgr.getVBox().getMachines().get(2);
+			List<String> vGroups = _vmgr.getVBox().getMachineGroups();
+			result += vGroups.toString() + "\n";
+			List<String> mGroups = m.getGroups();
+			result += mGroups.toString();
+//			ISession session = _vmgr.getVBox().getSessionObject();
+//			m.lockMachine(session, LockType.SHARED);
+//			IConsole console = session.getConsole();
+//			IDisplay display = console.getDisplay();
+//			Map<String, String> res = display.getScreenResolution(0);
+//			session.unlockMachine();
 			_vmgr.logoff();
-			return res.get("width") + "x" + res.get("height");
+			return result;
 		}
 		
 		@Override

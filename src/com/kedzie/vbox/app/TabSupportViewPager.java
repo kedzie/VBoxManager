@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -19,41 +23,92 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
  * @author Marek Kedzierski
  */
-public class TabSupportViewPager extends FragmentPagerAdapter  implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
+public class TabSupportViewPager extends PagerAdapter  implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
 	private static final String TAG = "TabSupportViewPager";
 
 	private SherlockFragmentActivity _activity;
 	private ActionBar _actionBar;
     private ViewPager _viewPager;
     private List<TabFragmentInfo<?>> _tabs = new ArrayList<TabFragmentInfo<?>>();
-	
+    private final FragmentManager mFragmentManager;
+    private FragmentTransaction mCurTransaction;
+    private Fragment mCurrentPrimaryItem;
+    
     public TabSupportViewPager(SherlockFragmentActivity activity, ViewPager pager) {
-        super(activity.getSupportFragmentManager());
+        mFragmentManager = activity.getSupportFragmentManager();
         _activity=activity;
         _actionBar=activity.getSupportActionBar();
         _viewPager=pager;
         _viewPager.setAdapter(this);
         _viewPager.setOnPageChangeListener(this);
     }
+
+    @Override
+    public void startUpdate(ViewGroup container) {
+        mCurTransaction = mFragmentManager.beginTransaction();
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        String name = makeFragmentName(container.getId(), position);
+        Fragment fragment = mFragmentManager.findFragmentByTag(name);
+        if (fragment != null) {
+            Log.i(TAG, "Attaching item #" + position);
+            mCurTransaction.attach(fragment);
+        } else {
+            TabFragmentInfo<?> info = _tabs.get(position);
+            fragment = Fragment.instantiate(_activity, info.clazz.getName(), info.args);
+            Log.i(TAG, "Adding item #" + position);
+            mCurTransaction.add(container.getId(), fragment, makeFragmentName(container.getId(), position));
+        }
+        if (fragment != mCurrentPrimaryItem) {
+            fragment.setMenuVisibility(false);
+            fragment.setUserVisibleHint(false);
+        }
+        return fragment;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        Log.i(TAG, "Detaching item #" + position);
+        mCurTransaction.remove((Fragment)object);
+    }
+
+    @Override
+    public void finishUpdate(ViewGroup container) {
+        if (mCurTransaction != null) {
+            mCurTransaction.commitAllowingStateLoss();
+            mCurTransaction = null;
+            mFragmentManager.executePendingTransactions();
+        }
+    }
     
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        Fragment fragment = (Fragment)object;
+        if (fragment != mCurrentPrimaryItem) {
+            if (mCurrentPrimaryItem != null) {
+                mCurrentPrimaryItem.setMenuVisibility(false);
+                mCurrentPrimaryItem.setUserVisibleHint(false);
+            }
+            if (fragment != null) {
+                fragment.setMenuVisibility(true);
+                fragment.setUserVisibleHint(true);
+            }
+            mCurrentPrimaryItem = fragment;
+        }
+    }
+
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return ((Fragment)object).getView() == view;
+    }
+
     @Override
     public int getCount() {
         return _tabs.size(); 
     }
 
-    @Override
-    public Fragment getItem(int position) {
-        Log.i(TAG, "getItem #"+position);
-        TabFragmentInfo<?> info = _tabs.get(position);
-        return Fragment.instantiate(_activity, info.clazz.getName(), info.args);
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.i(TAG, "detach fragment #"+position);
-        super.destroyItem(container, position, object);
-    }
-    
     private static String makeFragmentName(int viewId, long id) {
         return "android:switcher:" + viewId + ":" + id;
     }
@@ -79,15 +134,15 @@ public class TabSupportViewPager extends FragmentPagerAdapter  implements TabSup
 
 	@Override
 	public void removeAllTabs() {
-		for(int i=0; i<_tabs.size(); i++) {
-	    	Fragment f = _activity.getSupportFragmentManager().findFragmentByTag(makeFragmentName(_viewPager.getId(),i));
-	    	if(f!=null) {
-	    		FragmentTransaction t = _activity.getSupportFragmentManager().beginTransaction();
-				t.remove(f);
-				t.commit();
-				Log.i(TAG, "removed Fragment from Manager: " + f);
-	    	}
-		}
+//		for(int i=0; i<_tabs.size(); i++) {
+//	    	Fragment f = _activity.getSupportFragmentManager().findFragmentByTag(makeFragmentName(_viewPager.getId(),i));
+//	    	if(f!=null) {
+//	    		FragmentTransaction t = _activity.getSupportFragmentManager().beginTransaction();
+//				t.remove(f);
+//				t.commit();
+//				Log.i(TAG, "removed Fragment from Manager: " + f);
+//	    	}
+//		}
 		_activity.getSupportActionBar().removeAllTabs();
 		_tabs.clear();
 		notifyDataSetChanged();
@@ -105,6 +160,8 @@ public class TabSupportViewPager extends FragmentPagerAdapter  implements TabSup
                 _viewPager.setCurrentItem(i);
     }
 	
+	@Override public Parcelable saveState() {return null; }
+    @Override public void restoreState(Parcelable state, ClassLoader loader) {}
     @Override public void onPageScrollStateChanged(int state) {}
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
     @Override public void onTabUnselected(Tab tab, FragmentTransaction ft) {}

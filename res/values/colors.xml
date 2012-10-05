@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <color name="CPU_Load_Kernel">#ff0000ff</color>
-   <color name="CPU_Load_Kernel_Fill">#640000ff</color>
+   <color name="CPU_Load_Kernel_Fill">#3C0000ff</color>
    
    <color name="CPU_Load_User">#ff00ff00</color>
-   <color name="CPU_Load_User_Fill">#6400ff00</color>
+   <color name="CPU_Load_User_Fill">#3C00ff00</color>
    
    <color name="RAM_Usage_Used">#ffff0000</color>
-   <color name="RAM_Usage_Used_Fill">#64ff0000</color>
+   <color name="RAM_Usage_Used_Fill">#3Cff0000</color>
    
    <color name="RAM_Usage_Free">#ffff00ff</color>
-   <color name="RAM_Usage_Free_Fill">#64ff00ff</color>
+   <color name="RAM_Usage_Free_Fill">#3Cff00ff</color>
    
    <color name="RAM_Usage_Shared">#ffff0000</color>
-   <color name="RAM_Usage_Shared_Fill">#64ff0000</color>
+   <color name="RAM_Usage_Shared_Fill">#3Cff0000</color>
    
    <color name="RAM_Usage_Cache">#ffffff00</color>
-   <color name="RAM_Usage_Cache_Fill">#64ffff00</color>
+   <color name="RAM_Usage_Cache_Fill">#3Cffff00</color>
    
    <color name="RAM_Usage_Total">#ff00ffff</color>
-   <color name="RAM_Usage_Total_Fill">#6400ffff</color>
+   <color name="RAM_Usage_Total_Fill">#3C00ffff</color>
 </resources>

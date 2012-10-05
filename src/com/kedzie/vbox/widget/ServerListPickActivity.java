@@ -15,7 +15,6 @@ import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListBaseFragment;
-import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.machine.MachineListBaseFragment.OnSelectMachineListener;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.server.ServerListFragment.OnSelectServerListener;
@@ -42,7 +41,8 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
         mAppWidgetId = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        
+        getSupportActionBar().setTitle("Select Server for Widget");
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.widget_server_list);
         FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
         _dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
@@ -58,15 +58,21 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
                     new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vboxApi).create()));
             tx.commit();
         } else {
-            startActivity(new Intent(ServerListPickActivity.this, MachineListFragmentActivity.class)
+            startActivityForResult(new Intent(ServerListPickActivity.this, MachineListPickActivity.class)
                     .putExtra(VBoxSvc.BUNDLE, vboxApi)
-                    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
+                    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId), 0);
         }
     }
     
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setResult(resultCode, data);
+        finish();
+    }
+
+    @Override
     public void onMachineSelected(IMachine machine) {
-        ConfigureActivity.savePrefs(this, machine, _server, mAppWidgetId);
+        Provider.savePrefs(this, machine, _server, mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
         finish();
     }

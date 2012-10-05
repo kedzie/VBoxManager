@@ -1,5 +1,6 @@
 package com.kedzie.vbox.api;
 
+import java.io.IOException;
 import java.util.Map;
 
 import com.kedzie.vbox.soap.KSOAP;
@@ -41,7 +42,7 @@ public interface IManagedObjectRef  {
 	 * Returns the name of the interface that this managed object represents, for example, "IMachine", as a string. 
 	 */
 	@KSOAP(prefix="IManagedObjectRef")
-	public String getInterfaceName();
+	public String getInterfaceName() throws IOException;
 	
 	/**
 	 * Releases this managed object reference and frees the resources that were allocated for it in the webservice server process.

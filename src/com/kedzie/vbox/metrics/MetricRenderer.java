@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
@@ -47,6 +48,8 @@ public class MetricRenderer extends View {
 	private Rect bounds = new Rect();
 	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint();
 	private Path path = new Path();
+	private Path hGridPath = new Path();
+	private Path vGridPath = new Path();
 	
 	public MetricRenderer(Context context, int bgColor, int gridColor, int textColor, int borderColor) {
 		super(context);
@@ -65,11 +68,14 @@ public class MetricRenderer extends View {
 		gridPaint.setColor(gridColor);
 		gridPaint.setAntiAlias(true);
 		gridPaint.setStrokeWidth(1.5f);
-
-		metricPaint.setStrokeWidth(2.0f);
+		gridPaint.setStyle(Style.STROKE);
+		gridPaint.setPathEffect(new DashPathEffect(new float[] { 5, 15, 4, 8 }, 0));
+		
+		metricPaint.setStrokeWidth(4.0f);
 		metricPaint.setStrokeJoin(Join.MITER);
 		metricPaint.setStrokeCap(Cap.ROUND);
 		metricPaint.setAntiAlias(true);
+		metricPaint.setStyle(Style.STROKE);
 		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0x96000000);
 		
 		metricFill.setStyle(Style.FILL);
@@ -87,6 +93,11 @@ public class MetricRenderer extends View {
 		vStep = (float)_height/(float)_max;
 		hStep = _width/_count;
 		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%2$d\thStep/vStep: %3$d,%4$.2f",period, count, hStep, vStep ));
+		initGrid();
+	}
+	
+	private void initGrid() {
+	    //TODO draw grid bitmap.
 	}
 
 	@Override
@@ -116,23 +127,31 @@ public class MetricRenderer extends View {
 		int hPixelStep = hGridStep*hStep;
 		int horiz = bounds.right;
 		int seconds = 0;
+		hGridPath.reset();
 		for(int i=1; i<=GRID_LINES_HORIZ; i++) {	//horizontal grid
 			horiz -= hPixelStep;
 			seconds += hGridStep;
-			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
+			hGridPath.moveTo(horiz, bounds.bottom);
+			hGridPath.lineTo(horiz, bounds.top);
+//			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
 			canvas.drawText(seconds+" sec", horiz, bounds.bottom-20, textPaint);
 		}
+		canvas.drawPath(hGridPath, gridPaint);
 		
 		int yVal = 0;
 		int vert = bounds.bottom;
 		int vValStep = _max/GRID_LINES_VERT;
 		int vPixelStep = (int)(vValStep*vStep);
+		vGridPath.reset();
 		for( int i=1; i<=GRID_LINES_VERT; i++) {
 			yVal += vValStep;
 			vert -= vPixelStep;
-			canvas.drawLine(bounds.left, vert, bounds.right, vert, gridPaint);
+			vGridPath.moveTo(bounds.left, vert);
+			vGridPath.lineTo(bounds.right, vert);
+//			canvas.drawLine(bounds.left, vert, bounds.right, vert, gridPaint);
 			canvas.drawText(yVal+_unit, bounds.left+10, vert+4, textPaint);
 		}
+		canvas.drawPath(vGridPath, gridPaint);
 
 		for(String metric : _metrics) {
 			if(!_data.containsKey(metric)) continue;
@@ -142,21 +161,20 @@ public class MetricRenderer extends View {
 			metricFill.setColor(VBoxApplication.getColor(getContext(), colorName+"_Fill"));
 			
 			int[] data = _data.get(metric).values;
-			int prevX=bounds.right;
-			int prevY=bounds.bottom-(int)(data[data.length-1]*vStep);
+
+			int x=bounds.right;
+			path.reset();
+			path.moveTo(x, bounds.bottom-(int)(data[data.length-1]*vStep));
 			for(int i=data.length-2; i>=0; i--) {
-				int x=prevX-hStep;
-				int y = bounds.bottom-(int)(data[i]*vStep);
-				path.reset();
-				path.moveTo(prevX, bounds.bottom);
-				path.lineTo(prevX, prevY);
-				path.lineTo(x, y);
-				path.lineTo(x, bounds.bottom);
-				path.close();
-				canvas.drawPath(path, metricFill);
-				canvas.drawLine(prevX, prevY, x, y, metricPaint);
-				prevX=x;prevY=y;
+			    x-=hStep;
+                path.lineTo(x, bounds.bottom-(int)(data[i]*vStep));
 			}
+			canvas.drawPath(path, metricPaint);
+			//close the path for fill
+			path.lineTo(x, bounds.bottom);
+			path.lineTo(bounds.right, bounds.bottom);
+			path.close();
+			canvas.drawPath(path, metricFill);
 		}
 	}
 }

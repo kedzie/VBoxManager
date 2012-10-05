@@ -29,11 +29,35 @@ public class ServerSQlite extends SQLiteOpenHelper {
     
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(TAG, "DB upgrade [" + oldVersion + "-->" + newVersion + "], destroying data");
-        db.execSQL("DROP TABLE IF EXISTS SERVERS");
-        onCreate(db);
+        Log.w(TAG, "DB upgrade [" + oldVersion + "-->" + newVersion + "], migrating data");
+        db.execSQL("ALTER TABLE SERVERS ADD COLUMN SSL INTEGER");
     }
     
+    /**
+     * Get a server by id
+     * @param id    the id of the server
+     * @return the server
+     */
+    public Server get(Long id) {
+        Cursor c = getReadableDatabase().query("SERVERS", 
+                new String[] { "ID", "NAME", "HOST", "SSL", "PORT", "USERNAME", "PASSWORD" }, 
+                "ID=?", new String [] { id.toString() }, null, null, null);
+        if(!c.moveToFirst())
+            return null;
+        return new Server(
+                    c.getLong(c.getColumnIndex("ID")),  
+                    c.getString(c.getColumnIndex("NAME")), 
+                    c.getString(c.getColumnIndex("HOST")),
+                    c.getInt(c.getColumnIndex("SSL"))>0,
+                    c.getInt(c.getColumnIndex("PORT")),
+                    c.getString(c.getColumnIndex("USERNAME")),
+                    c.getString(c.getColumnIndex("PASSWORD")));
+    }
+    
+    /**
+     * Query all the servers
+     * @return All the Servers
+     */
     public List<Server> query() {
         Cursor c = getReadableDatabase().query("SERVERS", new String[] { "ID", "NAME", "HOST", "SSL", "PORT", "USERNAME", "PASSWORD" }, null, null, null, null, null);
         List<Server> ret = new ArrayList<Server>();
@@ -49,6 +73,10 @@ public class ServerSQlite extends SQLiteOpenHelper {
         return ret;
     }
     
+    /**
+     * Insert a server
+     * @param s the server
+     */
     public void insert(Server s) {
         ContentValues c = new ContentValues();
         c.put("NAME", s.getName());
@@ -60,6 +88,10 @@ public class ServerSQlite extends SQLiteOpenHelper {
         s.setId(getWritableDatabase().insert( "SERVERS", null, c));
     }
     
+    /**
+     * Update a server
+     * @param s the server
+     */
     public void update(Server s) {
         ContentValues c = new ContentValues();
         c.put("ID", s.getId());
@@ -72,6 +104,10 @@ public class ServerSQlite extends SQLiteOpenHelper {
         getWritableDatabase().update( "SERVERS", c, "ID  =  ?", new String[] { s.getId().toString() } );
     }
     
+    /**
+     * Delete a server
+     * @param id    the id of server
+     */
     public void delete(Long id) {
         getWritableDatabase().delete( "SERVERS", "ID =  ?", new String[] { id.toString() } );
     }

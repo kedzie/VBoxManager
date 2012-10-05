@@ -52,4 +52,7 @@
     <string name="tab_info">Info</string>
     <string name="tab_log">Log</string>
     <string name="tab_snapshots">Snapshots</string>
+    <string name="edit_snapshot">Edit Snapshot</string>
+    <string name="notification_text">Virtual Machine <ff:g id="vm">%1$s</ff:g> changed state to [<ff:g id="state">%2$s</ff:g>]</string>
+    <string name="notification_title"><ff:g id="vm">%1$s</ff:g> is <ff:g id="state">%2$s</ff:g></string>
 </resources>

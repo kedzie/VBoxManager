@@ -152,7 +152,6 @@ public class MachineListBaseFragment extends SherlockFragment {
 	}
 	
 	void showDetails(int index) {
-		if(_curCheckPosition==index) return;
         _curCheckPosition = index;
        	_listView.setItemChecked(index, true);
        	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));

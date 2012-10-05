@@ -19,7 +19,7 @@ import com.kedzie.vbox.task.ActionBarTask;
  * @apiviz.stereotype fragment
  */
 public class LogFragment extends SherlockFragment {
-	private static final int MAX_LOG_SIZE=4096;
+	private static final int MAX_LOG_SIZE=409600; //400 Kbps
 	
 	class LoadLogTask extends ActionBarTask<IMachine, String> {
 		public LoadLogTask() {
@@ -33,8 +33,9 @@ public class LogFragment extends SherlockFragment {
 
 		@Override
 		protected void onResult(String result) {
-				Log.i(TAG,"Log size: " + result.length());
-				_logText.setText(result);
+			if(result.length()==MAX_LOG_SIZE)	
+			    Log.w(TAG,"Log size: " + result.length());
+			_logText.setText(_log=result);
 		}
 	}
 
@@ -58,12 +59,10 @@ public class LogFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState!=null) {
-			_log = savedInstanceState.getString("log");
-			_logText.setText(_log);
-		} else {
+		if(savedInstanceState!=null) 
+			_logText.setText(_log = savedInstanceState.getString("log"));
+		else
 			new LoadLogTask().execute(_machine);
-		}
 	}
 
 	@Override

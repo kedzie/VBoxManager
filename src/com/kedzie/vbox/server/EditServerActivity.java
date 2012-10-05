@@ -25,7 +25,7 @@ public class EditServerActivity extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle state) {
 		super.onCreate(state);
-		setResult(ServerListActivity.RESULT_CANCELED);
+		setResult(RESULT_CANCELED);
 		setContentView(R.layout.server);
 		_server = (Server)(state==null ? getIntent().getParcelableExtra(INTENT_SERVER) : state.getParcelable(INTENT_SERVER));
 		nameText = (TextView)findViewById(R.id.server_name);
@@ -57,11 +57,11 @@ public class EditServerActivity extends SherlockActivity {
 				case R.id.server_list_option_menu_save:
 					populateServer();
 					getIntent().putExtra(INTENT_SERVER, _server);
-					setResult(ServerListActivity.RESULT_CODE_SAVE, getIntent());
+					setResult(ServerListFragment.RESULT_CODE_SAVE, getIntent());
 					finish();
 					return true;
 				case R.id.server_list_option_menu_delete:
-					setResult(ServerListActivity.RESULT_CODE_DELETE, getIntent());
+					setResult(ServerListFragment.RESULT_CODE_DELETE, getIntent());
 					finish();
 					return true;
 				default:
@@ -70,7 +70,7 @@ public class EditServerActivity extends SherlockActivity {
 			}
 			@Override
 			public void onDestroyActionMode(ActionMode mode) {	
-				setResult(ServerListActivity.RESULT_CANCELED, getIntent());
+				setResult(RESULT_CANCELED, getIntent());
 				finish();
 			}
 		});

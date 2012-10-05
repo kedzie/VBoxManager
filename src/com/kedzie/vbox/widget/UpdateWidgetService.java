@@ -1,10 +1,17 @@
 package com.kedzie.vbox.widget;
 
-import java.util.List;
+import java.io.IOException;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.MachineView;
+import com.kedzie.vbox.server.Server;
+import com.kedzie.vbox.server.ServerSQlite;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Update widgets
@@ -20,12 +27,49 @@ public class UpdateWidgetService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		List<Integer> widgetIds = intent.getIntegerArrayListExtra(INTENT_WIDGET_IDS);
+		int[] widgetIds = intent.getIntArrayExtra(INTENT_WIDGET_IDS);
+		if(widgetIds==null)
+		    return;
 		for(int widgetId : widgetIds) {
 			Log.i(TAG, "Updating App Widget: " + widgetId);
-			//if logged on
-			
+			String machineName = Provider.loadPref(this, widgetId, Provider.KEY_NAME);
+			if(Utils.isEmpty(machineName))
+			    continue;
+			String machineId = Provider.loadPref(this, widgetId, Provider.KEY_IDREF);
+			Server server = loadServer(Long.valueOf(Provider.loadPref(this, widgetId, Provider.KEY_SERVER)));
+			VBoxSvc vboxApi = new VBoxSvc(server);
+			IMachine machine = vboxApi.getProxy(IMachine.class, machineId);
+            //check if logged on
+			try {
+			    machine.getInterfaceName();
+			} catch(IOException e) {
+			    machine = loginAndFindMachine(vboxApi, machineName);
+			    Provider.savePref(this, widgetId, Provider.KEY_IDREF, machine.getIdRef());
+			}
+			MachineView.cacheProperties(machine);
+			Provider.updateAppWidget(this, widgetId, machine);
 		}
 	}
-
+	
+	private IMachine loginAndFindMachine(VBoxSvc vboxApi, String machineName) {
+	    try {
+            vboxApi.logon();
+            for(IMachine m : vboxApi.getVBox().getMachines()) {
+                if(m.getName().equals(machineName))
+                    return m;
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error logging on", e);
+        }
+	    return null;
+	}
+	
+	private Server loadServer(long id) {
+	    ServerSQlite db = new ServerSQlite(this);
+        try {
+         return db.get(id);   
+        } finally {
+            db.close();
+        }
+	}
 }

@@ -114,7 +114,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 */
 	protected void showAlert(Throwable e) {
 		Log.e(TAG, "caught throwable", e);
-		while(Utils.isNullString(e.getMessage()) && e.getCause()!=null)
+		while(Utils.isEmpty(e.getMessage()) && e.getCause()!=null)
 			e = e.getCause();
 		new BundleBuilder().putString("title", e.getClass().getSimpleName()).putString("msg", e.getMessage()).sendMessage(_handler, WHAT_ERROR);
 	}

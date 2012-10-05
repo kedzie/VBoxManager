@@ -2,10 +2,10 @@ package com.kedzie.vbox.machine;
 
 import java.util.Map;
 
+import android.animation.LayoutTransition;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,9 +57,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	private VBoxSvc _vmgr;
 	/** The Virtual Machine */
 	private IMachine _machine;
-	/** Local Broadcast Manager */
 	private LocalBroadcastManager lbm;
-	private boolean _dualPane;
 	
 	/** Event-handling local broadcasts */
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
@@ -141,24 +139,19 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		 lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
-	}
-
-	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
         _machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
-        _dualPane = getArguments().getBoolean("dualPane");
-        setHasOptionsMenu(!_dualPane);
+        setHasOptionsMenu(!getArguments().getBoolean("dualPane"));
     }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_headerView = new MachineView(getApp(), getActivity());
 		_listView = new ListView(getActivity());
+		_listView.setClipChildren(false);
+		_listView.setLayoutTransition(new LayoutTransition());
 		_listView.addHeaderView(_headerView);
 		_listView.setOnItemClickListener(this);
 		return _listView;
@@ -167,9 +160,10 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		IntentFilter filter = new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name());
-		filter.addAction(VBoxEventType.ON_SESSION_STATE_CHANGED.name());
-		lbm.registerReceiver(_receiver, filter);
+		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
+		lbm.registerReceiver(_receiver, Utils.createIntentFilter(
+		        VBoxEventType.ON_MACHINE_STATE_CHANGED.name(),
+		        VBoxEventType.ON_SESSION_STATE_CHANGED.name()));
 		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
 

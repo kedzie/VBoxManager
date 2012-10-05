@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -36,7 +37,7 @@ public class Utils {
 	 * @param formatting params
 	 */
 	public static void toastLong(Context ctx, String msg, Object...params) {
-		Toast.makeText(ctx, isNullArray(params) ? msg : String.format(msg, params), Toast.LENGTH_LONG).show();
+		Toast.makeText(ctx, isEmpty(params) ? msg : String.format(msg, params), Toast.LENGTH_LONG).show();
 	}
 	
 	/**
@@ -45,14 +46,24 @@ public class Utils {
 	 * @param msg Message to show
 	 */
 	public static void toastShort(Context ctx, String msg, Object...params) {
-		Toast.makeText(ctx, isNullArray(params) ? msg : String.format(msg, params), Toast.LENGTH_SHORT).show();
+		Toast.makeText(ctx, isEmpty(params) ? msg : String.format(msg, params), Toast.LENGTH_SHORT).show();
 	}
 	
-	public static boolean isNullString(String s) {
+	/**
+	 * Check if String is <code>null</code> or empty string
+	 * @param s    the string
+	 * @return     <code>true</code> if empty string or null, <code>false</code> otherwise
+	 */
+	public static boolean isEmpty(String s) {
 		return s==null || s.equals("");
 	}
 	
-	public static boolean isNullArray(Object []array) {
+	/**
+     * Check if array is <code>null</code> or empty
+     * @param array    the array
+     * @return              <code>true</code> if empty or null, <code>false</code> otherwise
+     */
+	public static boolean isEmpty(Object []array) {
 		return array==null || array.length==0;
 	}
 	
@@ -66,15 +77,6 @@ public class Utils {
 	}
 	
 	/**
-	 * Get type parameter of Generic Type
-	 * @param genericType the generic {@link Type}
-	 * @return type parameter
-	 */
-	public static Class<?> getTypeParameter(Type genericType) {
-		return getTypeParameter(genericType, 0);
-	}
-	
-	/**
      * Get type parameter of Generic Type
      * @param genericType the generic {@link Type}
      * @param index which parameter
@@ -83,7 +85,16 @@ public class Utils {
     public static Class<?> getTypeParameter(Type genericType, int index) {
         return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[index];
     }
-    
+	
+	/**
+	 * Get first type parameter of Generic Type
+	 * @param genericType the generic {@link Type}
+	 * @return type parameter
+	 */
+	public static Class<?> getTypeParameter(Type genericType) {
+		return getTypeParameter(genericType, 0);
+	}
+	
     /**
      * Show a DialogFragment with Back Stack
      * @param manager   FragmentManager
@@ -97,5 +108,17 @@ public class Utils {
             tx.remove(prev);
         tx.addToBackStack(null);
         dialog.show(tx, tag);
+    }
+    
+    /**
+     * Create an {@link IntentFilter} for multiple actions
+     * @param actions   accepted actions
+     * @return      the {@link IntentFilter}
+     */
+    public static IntentFilter createIntentFilter(String...actions) {
+        IntentFilter filter = new IntentFilter();
+        for(String action : actions)
+            filter.addAction(action);
+        return filter;
     }
 }

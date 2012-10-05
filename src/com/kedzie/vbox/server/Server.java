@@ -108,7 +108,7 @@ public class Server implements Parcelable {
 		this.password = password;
 	}
 	public String toString() {
-		return !Utils.isNullString(name) ? name : (ssl ? "https://" : "http://") + getHost() + ":" + getPort();
+		return !Utils.isEmpty(name) ? name : (ssl ? "https://" : "http://") + getHost() + ":" + getPort();
 	}
 	@Override
 	public int hashCode() {

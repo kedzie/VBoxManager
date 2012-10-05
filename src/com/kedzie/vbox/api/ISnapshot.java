@@ -28,7 +28,6 @@ static ClassLoader loader = ISession.class.getClassLoader();
 			return new ISnapshot[size]; 
 		}
 	};
-
 	
 	public String getName();
 	public String getId();
@@ -38,4 +37,8 @@ static ClassLoader loader = ISession.class.getClassLoader();
 	public ISnapshot getParent();
 	public List<ISnapshot> getChildren();
 	public IMachine getMachine();
+	
+	public void setName(@KSOAP("name") String name);
+	
+	public void setDescription(@KSOAP("description") String description);
 }

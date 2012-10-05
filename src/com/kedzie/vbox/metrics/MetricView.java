@@ -2,8 +2,12 @@ package com.kedzie.vbox.metrics;
 
 import java.util.Map;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,31 +20,51 @@ public class MetricView extends LinearLayout {
 	private TextView _titleTextView;
 	private MetricRenderer _renderer;
 	private LinearLayout _metricNames;
+	private String _header;
+	private BroadcastReceiver _receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(MetricActivity.ACTION_METRIC_QUERY)) {
+//                _renderer.setQuery(q);
+            }
+        }
+    };
 	
 	public MetricView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MetricView, 0, 0);
 		try {
-			setOrientation(LinearLayout.VERTICAL);
-			String header = a.getString(R.styleable.MetricView_header);
+			_header = a.getString(R.styleable.MetricView_header);
 			int bgColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
 			int gridColor = a.getColor(R.styleable.MetricView_gridColor, android.R.color.black);
 			int textColor = a.getColor(R.styleable.MetricView_textColor, android.R.color.black);
 			int borderColor = a.getColor(R.styleable.MetricView_borderColor, android.R.color.holo_blue_dark);
-			_titleTextView = new TextView(context);
-			_titleTextView.setText(header);
-			_titleTextView.setTextAppearance(context, R.style.HeaderText);
-			addView(_titleTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-			_renderer = new MetricRenderer(context, bgColor, gridColor, textColor, borderColor);
-			LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-			p.weight=1;
-			addView(_renderer, p);
-			_metricNames = new LinearLayout(context);
-			_metricNames.setOrientation(LinearLayout.HORIZONTAL);
-			addView(_metricNames, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+			createView(bgColor, gridColor, textColor, borderColor);
 		} finally {
 			a.recycle();
 		}
+	}
+	
+	public MetricView(Context context, String header) {
+	    super(context);
+	    _header=header;
+	    createView(0xFFFFFFFF, android.R.color.black, android.R.color.black, android.R.color.holo_blue_dark);
+	}
+	
+	public void createView(int bgColor, int gridColor, int textColor, int borderColor) {
+	    setOrientation(LinearLayout.VERTICAL);
+	    _titleTextView = new TextView(getContext());
+        _titleTextView.setText(_header);
+        _titleTextView.setTextAppearance(getContext(), R.style.HeaderText);
+        addView(_titleTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        _renderer = new MetricRenderer(getContext(), bgColor, gridColor, textColor, borderColor);
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        p.weight=1;
+        addView(_renderer, p);
+        _metricNames = new LinearLayout(getContext());
+        _metricNames.setOrientation(LinearLayout.HORIZONTAL);
+        addView(_metricNames, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(_receiver, new IntentFilter(MetricActivity.ACTION_METRIC_QUERY));
 	}
 
 	public void init(int max, String []metrics) {
@@ -55,11 +79,19 @@ public class MetricView extends LinearLayout {
 		}
 	}
 	
+	public void close() {
+	    LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(_receiver);
+	}
+	
 	public void setMetricPrefs(int count, int period) {
 		_renderer.setMetricPrefs(count, period);
 	}
 
 	public void setQueries(Map<String,MetricQuery> q) {
 		_renderer.setQuery(q);
+	}
+	
+	public String getHeader() {
+	    return _header;
 	}
 }

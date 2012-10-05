@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
@@ -186,8 +187,9 @@ public class VBoxSvc implements Parcelable {
 			if ((ks.getPropertyCount()==0 && !isCollection && !isMap) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
 				return null;
 			if(isMap) {
-			    Class<?> valueClazz = Utils.getTypeParameter(genericType, 1);
-			    if(Collection.class.isAssignableFrom(valueClazz)) {  //Map<String, List<String>>
+			    Type valueType = ((ParameterizedType)genericType).getActualTypeArguments()[1];
+			    Log.i(TAG, String.format("Unmarshalling map.  %1$s==>%2$s", Utils.getTypeParameter(genericType, 0), valueType));
+			    if(!(valueType instanceof Class)) {  //Map<String, List<String>>
 			        Map<String, List<String>> map = new HashMap<String, List<String>>();
 	                PropertyInfo info = new PropertyInfo();
 	                for (int i = 0; i < ks.getPropertyCount(); i++) {
