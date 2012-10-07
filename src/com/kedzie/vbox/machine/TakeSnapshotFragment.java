@@ -45,7 +45,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Dialog dialog = super.onCreateDialog(savedInstanceState);
-		dialog.setTitle("New Snapshot");
+		dialog.setTitle(_snapshot==null ? "New Snapshot" : "Edit Snapshot");
 		return dialog;
 	}
 

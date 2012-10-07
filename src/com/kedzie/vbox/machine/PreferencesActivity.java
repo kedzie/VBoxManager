@@ -13,6 +13,7 @@ import com.kedzie.vbox.R;
 public class PreferencesActivity extends SherlockPreferenceActivity {
 	public static final String ICON_COLORS="colored_icons";
 	public static final String NOTIFICATIONS = "notifications";
+	public static final String PREF_WIDGET_INTERVAL = "widget_interval";
 
     @SuppressWarnings("deprecation")
 	@Override

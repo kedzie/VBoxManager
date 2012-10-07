@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/context_menu_restore_snapshot" android:title="@string/menu_context_snapshot_restore"  />
-    <item android:id="@+id/context_menu_delete_snapshot" android:title="@string/menu_context_snapshot_delete"  />
-    <item android:id="@+id/context_menu_details_snapshot" android:title="@string/menu_context_snapshot_details" />
+    <item android:id="@+id/context_menu_restore_snapshot" 
+        android:title="@string/menu_context_snapshot_restore"  
+        android:icon="@drawable/ic_list_start"/>
+    
+    <item android:id="@+id/context_menu_delete_snapshot" 
+        android:title="@string/menu_context_snapshot_delete"
+        android:icon="@drawable/ic_list_snapshot_del"  />
+    
+    <item android:id="@+id/context_menu_details_snapshot" 
+        android:title="@string/menu_context_snapshot_details" 
+        android:icon="@drawable/ic_menu_edit"/>
 </menu>

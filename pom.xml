@@ -63,10 +63,8 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
 		<directory>bin</directory>
 		<outputDirectory>bin/classes</outputDirectory>
-		<testOutputDirectory>bin/test-classes</testOutputDirectory>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>

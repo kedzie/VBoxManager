@@ -35,7 +35,7 @@ public class MachineFragmentActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		if (getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE 
 		        && getResources().getConfiguration().smallestScreenWidthDp>=600) {
-            finish();
+		    NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
             return;
         }
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
@@ -72,7 +72,7 @@ public class MachineFragmentActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+		    NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
 			return true;
 		case R.id.option_menu_preferences:
 			startActivityForResult(new Intent(this, PreferencesActivity.class), REQUEST_CODE_PREFERENCES);

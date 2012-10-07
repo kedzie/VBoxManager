@@ -90,9 +90,8 @@ public class MachineListBaseFragment extends SherlockFragment {
 		}
 		
 		public View getView(int position, View view, ViewGroup parent) {
-			if (view == null) {
+			if (view == null) 
 				view = new MachineView(getApp(), getActivity());
-			}
 			((MachineView)view).update(getItem(position));
 			return view;
 		}

@@ -68,7 +68,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				IMachine m = BundleBuilder.getProxy(intent.getExtras(), IMachine.BUNDLE, IMachine.class);
 				new UpdateMachineViewTask(_vmgr).execute(m);
 			} else if (intent.getAction().equals(VBoxEventType.ON_SESSION_STATE_CHANGED.name())) {
-				new HandleEventTask(_vmgr).execute(intent.getExtras());
+				new HandleSessionChangedEvent(_vmgr).execute(intent.getExtras());
 			}
 		}
 	};
@@ -100,9 +100,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	/**
 	 * Handle SessionStateChanged event
 	 */
-	class HandleEventTask extends ActionBarTask<Bundle, SessionState> {
+	class HandleSessionChangedEvent extends ActionBarTask<Bundle, SessionState> {
 		
-		public HandleEventTask(VBoxSvc vmgr) {  
+		public HandleSessionChangedEvent(VBoxSvc vmgr) {  
 			super( "HandleEventTask", getSherlockActivity(), vmgr);
 		}
 
@@ -114,7 +114,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 
 		@Override
 		protected void onResult(SessionState result)	{
-			Utils.toastLong(getActivity(), "Session changed State: "+result);
 		}
 	}
 	

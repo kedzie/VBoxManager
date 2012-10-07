@@ -14,7 +14,7 @@
     <string name="menu_options_host_metrics">Host Metrics</string>
     <string name="menu_options_machine_metrics">Machine Metrics</string>
     <string name="menu_options_preferences">Preferences</string>
- <string name="menu_context_machine_start">Start</string>
+    <string name="menu_context_machine_start">Start</string>
     <string name="menu_context_machine_reset">Reset</string>
     <string name="menu_context_machine_poweroff">Power Off</string>
     <string name="menu_context_machine_pause">Pause</string>
@@ -55,4 +55,5 @@
     <string name="edit_snapshot">Edit Snapshot</string>
     <string name="notification_text">Virtual Machine <ff:g id="vm">%1$s</ff:g> changed state to [<ff:g id="state">%2$s</ff:g>]</string>
     <string name="notification_title"><ff:g id="vm">%1$s</ff:g> is <ff:g id="state">%2$s</ff:g></string>
+    <string name="widget_server_list">Select Server for Widget</string>
 </resources>

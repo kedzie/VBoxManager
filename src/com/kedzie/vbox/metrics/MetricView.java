@@ -73,7 +73,7 @@ public class MetricView extends LinearLayout {
 		for(String m : metrics) {
 			TextView textView = new TextView(getContext());
 			textView.setText(m);
-			textView.setTextColor(VBoxApplication.getColor(getContext(), m.replace('/', '_')));
+			textView.setTextColor(VBoxApplication.getInstance().getColor(getContext(), m.replace('/', '_')));
 			textView.setPadding(0,2,8,0);
 			_metricNames.addView(textView, p);
 		}

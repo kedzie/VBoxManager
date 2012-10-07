@@ -18,13 +18,20 @@ import com.kedzie.vbox.machine.PreferencesActivity;
  * @apiviz.stereotype application
  */
 public class VBoxApplication extends Application {
-	protected Map<String,Integer> resources = new HashMap<String, Integer>();
-	protected Map<String,Integer> resources_color = new HashMap<String, Integer>();
-	protected static Map<String, Integer> metricColor = new HashMap<String, Integer>();
+    private Map<String,Integer> resources = new HashMap<String, Integer>();
+	private Map<String,Integer> resources_color = new HashMap<String, Integer>();
+	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
+	
+	private static VBoxApplication _instance;
+	
+	public static VBoxApplication getInstance() {
+	    return _instance;
+	}
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		_instance=this;
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, false);
 		
@@ -43,6 +50,7 @@ public class VBoxApplication extends Application {
 		putResource(MachineState.RESTORING.name(), R.drawable.ic_list_save, R.drawable.ic_list_save_c);		
 		putResource(MachineState.ABORTED.name(), R.drawable.ic_list_abort, R.drawable.ic_list_abort_c);		
 		putResource(MachineState.STUCK.name(), R.drawable.ic_list_stuck, R.drawable.ic_list_stuck_c);		
+		
 		putResource( VMAction.START.name(), R.drawable.ic_list_start , R.drawable.ic_list_start_c );		
 		putResource(VMAction.POWER_OFF.name(), R.drawable.ic_list_poweroff, R.drawable.ic_list_poweroff_c);		
 		putResource(VMAction.PAUSE.name(), R.drawable.ic_list_pause, R.drawable.ic_list_pause_c);		
@@ -122,7 +130,7 @@ public class VBoxApplication extends Application {
 	 * @param name     name of color resource
 	 * @return     4 byte color value <code>(0xAARRGGBB)</code>
 	 */
-	public static int getColor(Context context, String name) {
+	public int getColor(Context context, String name) {
 		if(!metricColor.containsKey(name)) 
 			metricColor.put(name, context.getResources().getColor( context.getResources().getIdentifier(name, "color", context.getPackageName())) );
 		return metricColor.get(name);

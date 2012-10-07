@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.service.textservice.SpellCheckerService.Session;
 
 import com.kedzie.vbox.api.jaxb.ChipsetType;
 import com.kedzie.vbox.api.jaxb.LockType;
@@ -25,7 +26,7 @@ Note that {@link IMachine} does not provide methods to control virtual machine e
 <dl><dt><b>See also:</b></dt><dd>{@link ISession}, {@link IConsole}</dd></dl>
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
-public interface IMachine extends IManagedObjectRef, Parcelable {
+public interface IMachine extends IManagedObjectRef, Parcelable, TreeNode {
 	public static String BUNDLE = "machine";
 	static final ClassLoader LOADER = IMachine.class.getClassLoader();
 	

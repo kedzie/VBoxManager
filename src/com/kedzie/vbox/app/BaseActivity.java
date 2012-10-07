@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
+import com.kedzie.vbox.VBoxApplication;
 
 /**
  * Base Activity for all application activities.  Enables indeterminate progress bar and disables it.
@@ -21,5 +22,9 @@ public class BaseActivity extends SherlockFragmentActivity {
 	protected void onStart() {
 		super.onStart();
 		setProgressBarIndeterminateVisibility(false);
+	}
+	
+	public VBoxApplication getApp() {
+	    return (VBoxApplication)getApplication();
 	}
 }

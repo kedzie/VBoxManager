@@ -73,7 +73,6 @@ public class MachineListFragment extends MachineListBaseFragment {
 
 		@Override
 		protected void onResult(IMachine result)	{
-			Utils.toastShort(getActivity(), "%s changed State: [%s]", result.getName(), result.getState());
 			getAdapter().setNotifyOnChange(false);
 			int position = getAdapter().getPosition(result);
 			getAdapter().remove(result);
@@ -95,7 +94,6 @@ public class MachineListFragment extends MachineListBaseFragment {
         
         @Override
         public boolean onCreateActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
-            _listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             _listView.setItemChecked(getAdapter().getPosition(_machine), true);
             mode.getMenuInflater().inflate(R.menu.machine_list_context, menu);
             return true;
@@ -196,13 +194,7 @@ public class MachineListFragment extends MachineListBaseFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
-		View detailsFrame = getActivity().findViewById(R.id.details);
-		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-		_listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
-		
 		setHasOptionsMenu(true);
-	
 		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
 		lbm.registerReceiver(_notificationReceiver, new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
 	}

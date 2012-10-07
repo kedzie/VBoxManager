@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -19,22 +20,17 @@ import android.view.View;
 import com.kedzie.vbox.VBoxApplication;
 
 public class MetricRenderer extends View {
-	/**  */
+    private static String TAG = "MetricRenderer";
+	/** # of vertical grid lines */
 	private static final int GRID_LINES_VERT = 10;
-
-	/**  */
+	/** # of horizontal grid lines */
 	private static final int GRID_LINES_HORIZ = 10;
-
-	private static String TAG = MetricRenderer.class.getSimpleName();
-	
 	/** Maximum Y Value */
 	protected int _max;
 	/** # of data points */
 	protected int _count;
 	/** Time interval between datapoints */
 	protected int _period;
-	/** view size (pixels) */
-	protected int _width, _height;
 	/** Metric names to render */
 	protected String[] _metrics;
 	/** pixels/period */
@@ -50,6 +46,8 @@ public class MetricRenderer extends View {
 	private Path path = new Path();
 	private Path hGridPath = new Path();
 	private Path vGridPath = new Path();
+	private Bitmap _gridBitmap;
+	private Rect gridBounds = new Rect();
 	
 	public MetricRenderer(Context context, int bgColor, int gridColor, int textColor, int borderColor) {
 		super(context);
@@ -90,22 +88,19 @@ public class MetricRenderer extends View {
 	public void setMetricPrefs(int count, int period) {
 		_count=count;
 		_period=period;
-		vStep = (float)_height/(float)_max;
-		hStep = _width/_count;
+		vStep = (float)getHeight()/(float)_max;
+		hStep = getWidth()/_count;
 		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%2$d\thStep/vStep: %3$d,%4$.2f",period, count, hStep, vStep ));
-		initGrid();
+		Log.i(TAG, "Drawing grid Bitmap");
+        _gridBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas gridCanvas = new Canvas(_gridBitmap);
+        drawGrid(gridCanvas);
 	}
 	
-	private void initGrid() {
-	    //TODO draw grid bitmap.
-	}
-
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		Log.i(TAG, "OnSizeChanged("+getWidth()+"," + getHeight() + ")");
-		_width=getWidth();
-		_height=getHeight();
+		Log.i(TAG, "OnSizeChanged("+w+"," + h + ")");
 		setMetricPrefs(_count, _period);
 	}
 	
@@ -115,50 +110,55 @@ public class MetricRenderer extends View {
 		postInvalidate();
 	}
 	
+	private void drawGrid(Canvas canvas) {
+	    canvas.getClipBounds(gridBounds);
+        
+	    canvas.drawRect(bounds, bgPaint);
+        canvas.drawRect(bounds, borderPaint);
+	    int hGridStep = _count/GRID_LINES_HORIZ*_period;
+        int hPixelStep = hGridStep*hStep;
+        int horiz = bounds.right;
+        int seconds = 0;
+        hGridPath.reset();
+        for(int i=1; i<=GRID_LINES_HORIZ; i++) {    //horizontal grid
+            horiz -= hPixelStep;
+            seconds += hGridStep;
+            hGridPath.moveTo(horiz, bounds.bottom);
+            hGridPath.lineTo(horiz, bounds.top);
+            canvas.drawText(seconds+" sec", horiz, bounds.bottom-20, textPaint);
+        }
+        canvas.drawPath(hGridPath, gridPaint);
+        
+        int yVal = 0;
+        int vert = bounds.bottom;
+        int vValStep = _max/GRID_LINES_VERT;
+        int vPixelStep = (int)(vValStep*vStep);
+        vGridPath.reset();
+        for( int i=1; i<=GRID_LINES_VERT; i++) {
+            yVal += vValStep;
+            vert -= vPixelStep;
+            vGridPath.moveTo(bounds.left, vert);
+            vGridPath.lineTo(bounds.right, vert);
+            canvas.drawText(yVal+_unit, bounds.left+10, vert+4, textPaint);
+        }
+        canvas.drawPath(vGridPath, gridPaint);
+	}
+	
 	@Override
 	protected synchronized  void onDraw(Canvas canvas) {
-		canvas.getClipBounds(bounds);
-		canvas.drawRect(bounds, bgPaint);
-		canvas.drawRect(bounds, borderPaint);
-		if(this.isInEditMode())
-			return;
+	    canvas.getClipBounds(bounds);
+	    
+		if(_gridBitmap!=null)
+		    canvas.drawBitmap(_gridBitmap, 0, 0, null);
+		else
+		    drawGrid(canvas);
 		
-		int hGridStep = _count/GRID_LINES_HORIZ*_period;
-		int hPixelStep = hGridStep*hStep;
-		int horiz = bounds.right;
-		int seconds = 0;
-		hGridPath.reset();
-		for(int i=1; i<=GRID_LINES_HORIZ; i++) {	//horizontal grid
-			horiz -= hPixelStep;
-			seconds += hGridStep;
-			hGridPath.moveTo(horiz, bounds.bottom);
-			hGridPath.lineTo(horiz, bounds.top);
-//			canvas.drawLine(horiz, bounds.bottom, horiz, bounds.top, gridPaint);
-			canvas.drawText(seconds+" sec", horiz, bounds.bottom-20, textPaint);
-		}
-		canvas.drawPath(hGridPath, gridPaint);
-		
-		int yVal = 0;
-		int vert = bounds.bottom;
-		int vValStep = _max/GRID_LINES_VERT;
-		int vPixelStep = (int)(vValStep*vStep);
-		vGridPath.reset();
-		for( int i=1; i<=GRID_LINES_VERT; i++) {
-			yVal += vValStep;
-			vert -= vPixelStep;
-			vGridPath.moveTo(bounds.left, vert);
-			vGridPath.lineTo(bounds.right, vert);
-//			canvas.drawLine(bounds.left, vert, bounds.right, vert, gridPaint);
-			canvas.drawText(yVal+_unit, bounds.left+10, vert+4, textPaint);
-		}
-		canvas.drawPath(vGridPath, gridPaint);
-
 		for(String metric : _metrics) {
 			if(!_data.containsKey(metric)) continue;
 			
 			String colorName = metric.replace('/', '_').replace("Guest_","");
-			metricPaint.setColor(VBoxApplication.getColor(getContext(), colorName));
-			metricFill.setColor(VBoxApplication.getColor(getContext(), colorName+"_Fill"));
+			metricPaint.setColor(VBoxApplication.getInstance().getColor(getContext(), colorName));
+			metricFill.setColor(VBoxApplication.getInstance().getColor(getContext(), colorName+"_Fill"));
 			
 			int[] data = _data.get(metric).values;
 

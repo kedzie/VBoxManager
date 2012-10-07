@@ -7,12 +7,12 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     
     <application android:name=".VBoxApplication"  android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/Theme.Sherlock">
-<!-- 		<activity android:label="Test Harness" android:name=".harness.HarnessActivity"> -->
-<!-- 			<intent-filter> -->
-<!--                 		<action android:name="android.intent.action.MAIN"/> -->
-<!--                 		<category android:name="android.intent.category.LAUNCHER"/> -->
-<!--             		</intent-filter> -->
-<!--         	</activity> -->
+		<activity android:label="Test Harness" android:name=".harness.HarnessActivity">
+			<intent-filter>
+                		<action android:name="android.intent.action.MAIN"/>
+                		<category android:name="android.intent.category.LAUNCHER"/>
+            		</intent-filter>
+        	</activity>
 		<activity android:name=".server.ServerListFragmentActivity"  android:label="@string/app_name" 
 		    	android:configChanges="orientation" android:uiOptions="splitActionBarWhenNarrow">
 			<intent-filter>
@@ -46,7 +46,7 @@
 	<service android:name=".event.EventNotificationService"/>
 	
 	<!-- App Widget Declarations -->
-	<receiver android:name=".widget.Provider">
+	<receiver android:name=".widget.Provider" android:label="Virtual Machine (1x3)">
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_provider"/>
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

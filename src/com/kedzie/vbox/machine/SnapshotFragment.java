@@ -57,6 +57,7 @@ public class SnapshotFragment extends SherlockFragment {
 
 		@Override
 		protected ISnapshot work(IMachine... params) throws Exception {
+		    params[0].clearCache();
 			ISnapshot root = params[0].getCurrentSnapshot();
 			if(root==null) return null;
 			while(root.getParent()!=null)
@@ -71,6 +72,7 @@ public class SnapshotFragment extends SherlockFragment {
 		 */
 		protected void cache(ISnapshot s) {
 			s.getName();
+			s.getDescription();
 			for(ISnapshot child : s.getChildren())
 				cache(child);
 		}

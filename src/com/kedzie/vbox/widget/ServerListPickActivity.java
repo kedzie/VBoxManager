@@ -13,7 +13,6 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListBaseFragment;
 import com.kedzie.vbox.machine.MachineListBaseFragment.OnSelectMachineListener;
 import com.kedzie.vbox.server.Server;
@@ -41,7 +40,7 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
         super.onCreate(savedInstanceState);
         setResult(RESULT_CANCELED);
         mAppWidgetId = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        getSupportActionBar().setTitle("Select Server for Widget");
+        getSupportActionBar().setTitle(R.string.widget_server_list);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.widget_server_list);
         FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
@@ -89,29 +88,20 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
      * Log on to VirtualBox webservice, load machine list
      */
     class LogonTask extends DialogTask<Server, IVirtualBox> {
-        public LogonTask() { 
-            super( "LogonTask", ServerListPickActivity.this, null, "Connecting");
-        }
-
+        public LogonTask() { super( "LogonTask", ServerListPickActivity.this, null, "Connecting"); }
         @Override
         protected IVirtualBox work(Server... params) throws Exception {
             _vmgr = new VBoxSvc(params[0]);
-            _vmgr.logon();
-            _vmgr.getVBox().getVersion();
-            return _vmgr.getVBox();
+            return _vmgr.logon();
         }
-
         @Override 
         protected void onResult(IVirtualBox vbox) {
-            Utils.toastShort(ServerListPickActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
             launchMachineList(_vmgr);
         }
     }
     
     private class LogoffTask extends DialogTask<Void, Void> {
-        public LogoffTask(VBoxSvc vmgr) { 
-            super( "LogoffTask", ServerListPickActivity.this, vmgr, "Logging Off");
-        }
+        public LogoffTask(VBoxSvc vmgr) { super( "LogoffTask", ServerListPickActivity.this, vmgr, "Logging Off"); }
         @Override
         protected Void work(Void... params) throws Exception {
             _vmgr.logoff();

@@ -6,7 +6,9 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +70,10 @@ public class MetricActivity extends BaseActivity  {
             _flipper = new ViewPager(this);
             _flipper.setId(99);
             _flipper.setAdapter(adapter);
+            PagerTabStrip tabStrip = new PagerTabStrip(this);
+            ViewPager.LayoutParams params = new ViewPager.LayoutParams();
+            params.gravity=Gravity.TOP;
+            _flipper.addView(tabStrip, params);
             setContentView(_flipper);
         }
 	}
