@@ -113,58 +113,6 @@ public class SnapshotFragment extends SherlockFragment {
 		}
 	}
 	
-/*    class HandleTakenEventTask extends ActionBarTask<Bundle, ISnapshot> {
-        
-        public HandleTakenEventTask(VBoxSvc vmgr) {  
-            super( "HandleTakenEventTask", getSherlockActivity(), vmgr);
-        }
-
-        @Override
-        protected ISnapshot work(Bundle... params) throws Exception {
-            _machine.clearCache();
-            ISnapshot newSnapshot = _machine.getCurrentSnapshot();
-            newSnapshot.getParent();
-            newSnapshot.getName();
-            return newSnapshot;
-        }
-
-        @Override
-        protected void onResult(ISnapshot result)    {
-            _treeBuilder.addRelation(result.getParent(), result);
-        }
-    }
-    
-    class HandleDeletedEventTask extends ActionBarTask<Bundle, ISnapshot> {
-        
-        public HandleDeletedEventTask(VBoxSvc vmgr) {  
-            super( "HandleDeletedEventTask", getSherlockActivity(), vmgr);
-        }
-
-        @Override
-        protected ISnapshot work(Bundle... params) throws Exception {
-            ISnapshotDeletedEvent event = (ISnapshotDeletedEvent)BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
-            ISnapshot deleted = getSnapshotById(event.getSnapshotId(), _rootSnapshot);
-            return deleted;
-        }
-
-        @Override
-        protected void onResult(ISnapshot result)    {
-            Utils.toastLong(getActivity(), "Snapshot Deleted: "+result);
-            _stateManager.removeNodeRecursively(result);
-        }
-    }
-    
-    ISnapshot getSnapshotById(String id, ISnapshot current) {
-        if(current.getId().equals(id))
-            return current;
-        for(ISnapshot child : current.getChildren()) {
-            ISnapshot found = getSnapshotById(id, child);
-            if(found!=null)
-                return found;
-        }
-        return null;
-    }*/
-	
 	protected VBoxSvc _vmgr;
 	protected IMachine _machine;
 	private ISnapshot _rootSnapshot;
@@ -332,4 +280,56 @@ public class SnapshotFragment extends SherlockFragment {
 		}
 		return false;
 	}
+	
+	/*    class HandleTakenEventTask extends ActionBarTask<Bundle, ISnapshot> {
+    
+    public HandleTakenEventTask(VBoxSvc vmgr) {  
+        super( "HandleTakenEventTask", getSherlockActivity(), vmgr);
+    }
+
+    @Override
+    protected ISnapshot work(Bundle... params) throws Exception {
+        _machine.clearCache();
+        ISnapshot newSnapshot = _machine.getCurrentSnapshot();
+        newSnapshot.getParent();
+        newSnapshot.getName();
+        return newSnapshot;
+    }
+
+    @Override
+    protected void onResult(ISnapshot result)    {
+        _treeBuilder.addRelation(result.getParent(), result);
+    }
+}
+
+class HandleDeletedEventTask extends ActionBarTask<Bundle, ISnapshot> {
+    
+    public HandleDeletedEventTask(VBoxSvc vmgr) {  
+        super( "HandleDeletedEventTask", getSherlockActivity(), vmgr);
+    }
+
+    @Override
+    protected ISnapshot work(Bundle... params) throws Exception {
+        ISnapshotDeletedEvent event = (ISnapshotDeletedEvent)BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
+        ISnapshot deleted = getSnapshotById(event.getSnapshotId(), _rootSnapshot);
+        return deleted;
+    }
+
+    @Override
+    protected void onResult(ISnapshot result)    {
+        Utils.toastLong(getActivity(), "Snapshot Deleted: "+result);
+        _stateManager.removeNodeRecursively(result);
+    }
+}
+
+ISnapshot getSnapshotById(String id, ISnapshot current) {
+    if(current.getId().equals(id))
+        return current;
+    for(ISnapshot child : current.getChildren()) {
+        ISnapshot found = getSnapshotById(id, child);
+        if(found!=null)
+            return found;
+    }
+    return null;
+}*/
 }

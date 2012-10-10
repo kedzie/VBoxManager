@@ -91,10 +91,12 @@ public class MetricRenderer extends View {
 		vStep = (float)getHeight()/(float)_max;
 		hStep = getWidth()/_count;
 		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%2$d\thStep/vStep: %3$d,%4$.2f",period, count, hStep, vStep ));
-		Log.i(TAG, "Drawing grid Bitmap");
-        _gridBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas gridCanvas = new Canvas(_gridBitmap);
-        drawGrid(gridCanvas);
+		if(getWidth()>0 && getHeight()>0) {
+		    Log.i(TAG, "Drawing grid Bitmap");
+		    _gridBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+		    Canvas gridCanvas = new Canvas(_gridBitmap);
+		    drawGrid(gridCanvas);
+		}
 	}
 	
 	@Override
@@ -148,9 +150,9 @@ public class MetricRenderer extends View {
 	protected synchronized  void onDraw(Canvas canvas) {
 	    canvas.getClipBounds(bounds);
 	    
-		if(_gridBitmap!=null)
-		    canvas.drawBitmap(_gridBitmap, 0, 0, null);
-		else
+//		if(_gridBitmap!=null)
+//		    canvas.drawBitmap(_gridBitmap, 0, 0, null);
+//		else
 		    drawGrid(canvas);
 		
 		for(String metric : _metrics) {

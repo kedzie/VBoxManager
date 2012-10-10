@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -22,17 +20,17 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineFragmentActivity;
 import com.kedzie.vbox.machine.PreferencesActivity;
-import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class Provider extends AppWidgetProvider {
     /**  Widget update interval */
-    private static final int UPDATE_INTERVAL = 10000;
+    private static int UPDATE_INTERVAL;
     private static final String TAG = "ExampleAppWidgetProvider";
     private static final String PREFS_NAME = "com.kedzie.vbox.widget";
-    public static final String KEY_IDREF = "_idRef";
-    public static final String KEY_NAME = "_name";
-    public static final String KEY_SERVER = "_server";
+    static final String KEY_IDREF = "_idRef";
+    static final String KEY_NAME = "_name";
+    static final String KEY_SERVER = "_server";
+    static final String KEY_VBOX = "_vbox";
     
     static void savePref(Context context, int appWidgetId, String key, String value) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
@@ -40,10 +38,11 @@ public class Provider extends AppWidgetProvider {
         prefs.commit();
     }
 
-    static void savePrefs(Context context, IMachine machine, Server server, int appWidgetId) {
+    static void savePrefs(Context context, VBoxSvc vboxApi, IMachine machine, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putString(appWidgetId+KEY_IDREF, machine.getIdRef());
-        prefs.putString(appWidgetId+KEY_SERVER, server.getId().toString());
+        prefs.putString(appWidgetId+KEY_VBOX, vboxApi.getVBox().getIdRef());
+        prefs.putString(appWidgetId+KEY_SERVER, vboxApi.getServer().getId().toString());
         prefs.putString(appWidgetId+KEY_NAME, machine.getName());
         prefs.commit();
         Provider.updateAppWidget(context, appWidgetId, machine);
@@ -55,6 +54,7 @@ public class Provider extends AppWidgetProvider {
         prefs.remove(appWidgetIds[0]+KEY_NAME);
         prefs.remove(appWidgetIds[0]+KEY_SERVER);
         prefs.remove(appWidgetIds[0]+KEY_IDREF);
+        prefs.remove(appWidgetIds[0]+KEY_VBOX);
         prefs.commit();
     }
     
@@ -73,8 +73,6 @@ public class Provider extends AppWidgetProvider {
                             String.format("(%1$s)%2$s", vm.getCurrentSnapshot().getName(), vm.getCurrentStateModified() ? "*" : "") : "";
         views.setTextViewText(R.id.machine_list_item_snapshot, snapshotText);
                             
-//        views.setOnClickPendingIntent(R.id.machine_view, PendingIntent.getService(context, 0, 
-//                new Intent(context, UpdateWidgetService.class) .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { appWidgetId } ), 0));
         views.setOnClickPendingIntent(R.id.machine_view, PendingIntent.getService(context, 0, 
                 new Intent(context, MachineFragmentActivity.class) .putExtra(IMachine.BUNDLE, vm).putExtra(VBoxSvc.BUNDLE, vm.getVBoxAPI()), 0));
         
@@ -87,33 +85,38 @@ public class Provider extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         Log.i(TAG, "onEnabled");
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                Log.i(TAG, "Shared Preferences Changed");
-            }
-        });
-        getAlarmManager(context).setRepeating(AlarmManager.RTC, UPDATE_INTERVAL, UPDATE_INTERVAL, 
-                PendingIntent.getBroadcast(context, 0, new Intent(context, Provider.class), 0));
-        LocalBroadcastManager.getInstance(context).registerReceiver(this, 
-                new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
+        UPDATE_INTERVAL = Utils.getIntPreference(context, PreferencesActivity.PREF_WIDGET_INTERVAL);
+        getAlarmManager(context).setRepeating(AlarmManager.RTC, UPDATE_INTERVAL, UPDATE_INTERVAL, getBroadcastIntent(context));
+        LocalBroadcastManager.getInstance(context).registerReceiver(this, new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
     }
 
     @Override
     public void onDisabled(Context context) {
         Log.i(TAG, "onDisabled");
         LocalBroadcastManager.getInstance(context).unregisterReceiver(this); 
-        getAlarmManager(context).cancel(PendingIntent.getBroadcast(context, 0, new Intent(context, Provider.class), 0));
+        getAlarmManager(context).cancel(getBroadcastIntent(context));
     }
     
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction()==null || intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) {
-            context.startService(new Intent(context, UpdateWidgetService.class)
-                    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, getAppWidgetIds(context)));
-            Log.i(TAG, "Shared Prefs: " + Utils.getBooleanPreference(context, PreferencesActivity.NOTIFICATIONS));
+            context.startService(new Intent(context, UpdateWidgetService.class).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, getAppWidgetIds(context)));
+            
+            int newInterval = Utils.getIntPreference(context, PreferencesActivity.PREF_WIDGET_INTERVAL);
+            if(newInterval != UPDATE_INTERVAL) {
+                Log.i(TAG, "Changed widget update interval");
+                UPDATE_INTERVAL=newInterval;
+                AlarmManager alarmManager = getAlarmManager(context);
+                alarmManager.cancel(getBroadcastIntent(context));
+                alarmManager.setRepeating(AlarmManager.RTC, newInterval, newInterval, getBroadcastIntent(context));
+            }
         } else
             super.onReceive(context, intent);
+    }
+    
+    
+    private PendingIntent getBroadcastIntent(Context context) {
+        return PendingIntent.getBroadcast(context, 0, new Intent(context, Provider.class), 0);
     }
     
     private static int[] getAppWidgetIds(Context context) {

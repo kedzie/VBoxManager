@@ -39,7 +39,7 @@ public class MachineListPickActivity extends BaseActivity implements OnSelectMac
 	
 	@Override
 	public void onMachineSelected(IMachine machine) {
-	    Provider.savePrefs(this, machine, _vmgr.getServer(), mAppWidgetId);
+	    Provider.savePrefs(this, _vmgr, machine, mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
         finish();
 	}

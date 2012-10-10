@@ -275,6 +275,10 @@ public class VBoxSvc implements Parcelable {
 		return _vbox;
 	}
 	
+	public void setVBox(IVirtualBox box) {
+	    _vbox=box;
+	}
+	
 	public Server getServer() {
 		return _server;
 	}

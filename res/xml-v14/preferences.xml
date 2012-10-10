@@ -20,6 +20,16 @@
                 android:switchTextOff="@string/pref_notifications_switch_off"
                 android:defaultValue="false"   />
             
+            <ListPreference 
+                	android:key="widget_interval"
+                	android:title="@string/pref_widget_interval_title"
+                	android:summary="@string/pref_widget_interval_summary"
+                	android:defaultValue="30000"
+                	android:entries="@array/widget_interval_entries"
+                	android:entryValues="@array/widget_interval_entryValues"    
+                	android:dialogTitle="@string/pref_widget_interval_title"        	
+                	/>
+            
         </PreferenceCategory>
         
         <PreferenceCategory  android:title="@string/pref_category_metrics">	

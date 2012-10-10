@@ -29,8 +29,8 @@
     <string name="menu_options_snapshot_add">Add</string>
     <string name="pref_metric_period_title">Interval</string>
     <string name="pref_metric_period_summary">Metric Sampling Rate (seconds)</string>
-    <string name="pref_metric_implementation_title">Implementation</string>
-    <string name="pref_metric_implementation_summary">Metric Implementation</string>
+    <string name="pref_widget_interval_title">Widget Update Interval</string>
+    <string name="pref_widget_interval_summary">How often AppWidgets perform updates</string>
     <string name="pref_metric_count_title">Count</string>
     <string name="pref_metric_count_summary"># of data points</string>
     <string name="pref_colored_icons">Color Icons</string>

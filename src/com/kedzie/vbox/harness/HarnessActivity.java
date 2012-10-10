@@ -7,12 +7,10 @@ import java.util.Map;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
@@ -20,6 +18,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.VMGroup;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
+import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -52,37 +51,38 @@ public class HarnessActivity extends BaseActivity {
 	            return null;
 	        }
 		}.execute(new Server(null, "192.168.1.99", false, 18083, "kedzie", "Mk0204$$" ));
-		
-		((Button)findViewById(R.id.testApiButton)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new LoadGroupsTask().execute();
-			}
-		});
-		
-		((Button)findViewById(R.id.machineListButton)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-			    startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vboxApi));
-			}
-		});
-		
-		((Button)findViewById(R.id.hostMetricsButton)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-			    IHost host = _vboxApi.getVBox().getHost();
-			    startActivity(new Intent(HarnessActivity.this, MetricActivity.class)
+	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+	    getSupportMenuInflater().inflate(R.menu.harness_actions, menu);
+	    return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.harness_hostMetrics:
+                IHost host = _vboxApi.getVBox().getHost();
+                startActivity(new Intent(HarnessActivity.this, MetricActivity.class)
                     .putExtra(VBoxSvc.BUNDLE, _vboxApi)
                     .putExtra(MetricActivity.INTENT_TITLE, R.string.host_metrics)
                     .putExtra(MetricActivity.INTENT_OBJECT, host.getIdRef() )
                     .putExtra(MetricActivity.INTENT_RAM_AVAILABLE, host.getMemorySize())
                     .putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
                     .putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
-			}
-		});
-	}
-	
-	@Override
+                return true;
+            case R.id.harness_machineList:
+                startActivity(new Intent(HarnessActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vboxApi));
+                return true;
+            case R.id.harness_testsApi:
+                new LoadGroupsTask().execute();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         new ActionBarTask<Void, Void>("LogoffTask", this, _vboxApi) {
@@ -111,6 +111,7 @@ public class HarnessActivity extends BaseActivity {
 		protected VMGroup work(Void... params) throws Exception {
 			List<String> vGroups = _vmgr.getVBox().getMachineGroups();
 			for(String tmp : vGroups) {
+			    if(tmp.equals("/")) continue;
 			    VMGroup previous = get(tmp);
 			    int lastIndex=0;
 			    while((lastIndex=tmp.lastIndexOf('/'))>0) {
@@ -122,6 +123,7 @@ public class HarnessActivity extends BaseActivity {
 			    get("/").addChild(get(tmp));
 			}
 			for(IMachine machine : _vmgr.getVBox().getMachines()) {
+			    MachineView.cacheProperties(machine);
 			    List<String> groups = machine.getGroups();
 			    if(groups.isEmpty() || groups.get(0).equals("") || groups.get(0).equals("/"))
 			        get("/").addChild(machine);
@@ -129,17 +131,14 @@ public class HarnessActivity extends BaseActivity {
 			        get(groups.get(0)).addChild(machine);
 			}
 			VMGroup root = get("/");
-			String tree = "Snapshot Tree:\n============\n"
-			                        +VMGroup.getTreeString(0, root)
-			                        +"\n============";
-            Log.i(TAG, tree);
+			Log.i(TAG, VMGroup.getTreeString(0, root));
 			return root;
 		}
 		@Override
 		protected void onResult(VMGroup result) {
-		    TextView view = new TextView(HarnessActivity.this);
-		    view.setText(result.toString());
-		    _frameLayout.addView(view);
+		    VMGroupView groupView = new VMGroupView(HarnessActivity.this, result);
+		    groupView.init();
+		    setContentView(groupView);
 		}
 	}
 }

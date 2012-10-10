@@ -30,8 +30,6 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 
     private boolean _dualPane;
     private int mAppWidgetId;
-    /** Currently selected server */
-    private Server _server;
     /** Currently selected logged on api */
     private VBoxSvc _vmgr;
     
@@ -71,7 +69,7 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 
     @Override
     public void onMachineSelected(IMachine machine) {
-        Provider.savePrefs(this, machine, _server, mAppWidgetId);
+        Provider.savePrefs(this, _vmgr, machine, mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
         finish();
     }
@@ -80,7 +78,6 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
     public void onSelectServer(Server server) {
         if(_vmgr!=null)
             new LogoffTask(_vmgr).execute();
-        _server=server;
         new LogonTask().execute(server);
     }
     

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/harness_testsApi"
+    	android:title="Test API"
+    	android:showAsAction="ifRoom"/>
+    
+    <item android:id="@+id/harness_machineList"
+    	android:title="VM List"
+    	android:showAsAction="ifRoom"/>
+    
+    <item android:id="@+id/harness_hostMetrics"
+    	android:title="Host Metrics"
+    	android:showAsAction="ifRoom"/>	
+</menu>
