@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--android:padding="@dimen/widget_padding"-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content" 
-	android:background="@drawable/appwidget_dark_bg_clickable"
+	android:background="@drawable/appwidget_dark_bg"
 	android:id="@+id/machine_view" >
 
     <include layout="@layout/machine_view"/>

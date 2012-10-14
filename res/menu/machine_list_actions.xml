@@ -4,8 +4,7 @@
     <item android:id="@+id/option_menu_refresh" 
         android:icon="@drawable/ic_menu_refresh" 
         android:title="@string/menu_options_refresh"
-        android:showAsAction="ifRoom"
-        />
+        android:showAsAction="ifRoom"  />
     
     <item android:id="@+id/option_menu_preferences" 
         android:icon="@drawable/ic_menu_preferences" 
@@ -15,8 +14,6 @@
     <item android:id="@+id/machine_list_option_menu_metrics" 
         android:icon="@drawable/ic_menu_metric" 
         android:title="@string/menu_options_host_metrics"
-        android:showAsAction="ifRoom"
-        />
-    
+        android:showAsAction="ifRoom" />
     
 </menu>

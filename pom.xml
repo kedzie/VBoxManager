@@ -5,7 +5,7 @@
 	<parent>
         	<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.0.1</version>
     	</parent>
 
 	<artifactId>vbox-app</artifactId>
@@ -74,7 +74,7 @@
 					<execution>
 						<phase>generate-sources</phase>
 						<goals><goal>add-source</goal></goals>
-						<configuration><sources><source>ksoap_src</source></sources></configuration>
+						<configuration><sources><source>ksoap3-src</source></sources></configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -104,6 +104,8 @@
 				<configuration>
 					<message>Creating site for ${project.version}.</message>
 					<force>true</force>
+					<path>maven</path>
+					<merge>true</merge>
 				</configuration>
  				<executions><execution><phase>site</phase><goals><goal>site</goal></goals></execution></executions>
 			</plugin>

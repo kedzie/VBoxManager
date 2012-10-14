@@ -6,7 +6,6 @@ import pl.polidea.treeview.TreeBuilder;
 import pl.polidea.treeview.TreeNodeInfo;
 import pl.polidea.treeview.TreeStateManager;
 import pl.polidea.treeview.TreeViewList;
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -143,7 +142,7 @@ public class SnapshotFragment extends SherlockFragment {
         View view = inflater.inflate(R.layout.snapshot_tree, null);
         _treeView = (TreeViewList)view.findViewById(R.id.mainTreeView);
         registerForContextMenu(_treeView);
-        _treeView.setLayoutTransition(getLayoutTransition());
+//        _treeView.setLayoutTransition(getLayoutTransition());
         
         _stateManager = savedInstanceState==null ? new InMemoryTreeStateManager<ISnapshot>()
                 : (TreeStateManager<ISnapshot>)savedInstanceState.getSerializable("manager");
@@ -152,9 +151,9 @@ public class SnapshotFragment extends SherlockFragment {
         return view;
     }
 
-    private LayoutTransition getLayoutTransition() {
-        return new LayoutTransition();
-    }
+//    private LayoutTransition getLayoutTransition() {
+//        return new LayoutTransition();
+//    }
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

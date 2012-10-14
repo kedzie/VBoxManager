@@ -5,6 +5,4 @@
         android:icon="@drawable/ic_menu_add" 
         android:title="@string/menu_options_server_add"
         android:showAsAction="ifRoom"/>
-
-
 </menu>

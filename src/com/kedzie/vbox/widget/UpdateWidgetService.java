@@ -31,8 +31,8 @@ public class UpdateWidgetService extends IntentService {
 		int[] widgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		if(widgetIds==null)
 		    return;
+		Log.d(TAG, "Updating App Widgets " + Utils.arrayToString(widgetIds));
 		for(int widgetId : widgetIds) {
-			Log.i(TAG, "Updating App Widget: " + widgetId);
 			String machineName = Provider.loadPref(this, widgetId, Provider.KEY_NAME);
 			if(Utils.isEmpty(machineName))
 			    continue;

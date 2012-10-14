@@ -1,61 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
-		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent">
-	<LinearLayout 
-			android:orientation="vertical"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:padding="8dp">
-	    
-	    <TextView style="@style/HeaderText"   android:text="General"  android:layout_gravity="left"  />
-	    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-			<TextView   style="@style/SmallText"  android:text="Name"  android:layout_gravity="left"  />
-			<TextView  style="@style/SmallText" android:id="@+id/name"   android:layout_weight="1" android:text="VM Name"/>
-	    </LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView   style="@style/SmallText"  android:text="OS Type:" android:layout_gravity="left" />
-		    <TextView  style="@style/SmallText" android:id="@+id/ostype"   android:layout_weight="1"/>
-	    </LinearLayout>
-	    
-		<TextView   android:text="System"  android:layout_gravity="left"  style="@style/HeaderText"/>
-	    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView  style="@style/SmallText"  android:text="Base Memory:" android:layout_gravity="left" />
-	    	<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1"/>
-	    </LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView  style="@style/SmallText"   android:text="Processors:"  android:layout_gravity="left"  />
-	    	<TextView  style="@style/SmallText" android:id="@+id/processors"  android:layout_weight="1"/>
-	    </LinearLayout>
-	    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView  style="@style/SmallText"  android:text="Boot Order:"  android:layout_gravity="left"  />
-	    	<TextView style="@style/SmallText"  android:id="@+id/bootOrder"  android:layout_weight="1"/>
-	    </LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView style="@style/SmallText" android:text="Acceleration:" android:layout_gravity="left"  />
-	    	<TextView style="@style/SmallText"  android:id="@+id/acceleration" android:layout_weight="1"/>
-	    </LinearLayout>
-	    
-		<TextView style="@style/HeaderText"  android:text="Display"  android:layout_gravity="left" />
-		<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView   style="@style/SmallText"   android:text="Video Memory"  android:layout_gravity="left" />
-	    	<TextView style="@style/SmallText"  android:id="@+id/videoMemory"     android:layout_weight="1"/>
-	    </LinearLayout>
-	    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView  style="@style/SmallText"   android:text="Acceleration" android:layout_gravity="left"  />
-	    	<TextView style="@style/SmallText"  android:id="@+id/accelerationVideo"     android:layout_weight="1"/>
-	    </LinearLayout>
-	    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-	    	<TextView style="@style/SmallText"     android:text="Remote Desktop Port" android:layout_gravity="left" />
-	    	<TextView  style="@style/SmallText" android:id="@+id/rdpPort"    android:layout_weight="1"/>
-	    </LinearLayout>
-	    
-		<TextView    android:text="Storage"  android:layout_gravity="left" style="@style/HeaderText"/>
-		<TextView   android:text="Audio"  android:layout_gravity="left" style="@style/HeaderText"/>
-		<TextView   android:text="Network"  android:layout_gravity="left"  style="@style/HeaderText"/>
-		<TextView    android:text="USB" android:layout_gravity="left"  style="@style/HeaderText"/>
-		<TextView    android:text="Description"  android:layout_gravity="left"  style="@style/HeaderText"/>
-		<TextView  style="@style/SmallText"  android:id="@+id/description"   android:layout_weight="1" />
+	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="8dp" >
+	<LinearLayout android:orientation="vertical" 
+		android:layout_width="match_parent" 
+		android:layout_height="match_parent">
+		<include layout="@layout/machine_info_column_1"/>
+		<include layout="@layout/machine_info_column_2"/>
 	</LinearLayout>
 </ScrollView>

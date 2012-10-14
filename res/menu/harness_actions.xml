@@ -11,5 +11,9 @@
     
     <item android:id="@+id/harness_hostMetrics"
     	android:title="Host Metrics"
+    	android:showAsAction="ifRoom"/>
+    
+    <item android:id="@+id/harness_panelTest"
+    	android:title="Test Panel"
     	android:showAsAction="ifRoom"/>	
 </menu>

@@ -12,6 +12,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
+import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
+
 /**
  * Android Utilities
  * @apiviz.stereotype utility
@@ -76,6 +79,15 @@ public class Utils {
 		return sb.append(" }").toString();
 	}
 	
+	public static String arrayToString(int []array) {
+        StringBuilder sb = new StringBuilder("{ ");
+        for(int i=0; i<array.length; i++) {
+            sb.append(array[i]+"");
+            if(i<array.length-1)    sb.append(", ");
+        }
+        return sb.append(" }").toString();
+    }
+	
 	/**
      * Get type parameter of Generic Type
      * @param genericType the generic {@link Type}
@@ -103,6 +115,7 @@ public class Utils {
      */
     public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
         FragmentTransaction tx = manager.beginTransaction();
+        tx.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit, R.anim.stack_enter, R.anim.stack_exit);
         Fragment prev = manager.findFragmentByTag(tag);
         if(prev!=null)
             tx.remove(prev);
@@ -120,5 +133,14 @@ public class Utils {
         for(String action : actions)
             filter.addAction(action);
         return filter;
+    }
+    
+    /**
+     * Convert DPI to pixels
+     * @param dpi  dpi value
+     * @return equivilent pixel value
+     */
+    public static int dpiToPixels(int dpi) {
+        return (int) (VBoxApplication.getInstance().getResources().getDisplayMetrics().density*dpi+.5f);
     }
 }

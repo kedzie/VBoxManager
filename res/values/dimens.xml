@@ -2,5 +2,4 @@
 
 <resources>
      <dimen name="screenshot_size">256dp</dimen>
-      <dimen name="widget_padding">8dp</dimen>
 </resources>

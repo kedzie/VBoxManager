@@ -14,6 +14,7 @@ import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
+import com.kedzie.vbox.app.TreeNode;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -26,7 +27,7 @@ Note that {@link IMachine} does not provide methods to control virtual machine e
 <dl><dt><b>See also:</b></dt><dd>{@link ISession}, {@link IConsole}</dd></dl>
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
-public interface IMachine extends IManagedObjectRef, Parcelable, TreeNode {
+public interface IMachine extends IManagedObjectRef, TreeNode {
 	public static String BUNDLE = "machine";
 	static final ClassLoader LOADER = IMachine.class.getClassLoader();
 	
@@ -50,11 +51,15 @@ public interface IMachine extends IManagedObjectRef, Parcelable, TreeNode {
 	  * @return Name of the virtual machine. 
 	  */
 	 @KSOAP(cacheable=true) public String getName() ;
+	 
+	 public void setName(@KSOAP() String name);
 
 	 /**
 	  * @return Description of the virtual machine. 
 	  */
 	 @KSOAP(cacheable=true) public String getDescription();
+	 
+	 public void setDescription(@KSOAP() String description);
 
 	/**
 	 * @return UUID of the virtual machine. 
@@ -70,6 +75,9 @@ public interface IMachine extends IManagedObjectRef, Parcelable, TreeNode {
 	 * @return Number of virtual CPUs in the VM. 
 	 */
 	@KSOAP(cacheable=true) public Integer getCPUCount();
+	
+	//public void setCPUCount(@KSOAP() int cpuCount());
+	
 	
 	/**
 	 * This setting determines whether VirtualBox allows CPU hotplugging for this machine. 
@@ -242,35 +250,17 @@ public interface IMachine extends IManagedObjectRef, Parcelable, TreeNode {
 	 */
 	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") LaunchMode type) throws IOException;
 	
-	/**
-	 * 
-	 */
 	public Map<String, List<String>> querySavedThumbnailSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
-	/**
-	 * 
-	 */
 	public Map<String, List<String>> readSavedThumbnailPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
-	/**
-	 * 
-	 */
 	public Map<String, List<String>> querySavedScreenshotPNGSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
-	/**
-	 * 
-	 */
 	@Deprecated
 	public Map<String, List<String>> readSavedScreenshotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
-	/**
-	 * 
-	 */
 	public String queryLogFilename(@KSOAP(type="unsignedInt", value="idx") int idx);
 	
-	/**
-	 * 
-	 */
 	public byte[] readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size);
 	
 	/**

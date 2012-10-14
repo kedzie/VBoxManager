@@ -3,55 +3,48 @@
     android:orientation="horizontal"   
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:background="#FF33B5E5"
-    android:padding="2dp">
+    android:background="@drawable/panel_header"
+    android:padding="4dp">
     
-	<ImageButton 
-		android:id="@+id/group_collapse" 
+	<ImageButton android:id="@+id/group_collapse" 
 		android:layout_marginRight="8dp"  
-		android:src="@drawable/ic_list_acpi"  
+		android:src="@drawable/ic_navigation_collapse"  
 		android:layout_gravity="center"
-		android:layout_width="32dip" 
-		android:layout_height="32dip" />
+		android:layout_width="16dip" 
+		android:layout_height="16dip" />
 	
-	<TextView  
-		android:id="@+id/group_title" 
+	<TextView android:id="@+id/group_title" 
 		style="@style/MediumText"
 		android:layout_gravity="left"	 
 		android:layout_weight="1"
 		android:text="Group Name" />
 	
-	<ImageView 
-		android:id="@+id/group_num_groups_image" 
-		android:src="@drawable/ic_list_acpi"  
+	<ImageView android:id="@+id/group_num_groups_image" 
+		android:src="@drawable/ic_context_network"  
 		android:layout_gravity="center"
 		android:layout_width="16dip" 
 		android:layout_height="16dip" />
 	
-	<TextView  
-		android:id="@+id/group_num_groups" 
+	<TextView android:id="@+id/group_num_groups" 
 		style="@style/SmallText"
 		android:layout_gravity="center"	 
-		android:text="1" />
+		android:text="0" />
 	
-	<ImageView 
-		android:id="@+id/group_num_machine_image" 
-		android:src="@drawable/ic_list_acpi"  
+	<ImageView android:id="@+id/group_num_machine_image" 
+		android:src="@drawable/ic_context_machine"  
 		android:layout_gravity="center"
 		android:layout_width="16dip" 
 		android:layout_height="16dip" />
 	
-	<TextView  
-		android:id="@+id/group_num_machine" 
+	<TextView android:id="@+id/group_num_machine" 
 		style="@style/SmallText"
 		android:layout_gravity="center"	 
-		android:text="2" />
+		android:text="0" />
 	
-	<ImageButton 
-		android:id="@+id/group_enter" 
-		android:src="@drawable/ic_list_acpi"  
+	<ImageButton android:id="@+id/group_enter" 
+		android:src="@drawable/ic_navigation_forward"  
 		android:layout_marginLeft="8dp"
 		android:layout_gravity="center"
-		android:layout_width="32dip" 
-		android:layout_height="32dip" />
+		android:layout_width="16dip" 
+		android:layout_height="16dip" />
 </LinearLayout>

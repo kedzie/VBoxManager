@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent"
+	android:padding="8dp">
+	
+	<LinearLayout android:orientation="horizontal" 
+		android:layout_width="match_parent" 
+		android:layout_height="match_parent">
+		
+		<include layout="@layout/machine_info_column_1"/>
+		
+		<LinearLayout android:orientation="vertical" 
+			android:layout_width="wrap_content" 
+			android:layout_height="match_parent" 
+			android:layout_weight="1" >
+			<com.kedzie.vbox.app.Panel vbox:name="Preview" vbox.icon="@drawable/ic_context_machine" android:layout_width="wrap_content" android:layout_height="wrap_content" >
+				<ImageView android:id="@+id/preview" android:layout_width="256dp" android:layout_height="256dp" />
+			</com.kedzie.vbox.app.Panel>
+			<include layout="@layout/machine_info_column_2"/>
+		</LinearLayout>
+		
+	</LinearLayout>
+</ScrollView>
+

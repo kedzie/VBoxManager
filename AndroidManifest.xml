@@ -1,52 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="300" android:versionName="3.0.0" package="com.kedzie.vbox">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="301" android:versionName="3.0.1" package="com.kedzie.vbox">
     
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15"/>
     
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     
-    <application android:name=".VBoxApplication"  android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/Theme.Sherlock">
+    <application android:debuggable="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name=".VBoxApplication" android:theme="@style/Theme.Sherlock.Light">
+		
 		<activity android:label="Test Harness" android:name=".harness.HarnessActivity">
 			<intent-filter>
                 		<action android:name="android.intent.action.MAIN"/>
                 		<category android:name="android.intent.category.LAUNCHER"/>
             		</intent-filter>
         	</activity>
-		<activity android:name=".server.ServerListFragmentActivity"  android:label="@string/app_name" 
-		    	android:configChanges="orientation" android:uiOptions="splitActionBarWhenNarrow">
+        	<activity android:label="Metrics" android:name=".harness.PanelActivity"/>
+        	
+		<activity android:configChanges="orientation" android:label="@string/app_name" android:name=".server.ServerListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
 			<intent-filter>
                 	<action android:name="android.intent.action.MAIN"/>
                 	<category android:name="android.intent.category.LAUNCHER"/>
             	</intent-filter>
         </activity>
         
-        <activity android:name=".server.EditServerActivity" android:label="Edit VirtualBox Server" 
-            		android:configChanges="orientation"  >
+        <activity android:configChanges="orientation" android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity">
 		<meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
 	</activity>
 	
-        <activity android:name=".machine.MachineListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow" >
+        <activity android:name=".machine.MachineListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
 	</activity>
 	
-        <activity android:name=".machine.MachineFragmentActivity"   android:uiOptions="splitActionBarWhenNarrow">
+        <activity android:name=".machine.MachineFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".machine.MachineListFragmentActivity"/>
 	</activity>
 	
 	<activity android:label="Metrics" android:name=".metrics.MetricActivity"/>
 	
-	<activity android:name=".machine.PreferencesActivity"  android:label="Preferences" 
-	    		android:configChanges="orientation"  />
+	<activity android:configChanges="orientation" android:label="Preferences" android:name=".machine.PreferencesActivity"/>
 	
-	<activity android:name=".metrics.MetricPreferencesActivity" android:label="Preferences" 
-	    		android:configChanges="orientation"/>
+	<activity android:configChanges="orientation" android:label="Preferences" android:name=".metrics.MetricPreferencesActivity"/>
 	
 	<service android:name=".event.EventIntentService"/>
 	<service android:name=".event.EventNotificationService"/>
 	
 	<!-- App Widget Declarations -->
-	<receiver android:name=".widget.Provider" android:label="Virtual Machine (1x3)">
+	<receiver android:label="Virtual Machine (1x3)" android:name=".widget.Provider">
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_provider"/>
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

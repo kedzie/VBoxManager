@@ -61,8 +61,7 @@ public class ServerListFragment extends SherlockFragment {
         }
         @Override 
         protected void onResult(List<Server> result)    {
-            getAdapter().clear();
-            getAdapter().addAll(result);
+            _listView.setAdapter(new ServerListAdapter(getSherlockActivity()));
             if(result.isEmpty()) {
                 new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.add_server_question)

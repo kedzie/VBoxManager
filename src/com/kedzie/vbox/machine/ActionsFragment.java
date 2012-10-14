@@ -2,7 +2,6 @@ package com.kedzie.vbox.machine;
 
 import java.util.Map;
 
-import android.animation.LayoutTransition;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -150,7 +149,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		_headerView = new MachineView(getApp(), getActivity());
 		_listView = new ListView(getActivity());
 		_listView.setClipChildren(false);
-		_listView.setLayoutTransition(new LayoutTransition());
 		_listView.addHeaderView(_headerView);
 		_listView.setOnItemClickListener(this);
 		return _listView;

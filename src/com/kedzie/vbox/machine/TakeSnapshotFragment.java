@@ -16,6 +16,7 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
+import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
 
 /**
@@ -26,7 +27,7 @@ import com.kedzie.vbox.task.MachineTask;
 public class TakeSnapshotFragment extends SherlockDialogFragment {
     
     public static interface OnClickOkListener {
-        public void OnClickOk();
+        public void OnClickOk(String name, String description);
     }
 
 	private IMachine _machine;
@@ -72,8 +73,8 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 			public void onClick(View arg0) {
 				dismiss();
 				if(_snapshot!=null) {
-    				new MachineTask<ISnapshot, Void>("UpdateSnapshotTask", getActivity(), _vmgr, "Updating Snapshot", false, _machine) { 
-                        protected Void work(IMachine m, IConsole console, ISnapshot...s) throws Exception {     
+    				new ActionBarTask<ISnapshot, Void>("UpdateSnapshotTask", getSherlockActivity(), _vmgr) { 
+                        protected Void work(ISnapshot...s) throws Exception {     
                             s[0].setName(snapshotName.getText().toString());
                             s[0].setDescription(snapshotDescription.getText().toString());
                             return null;

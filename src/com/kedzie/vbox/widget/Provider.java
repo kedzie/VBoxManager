@@ -84,7 +84,7 @@ public class Provider extends AppWidgetProvider {
     
     @Override
     public void onEnabled(Context context) {
-        Log.i(TAG, "onEnabled");
+        Log.d(TAG, "onEnabled");
         UPDATE_INTERVAL = Utils.getIntPreference(context, PreferencesActivity.PREF_WIDGET_INTERVAL);
         getAlarmManager(context).setRepeating(AlarmManager.RTC, UPDATE_INTERVAL, UPDATE_INTERVAL, getBroadcastIntent(context));
         LocalBroadcastManager.getInstance(context).registerReceiver(this, new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
@@ -92,7 +92,7 @@ public class Provider extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-        Log.i(TAG, "onDisabled");
+        Log.d(TAG, "onDisabled");
         LocalBroadcastManager.getInstance(context).unregisterReceiver(this); 
         getAlarmManager(context).cancel(getBroadcastIntent(context));
     }
