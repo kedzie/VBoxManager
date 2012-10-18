@@ -6,6 +6,8 @@ import com.kedzie.vbox.soap.KSOAP;
 public interface ISystemProperties extends IManagedObjectRef {
 	public Integer getMinGuestRAM();
 	public Integer getMaxGuestRam();
+	public Integer getMinGuestVRam();
+	public Integer getMaxGuestVRam();
 	public Integer getMinGuestCPUCount();
 	public Integer getMaxGuestCPUCount();
 	public Integer getMinGuestMonitors();

@@ -7,7 +7,6 @@ import java.util.Map;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ScrollView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -17,8 +16,10 @@ import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.TreeNode;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.app.VMGroup;
-import com.kedzie.vbox.app.VMGroupPanel;
+import com.kedzie.vbox.app.VMGroupListView;
+import com.kedzie.vbox.app.VMGroupListView.TreeNodeClickListener;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.metrics.MetricActivity;
@@ -34,15 +35,13 @@ public class HarnessActivity extends BaseActivity {
 	private static final String TAG = HarnessActivity.class.getSimpleName();
 
 	private VBoxSvc _vboxApi;
-	private ScrollView _scrollView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Harness created");
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.harness);
-		_scrollView = (ScrollView)findViewById(R.id.frameLayout);
+		
 		
 		new ActionBarTask<Server, Void>("LogonTask", this, _vboxApi) {
 		    @Override
@@ -141,8 +140,15 @@ public class HarnessActivity extends BaseActivity {
         }
         @Override
         protected void onResult(VMGroup root) {
-            for(TreeNode child : root.getChildren()) 
-                _scrollView.addView(VMGroupPanel.createView(HarnessActivity.this, child));
+            VMGroupListView listView = new VMGroupListView(HarnessActivity.this);
+            listView.setRoot(root);
+            listView.setSelectTreeNodeListener(new TreeNodeClickListener() {
+                @Override
+                public void onTreeNodeClick(TreeNode node) {
+                    Utils.toastShort(HarnessActivity.this, "OnClick: %1$s" , node.toString());
+                }
+            });
+            setContentView(listView);
         }
     }
 }

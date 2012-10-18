@@ -8,8 +8,9 @@
 	
     <com.kedzie.vbox.metrics.MetricView  
         android:id="@+id/cpu_metrics"  
-        android:layout_width="match_parent"  
+        android:layout_width="wrap_content"  
         android:layout_height="match_parent" 
+        android:layout_weight="1"
         vbox:header="CPU"
         vbox:backgroundColor="#ffffffff"
         vbox:gridColor="#64000000"
@@ -19,8 +20,9 @@
     
      <com.kedzie.vbox.metrics.MetricView  
          android:id="@+id/ram_metrics" 
-         android:layout_width="match_parent"  
+         android:layout_width="wrap_content"  
          android:layout_height="match_parent" 
+         android:layout_weight="1"
          vbox:header="Memory"
          vbox:backgroundColor="#ffffffff"
         vbox:gridColor="#64000000"

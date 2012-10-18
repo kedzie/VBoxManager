@@ -146,7 +146,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_headerView = new MachineView(getApp(), getActivity());
+		_headerView = new MachineView(getActivity());
 		_listView = new ListView(getActivity());
 		_listView.setClipChildren(false);
 		_listView.addHeaderView(_headerView);

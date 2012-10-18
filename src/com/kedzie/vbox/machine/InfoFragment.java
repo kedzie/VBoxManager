@@ -1,17 +1,25 @@
 package com.kedzie.vbox.machine;
 
+import java.io.ByteArrayInputStream;
+import java.util.Map;
+
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.MachineTask;
 
 /**
  * 
@@ -37,6 +45,20 @@ public class InfoFragment extends SherlockFragment {
 		protected void onResult(IMachine result) {
 				_machine = result;
 				populateViews(result);
+				if(_preview!=null) {
+				    new MachineTask<Void, byte []>("TakeScreenshotTask", getActivity(), _machine.getVBoxAPI(), "Taking Screenshot", true, _machine) { 
+		                protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception {    
+		                    IDisplay display = console.getDisplay();
+		                    Map<String, String> res = display.getScreenResolution(0);
+		                    return display.takeScreenShotPNGToArray(0, new Integer(res.get("width")), new Integer(res.get("height")));
+		                }
+		                @Override
+		                protected void onResult(byte[] result) {
+		                    super.onResult(result);
+		                    _preview.setImageBitmap(BitmapFactory.decodeStream(new ByteArrayInputStream(result)));
+		                }
+		            }.execute();
+				}
 		}
 	}
 	
@@ -52,6 +74,7 @@ public class InfoFragment extends SherlockFragment {
 	private TextView _videoMemoryText;
 	private TextView _accelerationVideoText;
 	private TextView _rdpPortText;
+	private ImageView _preview;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +96,7 @@ public class InfoFragment extends SherlockFragment {
 		_videoMemoryText = (TextView)_view.findViewById(R.id.videoMemory);
 		_accelerationVideoText = (TextView)_view.findViewById(R.id.accelerationVideo);
 		_rdpPortText = (TextView)_view.findViewById(R.id.rdpPort);
+		_preview = (ImageView)_view.findViewById(R.id.preview);
 		return _view;
 	}
 	

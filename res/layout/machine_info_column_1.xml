@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
 	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
 	android:orientation="vertical" 
-	android:layout_width="wrap_content" 
+	android:layout_width="match_parent" 
 	android:layout_height="match_parent" 
 	android:layout_weight="1" >
 	   
-	<com.kedzie.vbox.app.Panel vbox:name="General" vbox.icon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.Panel vbox:name="General" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView style="@style/SmallText" android:text="Name: " android:layout_gravity="left"  />
 			<TextView style="@style/SmallText" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
@@ -21,7 +21,7 @@
 		</LinearLayout>
 	</com.kedzie.vbox.app.Panel>   
 	
-	<com.kedzie.vbox.app.Panel vbox:name="System" vbox.icon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.Panel vbox:name="System" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"  android:text="Base Memory:" android:layout_gravity="left" />
 			<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1"/>
@@ -40,7 +40,7 @@
 		</LinearLayout>
 	</com.kedzie.vbox.app.Panel>
 		
-	<com.kedzie.vbox.app.Panel vbox:name="Display" vbox.icon="@drawable/ic_context_machine" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.Panel vbox:name="Display" vbox:headerIcon="@drawable/ic_context_machine" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallText"   android:text="Video Memory"  android:layout_gravity="left" />
 			<TextView style="@style/SmallText"  android:id="@+id/videoMemory"     android:layout_weight="1"/>
@@ -55,7 +55,7 @@
 		</LinearLayout>
 	</com.kedzie.vbox.app.Panel>
 		
-	<com.kedzie.vbox.app.Panel vbox:name="Storage" vbox.icon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.Panel vbox:name="Storage" vbox:headerIcon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >
 	</com.kedzie.vbox.app.Panel>   
 	   
 </LinearLayout>

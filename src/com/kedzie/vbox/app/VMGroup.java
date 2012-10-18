@@ -16,6 +16,8 @@ public class VMGroup implements TreeNode {
     
     private List<TreeNode> _children;
     private String _name;
+    private int numGroups;
+    private int numMachines;
     
     public VMGroup(String name) {
         _name = name;
@@ -30,8 +32,13 @@ public class VMGroup implements TreeNode {
         _children = children;
     }
     public void addChild(TreeNode child) {
-        if(!getChildren().contains(child))
+        if(!getChildren().contains(child)) {
             getChildren().add(child);
+            if(child instanceof VMGroup)
+                numGroups++;
+            else if(child instanceof IMachine)
+                numMachines++;
+        }
     }
     public String getName() {
         return _name;
@@ -77,6 +84,22 @@ public class VMGroup implements TreeNode {
         dest.writeParcelableArray(  getChildren().toArray(new TreeNode [getChildren().size()]), 0);
     }
     
+    public int getNumGroups() {
+        return numGroups;
+    }
+
+    public void setNumGroups(int numGroups) {
+        this.numGroups = numGroups;
+    }
+
+    public int getNumMachines() {
+        return numMachines;
+    }
+
+    public void setNumMachines(int numMachines) {
+        this.numMachines = numMachines;
+    }
+
     public static final Parcelable.Creator<VMGroup> CREATOR  = new Parcelable.Creator<VMGroup>() {
         @Override
         public VMGroup createFromParcel(Parcel source) {

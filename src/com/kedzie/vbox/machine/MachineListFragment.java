@@ -231,7 +231,7 @@ public class MachineListFragment extends MachineListBaseFragment {
 			return true;
 		case R.id.machine_list_option_menu_metrics:
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr)
-					.putExtra(MetricActivity.INTENT_TITLE, R.string.host_metrics)
+					.putExtra(MetricActivity.INTENT_TITLE, getResources().getString(R.string.host_metrics))
 					.putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )

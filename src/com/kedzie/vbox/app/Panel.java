@@ -31,6 +31,7 @@ public class Panel extends LinearLayout implements OnClickListener {
     protected ImageButton _collapseButton;
     protected View _titleView;
     protected LinearLayout _contents;
+    protected FrameLayout _frame;
     protected Drawable _collapseDrawable, _expandDrawable;
     protected Drawable _icon;
     protected int _contentHeight;
@@ -54,6 +55,7 @@ public class Panel extends LinearLayout implements OnClickListener {
     }
     
     protected void init(Context context) {
+        setClickable(true);
         _collapseDrawable = context.getResources().getDrawable(R.drawable.ic_navigation_collapse);
         _expandDrawable = context.getResources().getDrawable(R.drawable.ic_navigation_expand);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -61,18 +63,31 @@ public class Panel extends LinearLayout implements OnClickListener {
         setOrientation(VERTICAL);
         super.addView(_titleView=getTitleLayout(), lp);
         
-        FrameLayout frame = new FrameLayout(context);
-        frame.setPadding(BORDER_WIDTH, 0, BORDER_WIDTH, BORDER_WIDTH);
-        frame.setBackgroundDrawable(getResources().getDrawable(R.drawable.panel_body));
-        super.addView(frame, lp);
+        _frame = new FrameLayout(context);
+        _frame.setPadding(BORDER_WIDTH, 0, BORDER_WIDTH, BORDER_WIDTH);
+        _frame.setBackgroundDrawable(getResources().getDrawable(R.drawable.panel_body));
+        super.addView(_frame, lp);
         
         _contents = new LinearLayout(context);
-//        _contents.setBackgroundColor(R.color.w);
         _contents.setClipChildren(false);
         _contents.setOrientation(VERTICAL);
         _contents.setShowDividers(SHOW_DIVIDER_BEGINNING & SHOW_DIVIDER_MIDDLE & SHOW_DIVIDER_END);
         
-        frame.addView(_contents, lp);
+        _frame.addView(_contents, lp);
+    }
+    
+    @Override
+    public void setPressed(boolean pressed) {
+        super.setPressed(pressed);
+        _frame.setPressed(pressed);
+        _titleView.setPressed(pressed);
+    }
+    
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        _frame.setSelected(selected);
+        _titleView.setSelected(selected);
     }
     
     /**
@@ -125,6 +140,7 @@ public class Panel extends LinearLayout implements OnClickListener {
             a = new ExpandAnimation(_contentHeight, 0);
             getCollapseButton().setImageDrawable(_expandDrawable);
         } else { 
+            _frame.setVisibility(View.VISIBLE);
             a = new ExpandAnimation(0, _contentHeight);
             getCollapseButton().setImageDrawable(_collapseDrawable);
         }
@@ -140,6 +156,19 @@ public class Panel extends LinearLayout implements OnClickListener {
         public ExpandAnimation(int startHeight, int endHeight) {
             mStartHeight = startHeight;
             mDeltaHeight = endHeight - startHeight;
+            setAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if(mStartHeight>0)
+                        _frame.setVisibility(View.GONE);
+                }
+            });
         }
 
         @Override

@@ -91,7 +91,7 @@ public class MachineListBaseFragment extends SherlockFragment {
 		
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null) 
-				view = new MachineView(getApp(), getActivity());
+				view = new MachineView(getActivity());
 			((MachineView)view).update(getItem(position));
 			return view;
 		}
@@ -152,6 +152,7 @@ public class MachineListBaseFragment extends SherlockFragment {
 	
 	void showDetails(int index) {
         _curCheckPosition = index;
+        _listView.setSelection(index);
        	_listView.setItemChecked(index, true);
        	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
     }

@@ -17,16 +17,17 @@ import com.kedzie.vbox.api.IMachine;
  */
 public class MachineView extends LinearLayout {
 
+    private VBoxApplication _app;
 	private ImageView osIcon;
 	private ImageView stateIcon;
 	private TextView stateText;
 	private TextView nameText;
 	private TextView snapshotText;
-	private VBoxApplication _app;
+	private IMachine _machine;
 	
-	public MachineView(VBoxApplication app, Context context) {
+	public MachineView(Context context) {
 		super(context);
-		this._app=app;
+		_app=VBoxApplication.getInstance();
 		LayoutInflater.from(context).inflate(R.layout.machine_view, this, true);
 		osIcon = (ImageView)findViewById(R.id.machine_list_item_ostype);
 		nameText =(TextView)findViewById(R.id.machine_list_item_name);
@@ -36,6 +37,7 @@ public class MachineView extends LinearLayout {
 	}
 	
 	public void update(IMachine m) {
+	    _machine=m;
 		osIcon.setImageResource(_app.getOSDrawable(m.getOSTypeId()));
 		nameText.setText(m.getName());
 		stateIcon.setImageResource( _app.getDrawable(m.getState()) );
@@ -58,5 +60,9 @@ public class MachineView extends LinearLayout {
 		m.getOSTypeId();
 		if(m.getCurrentSnapshot()!=null) 
 			m.getCurrentSnapshot().getName();
+	}
+	
+	public IMachine getMachine() {
+	    return _machine;
 	}
 }
