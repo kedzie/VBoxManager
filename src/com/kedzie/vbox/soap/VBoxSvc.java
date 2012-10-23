@@ -149,7 +149,7 @@ public class VBoxSvc implements Parcelable {
 				for(Object o : (Object[])obj)  
 					marshal( request, ksoap, clazz.getComponentType(), gType,  o );
 			} else if(Collection.class.isAssignableFrom(clazz)) { //Collections
-				Class<?> pClazz = Utils.getTypeParameter(gType);
+				Class<?> pClazz = Utils.getTypeParameter(gType,0);
 				for(Object o : (List<?>)obj) 
 					marshal(request, ksoap, pClazz, gType,  o );
 			} else if(!ksoap.type().equals("")) //if annotation specifies SOAP datatype, i.e. unsignedint
@@ -210,7 +210,7 @@ public class VBoxSvc implements Parcelable {
 			    }
 			}
 			if(isCollection) {
-				Class<?> pClazz = Utils.getTypeParameter(genericType);
+				Class<?> pClazz = Utils.getTypeParameter(genericType,0);
 				Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
 				for (int i = 0; i < ks.getPropertyCount(); i++)
 					list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );

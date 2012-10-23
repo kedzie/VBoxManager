@@ -1,6 +1,5 @@
 package com.kedzie.vbox.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -61,7 +60,7 @@ public class ServerListFragment extends SherlockFragment {
         }
         @Override 
         protected void onResult(List<Server> result)    {
-            _listView.setAdapter(new ServerListAdapter(getSherlockActivity()));
+            _listView.setAdapter(new ServerListAdapter(getSherlockActivity(), result));
             if(result.isEmpty()) {
                 new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.add_server_question)
@@ -85,16 +84,16 @@ public class ServerListFragment extends SherlockFragment {
     class ServerListAdapter extends ArrayAdapter<Server> {
         private final LayoutInflater _layoutInflater;
 
-        public ServerListAdapter(Context context) {
-            super(context, 0, new ArrayList<Server>());
+        public ServerListAdapter(Context context, List<Server> servers) {
+            super(context, 0, servers);
             _layoutInflater = LayoutInflater.from(context);
         }
 
         public View getView(int position, View view, ViewGroup parent) {
             if (view == null)
-                view = _layoutInflater.inflate(R.layout.server_item, parent, false);
+                view = _layoutInflater.inflate(R.layout.simple_list_item, parent, false);
             Server s = getItem(position);
-            ((TextView)view.findViewById(R.id.server_item_text)).setText(s.toString());
+            ((TextView)view.findViewById(R.id.list_item_text)).setText(s.toString());
             return view;
         }
     }
@@ -114,7 +113,6 @@ public class ServerListFragment extends SherlockFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         _listView = new ListView(getActivity());
         _listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        _listView.setAdapter( new ServerListAdapter(getActivity()) );
         _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -131,7 +129,6 @@ public class ServerListFragment extends SherlockFragment {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         _db = new ServerSQlite(getActivity());
-        getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(false);
         new LoadServersTask().execute();
     }
     

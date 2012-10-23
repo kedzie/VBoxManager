@@ -1,12 +1,7 @@
-
+<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:drawable="@drawable/panel_body" />
-
-	<item android:drawable="@drawable/panel_body_yellow" 
-		android:state_pressed="true" />
-
-	<item android:drawable="@drawable/panel_body_blue"
-		android:state_focused="true"
-		android:state_enabled="true"
-		android:state_window_focused="true" />
+    
+	<item android:drawable="@drawable/panel_body_yellow"  android:state_pressed="true" />
+	<item android:drawable="@drawable/panel_body_blue" android:state_selected="true" android:state_pressed="false"/>
+	<item android:drawable="@drawable/panel_body_gray" />
 </selector>

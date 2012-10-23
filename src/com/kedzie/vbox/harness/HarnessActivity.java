@@ -15,13 +15,13 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
-import com.kedzie.vbox.app.TreeNode;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.app.VMGroup;
-import com.kedzie.vbox.app.VMGroupListView;
-import com.kedzie.vbox.app.VMGroupListView.TreeNodeClickListener;
 import com.kedzie.vbox.machine.MachineListFragmentActivity;
 import com.kedzie.vbox.machine.MachineView;
+import com.kedzie.vbox.machine.group.TreeNode;
+import com.kedzie.vbox.machine.group.VMGroup;
+import com.kedzie.vbox.machine.group.VMGroupListView;
+import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -142,9 +142,9 @@ public class HarnessActivity extends BaseActivity {
         protected void onResult(VMGroup root) {
             VMGroupListView listView = new VMGroupListView(HarnessActivity.this);
             listView.setRoot(root);
-            listView.setSelectTreeNodeListener(new TreeNodeClickListener() {
+            listView.setSelectTreeNodeListener(new OnTreeNodeSelectListener() {
                 @Override
-                public void onTreeNodeClick(TreeNode node) {
+                public void onTreeNodeSelect(TreeNode node) {
                     Utils.toastShort(HarnessActivity.this, "OnClick: %1$s" , node.toString());
                 }
             });

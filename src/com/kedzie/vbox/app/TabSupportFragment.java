@@ -25,40 +25,37 @@ public class TabSupportFragment implements TabSupport {
 		/** Fragment tag */
 		private String _tag;
 		/** Definition of Fragment before instantiation */
-		private TabFragmentInfo<?> _definition;
-        /** Already created instance */
-        private Fragment _fragment;
+		private TabFragmentInfo _definition;
         
-        public TabListener(TabFragmentInfo<?> info, String tag) {
+        public TabListener(TabFragmentInfo info, String tag) {
             _definition = info;
             _tag=tag;
             // if fragment exists remove it.. might be from previous machine
-            if ((_fragment=_activity.getSupportFragmentManager().findFragmentByTag(_tag)) != null) {
+            Fragment fragment=_activity.getSupportFragmentManager().findFragmentByTag(_tag);
+            if (fragment != null) {
             	Log.w(TAG, "Removing existing Fragment for tab: " + _tag);
                 FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
-                ft.remove(_fragment);
+                ft.remove(fragment);
                 ft.commit();
-                _fragment=null;
             }
         }
 
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
         	ft.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit);
-        	if (_fragment==null) {
+        	if (_definition.fragment==null) {
         		Log.i(TAG, String.format(" Instantiating new fragment [%s]", _tag));
-                _fragment = Fragment.instantiate(_activity, _definition.clazz.getName(), _definition.args);
-                ft.add(_fragmentContainer, _fragment, _tag);
+                ft.add(_fragmentContainer, _definition.instantiate(_activity), _tag);
             } else {
             	Log.i(TAG, String.format("re-Attaching existing fragment [%s]", _tag));
-                ft.attach(_fragment);
+                ft.attach(_definition.fragment);
             }
         }
 
         @Override
         public void onTabUnselected(Tab tab, FragmentTransaction ft) {
         	ft.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit);
-        	ft.detach(_fragment);
+        	ft.detach(_definition.fragment);
         }
 
         @Override public void onTabReselected(Tab tab, FragmentTransaction ft) { }
@@ -82,8 +79,8 @@ public class TabSupportFragment implements TabSupport {
 	}
 	
 	@Override
-	public <T extends Fragment> void addTab(String name, Class<T > clazz, Bundle args)  {
-        TabFragmentInfo<T> info = new TabFragmentInfo<T>(name, clazz, args);
+	public void addTab(String name, Class<? > clazz, Bundle args)  {
+        TabFragmentInfo info = new TabFragmentInfo(name, clazz, args);
         Tab tab =  _activity.getSupportActionBar().newTab().setText(name).setTag(name).setTabListener(new TabListener(info, name));
         _tabs.put(name,tab);
         _activity.getSupportActionBar().addTab(tab);

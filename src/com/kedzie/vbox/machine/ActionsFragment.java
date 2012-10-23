@@ -35,6 +35,7 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
+import com.kedzie.vbox.machine.settings.CategoryListFragmentActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -141,7 +142,6 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
         super.onCreate(savedInstanceState);
         _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
         _machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
-        setHasOptionsMenu(!getArguments().getBoolean("dualPane"));
     }
 
 	@Override
@@ -251,7 +251,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 					.putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine.getMemorySize() )
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
-		} else if(action.equals(VMAction.TAKE_SCREENSHOT)) 	
+		} else if(action.equals(VMAction.TAKE_SCREENSHOT)) 	{
 			new MachineTask<Void, byte []>("TakeScreenshotTask", getActivity(), _vmgr, "Taking Screenshot", true, _machine) { 
 				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
 					IDisplay display = console.getDisplay();
@@ -267,6 +267,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 					            new BundleBuilder().putByteArray(ScreenshotDialogFragment.BUNDLE_BYTES, result).create()) );
 				}
 			}.execute();
+		} else if(action.equals(VMAction.EDIT_SETTINGS)) {
+		    startActivity(new Intent(getActivity(), CategoryListFragmentActivity.class).putExtras(getArguments()));
+		}
 	}
 	
 	public VBoxApplication getApp() { 

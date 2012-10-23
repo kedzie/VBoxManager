@@ -29,7 +29,7 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
 	private SherlockFragmentActivity _activity;
 	private ActionBar _actionBar;
     private ViewPager _viewPager;
-    private List<TabFragmentInfo<?>> _tabs = new ArrayList<TabFragmentInfo<?>>();
+    private List<TabFragmentInfo> _tabs = new ArrayList<TabFragmentInfo>();
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction;
     private Fragment mCurrentPrimaryItem;
@@ -50,16 +50,15 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        String name = makeFragmentName(container.getId(), position);
-        Fragment fragment = mFragmentManager.findFragmentByTag(name);
+        String tag = makeFragmentName(container.getId(), position);
+        Fragment fragment = mFragmentManager.findFragmentByTag(tag);
         if (fragment != null) {
             Log.i(TAG, "Attaching item #" + position);
             mCurTransaction.attach(fragment);
         } else {
-            TabFragmentInfo<?> info = _tabs.get(position);
-            fragment = Fragment.instantiate(_activity, info.clazz.getName(), info.args);
+            fragment = _tabs.get(position).instantiate(_activity);
             Log.i(TAG, "Adding item #" + position);
-            mCurTransaction.add(container.getId(), fragment, makeFragmentName(container.getId(), position));
+            mCurTransaction.add(container.getId(), fragment, tag);
         }
         if (fragment != mCurrentPrimaryItem) {
             fragment.setMenuVisibility(false);
@@ -114,8 +113,8 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
     }
 
     @Override
-    public <T extends Fragment> void addTab(String name, Class<T> clazz, Bundle args)  {
-        TabFragmentInfo<T> info = new TabFragmentInfo<T>(name, clazz, args);
+    public void addTab(String name, Class<?> clazz, Bundle args)  {
+        TabFragmentInfo info = new TabFragmentInfo(name, clazz, args);
        _actionBar.addTab( _actionBar.newTab().setText(name).setTag(info).setTabListener(this) );
         _tabs.add(info);
         notifyDataSetChanged();
@@ -123,7 +122,7 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
     
     @Override
 	public void removeTab(String name) {
-    	TabFragmentInfo<?> info = new TabFragmentInfo<Fragment>(name, null, null);
+    	TabFragmentInfo info = new TabFragmentInfo(name, null, null);
     	int index = _tabs.indexOf(info);
     	_activity.getSupportActionBar().removeTabAt(index);
     	_tabs.remove(info);

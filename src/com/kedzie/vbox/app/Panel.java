@@ -64,8 +64,7 @@ public class Panel extends LinearLayout implements OnClickListener {
         super.addView(_titleView=getTitleLayout(), lp);
         
         _frame = new FrameLayout(context);
-        _frame.setPadding(BORDER_WIDTH, 0, BORDER_WIDTH, BORDER_WIDTH);
-        _frame.setBackgroundDrawable(getResources().getDrawable(R.drawable.panel_body));
+        _frame.setBackgroundResource(R.drawable.panel_body);
         super.addView(_frame, lp);
         
         _contents = new LinearLayout(context);
@@ -74,20 +73,6 @@ public class Panel extends LinearLayout implements OnClickListener {
         _contents.setShowDividers(SHOW_DIVIDER_BEGINNING & SHOW_DIVIDER_MIDDLE & SHOW_DIVIDER_END);
         
         _frame.addView(_contents, lp);
-    }
-    
-    @Override
-    public void setPressed(boolean pressed) {
-        super.setPressed(pressed);
-        _frame.setPressed(pressed);
-        _titleView.setPressed(pressed);
-    }
-    
-    @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-        _frame.setSelected(selected);
-        _titleView.setSelected(selected);
     }
     
     /**

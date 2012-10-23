@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
+    		android:orientation="horizontal" 
+		android:layout_width="match_parent" 
+		android:layout_height="match_parent">
+		
+    <LinearLayout orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+		<com.kedzie.vbox.app.Panel vbox:name="General" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView style="@style/SmallText" android:text="Name: " android:layout_gravity="left"  />
+				<TextView style="@style/SmallText"  android:id="@+id/name" android:layout_weight="1" />
+			</LinearLayout>
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView style="@style/SmallText" android:text="Operating System:" android:layout_gravity="left" />
+				<TextView style="@style/SmallText"  android:id="@+id/ostype" android:layout_weight="1"/>
+			</LinearLayout>
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView style="@style/SmallText" android:text="Groups:" android:layout_gravity="left" />
+				<TextView style="@style/SmallText"  android:id="@+id/groups" android:layout_weight="1" android:text="None"/>
+			</LinearLayout>
+		</com.kedzie.vbox.app.Panel>   
+	
+		<com.kedzie.vbox.app.Panel vbox:name="System" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView  style="@style/SmallText"  android:text="Base Memory:" android:layout_gravity="left" />
+				<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1"/>
+			</LinearLayout>
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView  style="@style/SmallText"   android:text="Processors:"  android:layout_gravity="left"  />
+				<TextView  style="@style/SmallText" android:id="@+id/processors"  android:layout_weight="1"/>
+			</LinearLayout>
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView  style="@style/SmallText"  android:text="Boot Order:"  android:layout_gravity="left"  />
+				<TextView style="@style/SmallText"  android:id="@+id/bootOrder"  android:layout_weight="1"/>
+			</LinearLayout>
+			<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+				<TextView style="@style/SmallText" android:text="Acceleration:" android:layout_gravity="left"  />
+				<TextView style="@style/SmallText"  android:id="@+id/acceleration" android:layout_weight="1"/>
+			</LinearLayout>
+		</com.kedzie.vbox.app.Panel>
+	</LinearLayout>
+		
+	<com.kedzie.vbox.app.Panel vbox:name="Preview" vbox:headerIcon="@drawable/ic_context_machine" android:layout_width="wrap_content" android:layout_height="wrap_content" >
+		<ImageView android:id="@+id/preview" android:layout_width="256dp" android:layout_height="256dp" />
+	</com.kedzie.vbox.app.Panel>
+		
+	</LinearLayout>

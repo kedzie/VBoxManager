@@ -1,4 +1,4 @@
-package com.kedzie.vbox.app;
+package com.kedzie.vbox.machine.group;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -15,8 +15,9 @@ import android.widget.ViewFlipper;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.app.VMGroupPanel.OnDrillDownListener;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineView;
+import com.kedzie.vbox.machine.group.VMGroupPanel.OnDrillDownListener;
 
 /**
  * 
@@ -24,12 +25,13 @@ import com.kedzie.vbox.machine.MachineView;
  */
 public class VMGroupListView extends ViewFlipper implements OnClickListener, OnDrillDownListener {
     
-    public static interface TreeNodeClickListener {
-        public void onTreeNodeClick(TreeNode node);
+    public static interface OnTreeNodeSelectListener {
+        public void onTreeNodeSelect(TreeNode node);
     }
     
     private VMGroup _group;
-    private TreeNodeClickListener _listener;
+    private View _selected;
+    private OnTreeNodeSelectListener _listener;
     private Animation _slideInLeft, _slideInRight, _slideOutLeft, _slideOutRight;
     
     public VMGroupListView(Context context, AttributeSet attrs) {
@@ -58,16 +60,15 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
         return _group;
     }
     
-    public void setSelectTreeNodeListener(TreeNodeClickListener listener) {
+    public void setSelectTreeNodeListener(OnTreeNodeSelectListener listener) {
         _listener = listener;
     }
 
     private View createGroupListView(VMGroup group) {
         ScrollView scrollView = new ScrollView(getContext());
         LinearLayout _contents = new LinearLayout(getContext());
-        _contents.setOrientation(LinearLayout.VERTICAL);
         scrollView.addView(_contents);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        _contents.setOrientation(LinearLayout.VERTICAL);
         if(!group.getName().equals("/")) {
             LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
             ((ImageButton)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
@@ -79,8 +80,11 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
             ((TextView)header.findViewById(R.id.group_title)).setText(group.getName());
             ((TextView)header.findViewById(R.id.group_num_groups)).setText(group.getNumGroups()+"");
             ((TextView)header.findViewById(R.id.group_num_machine)).setText(group.getNumMachines()+"");
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            lp.bottomMargin = Utils.dpiToPixels(4);
             _contents.addView(header, lp);
         }
+        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         for(TreeNode child : group.getChildren()) 
             _contents.addView(createView(child), lp);
         return scrollView;
@@ -96,6 +100,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
         if(node instanceof IMachine) {
             MachineView view = new MachineView(getContext());
             view.update((IMachine)node);
+            view.setBackgroundResource(R.drawable.list_selector_background);
             view.setClickable(true);
             view.setOnClickListener(this);
             return view;
@@ -116,10 +121,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
         if(_listener==null)
             return;
         if(v instanceof MachineView)
-            _listener.onTreeNodeClick(((MachineView)v).getMachine());
+            _listener.onTreeNodeSelect(((MachineView)v).getMachine());
         else if(v instanceof VMGroupPanel)
-            _listener.onTreeNodeClick(((VMGroupPanel)v).getGroup());
+            _listener.onTreeNodeSelect(((VMGroupPanel)v).getGroup());
+        if(_selected!=null)
+            _selected.setSelected(false);
         v.setSelected(true);
+        _selected=v;
     }
     
     public void drillOut() {

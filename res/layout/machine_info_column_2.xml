@@ -7,12 +7,15 @@
 	android:layout_weight="1" >
 	
 	<com.kedzie.vbox.app.Panel vbox:name="Audio" vbox:headerIcon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	    <TextView style="@style/SmallText"  android:text="Not Implemented"  android:layout_weight="1" />
 	</com.kedzie.vbox.app.Panel>
 		
 	<com.kedzie.vbox.app.Panel vbox:name="Network" vbox:headerIcon="@drawable/ic_context_network" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	    <TextView style="@style/SmallText"  android:text="Not Implemented"  android:layout_weight="1" />
 	</com.kedzie.vbox.app.Panel>
 		
 	<com.kedzie.vbox.app.Panel vbox:name="USB" vbox:headerIcon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	    <TextView style="@style/SmallText"  android:text="Not Implemented"  android:layout_weight="1" />
 	</com.kedzie.vbox.app.Panel>
 		
 	<com.kedzie.vbox.app.Panel vbox:name="System" vbox:headerIcon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >

@@ -18,6 +18,7 @@ import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
 
@@ -37,7 +38,7 @@ public class InfoFragment extends SherlockFragment {
 			//cache values
 			m[0].getName(); m[0].getOSTypeId(); m[0].getMemorySize();
 			m[0].getCPUCount(); m[0].getVRAMSize(); m[0].getAccelerate2DVideoEnabled();
-			m[0].getAccelerate3DEnabled(); m[0].getDescription();
+			m[0].getAccelerate3DEnabled(); m[0].getDescription(); m[0].getGroups();
 			return m[0];
 		}
 
@@ -66,6 +67,7 @@ public class InfoFragment extends SherlockFragment {
 	private View _view;
 	private TextView _nameText;
 	private TextView _descriptionText;
+	private TextView _groupText;
 	private TextView _osTypeText;
 	private TextView _baseMemoryText;
 	private TextView _processorsText;
@@ -88,6 +90,7 @@ public class InfoFragment extends SherlockFragment {
 		_view = inflater.inflate(R.layout.machine_info, null);
 		_nameText = (TextView)_view.findViewById(R.id.name);
 		_descriptionText = (TextView)_view.findViewById(R.id.description);
+		_groupText = (TextView)_view.findViewById(R.id.groups);
 		_osTypeText = (TextView)_view.findViewById(R.id.ostype);
 		_baseMemoryText = (TextView)_view.findViewById(R.id.baseMemory);
 		_processorsText = (TextView)_view.findViewById(R.id.processors);
@@ -117,6 +120,10 @@ public class InfoFragment extends SherlockFragment {
 	private void populateViews(IMachine m) {
 		_nameText.setText( m.getName()+"" );
 		_osTypeText.setText( m.getOSTypeId()+"" );
+		if(!Utils.isEmpty(m.getGroups())) 
+		    _groupText.setText(m.getGroups().get(0));
+	    else
+	        _groupText.setText("None");
 		_baseMemoryText.setText( m.getMemorySize()+"" );
 		_processorsText.setText( m.getCPUCount()+"" );
 		_bootOrderText.setText( "" );

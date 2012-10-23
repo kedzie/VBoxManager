@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -141,24 +142,18 @@ public class SnapshotFragment extends SherlockFragment {
         
         View view = inflater.inflate(R.layout.snapshot_tree, null);
         _treeView = (TreeViewList)view.findViewById(R.id.mainTreeView);
+        _treeView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         registerForContextMenu(_treeView);
-//        _treeView.setLayoutTransition(getLayoutTransition());
         
-        _stateManager = savedInstanceState==null ? new InMemoryTreeStateManager<ISnapshot>()
-                : (TreeStateManager<ISnapshot>)savedInstanceState.getSerializable("manager");
+        _stateManager = savedInstanceState==null ? new InMemoryTreeStateManager<ISnapshot>()  : (TreeStateManager<ISnapshot>)savedInstanceState.getSerializable("manager");
         _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
         _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
         return view;
     }
-
-//    private LayoutTransition getLayoutTransition() {
-//        return new LayoutTransition();
-//    }
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
 		if(savedInstanceState==null) 
 			new LoadSnapshotsTask(_vmgr).execute(_machine);
 	}

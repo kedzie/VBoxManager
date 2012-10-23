@@ -1,4 +1,4 @@
-package com.kedzie.vbox.app;
+package com.kedzie.vbox.machine.group;
 
 import java.security.acl.Group;
 

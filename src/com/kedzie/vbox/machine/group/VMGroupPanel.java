@@ -1,4 +1,4 @@
-package com.kedzie.vbox.app;
+package com.kedzie.vbox.machine.group;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.Panel;
 
 /**
  * Group of Virtual Machines.  Collapsible component like one introduced in VirtualBox 4.2.x
@@ -52,6 +53,20 @@ public class VMGroupPanel extends Panel {
         return titleLayout;
     }
     
+    @Override
+    public void setPressed(boolean pressed) {
+        super.setPressed(pressed);
+        _titleView.setPressed(pressed);
+        _frame.setPressed(pressed);
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        _titleView.setSelected(selected);
+        _frame.setSelected(selected);
+    }
+
     public void addChild(View view) {
         _contents.addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }

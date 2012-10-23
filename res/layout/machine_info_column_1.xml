@@ -54,8 +54,8 @@
 			<TextView  style="@style/SmallText" android:id="@+id/rdpPort"    android:layout_weight="1"/>
 		</LinearLayout>
 	</com.kedzie.vbox.app.Panel>
-		
+	
 	<com.kedzie.vbox.app.Panel vbox:name="Storage" vbox:headerIcon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	    <TextView style="@style/SmallText"  android:text="Not Implemented"  android:layout_weight="1" />
 	</com.kedzie.vbox.app.Panel>   
-	   
 </LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
+	android:orientation="vertical" 
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent" >
+	   
+		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+			<TextView style="@style/SmallText" android:text="Name: " android:layout_gravity="left"  />
+			<EditText style="@style/SmallText" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
+		</LinearLayout>
+		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+			<TextView style="@style/SmallText" android:text="Operating System:" android:layout_gravity="left" />
+			<EditText style="@style/SmallText" android:id="@+id/ostype" android:layout_weight="1"/>
+		</LinearLayout>
+		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+			<TextView style="@style/SmallText" android:text="Description" android:layout_gravity="left" />
+			<EditText style="@style/SmallText" android:id="@+id/description"  android:lines="4" android:layout_weight="1" />
+		</LinearLayout>
+		
+</LinearLayout>

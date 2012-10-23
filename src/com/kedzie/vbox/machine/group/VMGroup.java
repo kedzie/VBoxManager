@@ -1,4 +1,4 @@
-package com.kedzie.vbox.app;
+package com.kedzie.vbox.machine.group;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import com.kedzie.vbox.api.IMachine;
  * @author Marek Kędzierski
  */
 public class VMGroup implements TreeNode {
+    public static String BUNDLE = "group";
     
     private List<TreeNode> _children;
     private String _name;

@@ -40,8 +40,8 @@ public class MachineFragmentActivity extends BaseActivity {
         }
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
-//		getSupportActionBar().setIcon(((VBoxApplication)getApplication()).getOSDrawable(_machine.getOSTypeId()));
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		ViewPager pager = new ViewPager(this);
 		pager.setId(99);

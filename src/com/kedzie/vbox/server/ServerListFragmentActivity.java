@@ -23,7 +23,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
         if(savedInstanceState==null) {
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.add(android.R.id.content, new ServerListFragment(), "server_list");

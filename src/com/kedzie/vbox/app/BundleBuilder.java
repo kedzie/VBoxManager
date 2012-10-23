@@ -29,6 +29,7 @@ public class BundleBuilder {
 	 * @return builder pattern
 	 */
 	public static void putProxy(Bundle b, String key, IManagedObjectRef value) {
+	    if(value==null) return;
 		if(value instanceof Parcelable) 
 			b.putParcelable(key, (Parcelable)value);
 		else 
@@ -42,6 +43,7 @@ public class BundleBuilder {
 	 * @param obj remote proxy
 	 */
 	public static void addProxy(Intent intent, String name, IManagedObjectRef obj) {
+	    if(obj==null) return;
 		if(obj instanceof Parcelable) 
 			intent.putExtra(name, (Parcelable)obj);
 		else 

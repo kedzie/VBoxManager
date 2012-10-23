@@ -18,6 +18,9 @@ import com.kedzie.vbox.app.TabSupportFragment;
 import com.kedzie.vbox.app.TabSupportViewPager;
 import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.machine.MachineListBaseFragment.OnSelectMachineListener;
+import com.kedzie.vbox.machine.group.TreeNode;
+import com.kedzie.vbox.machine.group.VMGroup;
+import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -26,7 +29,7 @@ import com.kedzie.vbox.task.DialogTask;
  * @author Marek Kędzierski
  * @apiviz.stereotype activity
  */
-public class MachineListFragmentActivity extends BaseActivity implements OnSelectMachineListener {
+public class MachineListFragmentActivity extends BaseActivity implements OnTreeNodeSelectListener, OnSelectMachineListener {
 	public final static String INTENT_VERSION = "version";
 	public static final boolean VIEW_PAGER_TABS = false;
 	
@@ -82,16 +85,31 @@ public class MachineListFragmentActivity extends BaseActivity implements OnSelec
     }
 	
 	@Override
+    public void onTreeNodeSelect(TreeNode node) {
+	    
+	    if(node instanceof IMachine) {
+	        
+	    } else if (node instanceof VMGroup) {
+	        if(_dualPane) {
+	            Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr)
+	                    .putParcelable(VMGroup.BUNDLE, node)
+	                    .putBoolean("dualPane", true)
+	                    .create();
+	            _tabSupport.addTab(getString(R.string.tab_info), InfoFragment.class, b);
+	        }
+	    }
+    }
+	
+	@Override
 	public void onMachineSelected(IMachine machine) {
 		if (_dualPane) {
 			_tabSupport.removeAllTabs();
 //			_tabSupport = new TabSupportViewPager(this, _pager);
 			Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr)
 															.putProxy(IMachine.BUNDLE, machine)
-															.putBoolean("dualPane", true)
 															.create();
-			_tabSupport.addTab(getString(R.string.tab_actions), ActionsFragment.class, b);
 			_tabSupport.addTab(getString(R.string.tab_info), InfoFragment.class, b);
+			_tabSupport.addTab(getString(R.string.tab_actions), ActionsFragment.class, b);
 			_tabSupport.addTab(getString(R.string.tab_log), LogFragment.class, b);
 			_tabSupport.addTab(getString(R.string.tab_snapshots), SnapshotFragment.class, b);
 		} else {

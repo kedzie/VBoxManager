@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.kedzie.vbox.task.ActionBarTask;
  * @apiviz.stereotype fragment
  */
 public class LogFragment extends SherlockFragment {
+    private static final String TAG = "LogFragment";
 	private static final int MAX_LOG_SIZE=409600; //400 Kbps
 	
 	class LoadLogTask extends ActionBarTask<IMachine, String> {
@@ -45,6 +47,7 @@ public class LogFragment extends SherlockFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+	    Log.i(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		_machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
 	}
@@ -79,4 +82,40 @@ public class LogFragment extends SherlockFragment {
 		}
 		return false;
 	}
+
+    @Override
+    public void onAttach(Activity activity) {
+        Log.i(TAG, "onAttach");
+        super.onAttach(activity);
+    }
+    @Override
+    public void onDetach() {
+        Log.i(TAG, "onDetach");
+        super.onDetach();
+    }
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "onDestroy");
+        super.onDestroy();
+    }
+    @Override
+    public void onPause() {
+        Log.i(TAG, "onPause");
+        super.onPause();
+    }
+    @Override
+    public void onResume() {
+        Log.i(TAG, "onResume");
+        super.onResume();
+    }
+    @Override
+    public void onStart() {
+        Log.i(TAG, "onStart");
+        super.onStart();
+    }
+    @Override
+    public void onStop() {
+        Log.i(TAG, "onStop");
+        super.onStop();
+    }
 }
