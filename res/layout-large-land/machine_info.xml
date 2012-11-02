@@ -7,20 +7,23 @@
 	android:padding="8dp">
 	
 	<LinearLayout android:orientation="horizontal" 
+	    	android:baselineAligned="false"
 		android:layout_width="match_parent" 
-		android:layout_height="match_parent">
+		android:layout_height="wrap_content">
 		
-	    <FrameLayout android:layout_height="match_parent"  android:layout_width="wrap_content" android:layout_weight="1">
-		<include layout="@layout/machine_info_column_1" />
-	</FrameLayout>
+	    	<FrameLayout android:layout_height="match_parent"  android:layout_width="wrap_content" android:layout_weight="1">
+			<include layout="@layout/machine_info_column_1" />
+		</FrameLayout>
 		
 		<LinearLayout android:orientation="vertical" 
 			android:layout_width="wrap_content" 
 			android:layout_height="match_parent" 
 			android:layout_weight="1" >
-			<com.kedzie.vbox.app.Panel vbox:name="Preview" vbox:headerIcon="@drawable/ic_context_machine" android:layout_width="wrap_content" android:layout_height="wrap_content" >
-				<ImageView android:id="@+id/preview" android:layout_width="256dp" android:layout_height="256dp" />
+			
+			<com.kedzie.vbox.app.Panel vbox:name="Preview" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="wrap_content" android:layout_height="wrap_content" >
+				<ImageView android:id="@+id/preview" android:contentDescription="preview" android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
 			</com.kedzie.vbox.app.Panel>
+			
 			<include layout="@layout/machine_info_column_2"/>
 		</LinearLayout>
 		

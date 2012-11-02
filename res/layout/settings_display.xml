@@ -7,19 +7,19 @@
 		
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallText" android:text="Video Memory"  android:layout_gravity="left" />
-			<SeekBar android:id="@+id/videoMemory"   android:layout_weight="1"/>
+			<SeekBar android:id="@+id/videoMemory"   android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallText" android:text="Monitors"  android:layout_gravity="left" />
-			<SeekBar android:id="@+id/numMonitors"   android:layout_weight="1"/>
+			<SeekBar android:id="@+id/numMonitors"   android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"  android:text="3D Acceleration" android:layout_gravity="left"  />
-			<CheckBox android:id="@+id/acceleration3D"     android:layout_weight="1"/>
+			<CheckBox android:id="@+id/acceleration3D"     android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView style="@style/SmallText"  android:text="2D Acceleration" android:layout_gravity="left" />
-			<CheckBox  android:id="@+id/acceleration2D"    android:layout_weight="1"/>
+			<CheckBox  android:id="@+id/acceleration2D"    android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
 		</LinearLayout>
 
 </LinearLayout>

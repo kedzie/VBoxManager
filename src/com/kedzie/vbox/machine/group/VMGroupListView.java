@@ -1,10 +1,16 @@
 package com.kedzie.vbox.machine.group;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -23,15 +29,22 @@ import com.kedzie.vbox.machine.group.VMGroupPanel.OnDrillDownListener;
  * 
  * @author Marek Kędzierski
  */
-public class VMGroupListView extends ViewFlipper implements OnClickListener, OnDrillDownListener {
+public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener {
     
     public static interface OnTreeNodeSelectListener {
         public void onTreeNodeSelect(TreeNode node);
     }
     
+    public static interface OnTreeNodeLongClickListener {
+        public void onTreeNodeLongClick(TreeNode node);
+    }
+    
     private VMGroup _group;
     private View _selected;
+    private boolean _selectionEnabled;
     private OnTreeNodeSelectListener _listener;
+    private OnTreeNodeLongClickListener _longClickListener;
+    private Map<IMachine, List<MachineView>> _machineViewMap = new HashMap<IMachine, List<MachineView>>();
     private Animation _slideInLeft, _slideInRight, _slideOutLeft, _slideOutRight;
     
     public VMGroupListView(Context context, AttributeSet attrs) {
@@ -60,8 +73,12 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
         return _group;
     }
     
-    public void setSelectTreeNodeListener(OnTreeNodeSelectListener listener) {
+    public void setOnTreeNodeSelectListener(OnTreeNodeSelectListener listener) {
         _listener = listener;
+    }
+    
+    public void setOnTreeNodeLongClickListener(OnTreeNodeLongClickListener listener) {
+        _longClickListener = listener;
     }
 
     private View createGroupListView(VMGroup group) {
@@ -99,15 +116,21 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
     public View createView(TreeNode node) {
         if(node instanceof IMachine) {
             MachineView view = new MachineView(getContext());
-            view.update((IMachine)node);
+            IMachine m = (IMachine)node;
+            view.update(m);
             view.setBackgroundResource(R.drawable.list_selector_background);
             view.setClickable(true);
             view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
+            if(!_machineViewMap.containsKey(m))
+                _machineViewMap.put(m, new ArrayList<MachineView>());
+            _machineViewMap.get(m).add(view);
             return view;
         } else if (node instanceof VMGroup) {
             VMGroup group = (VMGroup)node;
             VMGroupPanel groupView = new VMGroupPanel(getContext(), group);
             groupView.setOnClickListener(this);
+            groupView.setOnLongClickListener(this);
             groupView.setOnDrillDownListener(this);
             for(TreeNode child : group.getChildren())
                 groupView.addChild(createView(child));
@@ -116,18 +139,54 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
         throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");
     }
     
+    /**
+     * Update all machine views with new data
+     * @param machine       the machine to update (properties must be cached)
+     */
+    public void update(IMachine machine) {
+        for(MachineView view : _machineViewMap.get(machine))
+            view.update(machine);
+    }
+    
     @Override
     public void onClick(View v) {
         if(_listener==null)
             return;
+        if(!_selectionEnabled) {
+            notifyListener(v);
+            return;
+        }
+        //Deselect existing selection
+        if(_selected==v) {      
+            _selected.setSelected(false);
+            _selected=null;
+            _listener.onTreeNodeSelect(null);
+            return;
+        } 
+        //Make new Selection
+        if(_selected!=null)
+            _selected.setSelected(false);
+        _selected=v;
+        _selected.setSelected(true);
+        notifyListener(_selected);
+    }
+    
+    private void notifyListener(View v) {
         if(v instanceof MachineView)
             _listener.onTreeNodeSelect(((MachineView)v).getMachine());
         else if(v instanceof VMGroupPanel)
             _listener.onTreeNodeSelect(((VMGroupPanel)v).getGroup());
-        if(_selected!=null)
-            _selected.setSelected(false);
-        v.setSelected(true);
-        _selected=v;
+    }
+    
+    @Override
+    public boolean onLongClick(View v) {
+        if(_longClickListener==null)
+            return true;
+        if(v instanceof MachineView)
+            _longClickListener.onTreeNodeLongClick(((MachineView)v).getMachine());
+        else if(v instanceof VMGroupPanel)
+            _longClickListener.onTreeNodeLongClick(((VMGroupPanel)v).getGroup());
+        return true;
     }
     
     public void drillOut() {
@@ -143,5 +202,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnD
         setInAnimation(_slideInRight);
         setOutAnimation(_slideOutLeft);
         showNext();
+    }
+    
+    public boolean isSelectionEnabled() {
+        return _selectionEnabled;
+    }
+
+    public void setSelectionEnabled(boolean _selectionEnabled) {
+        this._selectionEnabled = _selectionEnabled;
     }
 }

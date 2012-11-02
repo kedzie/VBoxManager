@@ -1,7 +1,6 @@
 package com.kedzie.vbox.machine;
 
 import java.io.ByteArrayInputStream;
-import java.util.Map;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,13 +13,11 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.api.IConsole;
-import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
-import com.kedzie.vbox.task.MachineTask;
 
 /**
  * 
@@ -29,41 +26,29 @@ import com.kedzie.vbox.task.MachineTask;
  */
 public class InfoFragment extends SherlockFragment {
 
-	class LoadInfoTask extends ActionBarTask<IMachine, IMachine> {
+	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
 
 		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), null); }
 
 		@Override 
-		protected IMachine work(IMachine... m) throws Exception {
+		protected MachineInfo work(IMachine... m) throws Exception {
 			//cache values
 			m[0].getName(); m[0].getOSTypeId(); m[0].getMemorySize();
 			m[0].getCPUCount(); m[0].getVRAMSize(); m[0].getAccelerate2DVideoEnabled();
 			m[0].getAccelerate3DEnabled(); m[0].getDescription(); m[0].getGroups();
-			return m[0];
+			return new MachineInfo(m[0], m[0].getVBoxAPI().takeScreenshot(m[0], 256, 256));
 		}
 
 		@Override
-		protected void onResult(IMachine result) {
-				_machine = result;
-				populateViews(result);
-				if(_preview!=null) {
-				    new MachineTask<Void, byte []>("TakeScreenshotTask", getActivity(), _machine.getVBoxAPI(), "Taking Screenshot", true, _machine) { 
-		                protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception {    
-		                    IDisplay display = console.getDisplay();
-		                    Map<String, String> res = display.getScreenResolution(0);
-		                    return display.takeScreenShotPNGToArray(0, new Integer(res.get("width")), new Integer(res.get("height")));
-		                }
-		                @Override
-		                protected void onResult(byte[] result) {
-		                    super.onResult(result);
-		                    _preview.setImageBitmap(BitmapFactory.decodeStream(new ByteArrayInputStream(result)));
-		                }
-		            }.execute();
-				}
+		protected void onResult(MachineInfo result) {
+		    _machine=result.machine;
+		    _machineInfo = result;
+		    populateViews(result);
 		}
 	}
 	
 	private IMachine _machine;
+	private MachineInfo _machineInfo;
 	private View _view;
 	private TextView _nameText;
 	private TextView _descriptionText;
@@ -83,6 +68,8 @@ public class InfoFragment extends SherlockFragment {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
+		if(savedInstanceState!=null)
+		    _machineInfo = savedInstanceState.getParcelable("info");
 	}
 	
 	@Override
@@ -107,7 +94,7 @@ public class InfoFragment extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if(savedInstanceState!=null) 
-			populateViews(_machine);
+			populateViews(_machineInfo);
 		else 
 			new LoadInfoTask().execute(_machine);
 	}
@@ -115,9 +102,11 @@ public class InfoFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
+		outState.putParcelable("info", _machineInfo);
 	}
 
-	private void populateViews(IMachine m) {
+	private void populateViews(MachineInfo info) {
+	    IMachine m = info.machine;
 		_nameText.setText( m.getName()+"" );
 		_osTypeText.setText( m.getOSTypeId()+"" );
 		if(!Utils.isEmpty(m.getGroups())) 
@@ -132,6 +121,8 @@ public class InfoFragment extends SherlockFragment {
 		_accelerationVideoText.setText( (m.getAccelerate2DVideoEnabled() ? "2D" : "") + " " +  (m.getAccelerate3DEnabled() ? "3D" : "") );
 		_rdpPortText.setText( "NaN" );
 		_descriptionText.setText( m.getDescription()+"" );
+		if(info.screenshot!=null)
+		    _preview.setImageBitmap(BitmapFactory.decodeStream(new ByteArrayInputStream(info.screenshot)));
 	}
 	
 	@Override

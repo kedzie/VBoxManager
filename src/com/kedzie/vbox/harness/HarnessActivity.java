@@ -142,7 +142,7 @@ public class HarnessActivity extends BaseActivity {
         protected void onResult(VMGroup root) {
             VMGroupListView listView = new VMGroupListView(HarnessActivity.this);
             listView.setRoot(root);
-            listView.setSelectTreeNodeListener(new OnTreeNodeSelectListener() {
+            listView.setOnTreeNodeSelectListener(new OnTreeNodeSelectListener() {
                 @Override
                 public void onTreeNodeSelect(TreeNode node) {
                     Utils.toastShort(HarnessActivity.this, "OnClick: %1$s" , node.toString());

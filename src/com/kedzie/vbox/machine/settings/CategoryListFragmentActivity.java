@@ -16,6 +16,7 @@ import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.FragmentActivity;
 import com.kedzie.vbox.app.TabFragmentInfo;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.CategoryFragment.OnSelectCategoryListener;
@@ -54,18 +55,18 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
     /**
      * Save settings
      */
-    class SaveSettingsTask extends ActionBarTask<IMachine, Void> {
+    class SaveSettingsTask extends ActionBarTask<IMachine, Integer> {
         public SaveSettingsTask() { super("SaveSettingsTask", CategoryListFragmentActivity.this, CategoryListFragmentActivity.this._vmgr); }
 
         @Override 
-        protected Void work(IMachine... m) throws Exception {
+        protected Integer work(IMachine... m) throws Exception {
             m[0].saveSettings();
             _vmgr.getVBox().getSessionObject().unlockMachine();
-            return null;
+            return 1;
         }
-
+        
         @Override
-        protected void onResult(Void result) {
+        protected void onResult(Integer result) {
             super.onResult(result);
             finish();
         }
@@ -74,16 +75,16 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
     /**
      * Discard settings
      */
-    class DiscardSettingsTask extends ActionBarTask<IMachine, Void> {
+    class DiscardSettingsTask extends ActionBarTask<IMachine, Integer> {
         public DiscardSettingsTask() { super("DiscardSettingsTask", CategoryListFragmentActivity.this, CategoryListFragmentActivity.this._vmgr); }
         @Override 
-        protected Void work(IMachine... m) throws Exception {
+        protected Integer work(IMachine... m) throws Exception {
             m[0].discardSettings();
             _vmgr.getVBox().getSessionObject().unlockMachine();
-            return null;
+            return 1;
         }
         @Override
-        protected void onResult(Void result) {
+        protected void onResult(Integer result) {
             super.onResult(result);
             finish();
         }
@@ -135,11 +136,12 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
 	            Fragment existing = getSupportFragmentManager().findFragmentByTag(currentCategory);
 	            if(existing!=null)
 	                tx.detach(existing);
-	            boolean added = Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
-	            Log.i(TAG, added ? "Instantiated new Fragment: " + category.name : "Reattached existing fragment: " + category.name);
 	        }
+            boolean added = Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
+            Log.i(TAG, added ? "Instantiated new Fragment: " + category.name : "Reattached existing fragment: " + category.name);
+            tx.commit();
 	    } else {
-	        startActivity(new Intent(this, SettingsPageActivity.class).putExtra("info", category));
+	        startActivity(new Intent(this, FragmentActivity.class).putExtra(TabFragmentInfo.BUNDLE, category));
 	    }
 	    currentCategory = category.name;
     }
@@ -154,7 +156,7 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_save:
-		    new SaveSettingsTask().execute();
+		    new SaveSettingsTask().execute(_mutable);
 			return true;
 		case R.id.option_menu_discard:
 		    discardSettings();
@@ -170,6 +172,6 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
 	}
 	
 	private void discardSettings() {
-	    new DiscardSettingsTask().execute();
+	    new DiscardSettingsTask().execute(_mutable);
 	}
 }

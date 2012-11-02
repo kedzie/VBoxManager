@@ -21,14 +21,16 @@ public class VMGroupPanel extends Panel {
     }
     
     private TextView _titleLabel;
-    private ImageButton _enterButton;
+    private ImageButton _drillDownButton;
+    private OnDrillDownListener _drillDownListener;
     private TextView _numGroupsText;
     private TextView _numMachinesText;
+    
     private VMGroup _group;
-    private OnDrillDownListener _listener;
     
     public VMGroupPanel(Context context, VMGroup group) {
         super(context);
+        setClickable(true);
         _group = group;
         _titleLabel.setText(_group.getName());
         _numGroupsText.setText(_group.getNumGroups()+"");
@@ -39,12 +41,12 @@ public class VMGroupPanel extends Panel {
         LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
         _collapseButton = (ImageButton)titleLayout.findViewById(R.id.group_collapse);
         _collapseButton.setOnClickListener(this);
-        _enterButton = (ImageButton)titleLayout.findViewById(R.id.group_enter);
-        _enterButton.setOnClickListener(new OnClickListener() {
+        _drillDownButton = (ImageButton)titleLayout.findViewById(R.id.group_enter);
+        _drillDownButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(_listener!=null)
-                    _listener.onDrillDown(_group);
+                if(_drillDownListener!=null)
+                    _drillDownListener.onDrillDown(_group);
             }
         });
         _numGroupsText  = (TextView)titleLayout.findViewById(R.id.group_num_groups);
@@ -65,6 +67,10 @@ public class VMGroupPanel extends Panel {
         super.setSelected(selected);
         _titleView.setSelected(selected);
         _frame.setSelected(selected);
+        if(selected) {  //if group is selected, unselect all of it's children
+            for(int i=0; i<_contents.getChildCount(); i++)
+                _contents.getChildAt(i).setSelected(false);
+        }
     }
 
     public void addChild(View view) {
@@ -75,6 +81,6 @@ public class VMGroupPanel extends Panel {
         return _group;
     }
     public void setOnDrillDownListener(OnDrillDownListener listener) {
-        _listener=listener;
+        _drillDownListener=listener;
     }
 }

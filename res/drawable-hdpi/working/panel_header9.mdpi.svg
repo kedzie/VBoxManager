@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="panel_header9.mdpi.svg"
-   inkscape:export-filename="/home/kedzie/Desktop/mdpi/panel_header.9.png"
+   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-mdpi/panel_header_blue.9.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -81,20 +81,20 @@
        id="linearGradient4311"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.48626366,0,0,0.47252722,1.6593437,47.659333)"
-       x1="45.257999"
-       y1="32.465141"
-       x2="45.257999"
-       y2="-1.3953373" />
+       x1="45.943504"
+       y1="40.930271"
+       x2="45.943504"
+       y2="0.72094685" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4318"
        id="linearGradient4316"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.48626366,0,0,0.47252826,1.6593444,1028.0215)"
-       x1="45.257999"
-       y1="32.465141"
-       x2="45.257999"
-       y2="-1.3953373" />
+       x1="45.943501"
+       y1="40.930252"
+       x2="45.943501"
+       y2="0.7210151" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3767"
@@ -111,10 +111,10 @@
        id="linearGradient4335"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.48626366,0,0,0.47252722,1.6593437,47.659334)"
-       x1="45.257999"
-       y1="32.465141"
-       x2="45.257999"
-       y2="-1.3953373" />
+       x1="45.943504"
+       y1="40.930267"
+       x2="45.943504"
+       y2="0.7209447" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -124,7 +124,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16.150699"
-     inkscape:cx="16.424119"
+     inkscape:cx="15.457861"
      inkscape:cy="15.173071"
      inkscape:document-units="px"
      inkscape:current-layer="layer4"
@@ -171,9 +171,9 @@
        y="46" />
     <rect
        y="71"
-       x="5"
+       x="3"
        height="1"
-       width="40"
+       width="44"
        id="rect3785"
        style="fill:#000000;fill-opacity:1;stroke:none;display:inline" />
     <rect
@@ -187,7 +187,7 @@
        style="fill:#000000;fill-opacity:1;stroke:none;display:inline"
        id="rect3789"
        width="1"
-       height="18"
+       height="20"
        x="49"
        y="50" />
   </g>
@@ -208,7 +208,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1026.3622)"
-     style="display:none">
+     style="display:inline">
     <path
        style="fill:url(#linearGradient4316);fill-opacity:1;stroke:#33b5e5;stroke-width:1.31868875;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
        d="m 5.549454,1028.0215 c -2.1551207,0 -3.8901096,1.686 -3.8901096,3.7802 l 0,7.088 0,8.033 0,3.7802 3.8901096,0 38.901092,0 3.89011,0 0,-3.7802 0,-8.033 0,-7.088 c 0,-2.0942 -1.734986,-3.7802 -3.89011,-3.7802 l -38.901092,0 z"
@@ -219,7 +219,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Gray"
-     style="display:inline"
+     style="display:none"
      transform="translate(0,-46)">
     <path
        inkscape:connector-curvature="0"

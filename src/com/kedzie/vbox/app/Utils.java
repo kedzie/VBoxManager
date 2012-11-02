@@ -6,11 +6,17 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kedzie.vbox.VBoxApplication;
@@ -108,21 +114,6 @@ public class Utils {
     }
 	
     /**
-     * Show a DialogFragment with Back Stack
-     * @param manager    {@link FragmentManager}
-     * @param tag           tag for {@link Fragment}
-     * @param dialog        the {@link DialogFragment} implementation
-     */
-    public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
-        FragmentTransaction tx = manager.beginTransaction();
-        Fragment prev = manager.findFragmentByTag(tag);
-        if(prev!=null)
-            tx.remove(prev);
-        tx.addToBackStack(tag);
-        dialog.show(tx, tag);
-    }
-    
-    /**
      * Create an {@link IntentFilter} for multiple actions
      * @param actions   accepted actions
      * @return      the {@link IntentFilter}
@@ -141,6 +132,21 @@ public class Utils {
      */
     public static int dpiToPixels(int dpi) {
         return (int) (VBoxApplication.getInstance().getResources().getDisplayMetrics().density*dpi+.5f);
+    }
+    
+    /**
+     * Show a DialogFragment with Back Stack
+     * @param manager    {@link FragmentManager}
+     * @param tag           tag for {@link Fragment}
+     * @param dialog        the {@link DialogFragment} implementation
+     */
+    public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
+        FragmentTransaction tx = manager.beginTransaction();
+        Fragment prev = manager.findFragmentByTag(tag);
+        if(prev!=null)
+            tx.remove(prev);
+        tx.addToBackStack(tag);
+        dialog.show(tx, tag);
     }
     
     /**
@@ -177,5 +183,45 @@ public class Utils {
             tx.attach(info.fragment);
             return false;
         }
+    }
+    
+    /**
+     * Set the contents of a {@link TextView}
+     * @param view     parent view
+     * @param id           textview id
+     * @param text     text contents
+     */
+    public static void setTextView(View parent, int id, String text) {
+        ((TextView)parent.findViewById(id)).setText(text);
+    }
+    
+    /**
+     * Set the contents of a {@link ImageView}
+     * @param view     parent view
+     * @param id           textview id
+     * @param image     contents
+     */
+    public static void setImageView(View parent, int id, Drawable image) {
+        ((ImageView)parent.findViewById(id)).setImageDrawable(image);
+    }
+    
+    /**
+     * Set the contents of a {@link ImageView}
+     * @param view     parent view
+     * @param id           textview id
+     * @param image     contents
+     */
+    public static void setImageView(View parent, int id, Bitmap image) {
+        ((ImageView)parent.findViewById(id)).setImageBitmap(image);
+    }
+    
+    /**
+     * Is this a large screen in landscape configuration?
+     * @param config    the {@link Configuration}
+     * @return      true if is large screen in landscape orientation, false otherwise
+     */
+    public static boolean isLargeLand(Configuration config) {
+        return config.orientation==Configuration.ORIENTATION_LANDSCAPE &&
+                (config.screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK)>=Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 }

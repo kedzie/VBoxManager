@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
  * @author Marek Kedzierski
  */
 public class TabFragmentInfo implements Parcelable {
+    public static String BUNDLE = "info";
 
     public final String name;
     public final int icon;

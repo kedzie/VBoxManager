@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
@@ -31,10 +34,9 @@ public class DisplayFragment extends SherlockFragment {
 			m[0].getAccelerate3DEnabled();
 			m[0].getMonitorCount();
 			ISystemProperties props = _vmgr.getVBox().getSystemProperties();
-			props.getMaxGuestVRam();
-			props.getMinGuestVRam();
+			props.getMaxGuestVRAM();
+			props.getMinGuestVRAM();
 			props.getMaxGuestMonitors();
-			props.getMinGuestMonitors();
 			return props;
 		}
 		@Override
@@ -86,11 +88,72 @@ public class DisplayFragment extends SherlockFragment {
 	}
 
 	private void populateViews(IMachine m, ISystemProperties sp) {
-	    _videoMemoryBar.setMax(sp.getMaxGuestVRam());
+	    _videoMemoryBar.setMax(sp.getMaxGuestVRAM());
 	    _videoMemoryBar.setProgress(m.getVRAMSize());
+	    _videoMemoryBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+            
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            
+            @Override
+            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        _machine.setVRAMSize(progress);
+                    }
+                }.start();
+            }
+        });
+	    
 	    _monitorBar.setMax(sp.getMaxGuestMonitors());
 	    _monitorBar.setProgress(m.getMonitorCount());
+	    _monitorBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+            
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            
+            @Override
+            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        _machine.setMonitorCount(progress);
+                    }
+                }.start();
+            }
+        });
 	    _acceleration2DBox.setChecked(m.getAccelerate2DVideoEnabled());
+	    _acceleration2DBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        _machine.setAccelerate2DVideoEnabled(isChecked);
+                    }
+                }.start();
+            }
+        });
 		_acceleration3DBox.setChecked(m.getAccelerate3DEnabled());
+		_acceleration3DBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        _machine.setAccelerate3DEnabled(isChecked);
+                    }
+                }.start();
+            }
+        });
 	}
 }

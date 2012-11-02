@@ -29,13 +29,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.ISnapshotDeletedEvent;
 import com.kedzie.vbox.api.ISnapshotTakenEvent;
 import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.api.jaxb.LockType;
+import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricQuery;
@@ -110,7 +115,7 @@ public class VBoxSvc implements Parcelable {
 					out.writeMap(_cache);
 					return null;
 				}
-				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? _type.getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
+				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? method.getDeclaringClass().getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 				
 				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(method.getName()))
 					return _cache.get(method.getName());
@@ -382,6 +387,45 @@ public class VBoxSvc implements Parcelable {
 		}
 		return ret;
 	}
+	
+	public byte[] takeScreenshot(IMachine machine) throws IOException {
+	    if(machine.getState().equals(MachineState.RUNNING) || machine.getState().equals(MachineState.SAVED)) {
+	        ISession session = _vbox.getSessionObject();
+            machine.lockMachine(session, LockType.SHARED);
+            try {
+                IDisplay display = session.getConsole().getDisplay();
+                Map<String, String> res = display.getScreenResolution(0);
+                return display.takeScreenShotPNGToArray(0, Integer.valueOf(res.get("width")), Integer.valueOf(res.get("height")));
+            } finally {
+                session.unlockMachine();
+            }
+	    }
+	    return null;
+	}
+	
+	public byte[] takeScreenshot(IMachine machine, int width, int height) throws IOException {
+        if(machine.getState().equals(MachineState.RUNNING) || machine.getState().equals(MachineState.SAVED)) {
+            ISession session = _vbox.getSessionObject();
+            machine.lockMachine(session, LockType.SHARED);
+            try {
+                IDisplay display = session.getConsole().getDisplay();
+                Map<String, String> res = display.getScreenResolution(0);
+                float screenW = Float.valueOf(res.get("width"));
+                float screenH = Float.valueOf(res.get("height"));
+                if(screenW > screenH) {
+                    float aspect = screenH/screenW;
+                    height =(int) (aspect*width);
+                } else if(screenH > screenW){
+                    float aspect = screenW/screenH;
+                    width =(int) (aspect*height);
+                }
+                return session.getConsole().getDisplay().takeScreenShotPNGToArray(0, width, height);
+            } finally {
+                session.unlockMachine();
+            }
+        }
+        return null;
+    }
 
 		@SuppressWarnings("unchecked")
 		public <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {

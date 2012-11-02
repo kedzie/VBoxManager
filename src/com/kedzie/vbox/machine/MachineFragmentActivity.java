@@ -1,7 +1,6 @@
 package com.kedzie.vbox.machine;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -33,11 +32,9 @@ public class MachineFragmentActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE 
-		        && getResources().getConfiguration().smallestScreenWidthDp>=600) {
-		    NavUtils.navigateUpTo(this, new Intent(this, MachineListFragmentActivity.class).putExtras(getIntent()));
-            return;
-        }
+		if(Utils.isLargeLand(getResources().getConfiguration())) 
+		    finish();
+		
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
 		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));

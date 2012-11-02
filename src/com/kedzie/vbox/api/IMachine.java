@@ -104,6 +104,8 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */ 
 	@KSOAP(cacheable=true) public Integer getMemorySize();
 	
+	public void setMemorySize(@KSOAP(type="unsignedInt", value="memorySize") int memorySize);
+	
 	/**
 	 * @return Memory balloon size in megabytes. 
 	 */
@@ -114,16 +116,22 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */
 	@KSOAP(cacheable=true) public Integer getVRAMSize();
 	
+	public void setVRAMSize(@KSOAP(type="unsignedint", value="VRAMSize")int vramSize);
+	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getAccelerate3DEnabled();
+	
+	public void setAccelerate3DEnabled(@KSOAP(type="boolean", value="accelerate3DEnabled")boolean accelerate3DEnabled);
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 2D video acceleration support available on the host. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getAccelerate2DVideoEnabled();
 
+	public void setAccelerate2DVideoEnabled(@KSOAP(type="boolean", value="accelerate2DVideoEnabled")boolean accelerate2DVideoEnabled);
+	
 	/**
 	 * @return Number of virtual monitors. 
 	 */

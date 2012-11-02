@@ -6,7 +6,7 @@
 	android:layout_height="match_parent" 
 	android:layout_weight="1" >
 	   
-	<com.kedzie.vbox.app.Panel vbox:name="General" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.Panel vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView style="@style/SmallText" android:text="Name: " android:layout_gravity="left"  />
 			<TextView style="@style/SmallText" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
@@ -40,7 +40,7 @@
 		</LinearLayout>
 	</com.kedzie.vbox.app.Panel>
 		
-	<com.kedzie.vbox.app.Panel vbox:name="Display" vbox:headerIcon="@drawable/ic_context_machine" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.Panel vbox:name="Display" vbox:headerIcon="@drawable/ic_settings_display" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallText"   android:text="Video Memory"  android:layout_gravity="left" />
 			<TextView style="@style/SmallText"  android:id="@+id/videoMemory"     android:layout_weight="1"/>

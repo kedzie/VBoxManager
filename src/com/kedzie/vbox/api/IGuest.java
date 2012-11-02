@@ -1,5 +1,9 @@
 package com.kedzie.vbox.api;
 
+import java.util.List;
+
+import com.kedzie.vbox.api.jaxb.AdditionsRunLevelType;
+import com.kedzie.vbox.api.jaxb.AdditionsUpdateFlag;
 import com.kedzie.vbox.soap.KSOAP;
 
 /**
@@ -11,5 +15,28 @@ import com.kedzie.vbox.soap.KSOAP;
  */
 @KSOAP
 public interface IGuest extends IManagedObjectRef {
-	@KSOAP(cacheable=true)  public Integer getMemoryBalloonSize();
+	
+    @KSOAP(cacheable=true) public Integer getMemoryBalloonSize();
+	public void setMemoryBalloonSize(@KSOAP(type="unsignedint", value="memoryBalloonSize") int memoryBalloonSize);
+	
+	@KSOAP(cacheable=true) public Integer getStatisticsUpdateInterval();
+	public void setStatisticsUpdateInterval(@KSOAP(type="unsignedint", value="statisticsUpdateInterval") int statisticsUpdateInterval);
+    
+    public boolean getAdditionsStatus(@KSOAP("level") AdditionsRunLevelType level);
+    
+    public void setCredentials(@KSOAP("userName") String userName, @KSOAP("password") String password, @KSOAP("domain") String domain, 
+            @KSOAP(type="boolean", value="allowInteractiveLogon") boolean allowInteractiveLogon);
+
+	@KSOAP(cacheable=true) public String getOSTypeId();
+	@KSOAP(cacheable=true) public AdditionsRunLevelType getAdditionsRunLevel();
+	@KSOAP(cacheable=true) public String getAdditionsVersion();
+	@KSOAP(cacheable=true) public int getAdditionsRevision();
+	@KSOAP(cacheable=true) public List<IGuestSession> getSessions();
+	
+	public IGuestSession createSession(@KSOAP("userName") String userName, @KSOAP("password") String password, @KSOAP("domain") String domain,
+	        @KSOAP("sessionName") String sessionName);
+
+	public List<IGuestSession> findSession(@KSOAP("sessionName") String sessionName);
+	
+	public IProgress updateGuestAdditions(@KSOAP("source") String source, @KSOAP("flags") List<AdditionsUpdateFlag> flags);
 }

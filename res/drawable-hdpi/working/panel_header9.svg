@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="panel_header9.svg"
-   inkscape:export-filename="/home/kedzie/Desktop/hdpi/panel_header_yellow.9.png"
+   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/panel_header_blue.9.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -81,8 +81,8 @@
        id="linearGradient4311"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.7293955,0,0,0.70879083,1.9890155,35.989)"
-       x1="45.257999"
-       y1="32.465141"
+       x1="45.258003"
+       y1="42.341122"
        x2="45.257999"
        y2="-1.3953373" />
     <linearGradient
@@ -91,8 +91,8 @@
        id="linearGradient4316"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.72939548,0,0,0.70879256,1.9890167,1016.3511)"
-       x1="45.257999"
-       y1="32.465141"
+       x1="45.258003"
+       y1="42.34116"
        x2="45.257999"
        y2="-1.3953373" />
     <linearGradient
@@ -111,8 +111,8 @@
        id="linearGradient4335"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.7293955,0,0,0.70879084,1.9890155,35.989001)"
-       x1="45.257999"
-       y1="32.465141"
+       x1="45.258003"
+       y1="42.341122"
        x2="45.257999"
        y2="-1.3953373" />
   </defs>
@@ -124,10 +124,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="15.069135"
-     inkscape:cx="35.724542"
+     inkscape:cx="23.680055"
      inkscape:cy="16.767975"
      inkscape:document-units="px"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer3"
      showgrid="true"
      inkscape:snap-nodes="false"
      inkscape:snap-bbox="true"
@@ -171,9 +171,9 @@
        y="34" />
     <rect
        y="71"
-       x="7"
+       x="4"
        height="1"
-       width="60"
+       width="66"
        id="rect3785"
        style="fill:#000000;fill-opacity:1;stroke:none;display:inline" />
     <rect
@@ -187,7 +187,7 @@
        style="fill:#000000;fill-opacity:1;stroke:none;display:inline"
        id="rect3789"
        width="1"
-       height="26"
+       height="29"
        x="73"
        y="41" />
   </g>

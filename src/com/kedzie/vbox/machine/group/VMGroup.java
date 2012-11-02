@@ -29,9 +29,11 @@ public class VMGroup implements TreeNode {
             _children  = new ArrayList<TreeNode>();
         return _children;
     }
+    
     public void setChildren(List<TreeNode> children) {
         _children = children;
     }
+    
     public void addChild(TreeNode child) {
         if(!getChildren().contains(child)) {
             getChildren().add(child);
@@ -41,12 +43,15 @@ public class VMGroup implements TreeNode {
                 numMachines++;
         }
     }
+    
     public String getName() {
         return _name;
     }
+    
     public void setName(String name) {
         _name=name;
     }
+    
     public static String getTreeString(int level, TreeNode node) {
         StringBuilder str = new StringBuilder("");
         str.append(node.getName());
@@ -61,15 +66,18 @@ public class VMGroup implements TreeNode {
         }
         return str.toString();
     }
+    
     public String toString() {
         return _name;
     }
+    
     public boolean equals(Object other) {
         if(!(other instanceof VMGroup)) 
             return false;
         VMGroup that = (VMGroup)other;
         return this._name.equals(that._name);
     }
+    
     public int hashCode() {
         return _name.hashCode();
     }

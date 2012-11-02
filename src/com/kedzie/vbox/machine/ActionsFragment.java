@@ -256,7 +256,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
 					IDisplay display = console.getDisplay();
 					Map<String, String> res = display.getScreenResolution(0);
-					return display.takeScreenShotPNGToArray(0, new Integer(res.get("width")), new Integer(res.get("height")));
+					return display.takeScreenShotPNGToArray(0, Integer.valueOf(res.get("width")), Integer.valueOf(res.get("height")));
 				}
 				@Override
 				protected void onResult(byte[] result) {

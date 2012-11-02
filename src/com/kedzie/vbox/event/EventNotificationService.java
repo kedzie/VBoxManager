@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.kedzie.vbox.R;
@@ -37,7 +38,7 @@ public class EventNotificationService extends IntentService {
 		MachineView.cacheProperties(eventMachine);
 		BundleBuilder.addProxy(i, IMachine.BUNDLE, eventMachine);
 		String title = getString(R.string.notification_title, eventMachine.getName(), eventMachine.getState());
-		Notification n =  new Notification.Builder(EventNotificationService.this)
+		Notification n =  new NotificationCompat.Builder(EventNotificationService.this)
 				.setContentTitle(title)
 				.setContentText(getString(R.string.notification_text, eventMachine.getName(), eventMachine.getState()))
 				.setWhen(System.currentTimeMillis())
@@ -46,7 +47,7 @@ public class EventNotificationService extends IntentService {
 				.setContentIntent(PendingIntent.getActivity(EventNotificationService.this, 0, i, 0))
 				.setTicker(title)
 				.setAutoCancel(true)
-				.getNotification();
+				.build();
 		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, n);
 	}
 }

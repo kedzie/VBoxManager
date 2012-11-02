@@ -63,9 +63,9 @@ public class CategoryFragment extends SherlockFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         List<TabFragmentInfo> categories = new ArrayList<TabFragmentInfo>();
-        categories.add(new TabFragmentInfo("General", R.drawable.ic_menu_info_details, GeneralFragment.class, getArguments()));
-        categories.add(new TabFragmentInfo("System", R.drawable.ic_menu_info_details, SystemFragment.class, getArguments()));
-        categories.add(new TabFragmentInfo("Display", R.drawable.ic_context_machine, DisplayFragment.class, getArguments()));
+        categories.add(new TabFragmentInfo("General", R.drawable.ic_settings_general, GeneralFragment.class, getArguments()));
+        categories.add(new TabFragmentInfo("System", R.drawable.ic_settings_general, SystemFragment.class, getArguments()));
+        categories.add(new TabFragmentInfo("Display", R.drawable.ic_settings_display, DisplayFragment.class, getArguments()));
         _adapter = new CategoryAdapter(getActivity(), categories);
     }
 
