@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
@@ -62,7 +63,7 @@ public class MetricActivity extends BaseActivity  {
         ramV.setMetricPrefs(_count, _period);
         
         //for large devices show both metric graphs on same page
-        if(getResources().getConfiguration().smallestScreenWidthDp>=600) {
+        if( (getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK) >=Configuration.SCREENLAYOUT_SIZE_LARGE) {
             setContentView(content);
         } else { //for smaller devices show a single metric graph on the page
             MetricViewPagerAdapter adapter = new MetricViewPagerAdapter();
