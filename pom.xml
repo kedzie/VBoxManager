@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-        	<groupId>virtualbox</groupId>
+        <groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.0.4</version>
-    	</parent>
+		<version>3.0.5-SNAPSHOT</version>
+    </parent>
 
 	<artifactId>vbox-app</artifactId>
 	<packaging>apk</packaging>
@@ -49,11 +49,6 @@
 			<version>4.2.0</version>
 			<type>apklib</type>
 		</dependency>
- 		<!--<dependency>
- 			<groupId>com.google.code.ksoap2-android</groupId>
- 			<artifactId>ksoap2-android</artifactId>
- 			<version>2.6.5</version>
- 		</dependency>-->
 	</dependencies>
 
 	<build>
@@ -69,7 +64,11 @@
 					<execution>
 						<phase>generate-sources</phase>
 						<goals><goal>add-source</goal></goals>
-						<configuration><sources><source>ksoap3-src</source></sources></configuration>
+						<configuration>
+							<sources>
+								<source>ksoap3-src</source>
+							</sources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -79,9 +78,16 @@
 				<extensions>true</extensions>
 				<configuration>
 					<manifestDebuggable>true</manifestDebuggable>
+					<attachSources>true</attachSources>
 				</configuration>
 				<executions>
-					<execution><id>manifest</id><phase>process-resources</phase><goals><goal>manifest-update</goal></goals></execution>
+					<execution>
+						<id>manifest</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>manifest-update</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -91,7 +97,14 @@
 					<description>${project.name} APK</description>
 					<override>true</override>
 				</configuration>
-				<executions><execution><phase>site</phase><goals><goal>upload</goal></goals></execution></executions>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.github.github</groupId>
@@ -102,7 +115,14 @@
 					<path>maven</path>
 					<merge>true</merge>
 				</configuration>
- 				<executions><execution><phase>site</phase><goals><goal>site</goal></goals></execution></executions>
+ 				<executions>
+					<execution>
+						<phase>site</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -110,11 +130,17 @@
 	<profiles>
 		<profile>
 			<id>production</id>
-			<activation><property><name>environment</name><value>production</value></property></activation>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>production</value>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
 						<artifactId>maven-jarsigner-plugin</artifactId>
+						<inherited>true</inherited>
 						<configuration>
 							<removeExistingSignatures>true</removeExistingSignatures>
 							<archive>${project.build.directory}/${project.build.finalName}.apk</archive>
@@ -124,25 +150,54 @@
 							<keypass>android</keypass>
 						</configuration>
 						<executions>
-							<execution><phase>package</phase><goals><goal>sign</goal></goals></execution>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
 						</executions>
 					</plugin>
 					<plugin>
 						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 						<artifactId>android-maven-plugin</artifactId>
-						<extensions>true</extensions>
+						<inherited>true</inherited>
 						<configuration>
 							<manifestDebuggable>false</manifestDebuggable>
-							<sign><debug>false</debug></sign>
+							<manifestVersionName></manifestVersionName>
+							<versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+							<sign>
+								<debug>false</debug>
+							</sign>
 							<zipalign>
 								<skip>false</skip>
 								<inputApk>${project.build.directory}/${project.build.finalName}.apk</inputApk>
 								<outputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</outputApk>
 							</zipalign>
+							<proguard>
+								<skip>false</skip>
+								<config>proguard.cfg</config>
+								<jvmArguments>
+									<jvmArgument>-Xms512m</jvmArgument>
+									<jvmArgument>-Xmx1024m</jvmArgument>
+								</jvmArguments>
+							</proguard>
 						</configuration>
 						<executions>
-							<execution><id>manifest</id><phase>process-resources</phase><goals><goal>manifest-update</goal></goals></execution>
-							<execution><id>zip</id><phase>package</phase><goals><goal>zipalign</goal></goals></execution>
+							<execution>
+								<id>manifest</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>manifest-update</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>zip</id>
+								<phase>package</phase>
+								<goals>
+									<goal>zipalign</goal>
+								</goals>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
@@ -162,11 +217,11 @@
 				<artifactId>maven-changelog-plugin</artifactId>
 				<version>2.2</version>
 			</plugin>
-			<!--plugin>
-        			<groupId>org.apache.maven.plugins</groupId>
-       				<artifactId>maven-surefire-report-plugin</artifactId>
-       				<version>2.12.2</version>
-      			</plugin-->
+			<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+       			<artifactId>maven-surefire-report-plugin</artifactId>
+       			<version>2.12.2</version>
+      		</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
