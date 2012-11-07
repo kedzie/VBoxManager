@@ -15,8 +15,7 @@
         vbox:backgroundColor="#ffffffff"
         vbox:gridColor="#64000000"
         vbox:textColor="#ff000000"
-        vbox:borderColor="#ff0000ff"
-        />
+        vbox:borderColor="#ff0000ff" />
     
      <com.kedzie.vbox.metrics.MetricView  
          android:id="@+id/ram_metrics" 
@@ -27,7 +26,6 @@
          vbox:backgroundColor="#ffffffff"
         vbox:gridColor="#64000000"
         vbox:textColor="#ff000000"
-        vbox:borderColor="#ff0000ff"
-        />
+        vbox:borderColor="#ff0000ff" />
      
 </LinearLayout>

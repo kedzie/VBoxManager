@@ -2,6 +2,7 @@ package com.kedzie.vbox.machine;
 
 import java.io.ByteArrayInputStream;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,12 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
+import com.kedzie.vbox.machine.settings.CategoryListFragmentActivity;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -131,13 +135,23 @@ public class InfoFragment extends SherlockFragment {
 	}
 
 	@Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.edit_machine).setEnabled(
+                _machine.getState().equals(MachineState.POWERED_OFF)
+                || _machine.getState().equals(MachineState.ABORTED) );
+    }
+
+	@Override
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		switch(item.getItemId()) {
-		//TODO lock action
-		case R.id.option_menu_refresh:
-			new LoadInfoTask().execute(_machine);
-			return true;
-		}
-		return false;
+	    switch(item.getItemId()) {
+	        case R.id.edit_machine:
+	            startActivity(new Intent(getActivity(), CategoryListFragmentActivity.class).putExtras(getArguments()));
+	            return true;
+	        case R.id.option_menu_refresh:
+	            new LoadInfoTask().execute(_machine);
+	            return true;
+	    }
+	    return false;
 	}
 }

@@ -12,4 +12,13 @@
        <attr name="name" format="string" />
        <attr name="headerIcon" format="integer" />
    </declare-styleable>
+   
+    <declare-styleable name="SliderView">
+       <attr name="tickSpacing" format="integer" />
+       <attr name="unit" format="string" />
+       <attr name="minValidValue" format="integer" />
+       <attr name="maxValidValue" format="integer" />
+       <attr name="minValue" format="integer" />
+       <attr name="maxValue" format="integer" />
+   </declare-styleable>
 </resources>

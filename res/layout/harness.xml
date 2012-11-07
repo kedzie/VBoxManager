@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:id="@+id/flipper"
-    android:layout_width="match_parent" 
-    android:layout_height="match_parent" >
-
-	<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
-	    android:id="@+id/frameLayout"
-	    android:orientation="vertical"   
-	    android:layout_width="match_parent" 
-	    android:layout_height="match_parent" 
-	    android:padding="8dp">
-		
-	</ScrollView>
-
-</ViewFlipper>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
+    	android:orientation="vertical"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent" >
+    	
+    <com.kedzie.vbox.app.SliderView 
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        vbox:tickSpacing="1"
+        vbox:minValue="1"
+        vbox:maxValue="10"
+        vbox:minValidValue="4"
+        vbox:maxValidValue="8"
+        vbox:unit="MB" />
+    
+    <com.kedzie.vbox.app.SliderView2 
+        android:id="@+id/slider2"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        vbox:tickSpacing="1"
+        vbox:minValue="1"
+        vbox:maxValue="10"
+        vbox:minValidValue="4"
+        vbox:maxValidValue="8"
+        vbox:unit="MB" />
+    
+    
+</LinearLayout>

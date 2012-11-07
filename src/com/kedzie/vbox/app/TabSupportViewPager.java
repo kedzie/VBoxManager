@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
@@ -29,7 +30,7 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
 	private SherlockFragmentActivity _activity;
 	private ActionBar _actionBar;
     private ViewPager _viewPager;
-    private List<TabFragmentInfo> _tabs = new ArrayList<TabFragmentInfo>();
+    private List<FragmentElement> _tabs = new ArrayList<FragmentElement>();
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction;
     private Fragment mCurrentPrimaryItem;
@@ -114,7 +115,7 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
 
     @Override
     public void addTab(String name, Class<?> clazz, Bundle args)  {
-        TabFragmentInfo info = new TabFragmentInfo(name, clazz, args);
+        FragmentElement info = new FragmentElement(name, clazz, args);
        _actionBar.addTab( _actionBar.newTab().setText(name).setTag(info).setTabListener(this) );
         _tabs.add(info);
         notifyDataSetChanged();
@@ -122,7 +123,7 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
     
     @Override
 	public void removeTab(String name) {
-    	TabFragmentInfo info = new TabFragmentInfo(name, null, null);
+        FragmentElement info = new FragmentElement(name, null, null);
     	int index = _tabs.indexOf(info);
     	_activity.getSupportActionBar().removeTabAt(index);
     	_tabs.remove(info);

@@ -30,20 +30,24 @@ public class MetricView extends LinearLayout {
         }
     };
 	
-	public MetricView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MetricView, 0, 0);
-		try {
-			_header = a.getString(R.styleable.MetricView_header);
-			int bgColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
-			int gridColor = a.getColor(R.styleable.MetricView_gridColor, android.R.color.black);
-			int textColor = a.getColor(R.styleable.MetricView_textColor, android.R.color.black);
-			int borderColor = a.getColor(R.styleable.MetricView_borderColor, android.R.color.holo_blue_dark);
-			createView(bgColor, gridColor, textColor, borderColor);
-		} finally {
-			a.recycle();
-		}
-	}
+    public MetricView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+    
+    public MetricView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.MetricView, 0, 0);
+        try {
+            _header = a.getString(R.styleable.MetricView_header);
+            int bgColor = a.getColor(R.styleable.MetricView_backgroundColor, android.R.color.white);
+            int gridColor = a.getColor(R.styleable.MetricView_gridColor, android.R.color.black);
+            int textColor = a.getColor(R.styleable.MetricView_textColor, android.R.color.black);
+            int borderColor = a.getColor(R.styleable.MetricView_borderColor, android.R.color.holo_blue_dark);
+            createView(bgColor, gridColor, textColor, borderColor);
+        } finally {
+            a.recycle();
+        }
+    }
 	
 	public MetricView(Context context, String header) {
 	    super(context);

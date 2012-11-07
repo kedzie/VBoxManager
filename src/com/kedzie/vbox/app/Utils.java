@@ -14,12 +14,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
  * Android Utilities
@@ -27,7 +29,7 @@ import com.kedzie.vbox.VBoxApplication;
  */
 public class Utils {
 
-	public static int getIntPreference(Context ctx, String name) {
+    public static int getIntPreference(Context ctx, String name) {
 		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, ""));
 	}
 	
@@ -150,18 +152,16 @@ public class Utils {
     }
     
     /**
-     * Instantiate or re-attach existing Fragment
-     * @param context          context
+     * Detach an existing fragment
      * @param manager         fragment manager
-     * @param containerId     container
-     * @param info                  fragment definition
-     * @return      true of fragment was instantiated, false if reattached existing fragment
+     * @param tx                    existing transaction
+     * @param tag                   tag of existing fragment
      */
-    public static boolean  addOrAttachFragment(Context context, FragmentManager manager, int containerId, TabFragmentInfo info) {
-        FragmentTransaction tx = manager.beginTransaction();
-        boolean result = addOrAttachFragment(context, manager, tx, containerId, info);
-        tx.commit();
-        return result;
+    public static void detachExistingFragment(FragmentManager manager, FragmentTransaction tx, String tag) {
+        if(isEmpty(tag)) return;
+        Fragment existing = manager.findFragmentByTag(tag);
+        if(existing!=null)
+            tx.detach(existing);
     }
     
     /**
@@ -171,17 +171,16 @@ public class Utils {
      * @param tx                    existing transaction
      * @param containerId     container
      * @param info                  fragment definition
-     * @return      true of fragment was instantiated, false if reattached existing fragment
      */
-    public static boolean addOrAttachFragment(Context context, FragmentManager manager, FragmentTransaction tx, int containerId, TabFragmentInfo info) {
-        if(info.fragment==null)
-            info.fragment = manager.findFragmentByTag(info.name);
-        if(info.fragment==null) {
-            tx.add(containerId, info.instantiate(context), info.name);
-            return true;
+    public static void addOrAttachFragment(Context context, FragmentManager manager, FragmentTransaction tx, int containerId, FragmentElement element) {
+        if(element.fragment==null)
+            element.fragment = manager.findFragmentByTag(element.name);
+        if(element.fragment==null) {
+            Log.i("FragmentManager",  "Instantiated new Fragment: " + element.name);
+            tx.add(containerId, element.instantiate(context), element.name);
         } else {
-            tx.attach(info.fragment);
-            return false;
+            Log.i("FragmentManager",  "Reattaching existing Fragment: " + element.name);
+            tx.attach(element.fragment);
         }
     }
     
@@ -216,12 +215,11 @@ public class Utils {
     }
     
     /**
-     * Is this a large screen in landscape configuration?
-     * @param config    the {@link Configuration}
-     * @return      true if is large screen in landscape orientation, false otherwise
+     * Get screen layout size
+     * @param config        the {@link Configuration}
+     * @return                  screen size
      */
-    public static boolean isLargeLand(Configuration config) {
-        return config.orientation==Configuration.ORIENTATION_LANDSCAPE &&
-                (config.screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK)>=Configuration.SCREENLAYOUT_SIZE_LARGE;
+    public static int getScreenSize(Configuration config) {
+        return config.screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
     }
 }

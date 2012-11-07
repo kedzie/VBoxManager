@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.app.TabFragmentInfo;
+import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
  * 
@@ -27,20 +27,20 @@ import com.kedzie.vbox.app.TabFragmentInfo;
 public class CategoryFragment extends SherlockFragment {
     
     public static interface OnSelectCategoryListener {
-        public void onSelectCategory(TabFragmentInfo category);
+        public void onSelectCategory(FragmentElement category);
     }
     
-    class CategoryAdapter extends ArrayAdapter<TabFragmentInfo> {
+    class CategoryAdapter extends ArrayAdapter<FragmentElement> {
         private LayoutInflater inflater;
         
-        public CategoryAdapter(Context context, List<TabFragmentInfo> objects) {
+        public CategoryAdapter(Context context, List<FragmentElement> objects) {
             super(context, 0, objects);
             inflater = LayoutInflater.from(context);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TabFragmentInfo info = getItem(position);
+            FragmentElement info = getItem(position);
             View view = inflater.inflate(R.layout.simple_list_item, null);
             ((ImageView)view.findViewById(R.id.list_item_icon)).setImageResource(info.icon);
             ((TextView)view.findViewById(R.id.list_item_text)).setText(info.name);
@@ -62,10 +62,10 @@ public class CategoryFragment extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<TabFragmentInfo> categories = new ArrayList<TabFragmentInfo>();
-        categories.add(new TabFragmentInfo("General", R.drawable.ic_settings_general, GeneralFragment.class, getArguments()));
-        categories.add(new TabFragmentInfo("System", R.drawable.ic_settings_general, SystemFragment.class, getArguments()));
-        categories.add(new TabFragmentInfo("Display", R.drawable.ic_settings_display, DisplayFragment.class, getArguments()));
+        List<FragmentElement> categories = new ArrayList<FragmentElement>();
+        categories.add(new FragmentElement("General", R.drawable.ic_settings_general, GeneralFragment.class, getArguments()));
+        categories.add(new FragmentElement("System", R.drawable.ic_settings_general, SystemFragment.class, getArguments()));
+        categories.add(new FragmentElement("Display", R.drawable.ic_settings_display, DisplayFragment.class, getArguments()));
         _adapter = new CategoryAdapter(getActivity(), categories);
     }
 
