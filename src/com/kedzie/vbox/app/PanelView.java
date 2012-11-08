@@ -20,7 +20,7 @@ import com.kedzie.vbox.R;
  * Collapsible Panel
  * @author Marek Kędzierski
  */
-public class Panel extends LinearLayout implements OnClickListener {
+public class PanelView extends LinearLayout implements OnClickListener {
     public static final int COLLAPSE_DURATION = 300;
     protected int BORDER_WIDTH = Utils.dpiToPixels(8);
     
@@ -34,7 +34,7 @@ public class Panel extends LinearLayout implements OnClickListener {
     protected int _contentHeight;
     private String _title;
     
-    public Panel(Context context, AttributeSet attrs) {
+    public PanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Panel, 0, 0);
         try {
@@ -46,7 +46,7 @@ public class Panel extends LinearLayout implements OnClickListener {
         init(context);
     }
     
-    public Panel(Context context) {
+    public PanelView(Context context) {
         super(context);
         init(context);
     }
@@ -71,9 +71,9 @@ public class Panel extends LinearLayout implements OnClickListener {
     }
     
     /**
-     * Override to create custom Panel header.  Make sure to also override {@link Panel#getCollapseButton}.
+     * Override to create custom Panel header.  Make sure to also override {@link PanelView#getCollapseButton}.
      * @return  the initialized panel header
-     * @see {@link Panel#getCollapseButton}
+     * @see {@link PanelView#getCollapseButton}
      */
     protected View getTitleLayout() {
         LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.panel_header, this, false);
@@ -85,7 +85,7 @@ public class Panel extends LinearLayout implements OnClickListener {
     }
     
     /**
-     * Specify custom collapse button if {@link Panel#getTitleLayout} is overridden
+     * Specify custom collapse button if {@link PanelView#getTitleLayout} is overridden
      * @return  the {@link ImageButton} to collapse/expand the panel
      */
     protected ImageButton getCollapseButton() {

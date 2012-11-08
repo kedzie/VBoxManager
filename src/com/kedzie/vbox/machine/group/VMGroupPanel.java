@@ -8,13 +8,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.app.Panel;
+import com.kedzie.vbox.app.PanelView;
 
 /**
  * Group of Virtual Machines.  Collapsible component like one introduced in VirtualBox 4.2.x
  * @author Marek Kędzierski
  */
-public class VMGroupPanel extends Panel {
+public class VMGroupPanel extends PanelView {
     
     public static interface OnDrillDownListener {
         public void onDrillDown(VMGroup group);

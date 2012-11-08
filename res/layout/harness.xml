@@ -4,29 +4,17 @@
 	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
     	android:orientation="vertical"
     	android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
+    	android:layout_height="wrap_content" >
     	
     <com.kedzie.vbox.app.SliderView 
         android:id="@+id/slider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         vbox:tickSpacing="1"
         vbox:minValue="1"
         vbox:maxValue="10"
         vbox:minValidValue="4"
         vbox:maxValidValue="8"
         vbox:unit="MB" />
-    
-    <com.kedzie.vbox.app.SliderView2 
-        android:id="@+id/slider2"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        vbox:tickSpacing="1"
-        vbox:minValue="1"
-        vbox:maxValue="10"
-        vbox:minValidValue="4"
-        vbox:maxValidValue="8"
-        vbox:unit="MB" />
-    
     
 </LinearLayout>

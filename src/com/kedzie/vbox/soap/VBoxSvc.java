@@ -28,6 +28,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.NoSuchPropertyException;
 
 import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
@@ -235,13 +236,25 @@ public class VBoxSvc implements Parcelable {
 			if(ret==null) return null;
 			if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
 				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
-			if(returnType.equals(Boolean.class))
+			if(returnType.equals(Boolean.class)) {
 				return Boolean.valueOf(ret.toString());
-			else if(returnType.equals(Integer.class))
-				return Integer.valueOf(ret.toString());
-			else if(returnType.equals(Long.class))
-				return Long.valueOf(ret.toString());
-			else if(returnType.equals(String.class))
+			} else if(returnType.equals(Integer.class)) {
+			    if(ret instanceof Integer) {
+			        Log.i(TAG, "SoapPrimitive already an Integer!");
+			        return ret;
+			    } else {
+			        Log.i(TAG, "UnMarshall type conversion performed");
+			        return Integer.valueOf(ret.toString());
+			    }
+			} else if(returnType.equals(Long.class)) {
+			    if(ret instanceof Long) {
+                    Log.i(TAG, "SoapPrimitive already an Long!");
+                    return ret;
+                } else {
+                    Log.i(TAG, "UnMarshall type conversion performed");
+                    return Long.valueOf(ret.toString());
+                }
+			} else if(returnType.equals(String.class))
 				return ret.toString();
 			else if(IManagedObjectRef.class.isAssignableFrom(returnType))
 				return getProxy(returnType, ret.toString());
@@ -249,8 +262,35 @@ public class VBoxSvc implements Parcelable {
 				for( Object element : returnType.getEnumConstants())
 					if( element.toString().equals( ret.toString() ) )
 						return element;
+			} else if(returnType.isAnnotationPresent(KSoapObject.class)) {
+			    try {
+			        Log.i(TAG, "Unmarshalling Complex Object: " + returnType.getName());
+                    Object pojo = returnType.newInstance();
+                    SoapObject soapObject = (SoapObject)ret;
+                    for(int i=0; i<soapObject.getPropertyCount(); i++) {
+                        PropertyInfo propertyInfo = new PropertyInfo();
+                        soapObject.getPropertyInfo(i, propertyInfo);
+                        Method setterMethod = findSetterMethod(returnType, propertyInfo.getName());
+                        Class<?> propertyType = setterMethod.getParameterTypes()[0];
+                        Object value = unmarshal(propertyType, propertyType, propertyInfo.getValue());
+                        setterMethod.invoke(pojo, value);
+                        Log.i(TAG, String.format("Setting POJO property: %1$s.%2$s=%3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
+                    }
+                    return pojo;
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception instantiating Complex Object Type: " + returnType.getName(), e);
+                } 
 			}
 			return ret;
+		}
+		
+		public Method findSetterMethod(Class<?> clazz, String property) {
+		    String setterMethodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
+		    Log.i(TAG, "Finding setter method: " + setterMethodName);
+		    for(Method method : clazz.getMethods()) 
+		        if(method.getName().equals(setterMethodName)) 
+		            return method;
+	        throw new NoSuchPropertyException(setterMethodName);
 		}
 	}
 

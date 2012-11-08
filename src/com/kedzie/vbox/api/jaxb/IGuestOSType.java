@@ -1,5 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
+import com.kedzie.vbox.soap.KSoapObject;
+
+@KSoapObject(namespace="http://www.virtualbox.org", value="IGuestOSType")
 public class IGuestOSType {
     protected String familyId;
     protected String familyDescription;

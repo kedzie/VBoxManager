@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:orientation="horizontal"   
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout 
+        android:orientation="vertical"
+        android:layout_width="0dp" 
+    	android:layout_height="wrap_content"
+    	android:layout_weight="1" >
+    	
+	    <SeekBar
+	        android:id="@+id/seekbar"
+	        android:thumb="@drawable/ic_navigation_collapse"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
+	    
+	    <com.kedzie.vbox.app.SliderView.ValidRangeIndicatorView
+	            android:id="@+id/validRangeIndicator"
+	            android:layout_width="match_parent"
+	            android:layout_height="8dp" />
+	    
+	    <LinearLayout 
+	        android:orientation="horizontal"
+	        android:layout_width="match_parent" 
+	    	android:layout_height="wrap_content" >
+	        
+	        <TextView 
+	            android:id="@+id/minValueLabel"
+	            style="@style/SmallText"
+	            android:text="1 %" />
+	        
+	        <View
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content" />
+	        
+	        <TextView 
+	            android:id="@+id/maxValueLabel"
+	            style="@style/SmallText"
+	            android:text="100 %" />
+	        
+	    </LinearLayout>
+    
+    </LinearLayout>
+    
+	<EditText 
+	    android:id="@+id/editText"
+	    android:layout_width="24dp" 
+	    android:layout_height="wrap_content" 
+	    android:text="0"
+	    />
+	
+	<TextView 
+	    android:id="@+id/unitLabel"
+	    android:layout_marginLeft="4dp"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content" 
+	    android:text="%"
+	    />
+	    
+</LinearLayout>

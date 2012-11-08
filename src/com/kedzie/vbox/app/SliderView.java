@@ -2,7 +2,12 @@ package com.kedzie.vbox.app;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Paint.Style;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,19 +26,51 @@ import com.kedzie.vbox.R;
  * </ul>
  */
 public class SliderView extends LinearLayout {
+    
+    public static class ValidRangeIndicatorView extends View {
+        
+        private Rect _bounds = new Rect();
+        private Rect _validRect;
+        private Rect _invalidRect;
+        private Paint validPaint;
+        private Paint invalidPaint;
+
+        public ValidRangeIndicatorView(Context context, AttributeSet attrs) {
+            this(context, attrs, 0);
+        }
+        
+        public ValidRangeIndicatorView(Context context, AttributeSet attrs, int defStyle) {
+            super(context, attrs, defStyle);
+            validPaint = new Paint();
+            validPaint.setColor(0xFF00FF00);
+            validPaint.setStyle(Style.FILL);
+            invalidPaint = new Paint();
+            invalidPaint.setColor(0xFFFF0000);
+            invalidPaint.setStyle(Style.FILL);
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            canvas.getClipBounds(_bounds);
+            _validRect = _bounds;
+            canvas.drawRect(_validRect, validPaint);
+        }
+    }
 
     /** tick-mark spacing */
-    private int _tickSpacing;
+    int _tickSpacing;
     private String _unit;
-    private int _minValue;
-    private int _maxValue;
-    private int _minValidValue;
-    private int _maxValidValue;
+    int _minValue;
+    int _maxValue;
+    int _minValidValue;
+    int _maxValidValue;
+    int _range;
     
     private SeekBar _seekBar;
     private TextView _minValueLabel;
     private TextView _maxValueLabel;
     private EditText _valueEditText;
+    private ValidRangeIndicatorView _validRangeIndicator;
     
     public SliderView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -61,10 +98,10 @@ public class SliderView extends LinearLayout {
     }
 
     private void init() {
-        setOrientation(VERTICAL);
-        _seekBar = new SeekBar(getContext());
-        _seekBar.setThumb(getContext().getResources().getDrawable(R.drawable.slider_thumb));
-        _seekBar.setMax(_maxValue-_minValue);
+        _range=_maxValue-_minValue;
+        LayoutInflater.from(getContext()).inflate(R.layout.slider_view, this, true);
+        _seekBar = (SeekBar)findViewById(R.id.seekbar);
+        _seekBar.setMax(_range);
         _seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -75,31 +112,13 @@ public class SliderView extends LinearLayout {
                 _valueEditText.setText(progress+_minValue+"");
             }
         });
-        _minValueLabel = new TextView(getContext());
-        _minValueLabel.setText(_minValue+_unit);
-        _maxValueLabel = new TextView(getContext());
-        _maxValueLabel.setText(_maxValue+_unit);
-        _valueEditText = new EditText(getContext());
-        
-        LinearLayout top = new LinearLayout(getContext());
-        top.setOrientation(HORIZONTAL);
-        addView(top, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
-        LinearLayout bottom = new LinearLayout(getContext());
-        bottom.setOrientation(HORIZONTAL);
-        addView(bottom, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        
-        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        params.weight=1;
-        top.addView(_seekBar, params);
-        
-        top.addView(_valueEditText, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        
-        bottom.addView(_minValueLabel, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        params.weight=1;
-        bottom.addView(new View(getContext()), params);
-        bottom.addView(_maxValueLabel, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        _validRangeIndicator = (ValidRangeIndicatorView)findViewById(R.id.validRangeIndicator);
+        _minValueLabel = (TextView)findViewById(R.id.minValueLabel);
+        _minValueLabel.setText(_minValue+" "+_unit);
+        _maxValueLabel = (TextView)findViewById(R.id.maxValueLabel);
+        _maxValueLabel.setText(_maxValue+" "+_unit);
+        _valueEditText = (EditText)findViewById(R.id.editText);
+        _valueEditText.setText(getValue()+"");
     }
 
     public int getValue() {
