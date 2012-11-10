@@ -146,11 +146,35 @@ public class SliderView extends LinearLayout {
         _valueEditText.setText(getValue()+"");
     }
 
+    public void setOnSliderViewChangeListener(OnSliderViewChangeListener listener) {
+        _onSliderChangeListener = listener;
+    }
+    
     public int getValue() {
         return _seekBar.getProgress()+_minValue;
     }
     
-    public void setOnSliderViewChangeListener(OnSliderViewChangeListener listener) {
-        _onSliderChangeListener = listener;
+    public void setValue(int value) {
+    	_seekBar.setProgress(value-_minValue);
+    }
+    
+    public void setMaxValue(int max) {
+    	_maxValue=max;
+    	_maxValueLabel.setText(_maxValue+" "+_unit);
+    }
+    
+    public void setMinValue(int min) {
+    	_minValue=min;
+    	_minValueLabel.setText(_minValue+" "+_unit);
+    }
+    
+    public void setMaxValidValue(int max) {
+    	_maxValidValue=max;
+    	
+    }
+    
+    public void setMinValidValue(int min) {
+    	_minValidValue=min;
+    	
     }
 }

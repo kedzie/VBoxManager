@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
@@ -12,7 +11,9 @@ import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISystemProperties;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.Tuple;
+import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -51,8 +52,8 @@ public class SystemFragment extends SherlockFragment {
 	private ISystemProperties _systemProperties;
 	private IHost _host;
 	private View _view;
-	private SeekBar _baseMemoryBar;
-	private SeekBar _processorsBar;
+	private SliderView _baseMemoryBar;
+	private SliderView _processorsBar;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,8 +75,8 @@ public class SystemFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_view = inflater.inflate(R.layout.settings_system, null);
-		_baseMemoryBar = (SeekBar)_view.findViewById(R.id.baseMemory);
-		_processorsBar = (SeekBar)_view.findViewById(R.id.processors);
+		_baseMemoryBar = (SliderView)_view.findViewById(R.id.baseMemory);
+		_processorsBar = (SliderView)_view.findViewById(R.id.processors);
 		return _view;
 	}
 	
@@ -89,9 +90,37 @@ public class SystemFragment extends SherlockFragment {
 	}
 
 	private void populateViews(IMachine m, ISystemProperties sp, IHost h) {
-	    _baseMemoryBar.setMax(h.getMemoryAvailable());
-		_baseMemoryBar.setProgress(m.getMemorySize());
-		_processorsBar.setMax(sp.getMaxGuestCPUCount());
-		_processorsBar.setProgress(m.getCPUCount());
+		_baseMemoryBar.setMinValue(1);
+		_baseMemoryBar.setMinValidValue(1);
+		_baseMemoryBar.setMaxValue(h.getMemoryAvailable());
+		_baseMemoryBar.setMaxValidValue(h.getMemoryAvailable());
+		_baseMemoryBar.setValue(m.getMemorySize());
+	    _baseMemoryBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
+			@Override
+			public void onSliderValueChanged(final int newValue) {
+				new Thread() {
+                    @Override
+                    public void run() {
+                        _machine.setMemorySize(newValue);
+                    }
+                }.start();
+			}
+		});
+	    _processorsBar.setMinValue(1);
+	    _processorsBar.setMinValidValue(1);
+	    _processorsBar.setMaxValue(sp.getMaxGuestCPUCount());
+		_processorsBar.setMaxValidValue(sp.getMaxGuestCPUCount());
+		_processorsBar.setValue(m.getCPUCount());
+		_processorsBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
+			@Override
+			public void onSliderValueChanged(final int newValue) {
+				new Thread() {
+                    @Override
+                    public void run() {
+                        _machine.setCPUCount(newValue);
+                    }
+                }.start();
+			}
+		});
 	}
 }

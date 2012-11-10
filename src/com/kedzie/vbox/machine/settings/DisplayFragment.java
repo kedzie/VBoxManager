@@ -7,14 +7,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISystemProperties;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.SliderView;
+import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -49,8 +49,8 @@ public class DisplayFragment extends SherlockFragment {
 	private IMachine _machine;
 	private ISystemProperties _systemProperties;
 	private View _view;
-	private SeekBar _videoMemoryBar;
-	private SeekBar _monitorBar;
+	private SliderView _videoMemoryBar;
+	private SliderView _monitorBar;
 	private CheckBox _acceleration3DBox;
 	private CheckBox _acceleration2DBox;
 	
@@ -65,8 +65,8 @@ public class DisplayFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_view = inflater.inflate(R.layout.settings_display, null);
-		_videoMemoryBar = (SeekBar)_view.findViewById(R.id.videoMemory);
-		_monitorBar = (SeekBar)_view.findViewById(R.id.numMonitors);
+		_videoMemoryBar = (SliderView)_view.findViewById(R.id.videoMemory);
+		_monitorBar = (SliderView)_view.findViewById(R.id.numMonitors);
 		_acceleration2DBox = (CheckBox)_view.findViewById(R.id.acceleration2D);
 		_acceleration3DBox = (CheckBox)_view.findViewById(R.id.acceleration3D);
 		return _view;
@@ -88,49 +88,38 @@ public class DisplayFragment extends SherlockFragment {
 	}
 
 	private void populateViews(IMachine m, ISystemProperties sp) {
-	    _videoMemoryBar.setMax(sp.getMaxGuestVRAM());
-	    _videoMemoryBar.setProgress(m.getVRAMSize());
-	    _videoMemoryBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-            
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            
-            @Override
-            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
-                new Thread() {
+		_videoMemoryBar.setMinValue(1);
+		_videoMemoryBar.setMinValidValue(1);
+	    _videoMemoryBar.setMaxValue(sp.getMaxGuestVRAM());
+	    _videoMemoryBar.setMaxValidValue(sp.getMaxGuestVRAM());
+	    _videoMemoryBar.setValue(m.getVRAMSize());
+	    _videoMemoryBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
+			@Override
+			public void onSliderValueChanged(final int newValue) {
+				new Thread() {
                     @Override
                     public void run() {
-                        _machine.setVRAMSize(progress);
+                        _machine.setVRAMSize(newValue);
                     }
                 }.start();
-            }
-        });
-	    
-	    _monitorBar.setMax(sp.getMaxGuestMonitors());
-	    _monitorBar.setProgress(m.getMonitorCount());
-	    _monitorBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-            
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            
-            @Override
-            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
-                new Thread() {
+			}
+		});
+	    _monitorBar.setMinValue(1);
+	    _monitorBar.setMinValidValue(1);
+	    _monitorBar.setMaxValue(sp.getMaxGuestMonitors());
+	    _monitorBar.setMaxValidValue(sp.getMaxGuestMonitors());
+	    _monitorBar.setValue(m.getMonitorCount());
+	    _monitorBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
+			@Override
+			public void onSliderValueChanged(final int newValue) {
+				new Thread() {
                     @Override
                     public void run() {
-                        _machine.setMonitorCount(progress);
+                        _machine.setMonitorCount(newValue);
                     }
                 }.start();
-            }
-        });
+			}
+		});
 	    _acceleration2DBox.setChecked(m.getAccelerate2DVideoEnabled());
 	    _acceleration2DBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
