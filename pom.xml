@@ -49,6 +49,14 @@
 			<version>4.2.0</version>
 			<type>apklib</type>
 		</dependency>
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>		    
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -71,6 +79,18 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+			        <groupId>org.codehaus.mojo</groupId>
+			        <artifactId>aspectj-maven-plugin</artifactId>
+			        <configuration><source>1.6</source> <target>1.6</target></configuration>
+		        	<executions>
+			          	<execution>
+				            	<goals>
+				                	<goal>compile</goal>
+				            	</goals>
+			          	</execution>
+		        	</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
@@ -165,7 +185,7 @@
 						<configuration>
 							<manifestDebuggable>false</manifestDebuggable>
 							<manifestVersionName></manifestVersionName>
-							<versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+							<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 							<sign>
 								<debug>false</debug>
 							</sign>

@@ -59,7 +59,7 @@ public class MetricView extends LinearLayout {
 	    setOrientation(LinearLayout.VERTICAL);
 	    _titleTextView = new TextView(getContext());
         _titleTextView.setText(_header);
-        _titleTextView.setTextAppearance(getContext(), R.style.HeaderText);
+//        _titleTextView.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
         addView(_titleTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         _renderer = new MetricRenderer(getContext(), bgColor, gridColor, textColor, borderColor);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

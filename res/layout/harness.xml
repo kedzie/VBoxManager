@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
 	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
     	android:orientation="vertical"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content" >
+    	
+    <TextView 
+        style="@style/MediumText"
+        android:layout_width="match_parent"
+        android:text="Text View Top" />
     	
     <com.kedzie.vbox.app.SliderView 
         android:id="@+id/slider"
@@ -16,5 +20,10 @@
         vbox:minValidValue="4"
         vbox:maxValidValue="8"
         vbox:unit="MB" />
+    
+    <TextView 
+        style="@style/MediumText"
+        android:layout_width="match_parent"
+        android:text="Text View Bottom" />
     
 </LinearLayout>

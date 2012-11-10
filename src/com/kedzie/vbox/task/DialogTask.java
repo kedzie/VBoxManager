@@ -44,6 +44,11 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	}
 
 	@Override
+    protected Output work(Input... params) throws Exception {
+        return null;
+    }
+
+    @Override
 	protected void onProgressUpdate(IProgress... p) {
 		if(pDialog.isIndeterminate()) {	//Dismiss Indeterminate progress dialog and display the determinate one.
 			pDialog.dismiss();
@@ -53,7 +58,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 			pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			pDialog.setCancelable(p[0].getCancelable()); 
 			if(p[0].getCancelable()) {
-				Message cancelMessage = _handler.obtainMessage(WHAT_CANCEL);
+				Message cancelMessage = _cancelHandler.obtainMessage(0);
 				cancelMessage.setData(new BundleBuilder().putProxy("progress", p[0]).create());
 				pDialog.setCancelMessage(cancelMessage);
 			}

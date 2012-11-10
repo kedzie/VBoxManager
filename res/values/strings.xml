@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">VirtualBox Manager</string>
+    <string name="app_name">VirtualBox® Manager</string>
     <string name="server_name">Display Name</string>
     <string name="server_host">Host/IP Address</string>
     <string name="server_ssl">Use SSL</string>
@@ -34,18 +34,20 @@
     <string name="pref_colored_icons">Color Icons</string>
     <string name="pref_colored_icons_summary">Use Colored or B/W Icons</string>
     <string name="pref_notifications">Event Notifications</string>
-    <string name="pref_notifications_summary">Publish VirtualBox event notifications</string>
+    <string name="pref_notifications_summary">Publish VirtualBox® event notifications</string>
     <string name="pref_category_general">General</string>
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_category_metrics">Metrics</string>
     <string name="firstrun_welcome">Welcome</string>
-    <string name="firstrun_message" >Make sure you virtualBox web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
-    <string name="add_server_question_title">Add new VirtualBox server?</string>
+    <string name="firstrun_message" >Make sure you VirtualBox® web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
+    <string name="event_handler_notification_title" >VirtualBox® is connected</string>
+    <string name="event_handler_notification_content" >You are connected to VirtualBox® server at <ff:g id="server">%1$s</ff:g>.  Events are being processed in real-time.</string>
+    <string name="add_server_question_title">Add new VirtualBox® server?</string>
     <string name="add_server_question">You have no servers defined.  Would you like to add one?</string>
     <string name="snapshot_name">Name</string>
     <string name="snapshot_description">Description</string>
     <string name="host_metrics">Host Metrics</string>
-    <string name="vbox_version">VirtualBox v.<ff:g id="version">%1$s</ff:g></string>
+    <string name="vbox_version">VirtualBox® v.<ff:g id="version">%1$s</ff:g></string>
     <string name="tab_actions">Actions</string>
     <string name="tab_info">Info</string>
     <string name="tab_log">Log</string>

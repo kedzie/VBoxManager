@@ -31,6 +31,7 @@ public class EventNotificationService extends IntentService {
 	}
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void onHandleIntent(Intent intent) {
 		Log.i(TAG, "Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
@@ -47,7 +48,7 @@ public class EventNotificationService extends IntentService {
 				.setContentIntent(PendingIntent.getActivity(EventNotificationService.this, 0, i, 0))
 				.setTicker(title)
 				.setAutoCancel(true)
-				.build();
+				.getNotification();
 		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, n);
 	}
 }

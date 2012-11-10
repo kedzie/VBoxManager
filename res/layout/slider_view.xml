@@ -19,7 +19,7 @@
 	    <com.kedzie.vbox.app.SliderView.ValidRangeIndicatorView
 	            android:id="@+id/validRangeIndicator"
 	            android:layout_width="match_parent"
-	            android:layout_height="8dp" />
+	            android:layout_height="24dp" />
 	    
 	    <LinearLayout 
 	        android:orientation="horizontal"
