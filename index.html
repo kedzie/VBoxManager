@@ -3,13 +3,16 @@
 
   <head>
     <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Virtualbox-Manager : VirtualBox Manager for Android multi-module project." />
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <title>Virtualbox-Manager</title>
-	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/vader/jquery-ui.css" rel="stylesheet" />
-   	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
- 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+    <title>VirtualBox® Manager</title>
+    <meta name="description" content="VBoxManager : VirtualBox® Manager APK project." />
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/github.css">
+
   	<script type="text/javascript" >
      	$(document).ready(function(){
 
@@ -19,49 +22,79 @@
 
   <body>
 
-    <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/kedzie/VirtualBox-Manager">View on GitHub</a>
-
-          <h1 id="project_title">Virtualbox-Manager</h1>
-          <h2 id="project_tagline">VirtualBox Manager for Android multi-module project.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/kedzie/VirtualBox-Manager/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/kedzie/VirtualBox-Manager/tarball/master">Download this project as a tar.gz file</a>
-            </section>
+          <a id="forkme_banner" href="https://github.com/kedzie/VBoxManager">View on GitHub</a>
+          <h1 id="project_title">VBoxManager</h1>
+          <h2 id="project_tagline">VirtualBox® Manager for Android APK project.</h2>
+          <section id="downloads">
+	          <a class="zip_download_link" href="https://github.com/kedzie/VBoxManager/zipball/master">Download this project as a .zip file</a>
+	          <a class="tar_download_link" href="https://github.com/kedzie/VBoxManager/tarball/master">Download this project as a tar.gz file</a>
+	          <a class="zip_download_link" href="https://github.com/kedzie/VBoxManager/vbox-app.apk/qr_code">Download this project as an apk file</a>
+          </section>
         </header>
     </div>
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
-<h1>VirtualBox Manager</h1>
 
-<ul>
-<li>Control Oracle VirtualBox installation remote & secure using Webservice API over SSL
-<li>Exposes all API functionality, i.e. start/stop, snapshot, save state
-<li>Developed for latest Android APIs but still backward compatible with Gingerbread.
-<li>Display Virtual Machine details & log files
-<li>Real-time CPU/Memory metric graphs
-<li>4.5-stars (1,000->5,000 installs) on Google Market
-<li>Source code available at <a href="http://github.com/kedzie/VBoxManager">GitHub</a>
-</ul>
+<hr/><hr/>
+      <dl>
+      <dt>VirtualBox® Manager</dt>
+      <dd>
+      	<ul>
+	  		<li>Control Oracle VirtualBox installation remote & secure using Webservice API over SSL
+	  		<li>Exposes all API functionality, i.e. start/stop, snapshot, save state
+	  		<li>Developed for latest Android APIs but still backward compatible with Gingerbread.
+	  		<li>Display Virtual Machine details & log files
+	  		<li>Real-time CPU/Memory metric graphs
+	  		<li>4.5-stars (1,000->5,000 installs) on Google Market
+	  		<li>Source code available at <a href="http://github.com/kedzie/VBoxManager">GitHub</a>
+			</ul>
+      </dd>
 
-<h2>SSL Support</h2>
+      <dt>SSL Support</dt>
+	  <dd>
+			SSL can be enabled when launching `vboxwebsrv` on the server machine.  You will need:
+	  	<ol>
+	  	<li>server certificate & key inside a PEM file
+	  	<li>CA certificate in a CRT file
+	  	<li>Launch <code>vboxwebsrv --host 0.0.0.0 --port 18084 --ssl --serverKey server.pem --ca ca.crt</code>
+	  	</ol>
+	  </dd>
 
-<p>SSL can be enabled when launching `vboxwebsrv` on the server machine.  You will need:
-<ol>
-<li>server certificate & key inside a PEM file
-<li>CA certificate in a CRT file
-<li>Launch <code>vboxwebsrv --host 0.0.0.0 --port 18084 --ssl --serverKey server.pem --ca ca.crt</code>
-</p>
+	  <dt>Project Details</dt>
+	  <dd>Detailed and reference documentation can be found on the <a href="maven/index.html">Maven generated site</a>.</dd>
+	</dl>
 
-<h2>Project Details</h2>
+<hr/><hr/>
 
-Detailed and reference documentation can be found on the Maven generated <a href="maven/index.html">site</a>.
+		<h1>VirtualBox® Manager</h1>
+
+		<ul>
+			<li>Control Oracle VirtualBox installation remote & secure using Webservice API over SSL
+			<li>Exposes all API functionality, i.e. start/stop, snapshot, save state
+			<li>Developed for latest Android APIs but still backward compatible with Gingerbread.
+			<li>Display Virtual Machine details & log files
+			<li>Real-time CPU/Memory metric graphs
+			<li>4.5-stars (1,000->5,000 installs) on Google Market
+			<li>Source code available at <a href="http://github.com/kedzie/VBoxManager">GitHub</a>
+		</ul>
+
+		<h2>SSL Support</h2>
+
+		<p>SSL can be enabled when launching `vboxwebsrv` on the server machine.  You will need:
+		<ol>
+			<li>server certificate & key inside a PEM file
+			<li>CA certificate in a CRT file
+			<li>Launch <code>vboxwebsrv --host 0.0.0.0 --port 18084 --ssl --serverKey server.pem --ca ca.crt</code>
+		</ol>
+		</p>
+
+		<h2>Project Details</h2>
+
+		Detailed and reference documentation can be found on the Maven generated <a href="maven/index.html">site</a>.
 
 
       </section>
