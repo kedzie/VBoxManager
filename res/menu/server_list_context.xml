@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
     <item android:id="@+id/server_list_context_menu_select"  
-        android:title="Connect"  
-        android:icon="@drawable/ic_list_vbox" />
+        android:title="Connect"   />
     
     <item android:id="@+id/server_list_context_menu_edit"  
-        android:title="Edit"  
-        android:icon="@drawable/ic_menu_edit" />
+        android:title="Edit"   />
     
 <item android:id="@+id/server_list_context_menu_delete"  
-    android:title="Delete"  
-    android:icon="@drawable/ic_menu_delete" />
+    android:title="Delete"   />
+
+<item android:id="@+id/server_list_context_menu_ping"  
+    android:title="Ping"  />
 
 </menu>

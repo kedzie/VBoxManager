@@ -2,6 +2,7 @@ package org.ksoap2.serialization;
 
 import java.util.Vector;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class AttributeContainer {
     private Vector attributes = new Vector();
 

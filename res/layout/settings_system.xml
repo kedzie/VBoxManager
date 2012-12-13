@@ -14,7 +14,7 @@
 			    android:layout_width="0dip" 
 			    android:layout_height="wrap_content"
 			    vbox:unit="MB"
-			    vbox:tickSpacing="0"    />
+			    vbox:tickSpacing="100"   />
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"   android:text="Processors:"  android:layout_gravity="left"  />
@@ -24,7 +24,7 @@
 			    android:layout_width="0dip" 
 			    android:layout_height="wrap_content"
 			    vbox:unit="Proc"
-			    vbox:tickSpacing="1"    />
+			    vbox:tickSpacing="1"  />
 		</LinearLayout>
 
 </LinearLayout>

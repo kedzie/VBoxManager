@@ -67,6 +67,7 @@ public class TabSupportFragment implements TabSupport {
 	/** View which will host the Fragments */
 	protected int _fragmentContainer;
 	protected SherlockFragmentActivity _activity;
+	protected  ActionBar _actionBar;
 	protected FragmentManager _manager;
 	
 	/**
@@ -74,10 +75,11 @@ public class TabSupportFragment implements TabSupport {
 	 * @param container target container for {@link Fragment}
 	 */
 	public TabSupportFragment(SherlockFragmentActivity activity, int container) {
-		_activity = activity;
+		_activity=activity;
+		_actionBar = activity.getSupportActionBar();
+		_manager = activity.getSupportFragmentManager();
 		_activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		_fragmentContainer=container;
-		_manager = _activity.getSupportFragmentManager();
 	}
 	
 	@Override

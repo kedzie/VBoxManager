@@ -35,7 +35,6 @@ public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 		}
 	};
 	
-	
 	@KSOAP(cacheable=true) public String getVersion();
 	@KSOAP(cacheable=true) public IEventSource getEventSource() ;
 	@KSOAP(cacheable=true) public IPerformanceCollector getPerformanceCollector();

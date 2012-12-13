@@ -39,6 +39,7 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
         mFragmentManager = activity.getSupportFragmentManager();
         _activity=activity;
         _actionBar=activity.getSupportActionBar();
+        _actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         _viewPager=pager;
         _viewPager.setAdapter(this);
         _viewPager.setOnPageChangeListener(this);

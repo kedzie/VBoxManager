@@ -2,8 +2,8 @@ package com.kedzie.vbox.machine;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
@@ -15,7 +15,7 @@ import com.kedzie.vbox.api.IMachine;
  * @author Marek Kędzierski
  * @apiviz.stereotype view
  */
-public class MachineView extends LinearLayout {
+public class MachineView extends FrameLayout {
 
     private VBoxApplication _app;
 	private ImageView osIcon;

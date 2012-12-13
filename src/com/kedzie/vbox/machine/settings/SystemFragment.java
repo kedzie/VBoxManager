@@ -9,10 +9,8 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.ISystemProperties;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
-import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.task.ActionBarTask;
 
@@ -23,33 +21,29 @@ import com.kedzie.vbox.task.ActionBarTask;
  */
 public class SystemFragment extends SherlockFragment {
 
-	class LoadInfoTask extends ActionBarTask<IMachine, Tuple<ISystemProperties, IHost>> {
+	class LoadInfoTask extends ActionBarTask<IMachine, IHost> {
 		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getVBoxAPI()); }
 
 		@Override 
-		protected Tuple<ISystemProperties, IHost> work(IMachine... m) throws Exception {
+		protected IHost work(IMachine... m) throws Exception {
 			//cache values
 			m[0].getMemorySize();
 			m[0].getCPUCount(); 
-			ISystemProperties props = _vmgr.getVBox().getSystemProperties();
-			props.getMaxGuestCPUCount();
-			props.getMinGuestCPUCount();
-			props.getMaxGuestRAM();
 			IHost host = _vmgr.getVBox().getHost();
+			host.getProcessorCount();
+			host.getProcessorOnlineCount();
 			host.getMemoryAvailable();
 			host.getMemorySize();
-			return new Tuple<ISystemProperties, IHost>(props, host);
+			return host;
 		}
 		@Override
-		protected void onResult(Tuple<ISystemProperties, IHost> result) {
-		    _systemProperties=result.first;
-		    _host = result.second;
-		    populateViews(_machine, _systemProperties, _host);
+		protected void onResult(IHost result) {
+		    _host = result;
+		    populateViews(_machine, _host);
 		}
 	}
 	
 	private IMachine _machine;
-	private ISystemProperties _systemProperties;
 	private IHost _host;
 	private View _view;
 	private SliderView _baseMemoryBar;
@@ -60,7 +54,6 @@ public class SystemFragment extends SherlockFragment {
 		super.onCreate(savedInstanceState);
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
 		if(savedInstanceState!=null) {
-		    _systemProperties = savedInstanceState.getParcelable("systemProperties");
 		    _host = savedInstanceState.getParcelable("host");
 		}
 	}
@@ -68,7 +61,6 @@ public class SystemFragment extends SherlockFragment {
 	@Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(IMachine.BUNDLE, _machine);
-        outState.putParcelable("systemProperties", _systemProperties);
         outState.putParcelable("host", _host);
     }
 	
@@ -84,12 +76,12 @@ public class SystemFragment extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if(savedInstanceState!=null) 
-			populateViews(_machine, _systemProperties, _host);
+			populateViews(_machine, _host);
 		else 
 			new LoadInfoTask().execute(_machine);
 	}
 
-	private void populateViews(IMachine m, ISystemProperties sp, IHost h) {
+	private void populateViews(IMachine m, IHost h) {
 		_baseMemoryBar.setMinValue(1);
 		_baseMemoryBar.setMinValidValue(1);
 		_baseMemoryBar.setMaxValue(h.getMemoryAvailable());
@@ -108,11 +100,11 @@ public class SystemFragment extends SherlockFragment {
 		});
 	    _processorsBar.setMinValue(1);
 	    _processorsBar.setMinValidValue(1);
-	    _processorsBar.setMaxValue(sp.getMaxGuestCPUCount());
-		_processorsBar.setMaxValidValue(sp.getMaxGuestCPUCount());
+	    _processorsBar.setMaxValue(h.getProcessorCount());
+		_processorsBar.setMaxValidValue(h.getProcessorOnlineCount());
 		_processorsBar.setValue(m.getCPUCount());
 		_processorsBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
-			@Override
+			@Override 
 			public void onSliderValueChanged(final int newValue) {
 				new Thread() {
                     @Override

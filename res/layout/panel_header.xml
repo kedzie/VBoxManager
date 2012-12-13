@@ -5,7 +5,8 @@
     android:layout_height="wrap_content" 
     android:background="@drawable/panel_header" >
     
-	<ImageView android:id="@+id/panel_icon" 
+	<ImageView 
+	    	android:id="@+id/panel_icon" 
 	    	android:contentDescription="Panel Icon"
 	    	android:layout_marginLeft="8dp"
 		android:layout_marginRight="8dp"  
@@ -13,13 +14,15 @@
 		android:layout_width="24dip" 
 		android:layout_height="24dip" />
 	
-	<TextView android:id="@+id/group_title" 
+	<TextView 
+	    	android:id="@+id/group_title" 
 		style="@style/MediumText"
 		android:layout_gravity="left"	 
 		android:layout_weight="1" />
 	
-	<ImageButton android:id="@+id/group_collapse" 
-	    android:contentDescription="Collapse  Button"
+	<ImageButton 
+	    	android:id="@+id/group_collapse" 
+		android:contentDescription="Collapse  Button"
 		android:layout_marginRight="8dp"  
 		android:src="@drawable/ic_navigation_collapse"  
 		android:layout_gravity="center"

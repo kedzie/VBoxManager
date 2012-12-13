@@ -40,6 +40,7 @@ public class UpdateWidgetService extends IntentService {
 			VBoxSvc vboxApi = new VBoxSvc(server);
 			vboxApi.setVBox(vboxApi.getProxy(IVirtualBox.class, Provider.loadPref(this, widgetId, Provider.KEY_VBOX)));
 			IMachine machine = vboxApi.getProxy(IMachine.class, Provider.loadPref(this, widgetId, Provider.KEY_IDREF));
+			
 			if(Utils.isEmpty(machine.getInterfaceName())) {      //check if logged on
 			    machine = loginAndFindMachine(vboxApi, machineName);
 			    if(machine==null)

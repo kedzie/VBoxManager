@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-        <groupId>virtualbox</groupId>
+		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
 		<version>3.0.5-SNAPSHOT</version>
-    </parent>
+	</parent>
 
 	<artifactId>vbox-app</artifactId>
 	<packaging>apk</packaging>
@@ -49,14 +49,6 @@
 			<version>4.2.0</version>
 			<type>apklib</type>
 		</dependency>
-		<dependency>
-		    <groupId>commons-beanutils</groupId>
-		    <artifactId>commons-beanutils</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>		    
-			<artifactId>aspectjrt</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -64,6 +56,7 @@
 		<directory>bin</directory>
 		<outputDirectory>bin/classes</outputDirectory>
 		<finalName>${project.artifactId}</finalName>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -79,18 +72,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-			        <groupId>org.codehaus.mojo</groupId>
-			        <artifactId>aspectj-maven-plugin</artifactId>
-			        <configuration><source>1.6</source> <target>1.6</target></configuration>
-		        	<executions>
-			          	<execution>
-				            	<goals>
-				                	<goal>compile</goal>
-				            	</goals>
-			          	</execution>
-		        	</executions>
 			</plugin>
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
@@ -195,7 +176,7 @@
 								<outputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</outputApk>
 							</zipalign>
 							<proguard>
-								<skip>false</skip>
+								<skip>true</skip>
 								<config>proguard.cfg</config>
 								<jvmArguments>
 									<jvmArgument>-Xms512m</jvmArgument>
@@ -238,10 +219,10 @@
 				<version>2.2</version>
 			</plugin>
 			<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-       			<artifactId>maven-surefire-report-plugin</artifactId>
-       			<version>2.12.2</version>
-      		</plugin>
+        			<groupId>org.apache.maven.plugins</groupId>
+       				<artifactId>maven-surefire-report-plugin</artifactId>
+       				<version>2.12.2</version>
+      			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>

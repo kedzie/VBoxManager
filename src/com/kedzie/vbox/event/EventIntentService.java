@@ -76,7 +76,6 @@ public class EventIntentService extends IntentService {
 	/**
 	 * Create notification notifying user that events are being handled in real-time.
 	 */
-	@SuppressWarnings("deprecation")
     private void sendNotification() {
 	    String title = getString(R.string.event_handler_notification_title);
 	    Notification notification =  new NotificationCompat.Builder(EventIntentService.this)
@@ -87,7 +86,7 @@ public class EventIntentService extends IntentService {
             .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
             .setContentIntent(PendingIntent.getActivity(EventIntentService.this, 0, new Intent(this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr), 0))
             .setTicker(title)
-            .setAutoCancel(true)
+            .setAutoCancel(false)
             .getNotification();
 	    ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
 	}

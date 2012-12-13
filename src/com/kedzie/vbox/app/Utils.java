@@ -1,5 +1,6 @@
 package com.kedzie.vbox.app;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -20,7 +21,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
@@ -114,6 +114,20 @@ public class Utils {
     public static Class<?> getTypeParameter(Type genericType, int index) {
         return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[index];
     }
+    
+    /**
+     * Get Class-level annotation
+     * @param clazz	the class
+     * @param a		type of annotation
+     * @return		the annotation if found
+     */
+    @SuppressWarnings("unchecked")
+	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
+		for(Annotation at : a)
+			if(at.annotationType().equals(clazz))
+				return (T)at;
+		return null;
+	}
 	
     /**
      * Create an {@link IntentFilter} for multiple actions
@@ -132,8 +146,8 @@ public class Utils {
      * @param dpi  dpi value
      * @return equivilent pixel value
      */
-    public static int dpiToPixels(int dpi) {
-        return (int) (VBoxApplication.getInstance().getResources().getDisplayMetrics().density*dpi+.5f);
+    public static int dpiToPixels(Context context, int dpi) {
+        return (int) (context.getResources().getDisplayMetrics().density*dpi+.5f);
     }
     
     /**

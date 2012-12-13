@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:orientation="vertical"   
-    android:padding="12dip"    
-    android:layout_centerVertical="true" 
+    android:padding="8dp"    
+    android:orientation="vertical"
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content"   >
     
@@ -10,16 +9,22 @@
         android:layout_width="@dimen/screenshot_size"
         android:layout_height="@dimen/screenshot_size" />
     
-    	<LinearLayout android:orientation="horizontal"  android:layout_width="wrap_content" android:layout_height="wrap_content">
-			<ImageButton android:id="@+id/button_cancel" 
-					android:layout_width="wrap_content" 
-		    			android:layout_height="wrap_content"
-					android:src="@drawable/ic_menu_close" 
-					/>
-			<ImageButton android:id="@+id/button_save"
-		    	     		android:src="@drawable/ic_menu_save"
-		    			android:layout_width="wrap_content" 
-		    			android:layout_height="wrap_content"
-					   />
+    	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal">
+
+			<ImageButton 
+				android:id="@+id/button_cancel" 
+				android:src="@drawable/ic_menu_close"
+				android:layout_width="wrap_content" 
+		    		android:layout_height="wrap_content"/>
+			
+			<ImageButton 
+			    	android:id="@+id/button_save"
+		    	     	android:src="@drawable/ic_menu_save"
+		    		android:layout_width="wrap_content" 
+		    		android:layout_height="wrap_content"  />
 		</LinearLayout>
 </LinearLayout>

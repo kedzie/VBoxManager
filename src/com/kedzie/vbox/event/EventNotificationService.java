@@ -31,7 +31,6 @@ public class EventNotificationService extends IntentService {
 	}
 	
 	@Override
-	@SuppressWarnings("deprecation")
 	protected void onHandleIntent(Intent intent) {
 		Log.i(TAG, "Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);

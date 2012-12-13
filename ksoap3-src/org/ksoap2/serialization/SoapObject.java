@@ -37,7 +37,7 @@ import java.util.*;
  * Instead of this this class, custom classes can be used if they implement the
  * KvmSerializable interface.
  */
-
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class SoapObject extends AttributeContainer implements KvmSerializable {
 
     private static final String EMPTY_STRING = "";

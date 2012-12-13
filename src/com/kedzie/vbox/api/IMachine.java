@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.service.textservice.SpellCheckerService.Session;
@@ -140,7 +142,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	/**
      * @param monitorCount    Number of virtual monitors. 
      */
-	public void setMonitorCount(@KSOAP(type="unsignedInt", value="monitorCount") int monitorCount);
+	public void setMonitorCount(@KSOAP(namespace=SoapSerializationEnvelope.XSD, type="unsignedInt", value="monitorCount") int monitorCount);
 
 	/**
 	 * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM. 

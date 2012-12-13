@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -17,12 +18,55 @@ import android.widget.LinearLayout;
 import com.kedzie.vbox.R;
 
 /**
- * Collapsible Panel
- * @author Marek Kędzierski
+ * Animated collapsible Panel
  */
 public class PanelView extends LinearLayout implements OnClickListener {
-    public static final int COLLAPSE_DURATION = 300;
-    protected int BORDER_WIDTH = Utils.dpiToPixels(8);
+    
+    /**
+     * Animation for collapsing/expanding the panel contents
+     */
+    protected class PanelAnimation extends Animation {
+    	static final int COLLAPSE_DURATION = 400;
+    	
+        private final int mStartHeight;
+        private final int mDeltaHeight;
+
+        public PanelAnimation(int startHeight, int endHeight) {
+            setDuration(COLLAPSE_DURATION);
+            mStartHeight = startHeight;
+            mDeltaHeight = endHeight - startHeight;
+            setAnimationListener(new AnimationListener() {
+                @Override public void onAnimationStart(Animation animation) {}
+                @Override public void onAnimationRepeat(Animation animation) {}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if(mStartHeight==0) { //expanding 
+                        _contents.setVisibility(View.VISIBLE);
+                        _collapseButton.startAnimation(_expandAnimation);
+//                        _collapseButton.setImageDrawable(_collapseDrawable);
+                    } else {       //collapsing
+                        _frame.setVisibility(View.GONE);
+                        _collapseButton.startAnimation(_collapseAnimation);
+//                        _collapseButton.setImageDrawable(_expandDrawable);
+                    }
+                }
+            });
+        }   
+
+        @Override
+        protected void applyTransformation(float interpolatedTime,  Transformation t) {
+            ViewGroup.LayoutParams lp = _contents.getLayoutParams();
+            lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
+            _contents.setLayoutParams(lp);
+        }
+
+        @Override
+        public boolean willChangeBounds() {
+            return true;
+        }
+    }
+    
+    protected int BORDER_WIDTH = Utils.dpiToPixels(getContext(), 8);
     
     protected boolean _expanded=true;
     protected ImageButton _collapseButton;
@@ -30,6 +74,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
     protected LinearLayout _contents;
     protected FrameLayout _frame;
     protected Drawable _collapseDrawable, _expandDrawable;
+    protected Animation _collapseAnimation, _expandAnimation; 
     protected Drawable _icon;
     protected int _contentHeight;
     private String _title;
@@ -40,6 +85,9 @@ public class PanelView extends LinearLayout implements OnClickListener {
         try {
             _title = a.hasValue(R.styleable.Panel_name) ? a.getString(R.styleable.Panel_name) : "";
             _icon = a.getDrawable(R.styleable.Panel_headerIcon);
+            _collapseDrawable = a.getDrawable(R.styleable.Panel_collapseDrawable);
+            _collapseAnimation = AnimationUtils.loadAnimation(context, a.getInteger(R.styleable.Panel_collapseUpAnimation, R.anim.panel_collapse));		
+            _expandAnimation = AnimationUtils.loadAnimation(context, a.getInteger(R.styleable.Panel_collapseDownAnimation, R.anim.panel_expand));
         } finally {
             a.recycle();
         }
@@ -52,7 +100,8 @@ public class PanelView extends LinearLayout implements OnClickListener {
     }
     
     protected void init(Context context) {
-        _collapseDrawable = context.getResources().getDrawable(R.drawable.ic_navigation_collapse);
+    	if(_collapseDrawable==null)
+    		context.getResources().getDrawable(R.drawable.ic_navigation_collapse);
         _expandDrawable = context.getResources().getDrawable(R.drawable.ic_navigation_expand);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         
@@ -84,14 +133,6 @@ public class PanelView extends LinearLayout implements OnClickListener {
         return titleLayout;
     }
     
-    /**
-     * Specify custom collapse button if {@link PanelView#getTitleLayout} is overridden
-     * @return  the {@link ImageButton} to collapse/expand the panel
-     */
-    protected ImageButton getCollapseButton() {
-        return _collapseButton;
-    }
-    
     @Override
     public void addView(View child) {
         _contents.addView(child);
@@ -120,46 +161,5 @@ public class PanelView extends LinearLayout implements OnClickListener {
             _contents.startAnimation(new PanelAnimation(0, _contentHeight));
         }
         _expanded = !_expanded;
-    }
-
-    protected class PanelAnimation extends Animation {
-        private final int mStartHeight;
-        private final int mDeltaHeight;
-
-        public PanelAnimation(int startHeight, int endHeight) {
-            setDuration(COLLAPSE_DURATION);
-            mStartHeight = startHeight;
-            mDeltaHeight = endHeight - startHeight;
-            setAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
-                
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
-                
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if(mStartHeight==0) { //expanding 
-                        _contents.setVisibility(View.VISIBLE);
-                        _collapseButton.setImageDrawable(_collapseDrawable);
-                    } else {       //collapsing
-                        _frame.setVisibility(View.GONE);
-                        _collapseButton.setImageDrawable(_expandDrawable);
-                    }
-                }
-            });
-        }   
-
-        @Override
-        protected void applyTransformation(float interpolatedTime,  Transformation t) {
-            ViewGroup.LayoutParams lp = _contents.getLayoutParams();
-            lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
-            _contents.setLayoutParams(lp);
-        }
-
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
     }
 }

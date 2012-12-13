@@ -31,10 +31,10 @@ import java.io.NotSerializableException;
 /**
  * This class is used to store information about each property an implementation of KvmSerializable exposes.
  */
-
-public class PropertyInfo implements java.io.Serializable
-{
-    public static final Class OBJECT_CLASS = new Object().getClass();
+@SuppressWarnings("rawtypes")
+public class PropertyInfo implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
+	public static final Class OBJECT_CLASS = new Object().getClass();
     public static final Class STRING_CLASS = "".getClass();
     public static final Class INTEGER_CLASS = new Integer(0).getClass();
     public static final Class LONG_CLASS = new Long(0).getClass();

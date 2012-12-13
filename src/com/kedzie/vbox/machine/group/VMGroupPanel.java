@@ -17,6 +17,10 @@ import com.kedzie.vbox.app.PanelView;
 public class VMGroupPanel extends PanelView {
     
     public static interface OnDrillDownListener {
+        /**
+         * The drill-down button has been pressed for a group
+         * @param group		the group to focus on 
+         */
         public void onDrillDown(VMGroup group);
     }
     
@@ -25,7 +29,7 @@ public class VMGroupPanel extends PanelView {
     private OnDrillDownListener _drillDownListener;
     private TextView _numGroupsText;
     private TextView _numMachinesText;
-    
+    /** The group this panel represents */
     private VMGroup _group;
     
     public VMGroupPanel(Context context, VMGroup group) {
@@ -67,10 +71,9 @@ public class VMGroupPanel extends PanelView {
         super.setSelected(selected);
         _titleView.setSelected(selected);
         _frame.setSelected(selected);
-        if(selected) {  //if group is selected, unselect all of it's children
+        if(selected)
             for(int i=0; i<_contents.getChildCount(); i++)
                 _contents.getChildAt(i).setSelected(false);
-        }
     }
 
     public void addChild(View view) {
@@ -80,6 +83,7 @@ public class VMGroupPanel extends PanelView {
     public VMGroup getGroup() {
         return _group;
     }
+    
     public void setOnDrillDownListener(OnDrillDownListener listener) {
         _drillDownListener=listener;
     }

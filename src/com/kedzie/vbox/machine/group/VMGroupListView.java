@@ -26,25 +26,47 @@ import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.group.VMGroupPanel.OnDrillDownListener;
 
 /**
+ * Scrollable list of {@link VMGroup} objects with drill-down support to focus on a particular group.
  * 
  * @author Marek Kędzierski
  */
 public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener {
     
+    /**
+     * Callback for element selection
+     */
     public static interface OnTreeNodeSelectListener {
+        /**
+         * An element has been selected
+         * @param node	the selected element
+         */
         public void onTreeNodeSelect(TreeNode node);
     }
     
+    /**
+     * Callback for element long-click
+     */
     public static interface OnTreeNodeLongClickListener {
+        /**
+         * An element has been long-clicked
+         * @param node	the element which received the long-click
+         */
         public void onTreeNodeLongClick(TreeNode node);
     }
     
-    private VMGroup _group;
+    /** View associated with the currently selected element */
     private View _selected;
+    
+    /** Is element selection enabled */
     private boolean _selectionEnabled;
+    
     private OnTreeNodeSelectListener _listener;
+    
     private OnTreeNodeLongClickListener _longClickListener;
+    
+    /** Maintains reference from a particular Machine to all views which reference it.  Used for updating views when events are received. */
     private Map<IMachine, List<MachineView>> _machineViewMap = new HashMap<IMachine, List<MachineView>>();
+    
     private Animation _slideInLeft, _slideInRight, _slideOutLeft, _slideOutRight;
     
     public VMGroupListView(Context context, AttributeSet attrs) {
@@ -65,14 +87,24 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     }
     
     public void setRoot(VMGroup group) {
-        _group=group;
         addView(createGroupListView(group));
     }
-
-    public VMGroup getRoot() {
-        return _group;
+    
+    @Override
+    public void onDrillDown(VMGroup group) {
+        addView(createGroupListView(group));
+        setInAnimation(_slideInRight);
+        setOutAnimation(_slideOutLeft);
+        showNext();
     }
     
+    public void drillOut() {
+        setInAnimation(_slideInLeft);
+        setOutAnimation(_slideOutRight);
+        showPrevious();
+        removeViewAt(getChildCount()-1);
+    }
+
     public void setOnTreeNodeSelectListener(OnTreeNodeSelectListener listener) {
         _listener = listener;
     }
@@ -80,7 +112,20 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     public void setOnTreeNodeLongClickListener(OnTreeNodeLongClickListener listener) {
         _longClickListener = listener;
     }
+    
+    public boolean isSelectionEnabled() {
+        return _selectionEnabled;
+    }
 
+    public void setSelectionEnabled(boolean _selectionEnabled) {
+        this._selectionEnabled = _selectionEnabled;
+    }
+
+    /**
+     * Build a scrollable list of everything below a group
+     * @param group		the root
+     * @return	scrollable list of things below the group
+     */
     private View createGroupListView(VMGroup group) {
         ScrollView scrollView = new ScrollView(getContext());
         LinearLayout _contents = new LinearLayout(getContext());
@@ -98,7 +143,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             ((TextView)header.findViewById(R.id.group_num_groups)).setText(group.getNumGroups()+"");
             ((TextView)header.findViewById(R.id.group_num_machine)).setText(group.getNumMachines()+"");
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            lp.bottomMargin = Utils.dpiToPixels(4);
+            lp.bottomMargin = Utils.dpiToPixels(getContext(), 4);
             _contents.addView(header, lp);
         }
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -108,9 +153,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     }
     
     /**
-     * Create the tree components from the data model
+     * Create a view for a single node in the tree
      * @param context  the {@link Context}
-     * @param node      tree structure
+     * @param node      tree node
      * @return  Fully populated view representing the node
      */
     public View createView(TreeNode node) {
@@ -187,28 +232,5 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         else if(v instanceof VMGroupPanel)
             _longClickListener.onTreeNodeLongClick(((VMGroupPanel)v).getGroup());
         return true;
-    }
-    
-    public void drillOut() {
-        setInAnimation(_slideInLeft);
-        setOutAnimation(_slideOutRight);
-        showPrevious();
-        removeViewAt(getChildCount()-1);
-    }
-    
-    @Override
-    public void onDrillDown(VMGroup group) {
-        addView(createGroupListView(group));
-        setInAnimation(_slideInRight);
-        setOutAnimation(_slideOutLeft);
-        showNext();
-    }
-    
-    public boolean isSelectionEnabled() {
-        return _selectionEnabled;
-    }
-
-    public void setSelectionEnabled(boolean _selectionEnabled) {
-        this._selectionEnabled = _selectionEnabled;
     }
 }

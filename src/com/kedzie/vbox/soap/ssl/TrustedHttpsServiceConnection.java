@@ -1,4 +1,4 @@
-package com.kedzie.vbox.soap;
+package com.kedzie.vbox.soap.ssl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.ksoap2.HeaderProperty;
@@ -25,23 +24,9 @@ import android.util.Log;
  * @author Marek Kedzierski
  */
 public class TrustedHttpsServiceConnection implements ServiceConnection {
-	private static final String TAG = "HttpsServiceConnectionSE";
 	
     private HttpsURLConnection connection;
     
-    private TrustManager []trustAll =  new TrustManager[]{
-    	    new X509TrustManager() {
-    	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-    	        	Log.i(TAG, "getAcceptedIssuers");
-    	            return null;
-    	        }
-    	        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        }
-    	        public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        }
-    	    }
-    	};
-
     /**
      * Create the transport with the supplied parameters.
      * @param host the name of the host e.g. webservices.somewhere.com
@@ -51,17 +36,19 @@ public class TrustedHttpsServiceConnection implements ServiceConnection {
      * @param timeout the timeout for the connection in milliseconds
      * @throws IOException
      */
-    public TrustedHttpsServiceConnection(String host, int port, String file, int timeout) throws IOException {
-    	 try {
-    	       SSLContext sc = SSLContext.getInstance("TLS");
-    	       sc.init(null, trustAll, new java.security.SecureRandom());
-    	       HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-    	    } catch (Exception e) {
-    	       Log.e("ServiceConnectionSE", "Error init SSL", e);
-    	    }
-        connection = (HttpsURLConnection) new URL(TrustedHttpsTransport.PROTOCOL, host, port, file).openConnection();
-        ((HttpsURLConnection) connection).setHostnameVerifier(new AllowAllHostnameVerifier());
-        updateConnectionParameters(timeout);
+    public TrustedHttpsServiceConnection(String host, int port, String file, int timeout, TrustManager[] trust) throws IOException {
+    	try {
+    		SSLContext sc = SSLContext.getInstance("TLS");
+    		sc.init(null, trust, new java.security.SecureRandom());
+//    		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+    		connection = (HttpsURLConnection) new URL(KeystoreTrustedHttpsTransport.PROTOCOL, host, port, file).openConnection();
+    		connection.setSSLSocketFactory(sc.getSocketFactory());
+    		((HttpsURLConnection) connection).setHostnameVerifier(new AllowAllHostnameVerifier());
+    		updateConnectionParameters(timeout);
+    	} catch (Exception e) {
+    		Log.e("ServiceConnectionSE", "Error init SSL", e);
+    	}
     }
 
     private void updateConnectionParameters(int timeout) {

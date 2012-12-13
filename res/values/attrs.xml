@@ -10,7 +10,10 @@
    
     <declare-styleable name="Panel">
        <attr name="name" format="string" />
-       <attr name="headerIcon" format="integer" />
+       <attr name="headerIcon" format="reference" />
+       <attr name="collapseDrawable" format="reference" />
+       <attr name="collapseDownAnimation" format="reference" />
+       <attr name="collapseUpAnimation" format="reference" />
    </declare-styleable>
    
     <declare-styleable name="SliderView">

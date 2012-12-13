@@ -2,7 +2,6 @@ package com.kedzie.vbox.soap;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -25,6 +24,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -46,6 +46,8 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricQuery;
 import com.kedzie.vbox.server.Server;
+import com.kedzie.vbox.soap.ssl.InteractiveTrustedHttpsTransport;
+import com.kedzie.vbox.soap.ssl.KeystoreTrustedHttpsTransport;
 
 /**
  * VirtualBox JAX-WS API
@@ -72,6 +74,25 @@ public class VBoxSvc implements Parcelable {
 			return new VBoxSvc[size];
 		}
 	};
+	
+	public class AsynchronousThread extends Thread {
+		private String name;
+		private SoapSerializationEnvelope envelope;
+		
+		public AsynchronousThread(String name, SoapSerializationEnvelope envelope) {
+			this.name=name;
+			this.envelope = envelope;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				_transport.call(name, envelope);
+			} catch (Exception e) {
+				Log.e(TAG, "Error invoking asynchronous method", e);
+			}
+		}
+	}
 	
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
@@ -128,16 +149,22 @@ public class VBoxSvc implements Parcelable {
 					request.addProperty(methodKSOAP.thisReference(), this._uiud);
 				if(args!=null) {
 					for(int i=0; i<args.length; i++)
-						marshal(request, getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
+						marshal(request, Utils.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
 				}
 				SerializationEnvelope envelope = new SerializationEnvelope();
 				envelope.setOutputSoapObject(request);
 				envelope.setAddAdornments(false);
-				_transport.call(NAMESPACE+request.getName(), envelope);
-				Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
-				if(methodKSOAP!=null && methodKSOAP.cacheable()) 
-					_cache.put(method.getName(), ret);
-				return ret;
+				
+				if(method.isAnnotationPresent(Asyncronous.class)) {
+					new AsynchronousThread(NAMESPACE+request.getName(), envelope).start();
+					return null;
+				} else {
+					_transport.call(NAMESPACE+request.getName(), envelope);
+					Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
+					if(methodKSOAP!=null && methodKSOAP.cacheable()) 
+						_cache.put(method.getName(), ret);
+					return ret;
+				}
 			}
 		}
 		
@@ -174,6 +201,9 @@ public class VBoxSvc implements Parcelable {
 	 */
 	class SerializationEnvelope extends SoapSerializationEnvelope {
 
+		/** Keep track of setter methods for each property of complex objects  */
+		private Map<Class<?>, Map<String, Method>> typeCache = new HashMap<Class<?>, Map<String, Method>>();
+		
 		public SerializationEnvelope() {
 			super(SoapEnvelope.VER11);
 		}
@@ -234,26 +264,14 @@ public class VBoxSvc implements Parcelable {
 		 */
 		private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
 			if(ret==null) return null;
-			if(returnType.isArray() && returnType.getComponentType().equals(byte.class))
+			if(returnType.isArray() && returnType.getComponentType().equals(byte.class)) {
 				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
-			if(returnType.equals(Boolean.class)) {
+			} else if(returnType.equals(Boolean.class)) {
 				return Boolean.valueOf(ret.toString());
 			} else if(returnType.equals(Integer.class)) {
-			    if(ret instanceof Integer) {
-			        Log.i(TAG, "SoapPrimitive already an Integer!");
-			        return ret;
-			    } else {
-			        Log.i(TAG, "UnMarshall type conversion performed");
 			        return Integer.valueOf(ret.toString());
-			    }
 			} else if(returnType.equals(Long.class)) {
-			    if(ret instanceof Long) {
-                    Log.i(TAG, "SoapPrimitive already an Long!");
-                    return ret;
-                } else {
-                    Log.i(TAG, "UnMarshall type conversion performed");
                     return Long.valueOf(ret.toString());
-                }
 			} else if(returnType.equals(String.class))
 				return ret.toString();
 			else if(IManagedObjectRef.class.isAssignableFrom(returnType))
@@ -274,7 +292,7 @@ public class VBoxSvc implements Parcelable {
                         Class<?> propertyType = setterMethod.getParameterTypes()[0];
                         Object value = unmarshal(propertyType, propertyType, propertyInfo.getValue());
                         setterMethod.invoke(pojo, value);
-                        Log.i(TAG, String.format("Setting POJO property: %1$s.%2$s=%3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
+                        Log.i(TAG, String.format("Setting POJO property (%1$s): %2$s.%3$s=%4$s", propertyType.getName(), returnType.getSimpleName(), propertyInfo.getName(), value));
                     }
                     return pojo;
                 } catch (Exception e) {
@@ -285,12 +303,20 @@ public class VBoxSvc implements Parcelable {
 		}
 		
 		public Method findSetterMethod(Class<?> clazz, String property) {
-		    String setterMethodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
-		    Log.i(TAG, "Finding setter method: " + setterMethodName);
-		    for(Method method : clazz.getMethods()) 
-		        if(method.getName().equals(setterMethodName)) 
-		            return method;
-	        throw new NoSuchPropertyException(setterMethodName);
+			if(!typeCache.containsKey(clazz))
+				typeCache.put(clazz, new HashMap<String, Method>());
+			Map<String, Method> typeDescription = typeCache.get(clazz);
+			if(typeDescription.containsKey(property)) 
+				return typeDescription.get(property);
+
+			String setterMethodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
+			Log.i(TAG, "Finding setter method: " + setterMethodName);
+			for(Method method : clazz.getMethods()) 
+				if(method.getName().equals(setterMethodName)) {
+					typeDescription.put(property, method);
+					return method;
+				}
+			throw new NoSuchPropertyException(setterMethodName);
 		}
 	}
 
@@ -303,7 +329,7 @@ public class VBoxSvc implements Parcelable {
 	 */
 	public VBoxSvc(Server server) {
 		_server=server;
-		_transport = server.isSSL() ? new TrustedHttpsTransport(server.getHost(), server.getPort(), "", TIMEOUT) : 
+		_transport = server.isSSL() ? new KeystoreTrustedHttpsTransport(server.getHost(), server.getPort(), "", TIMEOUT) : 
 					new HttpTransport("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
 	}
 
@@ -466,12 +492,15 @@ public class VBoxSvc implements Parcelable {
         }
         return null;
     }
-
-		@SuppressWarnings("unchecked")
-		public <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
-			for(Annotation at : a)
-				if(at.annotationType().equals(clazz))
-					return (T)at;
-			return null;
-		}
+	
+	public void ping(Handler handler) throws IOException, XmlPullParserException {
+		SoapObject request = new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName");
+		request.addProperty("_this", "0");
+		SerializationEnvelope envelope = new SerializationEnvelope();
+		envelope.setOutputSoapObject(request);
+		envelope.setAddAdornments(false);
+		InteractiveTrustedHttpsTransport transport = 
+				new InteractiveTrustedHttpsTransport(_server.getHost(), _server.getPort(), "", TIMEOUT, handler);
+		transport.call(NAMESPACE+request.getName(), envelope);
+	}
 }

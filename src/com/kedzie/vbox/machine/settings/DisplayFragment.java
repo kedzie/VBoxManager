@@ -94,7 +94,7 @@ public class DisplayFragment extends SherlockFragment {
 	    _videoMemoryBar.setMaxValidValue(sp.getMaxGuestVRAM());
 	    _videoMemoryBar.setValue(m.getVRAMSize());
 	    _videoMemoryBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
-			@Override
+			@Override 
 			public void onSliderValueChanged(final int newValue) {
 				new Thread() {
                     @Override
@@ -110,7 +110,7 @@ public class DisplayFragment extends SherlockFragment {
 	    _monitorBar.setMaxValidValue(sp.getMaxGuestMonitors());
 	    _monitorBar.setValue(m.getMonitorCount());
 	    _monitorBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
-			@Override
+			@Override 
 			public void onSliderValueChanged(final int newValue) {
 				new Thread() {
                     @Override

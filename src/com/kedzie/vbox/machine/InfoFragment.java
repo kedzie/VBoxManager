@@ -25,7 +25,6 @@ import com.kedzie.vbox.task.ActionBarTask;
 
 /**
  * 
- * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
 public class InfoFragment extends SherlockFragment {
@@ -70,7 +69,7 @@ public class InfoFragment extends SherlockFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+		setHasOptionsMenu(false);
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
 		if(savedInstanceState!=null)
 		    _machineInfo = savedInstanceState.getParcelable("info");

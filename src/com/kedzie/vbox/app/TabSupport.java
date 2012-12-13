@@ -17,16 +17,16 @@ public interface TabSupport {
 	 * @param clazz		type of Fragment
 	 * @param args		Arguments
 	 */
-	public  void addTab(String name, Class<?> clazz, Bundle args) ;
+	public abstract void addTab(String name, Class<?> clazz, Bundle args) ;
 
 	/**
 	 * Remove a tab from the {@link ActionBar}
 	 * @param name name (& tag) of Tab
 	 */
-	public void removeTab(String name);
+	public abstract void removeTab(String name);
 
 	/**
 	 * Remove all tabs from the {@link ActionBar}
 	 */
-	public void removeAllTabs();
+	public abstract void removeAllTabs();
 }

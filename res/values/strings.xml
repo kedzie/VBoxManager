@@ -46,6 +46,8 @@
     <string name="add_server_question">You have no servers defined.  Would you like to add one?</string>
     <string name="snapshot_name">Name</string>
     <string name="snapshot_description">Description</string>
+    <string name="snapshot_name_new">New Snapshot</string>
+    <string name="snapshot_description_new">None</string>
     <string name="host_metrics">Host Metrics</string>
     <string name="vbox_version">VirtualBox® v.<ff:g id="version">%1$s</ff:g></string>
     <string name="tab_actions">Actions</string>
@@ -65,4 +67,7 @@
     <string name="operating_system">Operating System:</string>
     <string name="name">"Name: "</string>
     <string name="groups">Groups:</string>
+    <string name="settings_description">Description:</string>
+    <string name="settings_operating_system">Operating System:</string>
+    <string name="settings_name">"Name: "</string>
 </resources>
