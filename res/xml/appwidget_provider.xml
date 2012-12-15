@@ -4,6 +4,10 @@
     android:minHeight="48dp"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/appwidget_provider"
-    android:configure="com.kedzie.vbox.widget.ServerListPickActivity"
-    android:resizeMode="horizontal"   />
+    android:initialKeyguardLayout="@layout/appwidget_provider"
+    android:widgetCategory="keyguard|home_screen" 
+    android:minResizeWidth="180dp"
+    android:minResizeHeight="48dp"
+    android:resizeMode="horizontal"
+    android:configure="com.kedzie.vbox.widget.ServerListPickActivity"  />
 

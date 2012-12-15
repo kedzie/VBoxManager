@@ -13,7 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -133,7 +133,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         _contents.setOrientation(LinearLayout.VERTICAL);
         if(!group.getName().equals("/")) {
             LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
-            ((ImageButton)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
+            ((ImageView)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     drillOut();

@@ -32,7 +32,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 
@@ -110,12 +109,34 @@ public class ServerListFragment extends SherlockFragment {
     private Handler _sslHandler = new Handler() {
     	@Override
     	public void handleMessage(Message msg) {
-    		String authType = msg.getData().getString("authType");
-    		 java.security.cert.X509Certificate[] certs = (X509Certificate[]) msg.getData().getSerializable("certs");
-    		 Utils.toastLong(getActivity(), "Auth type: %1$s,  # Certs: %2$d", authType, certs.length);
+    		if(msg.getData().getBoolean("isTrusted")) {
+    			//execute LogonTask
+    		} else {
+    			X509Certificate[] certs = (X509Certificate[]) msg.getData().getSerializable("certs");
+    			String text = "";
+    			for(X509Certificate cert : certs) {
+    				text += String.format("Issuer: %1$d, Subject: %2$d\n", cert.getIssuerDN().getName(), cert.getSubjectDN().getName());
+    			}
+    			new AlertDialog.Builder(getActivity())
+	    			.setIcon(android.R.drawable.ic_dialog_alert)
+	    			.setMessage("Do you trust this certificate?").setTitle("Unrecognized Certificate: " + text)
+	    			.setPositiveButton("Yes", new OnClickListener() {
+	    				@Override
+	    				public void onClick(DialogInterface dialog, int which) {
+	    					//add certificate to truststore
+	    					//execute LogonActivity
+	    					dialog.dismiss();
+	    				}
+	    			}).setNegativeButton("No", new OnClickListener() {
+	    				@Override
+	    				public void onClick(DialogInterface dialog, int which) {
+	    					dialog.dismiss();
+	    				}
+	    			}).show();
+    		}
     	}
     };
-    
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -196,7 +217,7 @@ public class ServerListFragment extends SherlockFragment {
         menu.add(Menu.NONE, R.id.server_list_context_menu_select, Menu.NONE, "Connect");
         menu.add(Menu.NONE, R.id.server_list_context_menu_edit, Menu.NONE, "Edit");
         menu.add(Menu.NONE, R.id.server_list_context_menu_delete, Menu.NONE, "Delete");
-        menu.add(Menu.NONE, R.id.server_list_context_menu_ping, Menu.NONE, "Ping");
+        menu.add(Menu.NONE, R.id.server_list_context_menu_ping, Menu.NONE, "Check SSL Certificate");
     }
 
     @Override

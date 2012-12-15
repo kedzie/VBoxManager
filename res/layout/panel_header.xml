@@ -20,8 +20,9 @@
 		android:layout_gravity="left"	 
 		android:layout_weight="1" />
 	
-	<ImageButton 
+	<ImageView 
 	    	android:id="@+id/group_collapse" 
+	    	android:clickable="true"
 		android:contentDescription="Collapse  Button"
 		android:layout_marginRight="8dp"  
 		android:src="@drawable/ic_navigation_collapse"  

@@ -9,10 +9,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.kedzie.vbox.R;
@@ -26,29 +25,28 @@ public class PanelView extends LinearLayout implements OnClickListener {
      * Animation for collapsing/expanding the panel contents
      */
     protected class PanelAnimation extends Animation {
-    	static final int COLLAPSE_DURATION = 400;
+    	static final int COLLAPSE_DURATION = 600;
     	
         private final int mStartHeight;
         private final int mDeltaHeight;
+        private final int mStartRotation;
+        private final int mDeltaRotation;
 
         public PanelAnimation(int startHeight, int endHeight) {
             setDuration(COLLAPSE_DURATION);
             mStartHeight = startHeight;
             mDeltaHeight = endHeight - startHeight;
+           	mStartRotation= startHeight==0 ? -90 : 0;
+           	mDeltaRotation= startHeight==0 ? 90 : -90 ;
             setAnimationListener(new AnimationListener() {
                 @Override public void onAnimationStart(Animation animation) {}
                 @Override public void onAnimationRepeat(Animation animation) {}
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if(mStartHeight==0) { //expanding 
+                    if(mStartHeight==0) //expanding 
                         _contents.setVisibility(View.VISIBLE);
-                        _collapseButton.startAnimation(_expandAnimation);
-//                        _collapseButton.setImageDrawable(_collapseDrawable);
-                    } else {       //collapsing
+                    else       //collapsing
                         _frame.setVisibility(View.GONE);
-                        _collapseButton.startAnimation(_collapseAnimation);
-//                        _collapseButton.setImageDrawable(_expandDrawable);
-                    }
                 }
             });
         }   
@@ -58,6 +56,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
             ViewGroup.LayoutParams lp = _contents.getLayoutParams();
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             _contents.setLayoutParams(lp);
+            _collapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
         }
 
         @Override
@@ -69,12 +68,11 @@ public class PanelView extends LinearLayout implements OnClickListener {
     protected int BORDER_WIDTH = Utils.dpiToPixels(getContext(), 8);
     
     protected boolean _expanded=true;
-    protected ImageButton _collapseButton;
+    protected ImageView _collapseButton;
     protected View _titleView;
     protected LinearLayout _contents;
     protected FrameLayout _frame;
-    protected Drawable _collapseDrawable, _expandDrawable;
-    protected Animation _collapseAnimation, _expandAnimation; 
+    protected Drawable _collapseDrawable;
     protected Drawable _icon;
     protected int _contentHeight;
     private String _title;
@@ -86,8 +84,6 @@ public class PanelView extends LinearLayout implements OnClickListener {
             _title = a.hasValue(R.styleable.Panel_name) ? a.getString(R.styleable.Panel_name) : "";
             _icon = a.getDrawable(R.styleable.Panel_headerIcon);
             _collapseDrawable = a.getDrawable(R.styleable.Panel_collapseDrawable);
-            _collapseAnimation = AnimationUtils.loadAnimation(context, a.getInteger(R.styleable.Panel_collapseUpAnimation, R.anim.panel_collapse));		
-            _expandAnimation = AnimationUtils.loadAnimation(context, a.getInteger(R.styleable.Panel_collapseDownAnimation, R.anim.panel_expand));
         } finally {
             a.recycle();
         }
@@ -101,8 +97,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
     
     protected void init(Context context) {
     	if(_collapseDrawable==null)
-    		context.getResources().getDrawable(R.drawable.ic_navigation_collapse);
-        _expandDrawable = context.getResources().getDrawable(R.drawable.ic_navigation_expand);
+    		context.getResources().getDrawable(R.drawable.ic_navigation_expand);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         
         setOrientation(VERTICAL);
@@ -122,11 +117,10 @@ public class PanelView extends LinearLayout implements OnClickListener {
     /**
      * Override to create custom Panel header.  Make sure to also override {@link PanelView#getCollapseButton}.
      * @return  the initialized panel header
-     * @see {@link PanelView#getCollapseButton}
      */
     protected View getTitleLayout() {
         LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.panel_header, this, false);
-        _collapseButton = (ImageButton)titleLayout.findViewById(R.id.group_collapse);
+        _collapseButton = (ImageView)titleLayout.findViewById(R.id.group_collapse);
         _collapseButton.setOnClickListener(this);
         Utils.setImageView(titleLayout, R.id.panel_icon, _icon);
         Utils.setTextView(titleLayout, R.id.group_title, _title);

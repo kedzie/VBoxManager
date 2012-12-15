@@ -3,7 +3,7 @@ package com.kedzie.vbox.machine.group;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,7 +25,7 @@ public class VMGroupPanel extends PanelView {
     }
     
     private TextView _titleLabel;
-    private ImageButton _drillDownButton;
+    private ImageView _drillDownButton;
     private OnDrillDownListener _drillDownListener;
     private TextView _numGroupsText;
     private TextView _numMachinesText;
@@ -43,9 +43,9 @@ public class VMGroupPanel extends PanelView {
     
     protected View getTitleLayout() {
         LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
-        _collapseButton = (ImageButton)titleLayout.findViewById(R.id.group_collapse);
+        _collapseButton = (ImageView)titleLayout.findViewById(R.id.group_collapse);
         _collapseButton.setOnClickListener(this);
-        _drillDownButton = (ImageButton)titleLayout.findViewById(R.id.group_enter);
+        _drillDownButton = (ImageView)titleLayout.findViewById(R.id.group_enter);
         _drillDownButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

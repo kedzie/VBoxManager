@@ -5,7 +5,8 @@
     android:layout_height="wrap_content" 
     android:padding="4dp">
     
-	<ImageButton android:id="@+id/group_back" 
+	<ImageView android:id="@+id/group_back" 
+	    	android:clickable="true"
 	    	android:contentDescription="Back Button"
 		android:layout_marginRight="8dp"  
 		android:src="@drawable/ic_navigation_back"  
