@@ -7,11 +7,23 @@
 		
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallText" android:text="Video Memory"  android:layout_gravity="left" />
-			<SeekBar android:id="@+id/videoMemory"   android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
+			<com.kedzie.vbox.app.SliderView 
+			    android:id="@+id/videoMemory"   
+			    android:layout_weight="1" 
+			    android:layout_width="0dip" 
+			    android:layout_height="wrap_content"
+			    vbox:unit="MB"
+			    vbox:tickSpacing="10" />
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallText" android:text="Monitors"  android:layout_gravity="left" />
-			<SeekBar android:id="@+id/numMonitors"   android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
+			<com.kedzie.vbox.app.SliderView 
+			    android:id="@+id/numMonitors"   
+			    android:layout_weight="1" 
+			    android:layout_width="0dip" 
+			    android:layout_height="wrap_content"
+			    vbox:unit=""
+			    vbox:tickSpacing="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"  android:text="3D Acceleration" android:layout_gravity="left"  />

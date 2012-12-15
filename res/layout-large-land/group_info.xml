@@ -10,7 +10,7 @@
 	android:layout_height="wrap_content" 
 	android:layout_weight="1">
 	   
-	<com.kedzie.vbox.app.Panel vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.PanelView vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView style="@style/SmallText" android:text="@string/name" android:layout_gravity="left"  />
 			<TextView style="@style/SmallText" android:id="@+id/name" android:layout_weight="1" android:layout_width="0dip"/>
@@ -23,9 +23,9 @@
 			<TextView style="@style/SmallText" android:text="@string/groups" android:layout_gravity="left" />
 			<TextView style="@style/SmallText" android:id="@+id/groups" android:layout_weight="1" android:layout_width="0dip"/>
 		</LinearLayout>
-	</com.kedzie.vbox.app.Panel>   
+	</com.kedzie.vbox.app.PanelView>   
 	
-	<com.kedzie.vbox.app.Panel vbox:name="System" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"  android:text="@string/base_memory" android:layout_gravity="left" />
 			<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1" android:layout_width="0dip"/>
@@ -42,14 +42,14 @@
 			<TextView style="@style/SmallText" android:text="@string/acceleration" android:layout_gravity="left"  />
 			<TextView style="@style/SmallText"  android:id="@+id/acceleration" android:layout_weight="1" android:layout_width="0dip"/>
 		</LinearLayout>
-	</com.kedzie.vbox.app.Panel>
+	</com.kedzie.vbox.app.PanelView>
 		
 	</LinearLayout>
 	
-    	<com.kedzie.vbox.app.Panel vbox:name="Preview" 
+    	<com.kedzie.vbox.app.PanelView vbox:name="Preview" 
     	    vbox:headerIcon="@drawable/ic_settings_general" 
     	    android:layout_width="wrap_content" 
     	    android:layout_height="wrap_content" >
 		<ImageView android:id="@+id/preview" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
-	</com.kedzie.vbox.app.Panel>
+	</com.kedzie.vbox.app.PanelView>
 </LinearLayout>

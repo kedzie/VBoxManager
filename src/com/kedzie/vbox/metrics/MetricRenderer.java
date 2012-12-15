@@ -42,7 +42,7 @@ public class MetricRenderer extends View {
 	protected String _unit;
 	
 	private Rect bounds = new Rect();
-	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint();
+	private Paint textPaint = new Paint(), bgPaint = new Paint(), borderPaint = new Paint(), metricPaint = new Paint(), gridPaint = new Paint(), metricFill=new Paint(), _editTextPaint = new Paint();
 	private Path path = new Path();
 	private Path hGridPath = new Path();
 	private Path vGridPath = new Path();
@@ -63,6 +63,10 @@ public class MetricRenderer extends View {
 		textPaint.setAntiAlias(true);
 		textPaint.setTextSize(18.0f);
 		
+		_editTextPaint.setColor(0xFF000000);
+		_editTextPaint.setAntiAlias(true);
+        _editTextPaint.setTextSize(24.0f);
+		
 		gridPaint.setColor(gridColor);
 		gridPaint.setAntiAlias(true);
 		gridPaint.setStrokeWidth(1.5f);
@@ -74,7 +78,7 @@ public class MetricRenderer extends View {
 		metricPaint.setStrokeCap(Cap.ROUND);
 		metricPaint.setAntiAlias(true);
 		metricPaint.setStyle(Style.STROKE);
-		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0x96000000);
+//		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0x96000000);
 		
 		metricFill.setStyle(Style.FILL);
 	}
@@ -103,7 +107,8 @@ public class MetricRenderer extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		Log.i(TAG, "OnSizeChanged("+w+"," + h + ")");
-		setMetricPrefs(_count, _period);
+		if(!isInEditMode() && _count>0 && _period>0) 
+		    setMetricPrefs(_count, _period);
 	}
 	
 	public synchronized void setQuery(Map<String, MetricQuery> q) {
@@ -149,6 +154,12 @@ public class MetricRenderer extends View {
 	@Override
 	protected synchronized  void onDraw(Canvas canvas) {
 	    canvas.getClipBounds(bounds);
+	    
+	    if(isInEditMode()) { 
+	        _editTextPaint.setTextSize(20f);
+	        canvas.drawText("Edit Mode", 100, 100, _editTextPaint);
+	        return;
+	    }
 	    
 //		if(_gridBitmap!=null)
 //		    canvas.drawBitmap(_gridBitmap, 0, 0, null);

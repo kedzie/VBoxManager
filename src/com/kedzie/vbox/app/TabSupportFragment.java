@@ -13,6 +13,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
  * Attaches/Detaches Fragments
@@ -25,9 +26,9 @@ public class TabSupportFragment implements TabSupport {
 		/** Fragment tag */
 		private String _tag;
 		/** Definition of Fragment before instantiation */
-		private TabFragmentInfo _definition;
+		private FragmentElement _definition;
         
-        public TabListener(TabFragmentInfo info, String tag) {
+        public TabListener(FragmentElement info, String tag) {
             _definition = info;
             _tag=tag;
             // if fragment exists remove it.. might be from previous machine
@@ -66,6 +67,7 @@ public class TabSupportFragment implements TabSupport {
 	/** View which will host the Fragments */
 	protected int _fragmentContainer;
 	protected SherlockFragmentActivity _activity;
+	protected  ActionBar _actionBar;
 	protected FragmentManager _manager;
 	
 	/**
@@ -73,14 +75,16 @@ public class TabSupportFragment implements TabSupport {
 	 * @param container target container for {@link Fragment}
 	 */
 	public TabSupportFragment(SherlockFragmentActivity activity, int container) {
-		_activity = activity;
+		_activity=activity;
+		_actionBar = activity.getSupportActionBar();
+		_manager = activity.getSupportFragmentManager();
+		_activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		_fragmentContainer=container;
-		_manager = _activity.getSupportFragmentManager();
 	}
 	
 	@Override
 	public void addTab(String name, Class<? > clazz, Bundle args)  {
-        TabFragmentInfo info = new TabFragmentInfo(name, clazz, args);
+	    FragmentElement info = new FragmentElement(name, clazz, args);
         Tab tab =  _activity.getSupportActionBar().newTab().setText(name).setTag(name).setTabListener(new TabListener(info, name));
         _tabs.put(name,tab);
         _activity.getSupportActionBar().addTab(tab);

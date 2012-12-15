@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.service.textservice.SpellCheckerService.Session;
@@ -17,6 +19,7 @@ import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
 import com.kedzie.vbox.machine.group.TreeNode;
+import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -60,14 +63,14 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	  */
 	 @KSOAP(cacheable=true) public String getName() ;
 	 
-	 public void setName(@KSOAP("name") String name);
+	 @Asyncronous public void setName(@KSOAP("name") String name);
 
 	 /**
 	  * @return Description of the virtual machine. 
 	  */
 	 @KSOAP(cacheable=true) public String getDescription();
 	 
-	 public void setDescription(@KSOAP("description") String description);
+	 @Asyncronous public void setDescription(@KSOAP("description") String description);
 
 	/**
 	 * @return UUID of the virtual machine. 
@@ -79,14 +82,14 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */
 	@KSOAP(cacheable=true) public String getOSTypeId();
 	
-	public void setOSTypeId(@KSOAP("OSTypeId") String osTypeId);
+	@Asyncronous public void setOSTypeId(@KSOAP("OSTypeId") String osTypeId);
 	
 	/**
 	 * @return Number of virtual CPUs in the VM. 
 	 */
 	@KSOAP(cacheable=true) public Integer getCPUCount();
 	
-	public void setCPUCount(@KSOAP(type="unsignedInt", value="CPUCount") int cpuCount);
+	@Asyncronous public void setCPUCount(@KSOAP(type="unsignedInt", value="CPUCount") int cpuCount);
 	
 	
 	/**
@@ -104,7 +107,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */ 
 	@KSOAP(cacheable=true) public Integer getMemorySize();
 	
-	public void setMemorySize(@KSOAP(type="unsignedInt", value="memorySize") int memorySize);
+	@Asyncronous public void setMemorySize(@KSOAP(type="unsignedInt", value="memorySize") int memorySize);
 	
 	/**
 	 * @return Memory balloon size in megabytes. 
@@ -116,21 +119,21 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */
 	@KSOAP(cacheable=true) public Integer getVRAMSize();
 	
-	public void setVRAMSize(@KSOAP(type="unsignedint", value="VRAMSize")int vramSize);
+	@Asyncronous public void setVRAMSize(@KSOAP(type="unsignedint", value="VRAMSize")int vramSize);
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getAccelerate3DEnabled();
 	
-	public void setAccelerate3DEnabled(@KSOAP(type="boolean", value="accelerate3DEnabled")boolean accelerate3DEnabled);
+	@Asyncronous public void setAccelerate3DEnabled(@KSOAP(type="boolean", value="accelerate3DEnabled")boolean accelerate3DEnabled);
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 2D video acceleration support available on the host. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getAccelerate2DVideoEnabled();
 
-	public void setAccelerate2DVideoEnabled(@KSOAP(type="boolean", value="accelerate2DVideoEnabled")boolean accelerate2DVideoEnabled);
+	@Asyncronous public void setAccelerate2DVideoEnabled(@KSOAP(type="boolean", value="accelerate2DVideoEnabled")boolean accelerate2DVideoEnabled);
 	
 	/**
 	 * @return Number of virtual monitors. 
@@ -140,7 +143,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	/**
      * @param monitorCount    Number of virtual monitors. 
      */
-	public void setMonitorCount(@KSOAP(type="unsignedInt", value="monitorCount") int monitorCount);
+	@Asyncronous public void setMonitorCount(@KSOAP(namespace=SoapSerializationEnvelope.XSD, type="unsignedInt", value="monitorCount") int monitorCount);
 
 	/**
 	 * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM. 

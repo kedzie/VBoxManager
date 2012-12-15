@@ -25,12 +25,37 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
+ * Take a screenshot and save to filesystem
  * 
- * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
 public class ScreenshotDialogFragment extends SherlockDialogFragment {
 	public static final String BUNDLE_BYTES = "bytes";
+	
+	class SaveScreenshotTask extends ActionBarTask<Bitmap, Void> {
+
+	    private String filename;
+	    
+		public SaveScreenshotTask() {
+			super("SaveScreenshotTask", getSherlockActivity(), null);
+			filename =  "screenshot_"+DateFormat.format("yyyyMMdd_hmmssaa", new Date())+".jpg";
+		}
+		
+		@Override
+		protected Void work(Bitmap... params) throws Exception {
+			File file = new File(Environment.getExternalStorageDirectory().toString(), filename);
+			OutputStream fOut = new FileOutputStream(file);
+			params[0].compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+			fOut.flush();
+			fOut.close();
+			try {
+                MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception storing in MediaStore", e);
+            }
+			return null;
+		}
+	}
 	
 	private View _view;
 	private Bitmap _bitmap;
@@ -73,30 +98,5 @@ public class ScreenshotDialogFragment extends SherlockDialogFragment {
 			} 
 		});
 		return _view;
-	}
-	
-	class SaveScreenshotTask extends ActionBarTask<Bitmap, Void> {
-
-	    private String filename;
-	    
-		public SaveScreenshotTask() {
-			super("SaveScreenshotTask", getSherlockActivity(), null);
-			filename =  "screenshot_"+DateFormat.format("yyyyMMdd_hmmssaa", new Date())+".jpg";
-		}
-		
-		@Override
-		protected Void work(Bitmap... params) throws Exception {
-			File file = new File(Environment.getExternalStorageDirectory().toString(), filename);
-			OutputStream fOut = new FileOutputStream(file);
-			params[0].compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-			fOut.flush();
-			fOut.close();
-			try {
-                MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
-            } catch (Exception e) {
-                Log.e(TAG, "Exception storing in MediaStore", e);
-            }
-			return null;
-		}
 	}
 }

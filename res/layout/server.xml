@@ -5,34 +5,61 @@
 			android:layout_height="fill_parent"
 			android:padding="8dp"	>
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView   style="@style/MediumText"   android:text="@string/server_name" android:layout_gravity="center_vertical"  />
-		<EditText android:layout_weight="1" android:id="@+id/server_name" android:text="New Server" android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
-    </LinearLayout>
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<TextView android:id="@+id/name_label" android:text="@string/server_name" style="@style/MediumText" />
+		<EditText android:id="@+id/server_name" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/name_label"
+			android:layout_alignBaseline="@id/name_label"
+			android:layout_alignParentRight="true"/>
+    </RelativeLayout>
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView   style="@style/MediumText"    android:text="@string/server_host"  android:layout_gravity="center_vertical" />
-		<EditText android:layout_weight="1" android:id="@+id/server_host" android:layout_width="fill_parent" android:layout_height="wrap_content"><requestFocus/></EditText>
-    </LinearLayout>
+    <RelativeLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<TextView android:id="@+id/host_label" style="@style/MediumText" android:text="@string/server_host"   />
+		<EditText android:id="@+id/server_host" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/host_label"
+			android:layout_alignBaseline="@id/host_label"
+			android:layout_alignParentRight="true"><requestFocus/></EditText>
+    </RelativeLayout>
 
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView   style="@style/MediumText" android:text="@string/server_ssl"  android:layout_gravity="center_vertical" />
-		<CheckBox android:id="@+id/server_ssl" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-    </LinearLayout>
+    <RelativeLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<TextView android:id="@+id/ssl_label" style="@style/MediumText" android:text="@string/server_ssl" />
+		<CheckBox android:id="@+id/server_ssl" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/ssl_label"
+			android:layout_alignBaseline="@id/ssl_label"/>
+    </RelativeLayout>
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView  style="@style/MediumText"   android:text="@string/server_port" android:layout_gravity="center_vertical"/>
-    	<EditText android:id="@+id/server_port"  android:layout_weight="1"  android:inputType="number" android:text="18083" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-    </LinearLayout>
+    <RelativeLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    	<TextView  android:id="@+id/port_label"  style="@style/MediumText"   android:text="@string/server_port"/>
+    	<EditText android:id="@+id/server_port" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/port_label"
+			android:layout_alignBaseline="@id/port_label"
+			android:layout_alignParentRight="true"/>
+    </RelativeLayout>
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView  style="@style/MediumText"  android:text="@string/server_username" android:layout_gravity="center_vertical"/>
-    	<EditText android:id="@+id/server_username"  android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-    </LinearLayout>
+    <RelativeLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    	<TextView android:id="@+id/username_label"  style="@style/MediumText"  android:text="@string/server_username"/>
+    	<EditText android:id="@+id/server_username" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/username_label"
+			android:layout_alignBaseline="@id/username_label"
+			android:layout_alignParentRight="true"/>
+    </RelativeLayout>
     
-    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
-    	<TextView  style="@style/MediumText"  android:text="@string/server_password" android:layout_gravity="center_vertical"/>
-    	<EditText android:id="@+id/server_password"  android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content"  android:inputType="textPassword"/>
-    </LinearLayout>
-    
+    <RelativeLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    	<TextView  android:id="@+id/password_label" style="@style/MediumText"  android:text="@string/server_password" />
+    	<EditText android:id="@+id/server_password" 
+			android:inputType="textPassword"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/password_label"
+			android:layout_alignBaseline="@id/password_label"
+			android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 </LinearLayout>

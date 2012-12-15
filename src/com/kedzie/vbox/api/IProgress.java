@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.kedzie.vbox.soap.KSOAP;
 
 public interface IProgress extends IManagedObjectRef {
+    public static final String BUNDLE = "progress";
 
 	public void waitForCompletion(@KSOAP(type="int", value="timeout") int millseconds) throws IOException;
 	public void waitForCompletion(@KSOAP(type="unsignedInt", value="operation") int operation, @KSOAP(type="int", value="timeout") int millseconds) throws IOException;

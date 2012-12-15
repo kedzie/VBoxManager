@@ -26,7 +26,9 @@ package org.ksoap2.serialization;
  */
 public class AttributeInfo extends PropertyInfo
 {
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Constructor.
      */
     public AttributeInfo()

@@ -1,66 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:orientation="horizontal"   
+
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
     android:padding="8dp">
-	<ImageView 
+
+    	<ImageView 
 	    android:id="@+id/machine_list_item_ostype" 
+	    android:src="@drawable/ic_list_os_macos" 
 	    android:layout_width="32dp" 
 	    android:layout_height="32dp"  
-	    android:layout_marginRight="8dp"
-	    android:src="@drawable/ic_list_os_macos"  
-	    android:layout_gravity="center_vertical"/>
-	<LinearLayout  
-	    android:layout_width="0dip" 
-	    android:layout_height="wrap_content"   
-	    android:layout_weight="1" 
-	    android:orientation="vertical">
-		<LinearLayout  
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:orientation="horizontal">
-			<TextView  
-			    android:id="@+id/machine_list_item_name" 
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:textSize="18sp"  
-			    android:layout_marginRight="6dp"  
-			    android:layout_gravity="center_vertical"	 
-			    android:text="Machine Name" />
-			<TextView  
-			    android:id="@+id/machine_list_item_snapshot" 
-			    android:textSize="8sp" 
-			    android:textStyle="italic"  
-			    android:layout_gravity="center_vertical"  
-			    android:layout_weight="1"  
-			    android:text="Current Snapshot" 
-			    android:layout_width="0dip"  
-			    android:layout_height="wrap_content"/>
-		</LinearLayout>
+	    android:layout_centerVertical="true"
+	    android:layout_marginRight="8dp"  />
+    	
+		<TextView  
+			android:id="@+id/machine_list_item_name" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_toRightOf="@id/machine_list_item_ostype"
+		   	android:layout_marginRight="6dp"  
+			android:textSize="18sp"  
+			android:textStyle="bold"
+			android:text="Machine Name" />
 		
-		<LinearLayout  
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:orientation="horizontal" >         
-			<ImageView 
-			    android:id="@+id/machine_list_item_state" 
-			    android:layout_marginRight="2dp"  
-			    android:src="@drawable/ic_list_acpi"  
-			    android:layout_width="16dip" 
-			    android:layout_height="16dip" />
-			<TextView   
-			    android:id="@+id/machine_list_item_state_text" 
-			    android:textSize="12sp" 
-			    android:textStyle="italic"   
-			    android:layout_gravity="center_vertical"   
-			    android:layout_weight="1" 
-			    android:text="Machine State" 
-			    android:layout_width="0dip"  
-			    android:layout_height="wrap_content"/>
-		</LinearLayout>		
+		<TextView  
+			android:id="@+id/machine_list_item_snapshot" 
+			android:layout_width="wrap_content"  
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/machine_list_item_name"
+			android:layout_marginTop="5dp"
+			android:textSize="8sp" 
+			android:textStyle="italic"  
+			android:text="Current Snapshot" />
+		
+		<ImageView 
+			android:id="@+id/machine_list_item_state" 
+			android:src="@drawable/ic_list_acpi"  
+			android:layout_marginRight="2dp"  
+			android:layout_width="16dip" 
+			android:layout_height="16dip" 
+			android:layout_toRightOf="@id/machine_list_item_ostype" 
+			android:layout_below="@id/machine_list_item_name" />
+		
+		<TextView   
+			android:id="@+id/machine_list_item_state_text" 
+			android:layout_width="wrap_content"  
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/machine_list_item_state"
+			android:layout_below="@id/machine_list_item_name"
+			android:layout_marginTop="1dp"
+			android:textSize="12sp" 
+			android:textStyle="italic"   
+			android:text="Machine State"  />
 			
-	</LinearLayout>
-	
-</LinearLayout>
+</RelativeLayout>

@@ -20,22 +20,6 @@ import com.kedzie.vbox.task.DialogTask;
  */
 public class ServerListFragmentActivity extends BaseActivity implements OnSelectServerListener {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        if(savedInstanceState==null) {
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.add(android.R.id.content, new ServerListFragment(), "server_list");
-            tx.commit();
-        }
-    }
-
-    @Override
-    public void onSelectServer(Server server) {
-        new LogonTask().execute(server);
-    }
-    
     /**
      * Log on to VirtualBox webservice
      */
@@ -57,5 +41,21 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
             Utils.toastLong(ServerListFragmentActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
             startActivity(new Intent(ServerListFragmentActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
         }
+    }
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        if(savedInstanceState==null) {
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.add(android.R.id.content, new ServerListFragment(), "server_list");
+            tx.commit();
+        }
+    }
+
+    @Override
+    public void onSelectServer(Server server) {
+        new LogonTask().execute(server);
     }
 }

@@ -6,16 +6,28 @@
 	android:layout_height="match_parent" >
 	   
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Name: " android:layout_gravity="left"  />
+			<TextView style="@style/MediumText" android:text="@string/settings_name" android:layout_gravity="left"  />
 			<EditText style="@style/SmallText" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
 		</LinearLayout>
+		
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Operating System:" android:layout_gravity="left" />
+			<TextView style="@style/MediumText" android:text="@string/settings_operating_system" android:layout_gravity="left" />
 			<EditText style="@style/SmallText" android:id="@+id/ostype" android:layout_weight="1"/>
 		</LinearLayout>
+		
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Description" android:layout_gravity="left" />
-			<EditText style="@style/SmallText" android:id="@+id/description"  android:lines="4" android:layout_weight="1" />
+		    
+			<TextView style="@style/MediumText" android:text="@string/settings_description" android:layout_gravity="left" />
+
+			<EditText
+			    android:id="@+id/description"
+			    android:text="Machine Description"
+			    style="@style/SmallText"
+			    android:layout_weight="1"
+			    android:inputType="textMultiLine"
+			    android:gravity="start"
+			    android:lines="4" />
+
 		</LinearLayout>
 		
 </LinearLayout>

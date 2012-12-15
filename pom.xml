@@ -3,10 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-        <groupId>virtualbox</groupId>
+		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.0.4</version>
-    </parent>
+		<version>3.0.5</version>
+	</parent>
 
 	<artifactId>vbox-app</artifactId>
 	<packaging>apk</packaging>
@@ -56,6 +56,7 @@
 		<directory>bin</directory>
 		<outputDirectory>bin/classes</outputDirectory>
 		<finalName>${project.artifactId}</finalName>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -165,7 +166,7 @@
 						<configuration>
 							<manifestDebuggable>false</manifestDebuggable>
 							<manifestVersionName></manifestVersionName>
-							<versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+							<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 							<sign>
 								<debug>false</debug>
 							</sign>
@@ -175,7 +176,7 @@
 								<outputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</outputApk>
 							</zipalign>
 							<proguard>
-								<skip>false</skip>
+								<skip>true</skip>
 								<config>proguard.cfg</config>
 								<jvmArguments>
 									<jvmArgument>-Xms512m</jvmArgument>
@@ -218,10 +219,10 @@
 				<version>2.2</version>
 			</plugin>
 			<plugin>
-        		<groupId>org.apache.maven.plugins</groupId>
-       			<artifactId>maven-surefire-report-plugin</artifactId>
-       			<version>2.12.2</version>
-      		</plugin>
+        			<groupId>org.apache.maven.plugins</groupId>
+       				<artifactId>maven-surefire-report-plugin</artifactId>
+       				<version>2.12.2</version>
+      			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>

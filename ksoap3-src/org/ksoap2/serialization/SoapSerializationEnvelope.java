@@ -35,6 +35,7 @@ import java.util.Vector;
  *
  *         This class extends the SoapEnvelope with Soap Serialization functionality.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class SoapSerializationEnvelope extends SoapEnvelope
 {
     protected static final int QNAME_TYPE = 1;
@@ -332,7 +333,7 @@ public class SoapSerializationEnvelope extends SoapEnvelope
      * subclasses. Precondition: On the start tag of the object or property, so href can be read.
      */
 
-    public Object read(XmlPullParser parser, Object owner, int index, String namespace, String name,
+	public Object read(XmlPullParser parser, Object owner, int index, String namespace, String name,
             PropertyInfo expected) throws IOException, XmlPullParserException {
         String elementName = parser.getName();
         String href = parser.getAttributeValue(null, HREF_LABEL);

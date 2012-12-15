@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -17,7 +16,7 @@ import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentActivity;
-import com.kedzie.vbox.app.TabFragmentInfo;
+import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.CategoryFragment.OnSelectCategoryListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -28,7 +27,6 @@ import com.kedzie.vbox.task.ActionBarTask;
  * @apiviz.stereotype activity
  */
 public class CategoryListFragmentActivity extends BaseActivity implements OnSelectCategoryListener {
-    private static final String TAG = "CategoryListFragmentActivity";
     public static final String MUTABLE_KEY = "mutable";
 
     /**
@@ -129,19 +127,14 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
 	}
 	
 	@Override
-    public void onSelectCategory(TabFragmentInfo category) {
+    public void onSelectCategory(FragmentElement category) {
 	    if(_dualPane) {
 	        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-	        if(!Utils.isEmpty(currentCategory)) {
-	            Fragment existing = getSupportFragmentManager().findFragmentByTag(currentCategory);
-	            if(existing!=null)
-	                tx.detach(existing);
-	        }
-            boolean added = Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
-            Log.i(TAG, added ? "Instantiated new Fragment: " + category.name : "Reattached existing fragment: " + category.name);
+	        Utils.detachExistingFragment(getSupportFragmentManager(), tx, currentCategory);
+            Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
             tx.commit();
 	    } else {
-	        startActivity(new Intent(this, FragmentActivity.class).putExtra(TabFragmentInfo.BUNDLE, category));
+	        startActivity(new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, category));
 	    }
 	    currentCategory = category.name;
     }

@@ -10,6 +10,6 @@
 		android:layout_marginRight="12dp"/>	
 	
 	<TextView android:id="@+id/list_item_text"  
-		style="@style/NormalText"
+		style="@style/MediumText"
 		android:layout_gravity="center_vertical" />
 </LinearLayout>	

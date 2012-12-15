@@ -20,50 +20,55 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
- * VirtualBox API Asynchronous task with progress & error handling.  
+ * VirtualBox® API Asynchronous task with progress & error handling.  
  * Don't subclass this directly, instead use {@link ActionBarTask} or {@link DialogTask}
- * 
  * @param <Input>  Operation input argument 
  * @param <Output> Operation output
- * @author Marek Kedzierski
  */
 abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
-	protected final String TAG;
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
-	protected final static int WHAT_ERROR=6, WHAT_CANCEL=7;
 		
 	protected Context _context;
+	protected final String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
 	 protected boolean _indeterminate=true;
+	 /** <code>true</code> if user pressed back button while task is executing */
+	protected boolean _cancelled=false;
 		
-	/** Show an Alert Dialog */
-	protected Handler _handler = new Handler() {
+	/** 
+	 * Show an Alert Dialog 
+	 */
+	protected Handler _alertHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch(msg.what) {
-			case WHAT_ERROR:
 				new AlertDialog.Builder(_context)
 					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle(msg.getData().getString("title"))
 					.setMessage(msg.getData().getString("msg"))
 					.setPositiveButton("OK", new OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { 	dialog.dismiss();}})
 					.show();
-				break;
-			case WHAT_CANCEL:
-				Utils.toastLong(_context, "Cancelling Operation...");
-				IProgress progress = BundleBuilder.getProxy(msg.getData(), "progress", IProgress.class);
-				try {
-					progress.cancel();
-				} catch (IOException e) {
-					Log.e(TAG, "Error cancelling operation", e);
-				}
-				break;
-			}
 		}
 	};
 	
+	/** 
+     * Cancel the current operation
+     */
+	protected Handler _cancelHandler = new Handler() {
+	    @Override
+	    public void handleMessage(Message msg) {
+	        Log.i(TAG, "Cancel Handler received Cancel Message");
+	        Utils.toastLong(_context, "Cancelling Operation...");
+	        IProgress progress = BundleBuilder.getProxy(msg.getData(), IProgress.BUNDLE, IProgress.class);
+	        try {
+	            progress.cancel();
+	        } catch (IOException e) {
+	            Log.e(TAG, "Error cancelling operation", e);
+	        }
+	    }
+	};
+
 	/**
 	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
@@ -79,10 +84,9 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		try	{
 			Log.i(TAG, "Performing work...");
 			return work(params);
-		} catch(SoapFault e) {
-			showAlert(e);
-		} catch(Throwable e)	{
-			showAlert(e);
+		} catch(Exception e) {
+		    if(!_cancelled)
+		        showAlert(e);
 		}
 		return null;
 	}
@@ -108,6 +112,13 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 */
 	protected void onResult(Output result) {}
 	
+	@Override
+    protected void onCancelled() {
+	    Log.i(TAG, "Task Cancelled");
+        _cancelled=true;
+        super.onCancelled();
+    }
+	
 	/**
 	 * Show an Alert dialog 
 	 * @param e <code>Throwable</code> which caused the error
@@ -116,7 +127,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		Log.e(TAG, "caught throwable", e);
 		while(Utils.isEmpty(e.getMessage()) && e.getCause()!=null)
 			e = e.getCause();
-		new BundleBuilder().putString("title", e.getClass().getSimpleName()).putString("msg", e.getMessage()).sendMessage(_handler, WHAT_ERROR);
+		new BundleBuilder().putString("title", e.getClass().getSimpleName()).putString("msg", e.getMessage()).sendMessage(_alertHandler, 0);
 	}
 	
 	/**
@@ -127,7 +138,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		Log.e(TAG, "caught SoapFault", e);
 		new BundleBuilder().putString("title", "Soap Fault")
 				.putString("msg", String.format("Code: %1$s\nActor: %2$s\nString: %3$s", e.faultcode, e.faultactor, e.faultstring))
-				.sendMessage(_handler, WHAT_ERROR);
+				.sendMessage(_alertHandler, 0);
 	}
 	
 	/**
@@ -140,7 +151,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		new BundleBuilder()
 				.putString("title", "VirtualBox error")
 				.putString("msg", "Result Code: " + code + " - " + msg)
-				.sendMessage(_handler, WHAT_ERROR);
+				.sendMessage(_alertHandler, 0);
 	}
 
 	/**

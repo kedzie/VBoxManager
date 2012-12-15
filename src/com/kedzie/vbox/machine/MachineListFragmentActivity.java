@@ -14,7 +14,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentActivity;
-import com.kedzie.vbox.app.TabFragmentInfo;
+import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportFragment;
 import com.kedzie.vbox.app.TabSupportViewPager;
@@ -120,7 +120,7 @@ public class MachineListFragmentActivity extends BaseActivity implements OnTreeN
             _tabSupport.removeAllTabs();
             _tabSupport.addTab(getString(R.string.tab_info), GroupInfoFragment.class, b);
         } else {
-            startActivity(new Intent(this, FragmentActivity.class).putExtra(TabFragmentInfo.BUNDLE, new TabFragmentInfo(group.getName(), GroupInfoFragment.class, b)));
+            startActivity(new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement(group.getName(), GroupInfoFragment.class, b)));
         }
 	}
 	

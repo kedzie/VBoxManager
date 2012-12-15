@@ -47,7 +47,7 @@ public class EventNotificationService extends IntentService {
 				.setContentIntent(PendingIntent.getActivity(EventNotificationService.this, 0, i, 0))
 				.setTicker(title)
 				.setAutoCancel(true)
-				.build();
+				.getNotification();
 		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, n);
 	}
 }

@@ -8,11 +8,23 @@
 	   
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"  android:text="Base Memory:" android:layout_gravity="left" />
-			<SeekBar android:id="@+id/baseMemory"  android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
+			<com.kedzie.vbox.app.SliderView 
+			    android:id="@+id/baseMemory"  
+			    android:layout_weight="1" 
+			    android:layout_width="0dip" 
+			    android:layout_height="wrap_content"
+			    vbox:unit="MB"
+			    vbox:tickSpacing="100"   />
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"   android:text="Processors:"  android:layout_gravity="left"  />
-			<SeekBar android:id="@+id/processors"  android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"/>
+			<com.kedzie.vbox.app.SliderView 
+			    android:id="@+id/processors"  
+			    android:layout_weight="1" 
+			    android:layout_width="0dip" 
+			    android:layout_height="wrap_content"
+			    vbox:unit="Proc"
+			    vbox:tickSpacing="1"  />
 		</LinearLayout>
 
 </LinearLayout>

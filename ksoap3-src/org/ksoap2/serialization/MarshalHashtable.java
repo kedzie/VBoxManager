@@ -36,6 +36,7 @@ import org.xmlpull.v1.*;
  * including apache (obviously) and glue are also interoperable with the
  * schema.
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class MarshalHashtable implements Marshal {
 
     /** use then during registration */

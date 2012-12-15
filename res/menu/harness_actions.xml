@@ -9,11 +9,8 @@
     	android:title="VM List"
     	android:showAsAction="ifRoom"/>
     
-    <item android:id="@+id/harness_hostMetrics"
-    	android:title="Host Metrics"
+    <item android:id="@+id/harness_machineSettings"
+    	android:title="Machine Settings"
     	android:showAsAction="ifRoom"/>
     
-    <item android:id="@+id/harness_panelTest"
-    	android:title="Test Panel"
-    	android:showAsAction="ifRoom"/>	
 </menu>

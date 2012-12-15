@@ -3,7 +3,7 @@
 	<ImageView android:id="@+id/action_item_icon"  android:src="@drawable/ic_list_start"  android:layout_width="32dip" android:layout_height="32dip" android:layout_gravity="center_vertical" android:layout_marginLeft="12dp" android:layout_marginRight="12dp"/>	
 	<TextView
 			android:id="@+id/action_item_text"  
-			style="@style/NormalText"
+			style="@style/MediumText"
 	  		android:text="Start" 
 	  		android:layout_gravity="center_vertical" />
 </LinearLayout>	
