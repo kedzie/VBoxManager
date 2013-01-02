@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
+import com.kedzie.vbox.app.FragmentElement;
 
 /**
  * 
@@ -64,7 +64,7 @@ public class CategoryFragment extends SherlockFragment {
         super.onCreate(savedInstanceState);
         List<FragmentElement> categories = new ArrayList<FragmentElement>();
         categories.add(new FragmentElement("General", R.drawable.ic_settings_general, GeneralFragment.class, getArguments()));
-        categories.add(new FragmentElement("System", R.drawable.ic_settings_general, SystemFragment.class, getArguments()));
+        categories.add(new FragmentElement("System", R.drawable.ic_settings_general, SystemProcessorsFragment.class, getArguments()));
         categories.add(new FragmentElement("Display", R.drawable.ic_settings_display, DisplayFragment.class, getArguments()));
         _adapter = new CategoryAdapter(getActivity(), categories);
     }

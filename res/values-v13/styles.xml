@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+    
     <style name="SmallText" parent="@android:style/TextAppearance.Holo.Small">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
+        <item name="android:textColor">@android:color/secondary_text_light</item>
+    </style>
+    
+    <style name="SmallTextPrimary" parent="@style/SmallText">
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
 
     <style name="NormalText" parent="@android:style/TextAppearance.Holo">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
 
     <style name="MediumText" parent="@android:style/TextAppearance.Holo.Medium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
     
     <style name="BoldText" parent="@android:style/TextAppearance.Holo.Medium">
@@ -23,11 +31,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
 
     <style name="HeaderText" parent="@android:style/TextAppearance.Holo.Large">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
 </resources>

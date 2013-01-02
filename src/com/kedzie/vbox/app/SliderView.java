@@ -8,7 +8,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -25,14 +24,14 @@ import com.kedzie.vbox.R;
  * </ul>
  */
 public class SliderView extends LinearLayout {
-    private static final String TAG = "SliderView";
     
     public static interface OnSliderViewChangeListener {
-        public void onSliderValueChanged(int newValue);
+        public void onSliderValidValueChanged(int newValue);
+        public void onSliderInvalidValueChanged(int newValue);
     }
     
     public class SliderBar extends SeekBar {
-    	private final int HEIGHT=Utils.dpiToPixels(getContext(), 12);
+    	private final int VALID_RANGE_BAR_HEIGHT=Utils.dpiToPixels(getContext(), 12);
     	
     	private Rect _invalidRect;
         private Rect _validRect;
@@ -53,8 +52,13 @@ public class SliderView extends LinearLayout {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     _valueEditText.setText(progress+_minValue+"");
-                    if(_onSliderChangeListener!=null)
-                        _onSliderChangeListener.onSliderValueChanged(progress+_minValue);
+                    if(_onSliderChangeListener!=null) {
+                    	int value = progress+_minValue;
+                    	if(value >= _minValidValue && value <= _maxValidValue)
+                    		_onSliderChangeListener.onSliderValidValueChanged(value);
+                    	else
+                    		_onSliderChangeListener.onSliderInvalidValueChanged(value);
+                    }
                 }
             });
             mThumb=getContext().getResources().getDrawable(R.drawable.ic_navigation_expand);
@@ -77,7 +81,6 @@ public class SliderView extends LinearLayout {
         @Override
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
             super.onSizeChanged(w, h, oldw, oldh);
-            Log.i(TAG, String.format("onSizeChanged(%1$d, %2$d)", w, h));
             updateProperties();
         }
         
@@ -86,7 +89,7 @@ public class SliderView extends LinearLayout {
             int validLeft = (_minValidValue-_minValue)*_pixelsPerUnit+getLeft()+getPaddingLeft();
             int validRight = getRight()-getPaddingRight()-(_maxValue-_maxValidValue)*_pixelsPerUnit;
             int bottom = getBottom()-getPaddingBottom()-(int)_textPaint.getTextSize();
-            int top = getBottom()-getPaddingBottom()-HEIGHT-(int)_textPaint.getTextSize();
+            int top = bottom-VALID_RANGE_BAR_HEIGHT;
             _invalidRect = new Rect(getLeft()+getPaddingLeft(), top, getRight()-getPaddingRight(), bottom);
             _validRect = new Rect(validLeft, top, validRight, bottom);
             postInvalidate();
@@ -103,7 +106,7 @@ public class SliderView extends LinearLayout {
                 dh = Math.max(thumbHeight, d.getIntrinsicHeight());
             }
             dw += getPaddingLeft() + getPaddingRight();
-            dh += getPaddingTop() + getPaddingBottom() + HEIGHT+_textPaint.getTextSize();
+            dh += getPaddingTop() + getPaddingBottom() + VALID_RANGE_BAR_HEIGHT+_textPaint.getTextSize();
             setMeasuredDimension(resolveSizeAndState(dw, widthMeasureSpec, 0), resolveSizeAndState(dh, heightMeasureSpec, 0));
         }
 
@@ -113,7 +116,7 @@ public class SliderView extends LinearLayout {
         	
             canvas.drawRect(_invalidRect, _invalidPaint);
             canvas.drawRect(_validRect, _validPaint);
-            for(int x=_invalidRect.left; x<=_invalidRect.right; x+=_pixelsPerUnit) 
+            for(int x=_invalidRect.left; x<=_invalidRect.right; x+=_pixelsPerUnit*_tickSpacing) 
                 canvas.drawLine(x, _invalidRect.bottom, x, _invalidRect.top, _tickPaint);
             
             String min = _minValue + "  " + _unit;

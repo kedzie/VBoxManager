@@ -10,11 +10,13 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISystemProperties;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
+import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -24,10 +26,10 @@ import com.kedzie.vbox.task.ActionBarTask;
  */
 public class DisplayFragment extends SherlockFragment {
 
-	class LoadInfoTask extends ActionBarTask<IMachine, ISystemProperties> {
+	class LoadInfoTask extends ActionBarTask<IMachine, Tuple<ISystemProperties, IHost>> {
 		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getVBoxAPI()); }
 		@Override 
-		protected ISystemProperties work(IMachine... m) throws Exception {
+		protected Tuple<ISystemProperties, IHost> work(IMachine... m) throws Exception {
 			//cache values
 			m[0].getVRAMSize(); 
 			m[0].getAccelerate2DVideoEnabled();
@@ -37,17 +39,21 @@ public class DisplayFragment extends SherlockFragment {
 			props.getMaxGuestVRAM();
 			props.getMinGuestVRAM();
 			props.getMaxGuestMonitors();
-			return props;
+			IHost host = _vmgr.getVBox().getHost();
+			host.getAcceleration3DAvailable();
+			return new Tuple<ISystemProperties, IHost>(props, host);
 		}
 		@Override
-		protected void onResult(ISystemProperties result) {
-		        _systemProperties = result;
-				populateViews(_machine, _systemProperties);
+		protected void onResult(Tuple<ISystemProperties, IHost> result) {
+		        _systemProperties = result.first;
+		        _host = result.second;
+				populateViews(_machine, _systemProperties, _host);
 		}
 	}
 	
 	private IMachine _machine;
 	private ISystemProperties _systemProperties;
+	private IHost _host;
 	private View _view;
 	private SliderView _videoMemoryBar;
 	private SliderView _monitorBar;
@@ -58,13 +64,15 @@ public class DisplayFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
-		if(savedInstanceState!=null)
+		if(savedInstanceState!=null) {
             _systemProperties = BundleBuilder.getProxy(savedInstanceState, "systemProperties", ISystemProperties.class);
+            _host = BundleBuilder.getProxy(savedInstanceState, "host", IHost.class);
+		}
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.settings_display, null);
+		_view = inflater.inflate(R.layout.settings_display_video, null);
 		_videoMemoryBar = (SliderView)_view.findViewById(R.id.videoMemory);
 		_monitorBar = (SliderView)_view.findViewById(R.id.numMonitors);
 		_acceleration2DBox = (CheckBox)_view.findViewById(R.id.acceleration2D);
@@ -76,7 +84,7 @@ public class DisplayFragment extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		if(savedInstanceState!=null) 
-			populateViews(_machine, _systemProperties);
+			populateViews(_machine, _systemProperties, _host);
 		else 
 			new LoadInfoTask().execute(_machine);
 	}
@@ -85,23 +93,22 @@ public class DisplayFragment extends SherlockFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
 		BundleBuilder.putProxy(outState, "systemProperties", _systemProperties);
+		BundleBuilder.putProxy(outState, "host", _host);
 	}
 
-	private void populateViews(IMachine m, ISystemProperties sp) {
+	private void populateViews(IMachine m, ISystemProperties sp, IHost host) {
 		_videoMemoryBar.setMinValue(1);
 		_videoMemoryBar.setMinValidValue(1);
 	    _videoMemoryBar.setMaxValue(sp.getMaxGuestVRAM());
 	    _videoMemoryBar.setMaxValidValue(sp.getMaxGuestVRAM());
 	    _videoMemoryBar.setValue(m.getVRAMSize());
 	    _videoMemoryBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
-			@Override 
-			public void onSliderValueChanged(final int newValue) {
-				new Thread() {
-                    @Override
-                    public void run() {
-                        _machine.setVRAMSize(newValue);
-                    }
-                }.start();
+			@Override
+			public void onSliderValidValueChanged(int newValue) {
+				_machine.setVRAMSize(newValue);
+			}
+			@Override
+			public void onSliderInvalidValueChanged(int newValue) {
 			}
 		});
 	    _monitorBar.setMinValue(1);
@@ -110,38 +117,27 @@ public class DisplayFragment extends SherlockFragment {
 	    _monitorBar.setMaxValidValue(sp.getMaxGuestMonitors());
 	    _monitorBar.setValue(m.getMonitorCount());
 	    _monitorBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
-			@Override 
-			public void onSliderValueChanged(final int newValue) {
-				new Thread() {
-                    @Override
-                    public void run() {
-                        _machine.setMonitorCount(newValue);
-                    }
-                }.start();
+			@Override
+			public void onSliderValidValueChanged(int newValue) {
+				_machine.setMonitorCount(newValue);
+			}
+			@Override
+			public void onSliderInvalidValueChanged(int newValue) {
 			}
 		});
 	    _acceleration2DBox.setChecked(m.getAccelerate2DVideoEnabled());
 	    _acceleration2DBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                new Thread() {
-                    @Override
-                    public void run() {
                         _machine.setAccelerate2DVideoEnabled(isChecked);
-                    }
-                }.start();
             }
         });
+	    _acceleration3DBox.setEnabled(host.getAcceleration3DAvailable());
 		_acceleration3DBox.setChecked(m.getAccelerate3DEnabled());
 		_acceleration3DBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                new Thread() {
-                    @Override
-                    public void run() {
                         _machine.setAccelerate3DEnabled(isChecked);
-                    }
-                }.start();
             }
         });
 	}

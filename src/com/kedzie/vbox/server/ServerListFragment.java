@@ -115,7 +115,7 @@ public class ServerListFragment extends SherlockFragment {
     			X509Certificate[] certs = (X509Certificate[]) msg.getData().getSerializable("certs");
     			String text = "";
     			for(X509Certificate cert : certs) {
-    				text += String.format("Issuer: %1$d, Subject: %2$d\n", cert.getIssuerDN().getName(), cert.getSubjectDN().getName());
+    				text += String.format("Issuer: %1$s, Subject: %2$s", cert.getIssuerDN().getName(), cert.getSubjectDN().getName());
     			}
     			new AlertDialog.Builder(getActivity())
 	    			.setIcon(android.R.drawable.ic_dialog_alert)
@@ -162,7 +162,7 @@ public class ServerListFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(getActivity() instanceof ServerListFragmentActivity); //this is a hack
         _db = new ServerSQlite(getActivity());
         new LoadServersTask().execute();
     }
@@ -239,9 +239,8 @@ public class ServerListFragment extends SherlockFragment {
         case R.id.server_list_context_menu_ping:
             new Thread() {
             	public void run() {
-            		VBoxSvc api = new VBoxSvc(s);
             		try {
-						api.ping(_sslHandler);
+            			new VBoxSvc(s).ping(_sslHandler);
 					} catch (Exception e) {
 						Log.e("ServerListFragment", "error ping", e);
 					} 

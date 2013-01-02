@@ -40,10 +40,10 @@ public class TrustedHttpsServiceConnection implements ServiceConnection {
     	try {
     		SSLContext sc = SSLContext.getInstance("TLS");
     		sc.init(null, trust, new java.security.SecureRandom());
-//    		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
     		connection = (HttpsURLConnection) new URL(KeystoreTrustedHttpsTransport.PROTOCOL, host, port, file).openConnection();
-    		connection.setSSLSocketFactory(sc.getSocketFactory());
+//    		connection.setSSLSocketFactory(sc.getSocketFactory());
     		((HttpsURLConnection) connection).setHostnameVerifier(new AllowAllHostnameVerifier());
     		updateConnectionParameters(timeout);
     	} catch (Exception e) {

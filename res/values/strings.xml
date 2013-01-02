@@ -70,4 +70,8 @@
     <string name="settings_description">Description:</string>
     <string name="settings_operating_system">Operating System:</string>
     <string name="settings_name">"Name: "</string>
+    <string name="settings_num_monitors">Monitors</string>
+    <string name="settings_vram">Video Memory</string>
+    <string name="settings_3d_acceleration">3D Acceleration</string>
+    <string name="settings_2d_acceleration">2D Acceleration</string>
 </resources>

@@ -35,6 +35,7 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
+import com.kedzie.vbox.machine.settings.CategoryListFragmentActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -266,10 +267,9 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 					            new BundleBuilder().putByteArray(ScreenshotDialogFragment.BUNDLE_BYTES, result).create()) );
 				}
 			}.execute();
-		} 
-//		else if(action.equals(VMAction.EDIT_SETTINGS)) {
-//		    startActivity(new Intent(getActivity(), CategoryListFragmentActivity.class).putExtras(getArguments()));
-//		}
+		} else if(action.equals(VMAction.EDIT_SETTINGS)) {
+		    startActivity(new Intent(getActivity(), CategoryListFragmentActivity.class).putExtras(getArguments()));
+		}
 	}
 	
 	public VBoxApplication getApp() { 

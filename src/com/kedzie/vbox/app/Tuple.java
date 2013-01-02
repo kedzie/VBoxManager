@@ -1,11 +1,8 @@
 package com.kedzie.vbox.app;
 
-import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-public class Tuple<T extends Parcelable, S extends Parcelable> implements Parcelable {
-    private static final String TAG = "Tuple";
+public class Tuple<T extends Parcelable, S extends Parcelable> {
     final static ClassLoader LOADER = Tuple.class.getClassLoader();
     
     public T first;
@@ -14,17 +11,6 @@ public class Tuple<T extends Parcelable, S extends Parcelable> implements Parcel
     public Tuple(T first, S second) {
         this.first=first;
         this.second=second;
-    }
-    
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(first, flags);
-        dest.writeParcelable(second, flags);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
     
     @SuppressWarnings("rawtypes")
@@ -38,26 +24,4 @@ public class Tuple<T extends Parcelable, S extends Parcelable> implements Parcel
     public String toString() {
         return String.format("{%1$s, %2$s}", first, second);
     }
-    
-    @SuppressWarnings("rawtypes")
-    public static final Parcelable.ClassLoaderCreator<Tuple> CREATOR  = new Parcelable.ClassLoaderCreator<Tuple>() {
-        
-        @SuppressWarnings("unchecked")
-        @Override
-        public Tuple createFromParcel(Parcel source, ClassLoader loader) {
-            return new Tuple(source.readParcelable(loader), source.readParcelable(loader));
-        }
-        
-        @Override
-        public Tuple[] newArray(int size) {
-            return new Tuple[size];
-        }
-        
-        @SuppressWarnings("unchecked")
-        @Override
-        public Tuple createFromParcel(Parcel source) {
-            Log.i(TAG, "createFromParcel(Parcel source)");
-            return new Tuple(source.readParcelable(LOADER), source.readParcelable(LOADER));
-        }
-    };
 }

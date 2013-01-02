@@ -21,8 +21,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
-
 /**
  * Android Utilities
  * @apiviz.stereotype utility

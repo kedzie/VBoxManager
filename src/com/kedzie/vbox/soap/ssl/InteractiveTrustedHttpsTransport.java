@@ -1,8 +1,15 @@
 package com.kedzie.vbox.soap.ssl;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.Enumeration;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -28,6 +35,7 @@ public class InteractiveTrustedHttpsTransport extends HttpTransportSE{
 	private final String file;
 	private final int timeout;
 	private Handler handler;
+	
 	private TrustManager []trust =  new TrustManager[]{
     	    new X509TrustManager() {
     	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -39,10 +47,22 @@ public class InteractiveTrustedHttpsTransport extends HttpTransportSE{
     	        }
     	        public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType) {
     	        	Log.i(TAG, String.format("checkServerTrusted(%1$d, %2$s)", certs.length, authType));
-    	        	new BundleBuilder()
-    	        		.putSerializable("certs", certs)
-    	        		.putString("authType", authType)
-    	        		.sendMessage(handler, 0);
+    				try {
+						KeyStore keystore = KeyStore.getInstance("BKS");
+						keystore.load(new FileInputStream("/sdcard/virtualbox.bks"), "virtualbox".toCharArray());
+						Enumeration<String> aliases = keystore.aliases();
+						while(aliases.hasMoreElements()) {
+							String alias = aliases.nextElement();
+							Certificate cert = keystore.getCertificate(alias);
+							Log.i(TAG, "Alias: " + alias + "\tCert: " + cert);
+						}
+	    	        	new BundleBuilder()
+	    	        		.putSerializable("certs", certs)
+	    	        		.putString("authType", authType)
+	    	        		.sendMessage(handler, 0);
+					} catch (Exception e) {
+						Log.e(TAG, "Exception in Interactive Trust Manager", e);
+					} 
     	        }
     	    }
     	};

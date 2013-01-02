@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.0.6-SNAPSHOT</version>
+		<version>3.0.7-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vbox-app</artifactId>
@@ -79,6 +79,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<manifestDebuggable>true</manifestDebuggable>
+					<manifestVersionName></manifestVersionName>
+					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 					<attachSources>true</attachSources>
 				</configuration>
 				<executions>

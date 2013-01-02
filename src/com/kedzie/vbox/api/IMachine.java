@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.service.textservice.SpellCheckerService.Session;
@@ -101,6 +99,8 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * @return Number of virtual CPUs in the VM. 
 	 */
 	@KSOAP(cacheable=true) public Integer getCPUExecutionCap();
+	
+	@Asyncronous public void setCPUExecutionCap(@KSOAP(type="unsignedInt", value="CPUExecutionCap")int CPUExecutionCap);
 
 	/**
 	 * @return System memory size in megabytes. 
@@ -119,7 +119,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */
 	@KSOAP(cacheable=true) public Integer getVRAMSize();
 	
-	@Asyncronous public void setVRAMSize(@KSOAP(type="unsignedint", value="VRAMSize")int vramSize);
+	@Asyncronous public void setVRAMSize(@KSOAP(type="unsignedInt", value="VRAMSize")int vramSize);
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host. 
@@ -143,7 +143,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	/**
      * @param monitorCount    Number of virtual monitors. 
      */
-	@Asyncronous public void setMonitorCount(@KSOAP(namespace=SoapSerializationEnvelope.XSD, type="unsignedInt", value="monitorCount") int monitorCount);
+	@Asyncronous public void setMonitorCount(@KSOAP(type="unsignedInt", value="monitorCount") int monitorCount);
 
 	/**
 	 * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM. 

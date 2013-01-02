@@ -3,7 +3,6 @@ package com.kedzie.vbox.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,13 +17,12 @@ import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
  * @author Marek Kedzierski
  */
-public class TabSupportViewPager extends PagerAdapter  implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
+public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
 	private static final String TAG = "TabSupportViewPager";
 
 	private SherlockFragmentActivity _activity;
@@ -35,12 +33,19 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
     private FragmentTransaction mCurTransaction;
     private Fragment mCurrentPrimaryItem;
     
-    public TabSupportViewPager(SherlockFragmentActivity activity, ViewPager pager) {
+    public TabSupportActionBarViewPager(SherlockFragmentActivity activity, int container) {
         mFragmentManager = activity.getSupportFragmentManager();
         _activity=activity;
         _actionBar=activity.getSupportActionBar();
         _actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        _viewPager=pager;
+        
+        _viewPager=new ViewPager(_activity);
+        _viewPager.setId(99);
+        _viewPager.setOffscreenPageLimit(4);
+        if(container==android.R.id.content)
+            _activity.setContentView(_viewPager);
+        else
+            ((ViewGroup)_activity.findViewById(container)).addView(_viewPager);
         _viewPager.setAdapter(this);
         _viewPager.setOnPageChangeListener(this);
     }
@@ -52,26 +57,20 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        String tag = makeFragmentName(container.getId(), position);
-        Fragment fragment = mFragmentManager.findFragmentByTag(tag);
-        if (fragment != null) {
-            Log.i(TAG, "Attaching item #" + position);
-            mCurTransaction.attach(fragment);
-        } else {
-            fragment = _tabs.get(position).instantiate(_activity);
-            Log.i(TAG, "Adding item #" + position);
-            mCurTransaction.add(container.getId(), fragment, tag);
+        FragmentElement info = _tabs.get(position);
+        Utils.addOrAttachFragment(_activity, mFragmentManager, mCurTransaction, container.getId(), info);
+        
+        if (info.fragment != mCurrentPrimaryItem) {
+            info.fragment.setMenuVisibility(false);
+            info.fragment.setUserVisibleHint(false);
         }
-        if (fragment != mCurrentPrimaryItem) {
-            fragment.setMenuVisibility(false);
-            fragment.setUserVisibleHint(false);
-        }
-        return fragment;
+        return info.fragment;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.i(TAG, "Detaching item #" + position);
+        Log.i(TAG, "Removing item #" + position);
+        _tabs.get(position).fragment=null;
         mCurTransaction.remove((Fragment)object);
     }
 
@@ -106,18 +105,30 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        for(FragmentElement info : _tabs){
+            if(info.fragment==object)
+                return POSITION_UNCHANGED;
+        }
+        Log.i(TAG, "Found modfied fragment");
+        return POSITION_NONE;
+    }
+    
+    @Override
     public int getCount() {
         return _tabs.size(); 
     }
 
-    private static String makeFragmentName(int viewId, long id) {
-        return "android:switcher:" + viewId + ":" + id;
-    }
-
     @Override
-    public void addTab(String name, Class<?> clazz, Bundle args)  {
-        FragmentElement info = new FragmentElement(name, clazz, args);
-       _actionBar.addTab( _actionBar.newTab().setText(name).setTag(info).setTabListener(this) );
+    public void addTab(FragmentElement info)  {
+        Tab tab = _actionBar.newTab().setTag(info.name).setTabListener(this);
+        if(info.view!=null)
+            tab.setCustomView(info.view);
+        else if(info.icon!=-1)
+            tab.setIcon(info.icon);
+        else
+            tab.setText(info.name);
+       _actionBar.addTab( tab );
         _tabs.add(info);
         notifyDataSetChanged();
     }
@@ -125,29 +136,22 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
     @Override
 	public void removeTab(String name) {
         FragmentElement info = new FragmentElement(name, null, null);
-    	int index = _tabs.indexOf(info);
-    	_activity.getSupportActionBar().removeTabAt(index);
+    	_actionBar.removeTabAt(_tabs.indexOf(info));
     	_tabs.remove(info);
     	notifyDataSetChanged();
-    	Fragment f = _activity.getSupportFragmentManager().findFragmentByTag(makeFragmentName(_viewPager.getId(), index));
-    	Log.i(TAG, "Existing fragment: " + f);
 	}
 
 	@Override
 	public void removeAllTabs() {
-//		for(int i=0; i<_tabs.size(); i++) {
-//	    	Fragment f = _activity.getSupportFragmentManager().findFragmentByTag(makeFragmentName(_viewPager.getId(),i));
-//	    	if(f!=null) {
-//	    		FragmentTransaction t = _activity.getSupportFragmentManager().beginTransaction();
-//				t.remove(f);
-//				t.commit();
-//				Log.i(TAG, "removed Fragment from Manager: " + f);
-//	    	}
-//		}
-		_activity.getSupportActionBar().removeAllTabs();
+		_actionBar.removeAllTabs();
 		_tabs.clear();
 		notifyDataSetChanged();
 	}
+	
+	@Override
+    public void setCurrentTab(int position) {
+	    _actionBar.setSelectedNavigationItem(position);
+    }
 	
 	@Override
     public void onPageSelected(int position) {
@@ -157,8 +161,13 @@ public class TabSupportViewPager extends PagerAdapter  implements TabSupport, Ac
 	@Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
         for (int i=0; i<_tabs.size(); i++) 
-            if (_tabs.get(i) == tab.getTag()) 
+            if (_tabs.get(i).name == tab.getTag()) 
                 _viewPager.setCurrentItem(i);
+    }
+	
+	@Override
+    public Fragment getCurrentFragment() {
+	    return mCurrentPrimaryItem;
     }
 	
 	@Override public Parcelable saveState() {return null; }

@@ -139,6 +139,7 @@ public class SnapshotFragment extends SherlockFragment {
         setHasOptionsMenu(true);
         _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
         _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+        _machine = _vmgr.getProxy(IMachine.class, _machine.getIdRef());
         
         View view = inflater.inflate(R.layout.snapshot_tree, null);
         _treeView = (TreeViewList)view.findViewById(R.id.mainTreeView);
