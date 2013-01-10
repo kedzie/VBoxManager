@@ -20,17 +20,14 @@ import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
- * 
- * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class DisplayFragment extends SherlockFragment {
+public class DisplayVideoFragment extends SherlockFragment {
 
 	class LoadInfoTask extends ActionBarTask<IMachine, Tuple<ISystemProperties, IHost>> {
-		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getVBoxAPI()); }
+		public LoadInfoTask() { super("DisplayVIdeoFragment", getSherlockActivity(), _machine.getVBoxAPI()); }
 		@Override 
 		protected Tuple<ISystemProperties, IHost> work(IMachine... m) throws Exception {
-			//cache values
 			m[0].getVRAMSize(); 
 			m[0].getAccelerate2DVideoEnabled();
 			m[0].getAccelerate3DEnabled();

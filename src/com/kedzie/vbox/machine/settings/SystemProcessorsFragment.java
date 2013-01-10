@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +17,17 @@ import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
- * 
- * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
 public class SystemProcessorsFragment extends SherlockFragment {
+	private static final String TAG = "SystemProcessorsFragment";
 
 	class LoadInfoTask extends ActionBarTask<IMachine, IHost> {
 		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getVBoxAPI()); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {
+			Log.d(TAG, "Loading data");
 			m[0].getCPUCount(); 
 			IHost host = _vmgr.getVBox().getHost();
 			host.getProcessorCount();
@@ -46,22 +47,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	private TextView _errorText;
 	private SliderView _processorsBar;
 	private SliderView _executionCapBar;
-	private Bundle errorMessages = new Bundle();
-	
-	private void showErrors() {
-		String msg = "";
-		for (String key : errorMessages.keySet()) 
-			msg+=errorMessages.getString(key)+"\n";
-		_errorText.setText(msg);
-	}
-	
-	private void showError(String field,String msg) {
-		if(msg==null)
-			errorMessages.remove(field);
-		else
-			errorMessages.putString(field, msg);
-		showErrors();
-	}
+	private ErrorCapability _errorHandler = new ErrorCapability();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,15 +55,15 @@ public class SystemProcessorsFragment extends SherlockFragment {
 		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
 		if(savedInstanceState!=null) {
 		    _host = savedInstanceState.getParcelable("host");
-		    errorMessages = savedInstanceState.getBundle("errors");
-		}
+		    _errorHandler = savedInstanceState.getParcelable("errors");
+		} 
 	}
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(IMachine.BUNDLE, _machine);
         outState.putParcelable("host", _host);
-        outState.putBundle("errors", errorMessages);
+        outState.putParcelable("errors", _errorHandler);
     }
 	
 	@Override
@@ -86,7 +72,8 @@ public class SystemProcessorsFragment extends SherlockFragment {
 		_processorsBar = (SliderView)_view.findViewById(R.id.processors);
 		_executionCapBar = (SliderView)_view.findViewById(R.id.execution_cap);
 		_errorText = (TextView)_view.findViewById(R.id.error_message);
-		showErrors();
+		_errorHandler.setTextView(_errorText);
+		_errorHandler.showErrors();
 		return _view;
 	}
 	
@@ -100,6 +87,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	}
 
 	private void populateViews(IMachine m, IHost host) {
+		Log.d(TAG, "Populating data");
 	    _processorsBar.setMinValue(1);
 	    _processorsBar.setMinValidValue(1);
 	    _processorsBar.setMaxValidValue(host.getProcessorOnlineCount());
