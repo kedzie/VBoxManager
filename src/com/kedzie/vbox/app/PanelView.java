@@ -36,8 +36,13 @@ public class PanelView extends LinearLayout implements OnClickListener {
             setDuration(COLLAPSE_DURATION);
             mStartHeight = startHeight;
             mDeltaHeight = endHeight - startHeight;
-           	mStartRotation= startHeight==0 ? -90 : 0;
-           	mDeltaRotation= startHeight==0 ? 90 : -90 ;
+            if(startHeight==0) { //Expanding
+            	mStartRotation= -90;
+               	mDeltaRotation= 90;
+            } else { //Collapsing
+            	mStartRotation= 0;
+               	mDeltaRotation= -90 ;
+            }
             setAnimationListener(new AnimationListener() {
                 @Override public void onAnimationStart(Animation animation) {}
                 @Override public void onAnimationRepeat(Animation animation) {}

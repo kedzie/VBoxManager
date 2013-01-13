@@ -3,7 +3,6 @@ package com.kedzie.vbox.machine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -14,10 +13,10 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentActivity;
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
+import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.TabSupport;
+import com.kedzie.vbox.app.TabSupportActionBarViewPager;
 import com.kedzie.vbox.app.TabSupportFragment;
-import com.kedzie.vbox.app.TabSupportViewPager;
 import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.machine.group.GroupInfoFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
@@ -33,7 +32,7 @@ import com.kedzie.vbox.task.DialogTask;
  */
 public class MachineListFragmentActivity extends BaseActivity implements OnTreeNodeSelectListener {
 	public final static String INTENT_VERSION = "version";
-	public static final boolean VIEW_PAGER_TABS = false;
+	public static final boolean VIEW_PAGER_TABS = true;
 	
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
@@ -41,7 +40,6 @@ public class MachineListFragmentActivity extends BaseActivity implements OnTreeN
 	private VBoxSvc _vmgr;
 	/** {@link ActionBar} tabs */
 	private TabSupport _tabSupport;
-	private ViewPager _pager;
 
 	private class LogoffTask extends DialogTask<Void, Void>	{
 		public LogoffTask(VBoxSvc vmgr) { 
@@ -65,14 +63,10 @@ public class MachineListFragmentActivity extends BaseActivity implements OnTreeN
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if(_dualPane) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			if(VIEW_PAGER_TABS) {
-				 _pager = new ViewPager(this);
-				 _pager.setId(99);
-				 detailsFrame.addView(_pager);
-				 _tabSupport = new TabSupportViewPager(this, _pager);
-			} else {
+			if(VIEW_PAGER_TABS)
+				 _tabSupport = new TabSupportActionBarViewPager(this, R.id.details);
+			else
 				_tabSupport = new TabSupportFragment(this, R.id.details);
-			}
 			 if (savedInstanceState != null) 
 		            getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
@@ -103,10 +97,10 @@ public class MachineListFragmentActivity extends BaseActivity implements OnTreeN
             Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr)
                                                             .putProxy(IMachine.BUNDLE, machine)
                                                             .create();
-            _tabSupport.addTab(getString(R.string.tab_info), InfoFragment.class, b);
-            _tabSupport.addTab(getString(R.string.tab_actions), ActionsFragment.class, b);
-            _tabSupport.addTab(getString(R.string.tab_log), LogFragment.class, b);
-            _tabSupport.addTab(getString(R.string.tab_snapshots), SnapshotFragment.class, b);
+            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), InfoFragment.class, b));
+            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_actions), ActionsFragment.class, b));
+            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_log), LogFragment.class, b));
+            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_snapshots), SnapshotFragment.class, b));
         } else {
             Intent intent = new Intent(this, MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr);
             BundleBuilder.addProxy(intent, IMachine.BUNDLE, machine );
@@ -118,7 +112,7 @@ public class MachineListFragmentActivity extends BaseActivity implements OnTreeN
         Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr).putParcelable(VMGroup.BUNDLE, group).create();
         if(_dualPane) {
             _tabSupport.removeAllTabs();
-            _tabSupport.addTab(getString(R.string.tab_info), GroupInfoFragment.class, b);
+            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), GroupInfoFragment.class, b));
         } else {
             startActivity(new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement(group.getName(), GroupInfoFragment.class, b)));
         }

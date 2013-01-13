@@ -16,7 +16,7 @@ import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentActivity;
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
+import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.CategoryFragment.OnSelectCategoryListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -66,6 +66,7 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
         @Override
         protected void onResult(Integer result) {
             super.onResult(result);
+            Utils.toastLong(_context, "Saved Settings");
             finish();
         }
     }
@@ -84,6 +85,7 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
         @Override
         protected void onResult(Integer result) {
             super.onResult(result);
+            Utils.toastLong(_context, "Discarded Settings");
             finish();
         }
     }

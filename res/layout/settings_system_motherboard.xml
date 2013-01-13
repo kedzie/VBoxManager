@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/baseMemory_label"
+        style="@style/SmallText"
+        android:text="Base Memory:" />
+
+    <com.kedzie.vbox.app.SliderView
+        android:id="@+id/baseMemory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/baseMemory_label"
+        android:layout_toRightOf="@id/baseMemory_label"
+        vbox:tickSpacing="256"
+        vbox:unit="MB" />
+
+    <TextView
+        android:id="@+id/extended_features"
+        style="@style/MediumText"
+        android:layout_below="@id/baseMemory"
+        android:text="Extended Features" />
+
+    <TextView
+        android:id="@+id/error_message"
+        style="@style/SmallText"
+        android:layout_below="@id/extended_features"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:textColor="#FFFF0000" />
+
+</RelativeLayout>

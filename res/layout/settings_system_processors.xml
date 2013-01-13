@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/processors_label"
+        style="@style/SmallText"
+        android:layout_alignRight="@+id/execution_cap_label"
+        android:text="Processors:" />
+
+    <com.kedzie.vbox.app.SliderView
+        android:id="@+id/processors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/processors_label"
+        android:layout_toRightOf="@id/processors_label"
+        vbox:tickSpacing="1"
+        vbox:unit="CPU" />
+
+    <TextView
+        android:id="@id/execution_cap_label"
+        style="@style/SmallText"
+        android:layout_below="@id/processors"
+        android:text="Execution Cap:" />
+
+    <com.kedzie.vbox.app.SliderView
+        android:id="@+id/execution_cap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/execution_cap_label"
+        android:layout_toRightOf="@id/execution_cap_label"
+        vbox:maxValidValue="100"
+        vbox:maxValue="100"
+        vbox:minValidValue="50"
+        vbox:minValue="1"
+        vbox:tickSpacing="10"
+        vbox:unit="%" />
+
+    <TextView
+        android:id="@+id/extended_features"
+        style="@style/MediumText"
+        android:layout_below="@id/execution_cap"
+        android:text="Extended Features" />
+
+    <TextView
+        android:id="@+id/error_message"
+        style="@style/SmallText"
+        android:layout_below="@id/extended_features"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:textColor="#FFFF0000" />
+
+</RelativeLayout>

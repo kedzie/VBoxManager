@@ -1,7 +1,5 @@
 package com.kedzie.vbox.app;
 
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
-
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

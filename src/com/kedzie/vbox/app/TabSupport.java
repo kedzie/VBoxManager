@@ -1,6 +1,6 @@
 package com.kedzie.vbox.app;
 
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.actionbarsherlock.app.ActionBar;
 
@@ -17,7 +17,7 @@ public interface TabSupport {
 	 * @param clazz		type of Fragment
 	 * @param args		Arguments
 	 */
-	public abstract void addTab(String name, Class<?> clazz, Bundle args) ;
+	public abstract void addTab(FragmentElement info) ;
 
 	/**
 	 * Remove a tab from the {@link ActionBar}
@@ -29,4 +29,8 @@ public interface TabSupport {
 	 * Remove all tabs from the {@link ActionBar}
 	 */
 	public abstract void removeAllTabs();
+	
+	public void setCurrentTab(int position);
+	
+	public Fragment getCurrentFragment();
 }

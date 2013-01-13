@@ -3,7 +3,6 @@ package com.kedzie.vbox.app;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,8 +11,6 @@ import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.kedzie.vbox.R;
-import com.kedzie.vbox.app.FragmentInfo.FragmentElement;
 
 /**
  * Attaches/Detaches Fragments
@@ -43,7 +40,7 @@ public class TabSupportFragment implements TabSupport {
 
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        	ft.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit);
+        	ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         	if (_definition.fragment==null) {
         		Log.i(TAG, String.format(" Instantiating new fragment [%s]", _tag));
                 ft.add(_fragmentContainer, _definition.instantiate(_activity), _tag);
@@ -55,7 +52,7 @@ public class TabSupportFragment implements TabSupport {
 
         @Override
         public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-        	ft.setCustomAnimations(R.anim.stack_enter, R.anim.stack_exit);
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         	ft.detach(_definition.fragment);
         }
 
@@ -78,27 +75,42 @@ public class TabSupportFragment implements TabSupport {
 		_activity=activity;
 		_actionBar = activity.getSupportActionBar();
 		_manager = activity.getSupportFragmentManager();
-		_activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		_actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		_fragmentContainer=container;
 	}
 	
 	@Override
-	public void addTab(String name, Class<? > clazz, Bundle args)  {
-	    FragmentElement info = new FragmentElement(name, clazz, args);
-        Tab tab =  _activity.getSupportActionBar().newTab().setText(name).setTag(name).setTabListener(new TabListener(info, name));
-        _tabs.put(name,tab);
-        _activity.getSupportActionBar().addTab(tab);
+	public void addTab(FragmentElement info)  {
+	    Tab tab = _actionBar.newTab().setTag(info.name).setTabListener(new TabListener(info, info.name));
+        if(info.view!=null)
+            tab.setCustomView(info.view);
+        else if(info.icon!=-1)
+            tab.setIcon(info.icon);
+        else
+            tab.setText(info.name);
+        _tabs.put(info.name,tab);
+        _actionBar.addTab(tab);
 	}
 	
 	@Override
 	public void removeTab(String name) {
-		_activity.getSupportActionBar().removeTab(_tabs.remove(name));
+	    _actionBar.removeTab(_tabs.remove(name));
 	}
 	
 	@Override
 	public void removeAllTabs() {
-		_activity.getSupportActionBar().removeAllTabs();
+	    _actionBar.removeAllTabs();
 		_tabs.clear();
-	}
+    }
+	
+	@Override
+    public void setCurrentTab(int position) {
+	    _actionBar.setSelectedNavigationItem(position);
+    }   
+	
+	@Override
+    public Fragment getCurrentFragment() {
+        return _manager.findFragmentById(_fragmentContainer);
+    }
 }
 

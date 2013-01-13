@@ -329,7 +329,7 @@ public class VBoxSvc implements Parcelable {
 	 */
 	public VBoxSvc(Server server) {
 		_server=server;
-		_transport = server.isSSL() ? new KeystoreTrustedHttpsTransport(server.getHost(), server.getPort(), "", TIMEOUT) : 
+		_transport = server.isSSL() ? new KeystoreTrustedHttpsTransport(server, TIMEOUT) : 
 					new HttpTransport("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
 	}
 
@@ -494,13 +494,10 @@ public class VBoxSvc implements Parcelable {
     }
 	
 	public void ping(Handler handler) throws IOException, XmlPullParserException {
-		SoapObject request = new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName");
-		request.addProperty("_this", "0");
 		SerializationEnvelope envelope = new SerializationEnvelope();
-		envelope.setOutputSoapObject(request);
+		envelope.setOutputSoapObject(new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName").addProperty("_this", "0"));
 		envelope.setAddAdornments(false);
-		InteractiveTrustedHttpsTransport transport = 
-				new InteractiveTrustedHttpsTransport(_server.getHost(), _server.getPort(), "", TIMEOUT, handler);
-		transport.call(NAMESPACE+request.getName(), envelope);
+		InteractiveTrustedHttpsTransport transport = new InteractiveTrustedHttpsTransport(_server, TIMEOUT, handler);
+		transport.call(NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
 	}
 }

@@ -1,6 +1,5 @@
 package com.kedzie.vbox.server;
 
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import android.app.Activity;
@@ -12,10 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -32,7 +28,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -106,37 +101,6 @@ public class ServerListFragment extends SherlockFragment {
     private ServerSQlite _db;
     private ListView _listView;
 
-    private Handler _sslHandler = new Handler() {
-    	@Override
-    	public void handleMessage(Message msg) {
-    		if(msg.getData().getBoolean("isTrusted")) {
-    			//execute LogonTask
-    		} else {
-    			X509Certificate[] certs = (X509Certificate[]) msg.getData().getSerializable("certs");
-    			String text = "";
-    			for(X509Certificate cert : certs) {
-    				text += String.format("Issuer: %1$d, Subject: %2$d\n", cert.getIssuerDN().getName(), cert.getSubjectDN().getName());
-    			}
-    			new AlertDialog.Builder(getActivity())
-	    			.setIcon(android.R.drawable.ic_dialog_alert)
-	    			.setMessage("Do you trust this certificate?").setTitle("Unrecognized Certificate: " + text)
-	    			.setPositiveButton("Yes", new OnClickListener() {
-	    				@Override
-	    				public void onClick(DialogInterface dialog, int which) {
-	    					//add certificate to truststore
-	    					//execute LogonActivity
-	    					dialog.dismiss();
-	    				}
-	    			}).setNegativeButton("No", new OnClickListener() {
-	    				@Override
-	    				public void onClick(DialogInterface dialog, int which) {
-	    					dialog.dismiss();
-	    				}
-	    			}).show();
-    		}
-    	}
-    };
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -162,7 +126,7 @@ public class ServerListFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(getActivity() instanceof ServerListFragmentActivity); //this is a hack
         _db = new ServerSQlite(getActivity());
         new LoadServersTask().execute();
     }
@@ -217,7 +181,6 @@ public class ServerListFragment extends SherlockFragment {
         menu.add(Menu.NONE, R.id.server_list_context_menu_select, Menu.NONE, "Connect");
         menu.add(Menu.NONE, R.id.server_list_context_menu_edit, Menu.NONE, "Edit");
         menu.add(Menu.NONE, R.id.server_list_context_menu_delete, Menu.NONE, "Delete");
-        menu.add(Menu.NONE, R.id.server_list_context_menu_ping, Menu.NONE, "Check SSL Certificate");
     }
 
     @Override
@@ -235,18 +198,6 @@ public class ServerListFragment extends SherlockFragment {
             _db.delete(s.getId());
             getAdapter().remove(s);
             getAdapter().notifyDataSetChanged();
-            return true;
-        case R.id.server_list_context_menu_ping:
-            new Thread() {
-            	public void run() {
-            		VBoxSvc api = new VBoxSvc(s);
-            		try {
-						api.ping(_sslHandler);
-					} catch (Exception e) {
-						Log.e("ServerListFragment", "error ping", e);
-					} 
-            	}
-            }.start();
             return true;
         }
         return false;

@@ -78,7 +78,7 @@ public interface IHost extends IManagedObjectRef, Parcelable {
 	/**
 	 * @return	Returns true when the host supports 3D hardware acceleration. 
 	 */
-	@KSOAP(cacheable=true) public boolean getAcceleration3DAvailable();
+	@KSOAP(cacheable=true) public Boolean getAcceleration3DAvailable();
 	
 	/**
 	 * @return	Returns the current host time in milliseconds since 1970-01-01 UTC. 

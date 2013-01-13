@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -12,10 +11,12 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.TabSupport;
-import com.kedzie.vbox.app.TabSupportViewPager;
+import com.kedzie.vbox.app.TabSupportActionBarViewPager;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricPreferencesActivity;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 /**
@@ -37,20 +38,17 @@ public class MachineFragmentActivity extends BaseActivity {
 		    finish();
 		
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
+		VBoxSvc vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
 		
-		ViewPager pager = new ViewPager(this);
-		pager.setId(99);
-		setContentView(pager);
-		
-		_tabSupport = new TabSupportViewPager(this, pager);
-		_tabSupport.addTab("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras());
-		_tabSupport.addTab("Details", InfoFragment.class,getIntent().getExtras());
-		_tabSupport.addTab("Log", LogFragment.class, getIntent().getExtras());
-		_tabSupport.addTab("Snapshots", SnapshotFragment.class, getIntent().getExtras());
+		_tabSupport = new TabSupportActionBarViewPager(this, android.R.id.content);
+		_tabSupport.addTab(new FragmentElement("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras()));
+		_tabSupport.addTab(new FragmentElement("Details", InfoFragment.class,getIntent().getExtras()));
+		_tabSupport.addTab(new FragmentElement("Log", LogFragment.class, getIntent().getExtras()));
+		_tabSupport.addTab(new FragmentElement("Snapshots", SnapshotFragment.class, getIntent().getExtras()));
 		
 		if(savedInstanceState!=null)
 		    getSupportActionBar().setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
