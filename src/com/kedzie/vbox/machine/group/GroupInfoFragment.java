@@ -74,7 +74,8 @@ public class GroupInfoFragment extends SherlockFragment {
 		        if(child instanceof IMachine) {
 		            IMachine m = (IMachine)child;
 		            m.getName();  m.getGroups(); m.getOSTypeId(); m.getMemorySize(); m.getCPUCount();
-                    info.add(new MachineInfo(m, m.getVBoxAPI().takeScreenshot(m, 256, 256)));
+		            int size = getResources().getDimensionPixelSize(R.dimen.screenshot_size);
+                    info.add(new MachineInfo(m, m.getVBoxAPI().takeScreenshot(m, size, size)));
 		        }
 		    }
 		    return info;

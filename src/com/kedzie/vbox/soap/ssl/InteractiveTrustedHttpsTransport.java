@@ -1,15 +1,8 @@
 package com.kedzie.vbox.soap.ssl;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.Enumeration;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -21,6 +14,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.server.Server;
 
 /**
  * Uses {@link TrustManager} which sends certificates to handler for user response
@@ -30,48 +24,43 @@ public class InteractiveTrustedHttpsTransport extends HttpTransportSE{
 	static final String PROTOCOL = "https";
 
 	private ServiceConnection serviceConnection = null;
-	private final String host;
-	private final int port;
-	private final String file;
+	protected final Server server;
 	private final int timeout;
-	private Handler handler;
-	
-	private TrustManager []trust =  new TrustManager[]{
-    	    new X509TrustManager() {
-    	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-    	        	Log.i(TAG, "getAcceptedIssuers");
-    	            return null;
-    	        }
-    	        public void checkClientTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        	Log.i(TAG, String.format("checkClientTrusted(%1$d, %2$s)", certs.length, authType));
-    	        }
-    	        public void checkServerTrusted( java.security.cert.X509Certificate[] certs, String authType) {
-    	        	Log.i(TAG, String.format("checkServerTrusted(%1$d, %2$s)", certs.length, authType));
-    				try {
-						KeyStore keystore = KeyStore.getInstance("BKS");
-						keystore.load(new FileInputStream("/sdcard/virtualbox.bks"), "virtualbox".toCharArray());
-						Enumeration<String> aliases = keystore.aliases();
-						while(aliases.hasMoreElements()) {
-							String alias = aliases.nextElement();
-							Certificate cert = keystore.getCertificate(alias);
-							Log.i(TAG, "Alias: " + alias + "\tCert: " + cert);
-						}
-	    	        	new BundleBuilder()
-	    	        		.putSerializable("certs", certs)
-	    	        		.putString("authType", authType)
-	    	        		.sendMessage(handler, 0);
-					} catch (Exception e) {
-						Log.e(TAG, "Exception in Interactive Trust Manager", e);
-					} 
-    	        }
-    	    }
-    	};
+	protected Handler handler;
 
-	public InteractiveTrustedHttpsTransport (String host, int port, String file, int timeout, Handler handler) {
-		super(InteractiveTrustedHttpsTransport.PROTOCOL + "://" + host + ":" + port + file);
-		this.host = host;
-		this.port = port;
-		this.file = file;
+	private TrustManager []trust =  new TrustManager[]{
+			new X509TrustManager() {
+
+				private X509TrustManager _keystoreTM = (X509TrustManager)SSLUtil.getKeyStoreTrustManager()[0];
+
+				@Override public X509Certificate[] getAcceptedIssuers() { return null; }
+				@Override public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException{}
+
+				@Override
+				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException{
+					Log.i(TAG, String.format("checkServerTrusted(%1$d, %2$s)", chain.length, authType));
+					try {
+						_keystoreTM.checkServerTrusted(chain, authType);
+					} catch(CertificateException e) {
+						Log.w(TAG, "Untrusted Server " +  e.getMessage());
+						new BundleBuilder()
+							.putParcelable(Server.BUNDLE, server)
+							.putBoolean("isTrusted", false)
+							.putSerializable("certs", chain)
+							.sendMessage(handler, 0);
+						return;
+					}
+					new BundleBuilder()
+						.putParcelable(Server.BUNDLE, server)
+						.putBoolean("isTrusted", true)
+						.sendMessage(handler, 0);
+				}
+			}
+	};
+
+	public InteractiveTrustedHttpsTransport (Server server, int timeout, Handler handler) {
+		super(InteractiveTrustedHttpsTransport.PROTOCOL + "://" + server.getHost() + ":" + server.getPort());
+		this.server = server;
 		this.timeout = timeout;
 		this.handler=handler;
 	}
@@ -81,37 +70,19 @@ public class InteractiveTrustedHttpsTransport extends HttpTransportSE{
 	 * @see org.ksoap2.transport.HttpsTransportSE#getServiceConnection()
 	 */
 	public ServiceConnection getServiceConnection() throws IOException {
-		serviceConnection = new TrustedHttpsServiceConnection(host, port, file, timeout, trust);
+		serviceConnection = new TrustedHttpsServiceConnection(server.getHost(), server.getPort(), "", timeout, trust);
 		return serviceConnection;
 	}
 
 	public String getHost() {
-		String retVal = null;
-		try {
-			retVal = new URL(url).getHost();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		return retVal;
+		return server.getHost();
 	}
 
 	public int getPort() {
-		int retVal = -1;
-		try {
-			retVal = new URL(url).getPort();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		return retVal;
+		return server.getPort();
 	}
 
 	public String getPath() {
-		String retVal = null;
-		try {
-			retVal = new URL(url).getPath();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		return retVal;
+		return "";
 	}
 }

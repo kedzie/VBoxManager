@@ -29,6 +29,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 		pDialog = new ProgressDialog(_context);
 		pDialog.setMessage(msg);
 		pDialog.setIndeterminate(true);
+		pDialog.setCancelable(false);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 	}
 	
