@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Message;
 
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -20,12 +21,22 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	
 	/**
 	 * @param TAG LogCat tag
+	 * @param context Android <code>Context</code>
+	 * @param vmgr VirtualBox API service
+	 * @param msg  operation description string resource
+	 */
+	public DialogTask(String TAG, Context context, VBoxSvc vmgr, int msg) {
+		this(TAG, context, vmgr, context.getResources().getString(msg));
+	}
+	
+	/**
+	 * @param TAG LogCat tag
 	 * @param ctx Android <code>Context</code>
 	 * @param vmgr VirtualBox API service
 	 * @param msg  operation description
 	 */
-	public DialogTask(String TAG, Context ctx, VBoxSvc vmgr, String msg) {
-		super(TAG, ctx, vmgr);
+	public DialogTask(String TAG, Context context, VBoxSvc vmgr, String msg) {
+		super(TAG, context, vmgr);
 		pDialog = new ProgressDialog(_context);
 		pDialog.setMessage(msg);
 		pDialog.setIndeterminate(true);
@@ -39,7 +50,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	}
 	
 	@Override
-	protected final void onPostExecute(Output result)	{
+	protected void onPostExecute(Output result)	{
 			pDialog.dismiss();
 			super.onPostExecute(result);
 	}
@@ -65,7 +76,8 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 			}
 			pDialog.show();
 		}
-		pDialog.setMessage("Operation " + p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription() + " - " + p[0].getOperationPercent() + "%  remaining " + p[0].getTimeRemaining() + "secs");
+		pDialog.setMessage(_context.getResources().getString(R.string.progress_message, p[0].getOperation(), p[0].getOperationCount(), p[0].getOperationDescription(), p[0].getOperationPercent(),p[0].getTimeRemaining() ));
+//		pDialog.setMessage("Operation " + p[0].getOperation() + "/" + p[0].getOperationCount() + " - " + p[0].getOperationDescription() + " - " + p[0].getOperationPercent() + "%  remaining " + p[0].getTimeRemaining() + "secs");
 		pDialog.setProgress(p[0].getPercent());
 		pDialog.setSecondaryProgress(p[0].getOperationPercent());
 	}

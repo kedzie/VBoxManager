@@ -74,4 +74,13 @@
     <string name="settings_vram">Video Memory</string>
     <string name="settings_3d_acceleration">3D Acceleration</string>
     <string name="settings_2d_acceleration">2D Acceleration</string>
+    <string name="vm_start">Start</string>
+    <string name="add_server_title">No Servers</string>
+    <string name="add_server_cannot">Currently servers cannot be created within widget configuration.  Use regular application to create a Server.</string>
+    <string name="edit_server_actionmode_title">Edit Server</string>
+    <string name="server_connect">Connect</string>
+    <string name="server_edit">Edit</string>
+    <string name="cancelling_operation_toast">Cancelling Operation...</string>
+    <string name="progress_message">Operation <ff:g id="operation">%1$d</ff:g>/<ff:g id="operationCount">%2$d</ff:g> [<ff:g id="operationDescription">%3$s</ff:g>] <ff:g id="operationPercent">%4$d</ff:g>%% remaining<ff:g id="timeRemaining">%5$d</ff:g> secs</string>
+    <string name="logging_off_progress">Logging Off</string>
 </resources>

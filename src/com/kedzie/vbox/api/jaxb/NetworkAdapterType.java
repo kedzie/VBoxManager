@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum NetworkAdapterType {
+import java.io.Serializable;
+
+public enum NetworkAdapterType implements Serializable {
     NULL("Null"),
     AM_79_C_970_A("Am79C970A"),
     AM_79_C_973("Am79C973"),

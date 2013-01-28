@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -74,7 +75,7 @@ public class Provider extends AppWidgetProvider {
         views.setTextViewText(R.id.machine_list_item_snapshot, snapshotText);
                             
         views.setOnClickPendingIntent(R.id.machine_view, PendingIntent.getService(context, 0, 
-                new Intent(context, MachineFragmentActivity.class) .putExtra(IMachine.BUNDLE, vm).putExtra(VBoxSvc.BUNDLE, vm.getVBoxAPI()), 0));
+                new Intent(context, MachineFragmentActivity.class) .putExtra(IMachine.BUNDLE, vm).putExtra(VBoxSvc.BUNDLE, (Parcelable)vm.getVBoxAPI()), 0));
         
         AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
     }

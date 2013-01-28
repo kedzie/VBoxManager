@@ -1,6 +1,9 @@
 package com.kedzie.vbox.machine.settings;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -151,7 +154,7 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_save:
-		    new SaveSettingsTask().execute(_mutable);
+			saveSettings();
 			return true;
 		case R.id.option_menu_discard:
 		    discardSettings();
@@ -162,8 +165,31 @@ public class CategoryListFragmentActivity extends BaseActivity implements OnSele
 
 	@Override 
 	public void onBackPressed() {
-	    discardSettings();
-		super.onBackPressed();
+		new AlertDialog.Builder(this)
+	        .setTitle("Save Changes?")
+	        .setMessage("Do you wish to save changes?")
+	        .setIcon(android.R.drawable.ic_dialog_info)
+	        .setPositiveButton("OK", new OnClickListener() {
+	            @Override
+	            public void onClick(DialogInterface dialog, int which) {
+	                dialog.dismiss();
+	                saveSettings();
+	                finish();
+	            }
+	        })
+	        .setNegativeButton("Discard", new OnClickListener() {
+	            @Override
+	            public void onClick(DialogInterface dialog, int which) {
+	                dialog.dismiss();
+	                discardSettings();
+	                finish();
+	            }
+	        })
+	        .show();
+	}
+	
+	private void saveSettings() {
+		new SaveSettingsTask().execute(_mutable);
 	}
 	
 	private void discardSettings() {

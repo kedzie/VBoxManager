@@ -16,7 +16,6 @@ import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportActionBarViewPager;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricPreferencesActivity;
-import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 /**
@@ -38,7 +37,6 @@ public class MachineFragmentActivity extends BaseActivity {
 		    finish();
 		
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
-		VBoxSvc vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);		
 		getSupportActionBar().setDisplayShowTitleEnabled(true);

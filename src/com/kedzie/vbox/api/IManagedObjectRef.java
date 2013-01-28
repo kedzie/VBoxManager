@@ -28,6 +28,12 @@ public interface IManagedObjectRef  {
 	public void clearCache();
 	
 	/**
+	 * Clear cached property values
+	 * @param names  names of properties
+	 */
+	public void clearCacheNamed(String...names);
+	
+	/**
 	 * Get property cache
 	 */
 	public Map<String, Object> getCache();

@@ -3,6 +3,7 @@ package com.kedzie.vbox.harness;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -67,7 +68,7 @@ public class HarnessActivity extends BaseActivity {
 		@Override
 		protected void onResult(IMachine result) {
 			super.onResult(result);
-			startActivity(new Intent(HarnessActivity.this, CategoryListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vboxApi).putExtra(IMachine.BUNDLE, result));
+			startActivity(new Intent(HarnessActivity.this, CategoryListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi).putExtra(IMachine.BUNDLE, result));
 		}
 	}
 
@@ -89,8 +90,7 @@ public class HarnessActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.harness_machineList:
-				startActivity(new Intent(this, MachineListFragmentActivity.class).putExtra(
-						VBoxSvc.BUNDLE, _vboxApi));
+				startActivity(new Intent(this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi));
 				return true;
 			case R.id.harness_machineSettings:
 				new MachineSettingsTask(_vboxApi).execute(0);

@@ -1,6 +1,7 @@
 package com.kedzie.vbox.widget;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
@@ -31,7 +32,7 @@ public class UpdateWidgetService extends IntentService {
 		int[] widgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 		if(widgetIds==null)
 		    return;
-		Log.d(TAG, "Updating App Widgets " + Utils.arrayToString(widgetIds));
+		Log.d(TAG, "Updating App Widgets " + Arrays.toString(widgetIds));
 		for(int widgetId : widgetIds) {
 			String machineName = Provider.loadPref(this, widgetId, Provider.KEY_NAME);
 			if(Utils.isEmpty(machineName))

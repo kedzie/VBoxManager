@@ -46,7 +46,9 @@
 		
 	</LinearLayout>
 	
-    	<com.kedzie.vbox.app.PanelView vbox:name="Preview" 
+    	<com.kedzie.vbox.app.PanelView 
+    	    android:id="@+id/previewPanel" 
+    	    vbox:name="Preview" 
     	    vbox:headerIcon="@drawable/ic_settings_general" 
     	    android:layout_width="wrap_content" 
     	    android:layout_height="wrap_content" >

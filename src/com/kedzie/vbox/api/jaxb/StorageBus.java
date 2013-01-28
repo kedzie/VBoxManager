@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum StorageBus {
+import java.io.Serializable;
+
+public enum StorageBus implements Serializable {
     NULL("Null"),
     IDE("IDE"),
     SATA("SATA"),

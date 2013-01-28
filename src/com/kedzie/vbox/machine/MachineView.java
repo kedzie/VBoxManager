@@ -37,15 +37,17 @@ public class MachineView extends FrameLayout {
 	}
 	
 	public void update(IMachine m) {
-	    _machine=m;
-		osIcon.setImageResource(_app.getOSDrawable(m.getOSTypeId()));
-		nameText.setText(m.getName());
-		stateIcon.setImageResource( _app.getDrawable(m.getState()) );
-		stateText.setText(m.getState().value());
-		if(m.getCurrentSnapshot()!=null)  
-			snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")" + (m.getCurrentStateModified() ? "*" : ""));
-		else 
-			snapshotText.setText("");
+		synchronized(m) {
+			_machine=m;
+			osIcon.setImageResource(_app.getOSDrawable(m.getOSTypeId()));
+			nameText.setText(m.getName());
+			stateIcon.setImageResource( _app.getDrawable(m.getState()) );
+			stateText.setText(m.getState().value());
+			if(m.getCurrentSnapshot()!=null)  
+				snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")" + (m.getCurrentStateModified() ? "*" : ""));
+			else 
+				snapshotText.setText("");
+		}
 	}
 
 	/**
@@ -53,13 +55,15 @@ public class MachineView extends FrameLayout {
 	 * @param m
 	 */
 	public static void cacheProperties(IMachine m) {
-		m.clearCache();
-		m.getName();
-		m.getState();
-		m.getCurrentStateModified(); 
-		m.getOSTypeId();
-		if(m.getCurrentSnapshot()!=null) 
-			m.getCurrentSnapshot().getName();
+		synchronized(m) {
+			m.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
+			m.getName();
+			m.getState();
+			m.getCurrentStateModified(); 
+			m.getOSTypeId();
+			if(m.getCurrentSnapshot()!=null) 
+				m.getCurrentSnapshot().getName();
+		}
 	}
 	
 	public IMachine getMachine() {

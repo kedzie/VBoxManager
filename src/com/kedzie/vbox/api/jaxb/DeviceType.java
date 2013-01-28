@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DeviceType {
+import java.io.Serializable;
+
+public enum DeviceType implements Serializable {
     NULL("Null"),
     FLOPPY("Floppy"),
     DVD("DVD"),

@@ -47,7 +47,6 @@ public class MetricRenderer extends View {
 	private Path hGridPath = new Path();
 	private Path vGridPath = new Path();
 	private Bitmap _gridBitmap;
-	private Rect gridBounds = new Rect();
 	
 	public MetricRenderer(Context context, int bgColor, int gridColor, int textColor, int borderColor) {
 		super(context);
@@ -78,7 +77,6 @@ public class MetricRenderer extends View {
 		metricPaint.setStrokeCap(Cap.ROUND);
 		metricPaint.setAntiAlias(true);
 		metricPaint.setStyle(Style.STROKE);
-//		metricPaint.setShadowLayer(4.0f, 2.0f, 2.0f, 0x96000000);
 		
 		metricFill.setStyle(Style.FILL);
 	}
@@ -96,7 +94,6 @@ public class MetricRenderer extends View {
 		hStep = getWidth()/_count;
 		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%2$d\thStep/vStep: %3$d,%4$.2f",period, count, hStep, vStep ));
 		if(getWidth()>0 && getHeight()>0) {
-		    Log.i(TAG, "Drawing grid Bitmap");
 		    _gridBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
 		    Canvas gridCanvas = new Canvas(_gridBitmap);
 		    drawGrid(gridCanvas);
@@ -106,9 +103,9 @@ public class MetricRenderer extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		Log.i(TAG, "OnSizeChanged("+w+"," + h + ")");
 		if(!isInEditMode() && _count>0 && _period>0) 
 		    setMetricPrefs(_count, _period);
+		bounds = new Rect();
 	}
 	
 	public synchronized void setQuery(Map<String, MetricQuery> q) {
@@ -118,8 +115,6 @@ public class MetricRenderer extends View {
 	}
 	
 	private void drawGrid(Canvas canvas) {
-	    canvas.getClipBounds(gridBounds);
-        
 	    canvas.drawRect(bounds, bgPaint);
         canvas.drawRect(bounds, borderPaint);
 	    int hGridStep = _count/GRID_LINES_HORIZ*_period;
@@ -127,7 +122,7 @@ public class MetricRenderer extends View {
         int horiz = bounds.right;
         int seconds = 0;
         hGridPath.reset();
-        for(int i=1; i<=GRID_LINES_HORIZ; i++) {    //horizontal grid
+        for(int i=1; i<=GRID_LINES_HORIZ; i++) {
             horiz -= hPixelStep;
             seconds += hGridStep;
             hGridPath.moveTo(horiz, bounds.bottom);
@@ -153,17 +148,17 @@ public class MetricRenderer extends View {
 	
 	@Override
 	protected synchronized  void onDraw(Canvas canvas) {
-	    canvas.getClipBounds(bounds);
+		if(bounds.width()==0)
+			canvas.getClipBounds(bounds);
 	    
 	    if(isInEditMode()) { 
 	        _editTextPaint.setTextSize(20f);
 	        canvas.drawText("Edit Mode", 100, 100, _editTextPaint);
 	        return;
 	    }
-	    
-//		if(_gridBitmap!=null)
-//		    canvas.drawBitmap(_gridBitmap, 0, 0, null);
-//		else
+		if(_gridBitmap==null)
+		    canvas.drawBitmap(_gridBitmap, 0, 0, null);
+		else
 		    drawGrid(canvas);
 		
 		for(String metric : _metrics) {

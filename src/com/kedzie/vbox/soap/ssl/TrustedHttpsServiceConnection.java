@@ -38,11 +38,9 @@ public class TrustedHttpsServiceConnection implements ServiceConnection {
      */
     public TrustedHttpsServiceConnection(String host, int port, String file, int timeout, TrustManager[] trust) throws IOException {
     	try {
+    		connection = (HttpsURLConnection) new URL(KeystoreTrustedHttpsTransport.PROTOCOL, host, port, file).openConnection();
     		SSLContext sc = SSLContext.getInstance("TLS");
     		sc.init(null, trust, new java.security.SecureRandom());
-//    		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-    		connection = (HttpsURLConnection) new URL(KeystoreTrustedHttpsTransport.PROTOCOL, host, port, file).openConnection();
     		connection.setSSLSocketFactory(sc.getSocketFactory());
     		((HttpsURLConnection) connection).setHostnameVerifier(new AllowAllHostnameVerifier());
     		updateConnectionParameters(timeout);

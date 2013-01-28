@@ -59,7 +59,6 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
     public Object instantiateItem(ViewGroup container, int position) {
         FragmentElement info = _tabs.get(position);
         Utils.addOrAttachFragment(_activity, mFragmentManager, mCurTransaction, container.getId(), info);
-        
         if (info.fragment != mCurrentPrimaryItem) {
             info.fragment.setMenuVisibility(false);
             info.fragment.setUserVisibleHint(false);
@@ -69,8 +68,7 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.i(TAG, "Removing item #" + position);
-        _tabs.get(position).fragment=null;
+        Log.d(TAG, "Removing item #" + position);
         mCurTransaction.remove((Fragment)object);
     }
 
@@ -110,7 +108,6 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
             if(info.fragment==object)
                 return POSITION_UNCHANGED;
         }
-        Log.i(TAG, "Found modfied fragment");
         return POSITION_NONE;
     }
     
@@ -122,9 +119,7 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
     @Override
     public void addTab(FragmentElement info)  {
         Tab tab = _actionBar.newTab().setTag(info.name).setTabListener(this);
-        if(info.view!=null)
-            tab.setCustomView(info.view);
-        else if(info.icon!=-1)
+        if(info.icon!=-1)
             tab.setIcon(info.icon);
         else
             tab.setText(info.name);

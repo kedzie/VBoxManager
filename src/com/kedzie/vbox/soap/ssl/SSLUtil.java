@@ -20,13 +20,44 @@ import android.util.Log;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.task.DialogTask;
 
+/**
+ * Manipulate/load/save truststore to filesystem.  Create TrustManagers to use the keystore.
+ */
 public class SSLUtil {
 	private static final char[] KEYSTORE_PASSWORD = "virtualbox".toCharArray();
 	private static final String KEYSTORE_PATH = "/sdcard/VirtualBox/";
 	private static final String KEYSTORE_NAME = "virtualbox.bks";
-
 	private static final String TAG = "SSLUtil";
-	
+
+	/**
+	 * Add a root certificate to keystore and save to filesystem
+	 */
+	public static class AddCertificateToKeystoreTask extends DialogTask<X509Certificate, Boolean> {
+
+		private Server server;
+
+		public AddCertificateToKeystoreTask(Context context, Server server) {
+			super("AddCertificateToKeystoreTask", context, null, "Updating Keystore");
+			this.server = server;
+		}
+
+		@Override
+		protected Boolean work(X509Certificate... chain) throws Exception {
+			Log.d(TAG, "Certificate Chain");
+			Log.d(TAG, "==================");
+			for(X509Certificate cert : chain)
+				Log.d(TAG, String.format("Issuer: %1$s\tSubject: %2$s", cert.getIssuerDN().getName(), cert.getSubjectDN().getName()));
+			Log.d(TAG, "==================");
+			X509Certificate root = chain[chain.length-1];
+			String alias = server.toString() + "-" + String.format("Issuer: %1$s\tSubject: %2$s", root.getIssuerDN().getName(), root.getSubjectDN().getName());
+			Log.d(TAG, "Certificate Alias: " + alias);
+			KeyStore ks = SSLUtil.getKeystore();
+			ks.setEntry(alias, new KeyStore.TrustedCertificateEntry(root), null);
+			SSLUtil.storeKeystore(ks);
+			return true;
+		}
+	}
+
 	private static TrustManager []_trust; 
 	private static KeyStore _keystore;
 
@@ -43,7 +74,7 @@ public class SSLUtil {
 		}
 		return _trust;
 	}
-	
+
 	public static KeyStore getKeystore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
 		if(_keystore==null) {
 			_keystore = KeyStore.getInstance("BKS");
@@ -58,38 +89,11 @@ public class SSLUtil {
 		}
 		return _keystore;
 	}
-	
+
 	public static void storeKeystore(KeyStore ks) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
 		Log.i(TAG, "Saving updated keystore");
 		ks.store(new FileOutputStream(KEYSTORE_PATH+KEYSTORE_NAME), KEYSTORE_PASSWORD);
 		_keystore = ks;
 		_trust = null;  //make sure TrustManagers are using the updated keystore
-	}
-	
-	public static class AddCertificateToKeystoreTask extends DialogTask<X509Certificate, Boolean> {
-		
-		private Server server;
-		
-		public AddCertificateToKeystoreTask(Context context, Server server) {
-			super("AddCertificateToKeystoreTask", context, null, "Updating Keystore");
-			this.server = server;
-		}
-		
-		@Override
-		protected Boolean work(X509Certificate... chain) throws Exception {
-			Log.d(TAG, "Certificate Chain");
-			Log.d(TAG, "==================");
-			for(X509Certificate cert : chain)
-				Log.d(TAG, String.format("Issuer: %1$s\tSubject: %2$s", cert.getIssuerDN().getName(), cert.getSubjectDN().getName()));
-			Log.d(TAG, "==================");
-			
-			X509Certificate root = chain[chain.length-1];
-			String alias = server.toString() + "-" + root.getIssuerX500Principal().getName();
-			Log.d(TAG, "Certificate Alias: " + alias);
-			KeyStore ks = SSLUtil.getKeystore();
-			ks.setEntry(alias, new KeyStore.TrustedCertificateEntry(root), null);
-			SSLUtil.storeKeystore(ks);
-			return true;
-		}
 	}
 }

@@ -21,12 +21,11 @@ public interface IHost extends IManagedObjectRef, Parcelable {
 	
 	public static final Parcelable.Creator<IHost> CREATOR = new Parcelable.Creator<IHost>() {
 		public IHost createFromParcel(Parcel in) {
-			Class<?> clazz = (Class<?>) in.readSerializable();
 			VBoxSvc vmgr =  in.readParcelable(loader);
 			String id = in.readString();
 			Map<String, Object> cache = new HashMap<String, Object>();
 			in.readMap(cache, loader);
-			return (IHost) vmgr.getProxy(clazz, id, cache); 
+			return (IHost) vmgr.getProxy(IHost.class, id, cache); 
 		}
 		public IHost[] newArray(int size) {  
 			return new IHost[size]; 

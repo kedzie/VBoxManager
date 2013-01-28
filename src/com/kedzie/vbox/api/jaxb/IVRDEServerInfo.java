@@ -1,145 +1,152 @@
 package com.kedzie.vbox.api.jaxb;
 
-public class IVRDEServerInfo {
-    protected boolean active;
-    protected int port;
-    protected long numberOfClients;
-    protected long beginTime;
-    protected long endTime;
-    protected long bytesSent;
-    protected long bytesSentTotal;
-    protected long bytesReceived;
-    protected long bytesReceivedTotal;
+import java.io.Serializable;
+
+import com.kedzie.vbox.soap.KSoapObject;
+
+@KSoapObject("IVRDEServerInfo")
+public class IVRDEServerInfo implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	protected Boolean active;
+    protected Integer port;
+    protected Long numberOfClients;
+    protected Long begIntegerime;
+    protected Long endTime;
+    protected Long bytesSent;
+    protected Long bytesSentTotal;
+    protected Long bytesReceived;
+    protected Long bytesReceivedTotal;
     protected String user;
     protected String domain;
     protected String clientName;
     protected String clientIP;
-    protected long clientVersion;
-    protected long encryptionStyle;
+    protected Long clientVersion;
+    protected Long encryptionStyle;
     /**
      * Gets the value of the active property.
      * 
      */
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
     /**
      * Sets the value of the active property.
      * 
      */
-    public void setActive(boolean value) {
+    public void setActive(Boolean value) {
         this.active = value;
     }
     /**
      * Gets the value of the port property.
      * 
      */
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
     /**
      * Sets the value of the port property.
      * 
      */
-    public void setPort(int value) {
+    public void setPort(Integer value) {
         this.port = value;
     }
     /**
      * Gets the value of the numberOfClients property.
      * 
      */
-    public long getNumberOfClients() {
+    public Long getNumberOfClients() {
         return numberOfClients;
     }
     /**
      * Sets the value of the numberOfClients property.
      * 
      */
-    public void setNumberOfClients(long value) {
+    public void setNumberOfClients(Long value) {
         this.numberOfClients = value;
     }
     /**
-     * Gets the value of the beginTime property.
+     * Gets the value of the begIntegerime property.
      * 
      */
-    public long getBeginTime() {
-        return beginTime;
+    public Long getBegIntegerime() {
+        return begIntegerime;
     }
     /**
-     * Sets the value of the beginTime property.
+     * Sets the value of the begIntegerime property.
      * 
      */
-    public void setBeginTime(long value) {
-        this.beginTime = value;
+    public void setBegIntegerime(Long value) {
+        this.begIntegerime = value;
     }
     /**
      * Gets the value of the endTime property.
      * 
      */
-    public long getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
     /**
      * Sets the value of the endTime property.
      * 
      */
-    public void setEndTime(long value) {
+    public void setEndTime(Long value) {
         this.endTime = value;
     }
     /**
      * Gets the value of the bytesSent property.
      * 
      */
-    public long getBytesSent() {
+    public Long getBytesSent() {
         return bytesSent;
     }
     /**
      * Sets the value of the bytesSent property.
      * 
      */
-    public void setBytesSent(long value) {
+    public void setBytesSent(Long value) {
         this.bytesSent = value;
     }
     /**
      * Gets the value of the bytesSentTotal property.
      * 
      */
-    public long getBytesSentTotal() {
+    public Long getBytesSentTotal() {
         return bytesSentTotal;
     }
     /**
      * Sets the value of the bytesSentTotal property.
      * 
      */
-    public void setBytesSentTotal(long value) {
+    public void setBytesSentTotal(Long value) {
         this.bytesSentTotal = value;
     }
     /**
      * Gets the value of the bytesReceived property.
      * 
      */
-    public long getBytesReceived() {
+    public Long getBytesReceived() {
         return bytesReceived;
     }
     /**
      * Sets the value of the bytesReceived property.
      * 
      */
-    public void setBytesReceived(long value) {
+    public void setBytesReceived(Long value) {
         this.bytesReceived = value;
     }
     /**
      * Gets the value of the bytesReceivedTotal property.
      * 
      */
-    public long getBytesReceivedTotal() {
+    public Long getBytesReceivedTotal() {
         return bytesReceivedTotal;
     }
     /**
      * Sets the value of the bytesReceivedTotal property.
      * 
      */
-    public void setBytesReceivedTotal(long value) {
+    public void setBytesReceivedTotal(Long value) {
         this.bytesReceivedTotal = value;
     }
     /**
@@ -234,28 +241,28 @@ public class IVRDEServerInfo {
      * Gets the value of the clientVersion property.
      * 
      */
-    public long getClientVersion() {
+    public Long getClientVersion() {
         return clientVersion;
     }
     /**
      * Sets the value of the clientVersion property.
      * 
      */
-    public void setClientVersion(long value) {
+    public void setClientVersion(Long value) {
         this.clientVersion = value;
     }
     /**
      * Gets the value of the encryptionStyle property.
      * 
      */
-    public long getEncryptionStyle() {
+    public Long getEncryptionStyle() {
         return encryptionStyle;
     }
     /**
      * Sets the value of the encryptionStyle property.
      * 
      */
-    public void setEncryptionStyle(long value) {
+    public void setEncryptionStyle(Long value) {
         this.encryptionStyle = value;
     }
 }

@@ -8,11 +8,11 @@
     
 	<ImageView android:id="@+id/group_collapse" 
 		android:layout_marginRight="8dp"  
-		android:src="@drawable/ic_navigation_expand"  
+		android:src="@drawable/ic_menu_collapse"  
 		android:clickable="true"
 		android:layout_gravity="center"
-		android:layout_width="24dip" 
-		android:layout_height="24dip" />
+		android:layout_width="32dip" 
+		android:layout_height="32dip" />
 	
 	<TextView android:id="@+id/group_title" 
 		style="@style/MediumText"
@@ -37,6 +37,6 @@
 		android:src="@drawable/ic_navigation_forward"  
 		android:layout_marginLeft="8dp"
 		android:layout_gravity="center"
-		android:layout_width="24dip" 
-		android:layout_height="24dip" />
+		android:layout_width="32dip" 
+		android:layout_height="32dip" />
 </LinearLayout>

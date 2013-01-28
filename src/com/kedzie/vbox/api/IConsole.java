@@ -2,6 +2,7 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
+import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.soap.KSOAP;
 
 /**
@@ -11,6 +12,14 @@ import com.kedzie.vbox.soap.KSOAP;
  * @see {@link ISession}
  */
 public interface IConsole extends IManagedObjectRef {
+	
+	@KSOAP(cacheable=true) public IEventSource getEventSource() throws IOException;
+	
+	@KSOAP(cacheable=true) public IDisplay getDisplay() throws IOException;
+	
+	@KSOAP(cacheable=true) public IGuest getGuest() throws IOException;
+	
+	public MachineState getState() throws IOException;
 
 	/**
 	 * <p>Starts the virtual machine execution using the current machine state (that is, its current execution state, current settings and current storage devices).</p>
@@ -75,27 +84,11 @@ public interface IConsole extends IManagedObjectRef {
 	public IProgress saveState() throws IOException;
 	
 	public void adoptSavedState(@KSOAP("saveStateFile") String saveStateFile) throws IOException;
-
 	public void discardSavedState( @KSOAP("fRemoveFile") boolean removeFile) throws IOException;
 	
-	public IEventSource getEventSource() throws IOException;
-	
-	public IDisplay getDisplay() throws IOException;
-	
-	public IGuest getGuest() throws IOException;
-	
-	/**
-	 * 
-	 */
 	public IProgress takeSnapshot(@KSOAP("name") String name, @KSOAP("description") String description) throws IOException;
-	
-	/**
-	 * 
-	 */
 	public IProgress deleteSnapshot(@KSOAP(value="id") String snapshot) throws IOException;
-	
-	/**
-	 * 
-	 */
+	public IProgress deleteSnapshotAndChildren(@KSOAP(value="id") String snapshot) throws IOException;
+	public IProgress deleteSnapshotRange(@KSOAP("startId") String startId, @KSOAP("endId") String endId) throws IOException;
 	public IProgress restoreSnapshot(@KSOAP("snapshot") ISnapshot snapshot) throws IOException;
 }

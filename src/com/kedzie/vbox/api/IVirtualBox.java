@@ -58,12 +58,11 @@ public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 
 	public static final Parcelable.Creator<IVirtualBox> CREATOR = new Parcelable.Creator<IVirtualBox>() {
 		public IVirtualBox createFromParcel(Parcel in) {
-			Class<?> clazz = (Class<?>) in.readSerializable();
 			VBoxSvc vmgr =  in.readParcelable(loader);
 			String id = in.readString();
 			Map<String, Object> cache = new HashMap<String, Object>();
 			in.readMap(cache, loader);
-			return (IVirtualBox) vmgr.getProxy(clazz, id, cache); 
+			return (IVirtualBox) vmgr.getProxy(IVirtualBox.class, id, cache); 
 		}
 		public IVirtualBox[] newArray(int size) {  
 			return new IVirtualBox[size]; 

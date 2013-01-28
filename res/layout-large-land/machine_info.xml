@@ -20,7 +20,7 @@
 			android:layout_height="match_parent" 
 			android:layout_weight="1" >
 			
-			<com.kedzie.vbox.app.PanelView vbox:name="Preview" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="wrap_content" android:layout_height="wrap_content" >
+			<com.kedzie.vbox.app.PanelView android:id="@+id/previewPanel"  vbox:name="Preview" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="wrap_content" android:layout_height="wrap_content" >
 				<ImageView android:id="@+id/preview" android:contentDescription="preview" android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
 			</com.kedzie.vbox.app.PanelView>
 			

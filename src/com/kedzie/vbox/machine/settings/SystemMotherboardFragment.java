@@ -1,34 +1,44 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.jaxb.ChipsetType;
+import com.kedzie.vbox.api.jaxb.FirmwareType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.DialogTask;
 
 /**
  * @apiviz.stereotype fragment
  */
 public class SystemMotherboardFragment extends SherlockFragment {
-	private static final String TAG = "SystemMotherboardFragment";
 
-	class LoadInfoTask extends ActionBarTask<IMachine, IHost> {
-		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getVBoxAPI()); }
+	class LoadInfoTask extends DialogTask<IMachine, IHost> {
+		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getVBoxAPI(), "Loading Data"); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {
-			Log.d(TAG, "Loading data");
 			m[0].getMemorySize();
+			m[0].getRTCUseUTC();
+			m[0].getBIOSSettings().getIOAPICEnabled();
+			m[0].getChipsetType();
+			m[0].getFirmwareType();
 			IHost host = _vmgr.getVBox().getHost();
 			host.getMemoryAvailable();
 			host.getMemorySize();
@@ -36,6 +46,7 @@ public class SystemMotherboardFragment extends SherlockFragment {
 		}
 		@Override
 		protected void onResult(IHost result) {
+			super.onResult(result);
 		    _host = result;
 		    populateViews(_machine, _host);
 		}
@@ -46,6 +57,11 @@ public class SystemMotherboardFragment extends SherlockFragment {
 	private View _view;
 	private TextView _errorText;
 	private SliderView _baseMemoryBar;
+	private CheckBox _ioApicCheckbox;
+	private CheckBox _efiCheckbox;
+	private CheckBox _utcCheckbox;
+	private Spinner _chipsetSpinner;
+	private ArrayAdapter<ChipsetType> _chipsetAdapter;
 	private ErrorCapability _errorHandler = new ErrorCapability();
 	
 	@Override
@@ -69,6 +85,39 @@ public class SystemMotherboardFragment extends SherlockFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_view = inflater.inflate(R.layout.settings_system_motherboard, null);
 		_baseMemoryBar = (SliderView)_view.findViewById(R.id.baseMemory);
+		_ioApicCheckbox = (CheckBox) _view.findViewById(R.id.io_apic);
+		_ioApicCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.getBIOSSettings().setIOAPICEnabled(isChecked);
+			}
+		});
+		_efiCheckbox = (CheckBox) _view.findViewById(R.id.efi);
+		_efiCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					_machine.setFirmwareType(isChecked ? FirmwareType.EFI : FirmwareType.BIOS);
+			}
+		});
+		_utcCheckbox = (CheckBox) _view.findViewById(R.id.utc);
+		_utcCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.setRTCUseUTC(isChecked);
+			}
+		});
+		_chipsetSpinner = (Spinner) _view.findViewById(R.id.chipset);
+		_chipsetAdapter = new ArrayAdapter<ChipsetType>(getActivity(), android.R.layout.simple_spinner_item, new ChipsetType [] { ChipsetType.PIIX_3, ChipsetType.ICH_9 } );
+		_chipsetSpinner.setAdapter(_chipsetAdapter);
+		_chipsetSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				_machine.setChipsetType(_chipsetAdapter.getItem(position));
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
 		_errorText = (TextView)_view.findViewById(R.id.error_message);
 		_errorHandler.setTextView(_errorText);
 		_errorHandler.showErrors();
@@ -78,14 +127,21 @@ public class SystemMotherboardFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState!=null) 
+		if(_host!=null) 
 			populateViews(_machine, _host);
 		else 
 			new LoadInfoTask().execute(_machine);
 	}
 
 	private void populateViews(IMachine m, IHost host) {
-		Log.d(TAG, "Populating data");
+		_utcCheckbox.setChecked(_machine.getRTCUseUTC());
+		FirmwareType type = _machine.getFirmwareType();
+		_efiCheckbox.setChecked(type.equals(FirmwareType.EFI) || 
+				type.equals(FirmwareType.EFI_32) ||
+				type.equals(FirmwareType.EFI_64) ||
+				type.equals(FirmwareType.EFIDUAL));
+		_ioApicCheckbox.setChecked(_machine.getBIOSSettings().getIOAPICEnabled());
+		_chipsetSpinner.setSelection(_machine.getChipsetType().equals(ChipsetType.PIIX_3) ? 0 : 1);
 		_baseMemoryBar.setMinValue(1);
 		_baseMemoryBar.setMinValidValue(1);
 		_baseMemoryBar.setMaxValidValue((int)(host.getMemorySize()*.8f));
@@ -94,7 +150,7 @@ public class SystemMotherboardFragment extends SherlockFragment {
 	    _baseMemoryBar.setOnSliderViewChangeListener(new OnSliderViewChangeListener() {
 			@Override
 			public void onSliderValidValueChanged(int newValue) {
-				_machine.setMemorySize(newValue);
+				_machine.setMemorySize(newValue*1024);
 				_errorHandler.showError("Base Memory", "");
 			}
 			@Override

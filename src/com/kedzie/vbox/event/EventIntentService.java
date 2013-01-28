@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class EventIntentService extends IntentService {
 		_lbm = LocalBroadcastManager.getInstance(getApplicationContext());
 		_vmgr = intent.getParcelableExtra(VBoxSvc.BUNDLE);
 		_interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
-		sendNotification();
+//		sendNotification();
 		
 		IEvent event = null;
 		evSource =  _vmgr.getVBox().getEventSource();
@@ -84,16 +85,16 @@ public class EventIntentService extends IntentService {
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_notif_vbox)
             .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-            .setContentIntent(PendingIntent.getActivity(EventIntentService.this, 0, new Intent(this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr), 0))
+            .setContentIntent(PendingIntent.getActivity(EventIntentService.this, 0, new Intent(this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr), 0))
             .setTicker(title)
             .setAutoCancel(false)
-            .getNotification();
+            .build();
 	    ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
 	}
 	
 	@Override
 	public void onDestroy() {
-	    ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
+//	    ((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
 		if(_running) {
 			_running=false;
 			Log.w(TAG, "Service is still in running state onDestroy!");

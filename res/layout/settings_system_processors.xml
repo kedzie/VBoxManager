@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/processors_label"
-        style="@style/SmallText"
+        style="@style/SmallTextPrimary"
         android:layout_alignRight="@+id/execution_cap_label"
         android:text="Processors:" />
 
@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@id/execution_cap_label"
-        style="@style/SmallText"
+        style="@style/SmallTextPrimary"
         android:layout_below="@id/processors"
         android:text="Execution Cap:" />
 
@@ -43,9 +43,16 @@
 
     <TextView
         android:id="@+id/extended_features"
-        style="@style/MediumText"
+        style="@style/SmallTextPrimary"
         android:layout_below="@id/execution_cap"
-        android:text="Extended Features" />
+        android:text="Extended Features:" />
+    
+    <CheckBox
+        android:id="@+id/pae_nx"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/extended_features"
+        android:layout_centerHorizontal="true"
+        android:text="Enable PAE/NX" />
 
     <TextView
         android:id="@+id/error_message"

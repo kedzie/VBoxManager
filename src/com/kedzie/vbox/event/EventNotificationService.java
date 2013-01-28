@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -34,7 +35,7 @@ public class EventNotificationService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		Log.i(TAG, "Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
-		Intent i = new Intent(EventNotificationService.this, MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, eventMachine.getVBoxAPI());
+		Intent i = new Intent(EventNotificationService.this, MachineFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)eventMachine.getVBoxAPI());
 		MachineView.cacheProperties(eventMachine);
 		BundleBuilder.addProxy(i, IMachine.BUNDLE, eventMachine);
 		String title = getString(R.string.notification_title, eventMachine.getName(), eventMachine.getState());
@@ -47,7 +48,7 @@ public class EventNotificationService extends IntentService {
 				.setContentIntent(PendingIntent.getActivity(EventNotificationService.this, 0, i, 0))
 				.setTicker(title)
 				.setAutoCancel(true)
-				.getNotification();
+				.build();
 		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, n);
 	}
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/extended_features"
+        style="@style/MediumText"
+        android:text="Hardware Virtualization:" />
+    
+    <CheckBox
+        android:id="@+id/vtx_amdv"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/extended_features"
+        android:layout_alignLeft="@+id/nested_paging"
+        android:layout_centerHorizontal="true"
+        android:text="Enable VT-x/AMD-V" />
+    
+    <CheckBox
+        android:id="@id/nested_paging"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/vtx_amdv"
+        android:layout_centerHorizontal="true"
+        android:text="Enable Nested Paging" />
+
+    <TextView
+        android:id="@+id/error_message"
+        style="@style/SmallText"
+        android:layout_below="@id/extended_features"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:textColor="#FFFF0000" />
+
+</RelativeLayout>

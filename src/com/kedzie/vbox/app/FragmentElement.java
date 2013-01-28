@@ -5,42 +5,43 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.view.View;
 
 import com.google.common.base.Objects;
 
+/**
+ * Description of a fragment.  Also has methods to instantiate and track a reference.
+ */
 public class FragmentElement implements Parcelable {
-    public static String BUNDLE = "info";
+    public final static String BUNDLE = "info";
+    
+    public static final Parcelable.Creator<FragmentElement> CREATOR = new Parcelable.Creator<FragmentElement>() {
+        public FragmentElement createFromParcel(Parcel in) {
+            return new FragmentElement(in.readString(), in.readInt(), (Class<?>)in.readSerializable(), in.readBundle());
+        }
+        public FragmentElement[] newArray(int size) {
+            return new FragmentElement[size];
+        }
+    };
 
     public final String name;
     public final int icon;
-    public final View view;
     public final Class<?>  clazz;
     public final Bundle args;
     public Fragment fragment;
 
     public FragmentElement(String name, Class<?> clazz, Bundle args) {
-        this(name, null, clazz, args);
+        this(name, -1, clazz, args);
     }
     
     public FragmentElement(String name, int icon, Class<?> clazz, Bundle args) {
         this.name=name;
         this.icon=icon;
-        view=null;
-        this.clazz = clazz;
-        this.args = args;
-    }
-    
-    public FragmentElement(String name, View view, Class<?> clazz, Bundle args) {
-        this.name=name;
-        icon=-1;
-        this.view=view;
         this.clazz = clazz;
         this.args = args;
     }
     
     /**
-     * Instantiate the {@link Fragment}
+     * Instantiate the {@link Fragment} and keep a reference
      * @param context Android {@ Context}
      * @return the instantiated {@link Fragment}
      */
@@ -77,13 +78,4 @@ public class FragmentElement implements Parcelable {
     public int hashCode() {
         return Objects.hashCode(name, clazz);
     }
-    
-    public static final Parcelable.Creator<FragmentElement> CREATOR = new Parcelable.Creator<FragmentElement>() {
-        public FragmentElement createFromParcel(Parcel in) {
-            return new FragmentElement(in.readString(), in.readInt(), (Class<?>)in.readSerializable(), in.readBundle());
-        }
-        public FragmentElement[] newArray(int size) {
-            return new FragmentElement[size];
-        }
-    };
 }

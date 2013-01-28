@@ -37,9 +37,9 @@
 
     <TextView
         android:id="@+id/extended_features"
-        style="@style/MediumText"
+        style="@style/SmallTextPrimary"
         android:layout_below="@id/numMonitors"
-        android:text="Extended Features" />
+        android:text="Extended Features:" />
 
     <CheckBox
         android:id="@+id/acceleration3D"

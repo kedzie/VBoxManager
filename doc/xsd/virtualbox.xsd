@@ -2,22 +2,6 @@
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" name="VirtualBox"  targetNamespace="http://www.virtualbox.org/">
 
- <!--Interface IVirtualBox-->
-      <!-- readonly attribute IVirtualBox::version-->
-      <xsd:element name="IVirtualBox_getVersion">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_getVersionResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <!-- readonly attribute IVirtualBox::versionNormalized-->
       <xsd:element name="IVirtualBox_getVersionNormalized">
         <xsd:complexType>
@@ -105,51 +89,6 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IVirtualBox::host-->
-      <xsd:element name="IVirtualBox_getHost">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_getHostResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IVirtualBox::systemProperties-->
-      <xsd:element name="IVirtualBox_getSystemProperties">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_getSystemPropertiesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IVirtualBox::machines-->
-      <xsd:element name="IVirtualBox_getMachines">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_getMachinesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -258,21 +197,6 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IVirtualBox::performanceCollector-->
-      <xsd:element name="IVirtualBox_getPerformanceCollector">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_getPerformanceCollectorResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <!-- readonly attribute IVirtualBox::DHCPServers-->
       <xsd:element name="IVirtualBox_getDHCPServers">
         <xsd:complexType>
@@ -285,21 +209,6 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IVirtualBox::eventSource-->
-      <xsd:element name="IVirtualBox_getEventSource">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_getEventSourceResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -401,22 +310,6 @@
       <xsd:element name="IVirtualBox_registerMachineResponse">
         <xsd:complexType>
           <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IVirtualBox::findMachine-->
-      <xsd:element name="IVirtualBox_findMachine">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="nameOrId" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IVirtualBox_findMachineResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
       <!-- method IVirtualBox::getMachinesByGroups-->
