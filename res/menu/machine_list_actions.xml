@@ -12,7 +12,7 @@
         android:showAsAction="ifRoom"/>
     
     <item android:id="@+id/machine_list_option_menu_metrics" 
-        android:icon="@drawable/ic_menu_metric" 
+        android:icon="@drawable/ic_menu_metrics" 
         android:title="@string/menu_options_host_metrics"
         android:showAsAction="ifRoom" />
     

@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content"   android:paddingTop="4dp" android:paddingBottom="4dp">
-	
-	<ImageView android:id="@+id/list_item_icon"  
-		android:src="@drawable/ic_list_vbox"  
-		android:layout_width="32dip" 
-		android:layout_height="32dip" 
-		android:layout_gravity="center_vertical" 
-		android:layout_marginLeft="12dp" 
-		android:layout_marginRight="12dp"/>	
-	
-	<TextView android:id="@+id/list_item_text"  
-		style="@style/MediumText"
-		android:layout_gravity="center_vertical" />
-</LinearLayout>	
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="4dp"
+    android:background="@drawable/list_selector_background"
+    android:paddingTop="4dp" >
+
+    <ImageView
+        android:id="@+id/list_item_icon"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:src="@drawable/ic_list_vbox" />
+
+    <TextView
+        android:id="@+id/list_item_text"
+        style="@style/MediumText"
+        android:layout_gravity="center_vertical" />
+
+</LinearLayout>

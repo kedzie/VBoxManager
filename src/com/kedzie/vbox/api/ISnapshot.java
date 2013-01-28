@@ -17,12 +17,11 @@ static ClassLoader loader = ISession.class.getClassLoader();
 	
 	public static final Parcelable.Creator<ISnapshot> CREATOR = new Parcelable.Creator<ISnapshot>() {
 		public ISnapshot createFromParcel(Parcel in) {
-			Class<?> clazz = (Class<?>) in.readSerializable();
 			VBoxSvc vmgr =  in.readParcelable(loader);
 			String id = in.readString();
 			Map<String, Object> cache = new HashMap<String, Object>();
 			in.readMap(cache, loader);
-			return (ISnapshot) vmgr.getProxy(clazz, id, cache); 
+			return (ISnapshot) vmgr.getProxy(ISnapshot.class, id, cache); 
 		}
 		public ISnapshot[] newArray(int size) {  
 			return new ISnapshot[size]; 

@@ -85,23 +85,17 @@ public class Utils {
         return list==null || list.isEmpty();
     }
 	
-	public static String arrayToString(Object []array) {
-		StringBuilder sb = new StringBuilder("{ ");
-		for(int i=0; i<array.length; i++) {
-			sb.append(array[i].toString());
-			if(i<array.length-1)	sb.append(", ");
-		}
-		return sb.append(" }").toString();
+	/**
+	 * Append an element to a comma seperated string
+	 * @param base			base string
+	 * @param append		appended element
+	 * @return	base string with appened element, with comma if needed
+	 */
+	public static StringBuffer appendWithComma(StringBuffer base, String append) {
+		if(base.length()>0)
+			base.append(", ");
+		return base.append(append);
 	}
-	
-	public static String arrayToString(int []array) {
-        StringBuilder sb = new StringBuilder("{ ");
-        for(int i=0; i<array.length; i++) {
-            sb.append(array[i]+"");
-            if(i<array.length-1)    sb.append(", ");
-        }
-        return sb.append(" }").toString();
-    }
 	
 	/**
      * Get type parameter of Generic Type
@@ -188,10 +182,10 @@ public class Utils {
         if(element.fragment==null)
             element.fragment = manager.findFragmentByTag(element.name);
         if(element.fragment==null) {
-            Log.i("FragmentManager",  "Instantiated new Fragment: " + element.name);
+            Log.d("FragmentManager",  "Instantiated new Fragment: " + element.name);
             tx.add(containerId, element.instantiate(context), element.name);
         } else {
-            Log.i("FragmentManager",  "Reattaching existing Fragment: " + element.name);
+            Log.d("FragmentManager",  "Reattaching existing Fragment: " + element.name);
             tx.attach(element.fragment);
         }
     }

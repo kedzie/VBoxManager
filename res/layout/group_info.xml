@@ -20,7 +20,7 @@
 		</LinearLayout>
 	</com.kedzie.vbox.app.PanelView>   
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView  style="@style/SmallText"  android:text="@string/base_memory" android:layout_gravity="left" />
 			<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1" android:layout_width="0dip"/>
@@ -39,7 +39,9 @@
 		</LinearLayout>
 	</com.kedzie.vbox.app.PanelView>
 	
-    	<com.kedzie.vbox.app.PanelView vbox:name="Preview" 
+    	<com.kedzie.vbox.app.PanelView 
+    	    android:id="@+id/previewPanel" 
+    	    vbox:name="Preview" 
     	    vbox:headerIcon="@drawable/ic_settings_general" 
     	    android:layout_width="wrap_content" 
     	    android:layout_height="wrap_content" >

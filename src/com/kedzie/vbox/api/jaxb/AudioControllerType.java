@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AudioControllerType {
+import java.io.Serializable;
+
+public enum AudioControllerType implements Serializable {
     AC_97("AC97"),
     SB_16("SB16"),
     HDA("HDA");

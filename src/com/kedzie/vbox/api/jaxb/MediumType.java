@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum MediumType {
+import java.io.Serializable;
+
+public enum MediumType implements Serializable {
     NORMAL("Normal"),
     IMMUTABLE("Immutable"),
     WRITETHROUGH("Writethrough"),

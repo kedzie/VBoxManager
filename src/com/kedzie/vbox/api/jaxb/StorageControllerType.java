@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum StorageControllerType {
+import java.io.Serializable;
+
+public enum StorageControllerType implements Serializable {
     NULL("Null"),
     LSI_LOGIC("LsiLogic"),
     BUS_LOGIC("BusLogic"),

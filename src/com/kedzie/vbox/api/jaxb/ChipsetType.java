@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ChipsetType {
+import java.io.Serializable;
+
+public enum ChipsetType implements Serializable {
     NULL("Null"),
     PIIX_3("PIIX3"),
     ICH_9("ICH9");

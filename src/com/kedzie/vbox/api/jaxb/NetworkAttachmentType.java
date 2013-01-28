@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum NetworkAttachmentType {
+import java.io.Serializable;
+
+public enum NetworkAttachmentType implements Serializable {
     NULL("Null"),
     NAT("NAT"),
     BRIDGED("Bridged"),

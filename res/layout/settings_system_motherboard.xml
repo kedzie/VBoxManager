@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/baseMemory_label"
-        style="@style/SmallText"
+        style="@style/SmallTextPrimary"
         android:text="Base Memory:" />
 
     <com.kedzie.vbox.app.SliderView
@@ -19,16 +19,51 @@
         android:layout_toRightOf="@id/baseMemory_label"
         vbox:tickSpacing="256"
         vbox:unit="MB" />
+    
+    <TextView
+        android:id="@+id/chipsetLabel"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/baseMemory"
+        android:text="Chipset:" />
 
+    <Spinner android:id="@+id/chipset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/chipsetLabel"
+        android:layout_alignTop="@id/chipsetLabel"/>
+    
     <TextView
         android:id="@+id/extended_features"
-        style="@style/MediumText"
-        android:layout_below="@id/baseMemory"
-        android:text="Extended Features" />
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/chipset"
+        android:text="Extended Features:" />
+    
+    <CheckBox
+        android:id="@+id/io_apic"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/extended_features"
+        android:layout_alignLeft="@+id/utc"
+        android:layout_centerHorizontal="true"
+        android:text="Enable IO APIC" />
+    
+    <CheckBox
+        android:id="@+id/efi"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/io_apic"
+        android:layout_alignLeft="@id/utc"
+        android:layout_centerHorizontal="true"
+        android:text="Enable EFI" />
+    
+    <CheckBox
+        android:id="@id/utc"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/efi"
+        android:layout_centerHorizontal="true"
+        android:text="Hardware clock in UTC time" />
 
     <TextView
         android:id="@+id/error_message"
-        style="@style/SmallText"
+        style="@style/SmallTextPrimary"
         android:layout_below="@id/extended_features"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"

@@ -52,14 +52,14 @@ public class MetricView extends LinearLayout {
 	public MetricView(Context context, String header) {
 	    super(context);
 	    _header=header;
-	    createView(0xFFFFFFFF, android.R.color.black, android.R.color.black, android.R.color.holo_blue_dark);
+	    createView(0xFFFFFFFF, android.R.color.black, android.R.color.black, 0xFF0000FF);
 	}
 	
 	public void createView(int bgColor, int gridColor, int textColor, int borderColor) {
 	    setOrientation(LinearLayout.VERTICAL);
 	    _titleTextView = new TextView(getContext());
         _titleTextView.setText(_header);
-//        _titleTextView.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
+        _titleTextView.setTextColor(android.R.color.primary_text_dark);
         addView(_titleTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         _renderer = new MetricRenderer(getContext(), bgColor, gridColor, textColor, borderColor);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum MediumState {
+import java.io.Serializable;
+
+public enum MediumState implements Serializable {
     NOT_CREATED("NotCreated"),
     CREATED("Created"),
     LOCKED_READ("LockedRead"),

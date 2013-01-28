@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AudioDriverType {
+import java.io.Serializable;
+
+public enum AudioDriverType implements Serializable {
     NULL("Null"),
     WIN_MM("WinMM"),
     OSS("OSS"),

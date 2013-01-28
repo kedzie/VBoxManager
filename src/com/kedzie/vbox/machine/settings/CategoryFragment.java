@@ -64,8 +64,8 @@ public class CategoryFragment extends SherlockFragment {
         super.onCreate(savedInstanceState);
         List<FragmentElement> categories = new ArrayList<FragmentElement>();
         categories.add(new FragmentElement("General", R.drawable.ic_settings_general, GeneralFragment.class, getArguments()));
-        categories.add(new FragmentElement("System", R.drawable.ic_settings_general, SystemFragment.class, getArguments()));
-        categories.add(new FragmentElement("Display", R.drawable.ic_settings_display, DisplayVideoFragment.class, getArguments()));
+        categories.add(new FragmentElement("System", R.drawable.ic_settings_system, SystemFragment.class, getArguments()));
+        categories.add(new FragmentElement("Display", R.drawable.ic_settings_display, DisplayFragment.class, getArguments()));
         _adapter = new CategoryAdapter(getActivity(), categories);
     }
 
@@ -73,9 +73,11 @@ public class CategoryFragment extends SherlockFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         _listView = new ListView(getActivity());
         _listView.setAdapter(_adapter);
+        _listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         _listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            	view.setSelected(true);
                 if(_listener!=null)
                     _listener.onSelectCategory(_adapter.getItem(position));
             }

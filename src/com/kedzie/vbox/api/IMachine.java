@@ -9,13 +9,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.service.textservice.SpellCheckerService.Session;
 
+import com.kedzie.vbox.api.jaxb.CPUPropertyType;
 import com.kedzie.vbox.api.jaxb.ChipsetType;
 import com.kedzie.vbox.api.jaxb.CloneMode;
 import com.kedzie.vbox.api.jaxb.CloneOptions;
+import com.kedzie.vbox.api.jaxb.DeviceType;
+import com.kedzie.vbox.api.jaxb.FirmwareType;
+import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.SessionType;
+import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
@@ -42,51 +47,46 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	
 	public static final Parcelable.Creator<IMachine> CREATOR = new Parcelable.Creator<IMachine>() {
 		public IMachine createFromParcel(Parcel in) {
-			Class<?> clazz = (Class<?>) in.readSerializable();
 			VBoxSvc vmgr =  in.readParcelable(LOADER);
 			String id = in.readString();
 			Map<String, Object> cache = new HashMap<String, Object>();
 			in.readMap(cache, LOADER);
-			return (IMachine) vmgr.getProxy(clazz, id, cache); 
+			return (IMachine) vmgr.getProxy(IMachine.class, id, cache); 
 		}
 		public IMachine[] newArray(int size) {  
 			return new IMachine[size]; 
 		}
 	};
 	
-	public static enum LaunchMode { headless, gui; }
+	public static enum LaunchMode { headless, gui, sdl, emergencystop; }
+	
+	/**
+	 * @return UUID of the virtual machine. 
+	 */
+	@KSOAP(cacheable=true) public String getId();
 	
 	 /**
 	  * @return Name of the virtual machine. 
 	  */
 	 @KSOAP(cacheable=true) public String getName() ;
-	 
 	 @Asyncronous public void setName(@KSOAP("name") String name);
 
 	 /**
 	  * @return Description of the virtual machine. 
 	  */
 	 @KSOAP(cacheable=true) public String getDescription();
-	 
 	 @Asyncronous public void setDescription(@KSOAP("description") String description);
 
-	/**
-	 * @return UUID of the virtual machine. 
-	 */
-	@KSOAP(cacheable=true) public String getId();
-	
 	/**
 	 * @return User-defined identifier of the Guest OS type. 
 	 */
 	@KSOAP(cacheable=true) public String getOSTypeId();
-	
 	@Asyncronous public void setOSTypeId(@KSOAP("OSTypeId") String osTypeId);
 	
 	/**
 	 * @return Number of virtual CPUs in the VM. 
 	 */
 	@KSOAP(cacheable=true) public Integer getCPUCount();
-	
 	@Asyncronous public void setCPUCount(@KSOAP(type="unsignedInt", value="CPUCount") int cpuCount);
 	
 	
@@ -99,14 +99,12 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * @return Number of virtual CPUs in the VM. 
 	 */
 	@KSOAP(cacheable=true) public Integer getCPUExecutionCap();
-	
 	@Asyncronous public void setCPUExecutionCap(@KSOAP(type="unsignedInt", value="CPUExecutionCap")int CPUExecutionCap);
 
 	/**
 	 * @return System memory size in megabytes. 
 	 */ 
 	@KSOAP(cacheable=true) public Integer getMemorySize();
-	
 	@Asyncronous public void setMemorySize(@KSOAP(type="unsignedInt", value="memorySize") int memorySize);
 	
 	/**
@@ -118,31 +116,24 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * @return Video memory size in megabytes. 
 	 */
 	@KSOAP(cacheable=true) public Integer getVRAMSize();
-	
 	@Asyncronous public void setVRAMSize(@KSOAP(type="unsignedInt", value="VRAMSize")int vramSize);
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getAccelerate3DEnabled();
-	
-	@Asyncronous public void setAccelerate3DEnabled(@KSOAP(type="boolean", value="accelerate3DEnabled")boolean accelerate3DEnabled);
+	@Asyncronous public void setAccelerate3DEnabled(@KSOAP(type="Boolean", value="accelerate3DEnabled")Boolean accelerate3DEnabled);
 	
 	/**
 	 * @return This setting determines whether VirtualBox allows this machine to make use of the 2D video acceleration support available on the host. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getAccelerate2DVideoEnabled();
-
-	@Asyncronous public void setAccelerate2DVideoEnabled(@KSOAP(type="boolean", value="accelerate2DVideoEnabled")boolean accelerate2DVideoEnabled);
+	@Asyncronous public void setAccelerate2DVideoEnabled(@KSOAP(type="Boolean", value="accelerate2DVideoEnabled")Boolean accelerate2DVideoEnabled);
 	
 	/**
 	 * @return Number of virtual monitors. 
 	 */
 	@KSOAP(cacheable=true) public Integer getMonitorCount();
-	
-	/**
-     * @param monitorCount    Number of virtual monitors. 
-     */
 	@Asyncronous public void setMonitorCount(@KSOAP(type="unsignedInt", value="monitorCount") int monitorCount);
 
 	/**
@@ -154,21 +145,64 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * @return  Chipset type used in this VM. 
 	 */
 	@KSOAP(cacheable=true) public  ChipsetType 	getChipsetType();
- 	
+	@Asyncronous public void setChipsetType(@KSOAP("chipsetType") ChipsetType chipsetType);
+	
+	@KSOAP(cacheable=true) public FirmwareType getFirmwareType();
+	@Asyncronous public void setFirmwareType(@KSOAP("firmwareType") FirmwareType firmwareType);
+	
+	@KSOAP(cacheable=true) public Boolean getRTCUseUTC();
+	@Asyncronous public void setRTCUseUTC(@KSOAP("RTCUseUTC") boolean rtcUseUTC);
+	
+	/**
+	 * <p>Array of machine group names of which this machine is a member. </p>
+	 * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and 
+	 * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
+	 */
+	@KSOAP(cacheable=true) public List<String> getGroups();
+	public void setGroups(@KSOAP("groups")String...group);
+	
+	@KSOAP(cacheable=true) public IBIOSSettings getBIOSSettings();
+	
+	@KSOAP(cacheable=true) public Boolean getHWVirtExProperty(@KSOAP("property") HWVirtExPropertyType property);
+	@Asyncronous public void setHWVirtExProperty(@KSOAP("property") HWVirtExPropertyType property, @KSOAP("value") boolean value);
+
+	@KSOAP(cacheable=true) public Boolean getCPUProperty(@KSOAP("property") CPUPropertyType property);
+	@Asyncronous public void setCPUProperty(@KSOAP("property") CPUPropertyType property, @KSOAP("value") boolean value);
+	
+	@KSOAP(cacheable=true) public DeviceType getBootOrder(@KSOAP(type="unsignedInt", value="position") int position);
+	@Asyncronous public void setBootOrder(@KSOAP(type="unsignedInt", value="position") int position, @KSOAP("device") DeviceType device);
+	
+	@KSOAP(cacheable=true) public IAudioAdapter getAudioAdapter();
+	
+	@KSOAP(cacheable=true) public List<MediumAttachment>getMediumAttachments();
+	@KSOAP(cacheable=true) public IMedium getMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device);
+	@KSOAP(cacheable=true) public MediumAttachment getMediumAttachment(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device);
+	@KSOAP(cacheable=true) public List<MediumAttachment> getMediumAttachmentsOfController(@KSOAP("name") String name);
+	
+	@KSOAP(cacheable=true) public List<IStorageController>getStorageControllers();
+	@KSOAP(cacheable=true) public IStorageController getStorageControllerByName(@KSOAP("name") String name);
+	@KSOAP(cacheable=true) public IStorageController getStorageControllerByInstance(@KSOAP(type="unsignedInt", value="instance") int instance);
+	@Asyncronous public void removeStorageController(@KSOAP("name") String name);
+	public IStorageController addStorageController(@KSOAP("name") String name, @KSOAP("connectionType") StorageBus connectionType);
+	@Asyncronous public void setStorageControllerBootable(@KSOAP("name") String name, @KSOAP("bootable") boolean bootable);
+	
+	public void attachDevice(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("type") DeviceType type, @KSOAP("medium") IMedium medium);
+	public void attachDeviceWithoutMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("type") DeviceType type);
+	
+	public void mountMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("medium") IMedium medium, @KSOAP("force") boolean force);
+	public void unmountMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("force") boolean force);
+		
  	/**
 	 * @return  Full path to the directory used to store snapshot data (differencing media and saved state files) of this machine. 
 	 */
 	@KSOAP(cacheable=true) public String getSnapshotFolder();
+	
+	@KSOAP(cacheable=true) public INetworkAdapter getNetworkAdapter(@KSOAP(type="unsignedInt", value="slot") int slot);
  	
 // 	/**
 //	 * @return  VirtualBox Remote Desktop Extension (VRDE) server object. 
 //	 */
 //	@KSOAP(cacheable=true) public  IVRDEServer 	getVRDEServer();
-	
-//  /**
-//  * @return Object containing all BIOS settings. 
-//  */
-// @KSOAP(cacheable=true) public BIOSSettings getBIOSSettings();
 	
  	/**
  	 * @return Current session state for this machine. 
@@ -235,10 +269,10 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * <li>Release the write lock by calling {@link ISession#unlockMachine}. </li>
 	 * </ol>
 	 * <dl><dt><b>Expected result codes:</b></dt><dd><table border="1" cellspacing="3" cellpadding="3">
-	 * <tr><td>E_UNEXPECTED</td><td>Virtual machine not registered.   </td></tr>
-	 * <tr><td>E_ACCESSDENIED</td><td>Process not started by OpenRemoteSession.   </td></tr>
-	 * <tr><td>>VBOX_E_INVALID_OBJECT_STATE</td><td>Session already open or being opened.   </td></tr>
-	 * <tr><td>VBOX_E_VM_ERROR </td><td>Failed to assign machine to session.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#E_UNEXPECTED}</td><td>Virtual machine not registered.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#E_ACCESSDENIED}</td><td>Process not started by OpenRemoteSession.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_INVALID_OBJECT_STATE}</td><td>Session already open or being opened.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_VM_ERROR}</td><td>Failed to assign machine to session.   </td></tr>
 	 * </table>
 	 * </dd></dl>
 	 * @param s  Session object for which the machine will be locked.
@@ -274,20 +308,20 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 *  environment variable is omitted, this variable will be removed from the resulting environment. If the environment string is <code>null</code> or empty, the server 
 	 *  environment is inherited by the started process as is.<p>
 	 * <dl class="user" compact><dt><b>Expected result codes:</b></dt><dd><table border="1" cellspacing="3" cellpadding="3">
-	 * <tr><td>E_UNEXPECTED </td><td>Virtual machine not registered. </td></tr>
-	 * <tr><td>E_INVALIDARG </td><td>Invalid session type <em>type</em>. </td></tr>
-	 * <tr><td>VBOX_E_OBJECT_NOT_FOUND</td><td>No machine matching <em>machineId</em> found.   </td></tr>
-	 * <tr><td>VBOX_E_INVALID_OBJECT_STATE </a> </td><td>Session already open or being opened. </td></tr>
-	 * <tr><td>VBOX_E_IPRT_ERRORLaunching process for machine failed.</td></tr>
-	 * <tr><td>VBOX_E_VM_ERROR Failed to assign machine to session.</td></tr>
+	 * <tr><td>{@link IVirtualBox#E_UNEXPECTED}</td><td>Virtual machine not registered. </td></tr>
+	 * <tr><td>{@link IVirtualBox#E_INVALIDARG}</td><td>Invalid session type <em>type</em>. </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_OBJECT_NOT_FOUND}</td><td>No machine matching <em>machineId</em> found.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_INVALID_OBJECT_STATE}</td><td>Session already open or being opened. </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_IPRT_ERROR}</td><td>Launching process for machine failed.</td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_VM_ERROR}</td><td>Failed to assign machine to session.</td></tr>
 	 * </table>
 	 * </dd></dl>
 	 * @param session	Client session object to which the VM process will be connected (this must be in {@link SessionState.Unlocked} state).
 	 * @param type	Front-end to use for the new VM process. The following are currently supported: <ul>
-	 * <li><code>"gui"</code>: VirtualBox Qt GUI front-end </li>
-	 * <li><code>"headless"</code>: VBoxHeadless (VRDE Server) front-end </li>
-	 * <li><code>"sdl"</code>: VirtualBox SDL front-end </li>
-	 * <li><code>"emergencystop"</code>: reserved value, used for aborting the currently running VM or session owner. In this case the <em>session</em> parameter may be <code>NULL</code> (if it is non-null it isn't used in any way), and the <em>progress</em> return value will be always NULL. The operation completes immediately. </li>
+	 * <li>{@link LaunchMode#gui}: VirtualBox Qt GUI front-end </li>
+	 * <li>{@link LaunchMode#headless}: VBoxHeadless (VRDE Server) front-end </li>
+	 * <li>{@link LaunchMode#sdl}: VirtualBox SDL front-end </li>
+	 * <li>{@link LaunchMode#emergencystop}: reserved value, used for aborting the currently running VM or session owner. In this case the <em>session</em> parameter may be <code>NULL</code> (if it is non-null it isn't used in any way), and the <em>progress</em> return value will be always NULL. The operation completes immediately. </li>
 	 * </ul>	
 	 * @param environment	Environment to pass to the VM process. 
 	 * @return		Progress object to track the operation completion.
@@ -304,20 +338,6 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	public String queryLogFilename(@KSOAP(type="unsignedInt", value="idx") int idx);
 	
 	public byte[] readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size);
-	
-	/**
-	 * <p>Array of machine group names of which this machine is a member. </p>
-	 * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and 
-	 * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
-	 */
-	@KSOAP(cacheable=true) public List<String> getGroups();
-	
-	/**
-     * <p>Array of machine group names of which this machine is a member. </p>
-     * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and 
-     * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
-     */
-	public void setGroups(@KSOAP("groups")String...group);
 	
 	/**
 	 * <p>Creates a clone of this machine, either as a full clone (which means creating independent copies of the hard disk media, save states and so on), or as a linked clone 
@@ -338,7 +358,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 */
 	public IProgress cloneTo(@KSOAP("target")IMachine target, @KSOAP("mode")CloneMode mode, @KSOAP("options")CloneOptions...options);
 	
-	@KSOAP public void saveSettings();
+	public void saveSettings();
 	
-	@KSOAP public void discardSettings();
+	public void discardSettings();
 }

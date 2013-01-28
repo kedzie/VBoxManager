@@ -48,6 +48,7 @@ public class MetricActivity extends BaseActivity  {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_TITLE));
+
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);

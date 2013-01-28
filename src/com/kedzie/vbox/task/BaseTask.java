@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.app.BundleBuilder;
@@ -59,10 +60,11 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	    @Override
 	    public void handleMessage(Message msg) {
 	        Log.i(TAG, "Cancel Handler received Cancel Message");
-	        Utils.toastLong(_context, "Cancelling Operation...");
+	        Utils.toastLong(_context, _context.getString(R.string.cancelling_operation_toast));
 	        IProgress progress = BundleBuilder.getProxy(msg.getData(), IProgress.BUNDLE, IProgress.class);
 	        try {
 	            progress.cancel();
+	            BaseTask.this.cancel(true);
 	        } catch (IOException e) {
 	            Log.e(TAG, "Error cancelling operation", e);
 	        }
@@ -82,7 +84,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected Output doInBackground(Input... params)	{
 		try	{
-			Log.i(TAG, "Performing work...");
+			Log.d(TAG, "Performing work...");
 			return work(params);
 		} catch(Exception e) {
 		    if(!_cancelled)
@@ -102,7 +104,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected void onPostExecute(Output result) {
 		super.onPostExecute(result);
-		if(result!=null)
+		if(result!=null && _context!=null)
 			onResult(result);
 	}
 	
@@ -161,13 +163,13 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @throws IOException
 	 */
 	protected void handleProgress(IProgress p)  throws IOException {
-		Log.i(TAG, "Handling progress");
+		Log.d(TAG, "Handling progress");
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
 			try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
 		}
-		Log.i(TAG, "Operation Completed. result code: " + p.getResultCode());
+		Log.d(TAG, "Operation Completed. result code: " + p.getResultCode());
 		if(p.getResultCode()!=0) {
 			IVirtualBoxErrorInfo info = p.getErrorInfo();
 			showAlert(p.getResultCode(), info != null ? info.getText() : "No Message");
@@ -177,7 +179,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	}
 	
 	private void cacheProgress(IProgress p ) throws IOException { 
-		p.clearCache();
+		p.clearCacheNamed("getDescription", "getOperation", "getOperationDescription", "getOperationWeight", "getOperationPercent", "getTimeRemaining", "getPercent", "getCompleted");
 		p.getDescription(); p.getOperation(); p.getOperationCount(); p.getOperationDescription(); 
 		p.getPercent(); p.getOperationPercent(); p.getOperationWeight(); p.getTimeRemaining();
 		p.getCompleted(); p.getCancelable();

@@ -20,6 +20,7 @@ public class SystemFragment extends Fragment {
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
         mTabHost.addTab(mTabHost.newTabSpec("motherboard").setIndicator("Motherboard"), SystemMotherboardFragment.class, getArguments());
         mTabHost.addTab(mTabHost.newTabSpec("processors").setIndicator("Processors"), SystemProcessorsFragment.class, getArguments());
+        mTabHost.addTab(mTabHost.newTabSpec("acceleration").setIndicator("Acceleration"), SystemAccelerationFragment.class, getArguments());
         return view;
     }
 

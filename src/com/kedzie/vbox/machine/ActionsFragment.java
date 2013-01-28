@@ -155,13 +155,18 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	}
 	
 	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
+		new UpdateMachineViewTask(_vmgr).execute(_machine);
+	}
+	
+	@Override
 	public void onStart() {
 		super.onStart();
-		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
 		lbm.registerReceiver(_receiver, Utils.createIntentFilter(
 		        VBoxEventType.ON_MACHINE_STATE_CHANGED.name(),
 		        VBoxEventType.ON_SESSION_STATE_CHANGED.name()));
-		new UpdateMachineViewTask(_vmgr).execute(_machine);
 	}
 
 	@Override
@@ -188,6 +193,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 	@Override 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
+		if(action==null) return;
 		if(action.equals(VMAction.START))	
 			new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);
 		else if(action.equals(VMAction.POWER_OFF))	

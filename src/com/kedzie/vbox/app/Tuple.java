@@ -1,8 +1,7 @@
 package com.kedzie.vbox.app;
 
-import android.os.Parcelable;
 
-public class Tuple<T extends Parcelable, S extends Parcelable> {
+public class Tuple<T, S> {
     final static ClassLoader LOADER = Tuple.class.getClassLoader();
     
     public T first;

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum FirmwareType {
+import java.io.Serializable;
+
+public enum FirmwareType implements Serializable {
     BIOS("BIOS"),
     EFI("EFI"),
     EFI_32("EFI32"),

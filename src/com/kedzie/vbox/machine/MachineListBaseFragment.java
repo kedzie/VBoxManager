@@ -35,6 +35,7 @@ public class MachineListBaseFragment extends SherlockFragment {
 	protected VBoxSvc _vmgr;
 	protected List<IMachine> _machines;
 	protected ListView _listView;
+	protected String _version;
 	/** Selected item index. -1 means it was not set in a saved state. */
 	protected int _curCheckPosition=-1;
 	/** Handles selection of a VM in the list */
@@ -76,7 +77,8 @@ public class MachineListBaseFragment extends SherlockFragment {
 		@Override
 		protected void onResult(List<IMachine> result)	{
 			_machines = result;
-			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
+			_version = _vmgr.getVBox().getVersion();
+			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _version));
 			_listView.setAdapter(new MachineListAdapter(result));
 		}
 	}
@@ -104,6 +106,16 @@ public class MachineListBaseFragment extends SherlockFragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if(savedInstanceState!=null)  { 
+			_version = savedInstanceState.getString("version");
+			_curCheckPosition = savedInstanceState.getInt("curChoice", -1);
+			_machines = savedInstanceState.getParcelableArrayList("machines");
+		}
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_listView = new ListView(getActivity());
 		_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -122,16 +134,15 @@ public class MachineListBaseFragment extends SherlockFragment {
 		_vmgr = (VBoxSvc)((getArguments() != null && getArguments().containsKey(VBoxSvc.BUNDLE)) ? 
 		            getArguments().getParcelable(VBoxSvc.BUNDLE)
 		            : getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE) );
-		
-		if(savedInstanceState!=null)  { 
-			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, savedInstanceState.getString("version")));
-    		_curCheckPosition = savedInstanceState.getInt("curChoice", -1);
-    		_machines = savedInstanceState.getParcelableArrayList("machines");
-    		_listView.setAdapter(new MachineListAdapter(_machines));
-    		if(_curCheckPosition>-1)
-    			showDetails(_curCheckPosition);
-    	} else
-    		new LoadMachinesTask(_vmgr).execute();
+		if(_version!=null) 
+			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _version));
+
+		if(_machines!=null) {
+			_listView.setAdapter(new MachineListAdapter(_machines));
+    			if(_curCheckPosition>-1)
+    				showDetails(_curCheckPosition);
+		} else
+    			new LoadMachinesTask(_vmgr).execute();
 	}
 	
 	@Override

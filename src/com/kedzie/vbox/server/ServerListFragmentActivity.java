@@ -4,14 +4,16 @@ import java.security.cert.X509Certificate;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
@@ -48,7 +50,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
         @Override 
         protected void onResult(IVirtualBox vbox) {
             Utils.toastLong(ServerListFragmentActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-            startActivity(new Intent(ServerListFragmentActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, _vmgr));
+            VBoxApplication.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
         }
     }
     
@@ -104,17 +106,20 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
             tx.commit();
         }
     }
-
+    
     @Override
     public void onSelectServer(final Server server) {
+    	if(server.isSSL())
     	new Thread() {
         	public void run() {
         		try {
-        			new VBoxSvc(server).ping(_sslHandler);
+        				new VBoxSvc(server).ping(_sslHandler);
 				} catch (Exception e) {
 					Log.e("ServerListFragment", "error ping", e);
 				} 
         	}
         }.start();
+        else 
+			new LogonTask().execute(server);
     }
 }

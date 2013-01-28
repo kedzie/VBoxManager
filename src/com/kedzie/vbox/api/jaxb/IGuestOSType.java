@@ -1,36 +1,40 @@
 package com.kedzie.vbox.api.jaxb;
 
+import java.io.Serializable;
+
 import com.kedzie.vbox.soap.KSoapObject;
 
 @KSoapObject(namespace="http://www.virtualbox.org", value="IGuestOSType")
-public class IGuestOSType {
-    protected String familyId;
+public class IGuestOSType implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	protected String familyId;
     protected String familyDescription;
     protected String id;
     protected String description;
-    protected boolean is64Bit;
-    protected boolean recommendedIOAPIC;
-    protected boolean recommendedVirtEx;
-    protected long recommendedRAM;
-    protected long recommendedVRAM;
-    protected boolean recommended2DVideoAcceleration;
-    protected boolean recommended3DAcceleration;
-    protected long recommendedHDD;
+    protected Boolean is64Bit;
+    protected Boolean recommendedIOAPIC;
+    protected Boolean recommendedVirtEx;
+    protected Long recommendedRAM;
+    protected Long recommendedVRAM;
+    protected Boolean recommended2DVideoAcceleration;
+    protected Boolean recommended3DAcceleration;
+    protected Long recommendedHDD;
     protected NetworkAdapterType adapterType;
-    protected boolean recommendedPAE;
+    protected Boolean recommendedPAE;
     protected StorageControllerType recommendedDVDStorageController;
     protected StorageBus recommendedDVDStorageBus;
     protected StorageControllerType recommendedHDStorageController;
     protected StorageBus recommendedHDStorageBus;
     protected FirmwareType recommendedFirmware;
-    protected boolean recommendedUSBHID;
-    protected boolean recommendedHPET;
-    protected boolean recommendedUSBTablet;
-    protected boolean recommendedRTCUseUTC;
+    protected Boolean recommendedUSBHID;
+    protected Boolean recommendedHPET;
+    protected Boolean recommendedUSBTablet;
+    protected Boolean recommendedRTCUseUTC;
     protected ChipsetType recommendedChipset;
     protected AudioControllerType recommendedAudioController;
-    protected boolean recommendedFloppy;
-    protected boolean recommendedUSB;
+    protected Boolean recommendedFloppy;
+    protected Boolean recommendedUSB;
     /**
      * Gets the value of the familyId property.
      * 
@@ -123,112 +127,112 @@ public class IGuestOSType {
      * Gets the value of the is64Bit property.
      * 
      */
-    public boolean isIs64Bit() {
+    public Boolean isIs64Bit() {
         return is64Bit;
     }
     /**
      * Sets the value of the is64Bit property.
      * 
      */
-    public void setIs64Bit(boolean value) {
+    public void setIs64Bit(Boolean value) {
         this.is64Bit = value;
     }
     /**
      * Gets the value of the recommendedIOAPIC property.
      * 
      */
-    public boolean isRecommendedIOAPIC() {
+    public Boolean isRecommendedIOAPIC() {
         return recommendedIOAPIC;
     }
     /**
      * Sets the value of the recommendedIOAPIC property.
      * 
      */
-    public void setRecommendedIOAPIC(boolean value) {
+    public void setRecommendedIOAPIC(Boolean value) {
         this.recommendedIOAPIC = value;
     }
     /**
      * Gets the value of the recommendedVirtEx property.
      * 
      */
-    public boolean isRecommendedVirtEx() {
+    public Boolean isRecommendedVirtEx() {
         return recommendedVirtEx;
     }
     /**
      * Sets the value of the recommendedVirtEx property.
      * 
      */
-    public void setRecommendedVirtEx(boolean value) {
+    public void setRecommendedVirtEx(Boolean value) {
         this.recommendedVirtEx = value;
     }
     /**
      * Gets the value of the recommendedRAM property.
      * 
      */
-    public long getRecommendedRAM() {
+    public Long getRecommendedRAM() {
         return recommendedRAM;
     }
     /**
      * Sets the value of the recommendedRAM property.
      * 
      */
-    public void setRecommendedRAM(long value) {
+    public void setRecommendedRAM(Long value) {
         this.recommendedRAM = value;
     }
     /**
      * Gets the value of the recommendedVRAM property.
      * 
      */
-    public long getRecommendedVRAM() {
+    public Long getRecommendedVRAM() {
         return recommendedVRAM;
     }
     /**
      * Sets the value of the recommendedVRAM property.
      * 
      */
-    public void setRecommendedVRAM(long value) {
+    public void setRecommendedVRAM(Long value) {
         this.recommendedVRAM = value;
     }
     /**
      * Gets the value of the recommended2DVideoAcceleration property.
      * 
      */
-    public boolean isRecommended2DVideoAcceleration() {
+    public Boolean isRecommended2DVideoAcceleration() {
         return recommended2DVideoAcceleration;
     }
     /**
      * Sets the value of the recommended2DVideoAcceleration property.
      * 
      */
-    public void setRecommended2DVideoAcceleration(boolean value) {
+    public void setRecommended2DVideoAcceleration(Boolean value) {
         this.recommended2DVideoAcceleration = value;
     }
     /**
      * Gets the value of the recommended3DAcceleration property.
      * 
      */
-    public boolean isRecommended3DAcceleration() {
+    public Boolean isRecommended3DAcceleration() {
         return recommended3DAcceleration;
     }
     /**
      * Sets the value of the recommended3DAcceleration property.
      * 
      */
-    public void setRecommended3DAcceleration(boolean value) {
+    public void setRecommended3DAcceleration(Boolean value) {
         this.recommended3DAcceleration = value;
     }
     /**
      * Gets the value of the recommendedHDD property.
      * 
      */
-    public long getRecommendedHDD() {
+    public Long getRecommendedHDD() {
         return recommendedHDD;
     }
     /**
      * Sets the value of the recommendedHDD property.
      * 
      */
-    public void setRecommendedHDD(long value) {
+    public void setRecommendedHDD(Long value) {
         this.recommendedHDD = value;
     }
     /**
@@ -257,14 +261,14 @@ public class IGuestOSType {
      * Gets the value of the recommendedPAE property.
      * 
      */
-    public boolean isRecommendedPAE() {
+    public Boolean isRecommendedPAE() {
         return recommendedPAE;
     }
     /**
      * Sets the value of the recommendedPAE property.
      * 
      */
-    public void setRecommendedPAE(boolean value) {
+    public void setRecommendedPAE(Boolean value) {
         this.recommendedPAE = value;
     }
     /**
@@ -381,56 +385,56 @@ public class IGuestOSType {
      * Gets the value of the recommendedUSBHID property.
      * 
      */
-    public boolean isRecommendedUSBHID() {
+    public Boolean isRecommendedUSBHID() {
         return recommendedUSBHID;
     }
     /**
      * Sets the value of the recommendedUSBHID property.
      * 
      */
-    public void setRecommendedUSBHID(boolean value) {
+    public void setRecommendedUSBHID(Boolean value) {
         this.recommendedUSBHID = value;
     }
     /**
      * Gets the value of the recommendedHPET property.
      * 
      */
-    public boolean isRecommendedHPET() {
+    public Boolean isRecommendedHPET() {
         return recommendedHPET;
     }
     /**
      * Sets the value of the recommendedHPET property.
      * 
      */
-    public void setRecommendedHPET(boolean value) {
+    public void setRecommendedHPET(Boolean value) {
         this.recommendedHPET = value;
     }
     /**
      * Gets the value of the recommendedUSBTablet property.
      * 
      */
-    public boolean isRecommendedUSBTablet() {
+    public Boolean isRecommendedUSBTablet() {
         return recommendedUSBTablet;
     }
     /**
      * Sets the value of the recommendedUSBTablet property.
      * 
      */
-    public void setRecommendedUSBTablet(boolean value) {
+    public void setRecommendedUSBTablet(Boolean value) {
         this.recommendedUSBTablet = value;
     }
     /**
      * Gets the value of the recommendedRTCUseUTC property.
      * 
      */
-    public boolean isRecommendedRTCUseUTC() {
+    public Boolean isRecommendedRTCUseUTC() {
         return recommendedRTCUseUTC;
     }
     /**
      * Sets the value of the recommendedRTCUseUTC property.
      * 
      */
-    public void setRecommendedRTCUseUTC(boolean value) {
+    public void setRecommendedRTCUseUTC(Boolean value) {
         this.recommendedRTCUseUTC = value;
     }
     /**
@@ -481,28 +485,28 @@ public class IGuestOSType {
      * Gets the value of the recommendedFloppy property.
      * 
      */
-    public boolean isRecommendedFloppy() {
+    public Boolean isRecommendedFloppy() {
         return recommendedFloppy;
     }
     /**
      * Sets the value of the recommendedFloppy property.
      * 
      */
-    public void setRecommendedFloppy(boolean value) {
+    public void setRecommendedFloppy(Boolean value) {
         this.recommendedFloppy = value;
     }
     /**
      * Gets the value of the recommendedUSB property.
      * 
      */
-    public boolean isRecommendedUSB() {
+    public Boolean isRecommendedUSB() {
         return recommendedUSB;
     }
     /**
      * Sets the value of the recommendedUSB property.
      * 
      */
-    public void setRecommendedUSB(boolean value) {
+    public void setRecommendedUSB(Boolean value) {
         this.recommendedUSB = value;
     }
 }

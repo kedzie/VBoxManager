@@ -17,15 +17,15 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.app.Tuple;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.DialogTask;
 
 /**
  * @apiviz.stereotype fragment
  */
 public class DisplayVideoFragment extends SherlockFragment {
 
-	class LoadInfoTask extends ActionBarTask<IMachine, Tuple<ISystemProperties, IHost>> {
-		public LoadInfoTask() { super("DisplayVIdeoFragment", getSherlockActivity(), _machine.getVBoxAPI()); }
+	class LoadInfoTask extends DialogTask<IMachine, Tuple<ISystemProperties, IHost>> {
+		public LoadInfoTask() { super("DisplayVIdeoFragment", getSherlockActivity(), _machine.getVBoxAPI(), "Loading Data"); }
 		@Override 
 		protected Tuple<ISystemProperties, IHost> work(IMachine... m) throws Exception {
 			m[0].getVRAMSize(); 
@@ -80,7 +80,7 @@ public class DisplayVideoFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState!=null) 
+		if(_host!=null && _systemProperties!=null) 
 			populateViews(_machine, _systemProperties, _host);
 		else 
 			new LoadInfoTask().execute(_machine);

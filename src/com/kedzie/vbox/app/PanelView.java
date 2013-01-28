@@ -3,6 +3,7 @@ package com.kedzie.vbox.app;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,8 +45,9 @@ public class PanelView extends LinearLayout implements OnClickListener {
                	mDeltaRotation= -90 ;
             }
             setAnimationListener(new AnimationListener() {
+            	@Override public void onAnimationRepeat(Animation animation) {}
                 @Override public void onAnimationStart(Animation animation) {}
-                @Override public void onAnimationRepeat(Animation animation) {}
+                
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if(mStartHeight==0) //expanding 
@@ -88,7 +90,9 @@ public class PanelView extends LinearLayout implements OnClickListener {
         try {
             _title = a.hasValue(R.styleable.Panel_name) ? a.getString(R.styleable.Panel_name) : "";
             _icon = a.getDrawable(R.styleable.Panel_headerIcon);
-            _collapseDrawable = a.getDrawable(R.styleable.Panel_collapseDrawable);
+            _collapseDrawable = a.hasValue(R.styleable.Panel_collapseDrawable) ? 
+            		a.getDrawable(R.styleable.Panel_collapseDrawable) :
+            		context.getResources().getDrawable(R.drawable.ic_menu_collapse);
         } finally {
             a.recycle();
         }
@@ -101,22 +105,25 @@ public class PanelView extends LinearLayout implements OnClickListener {
     }
     
     protected void init(Context context) {
-    	if(_collapseDrawable==null)
-    		context.getResources().getDrawable(R.drawable.ic_navigation_expand);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        
         setOrientation(VERTICAL);
-        super.addView(_titleView=getTitleLayout(), lp);
-        
-        _frame = new FrameLayout(context);
-        _frame.setBackgroundResource(R.drawable.panel_body);
-        super.addView(_frame, lp);
-        
+        _titleView=getTitleLayout();
         _contents = new LinearLayout(context);
         _contents.setClipChildren(false);
         _contents.setOrientation(VERTICAL);
         
+        _frame = new FrameLayout(context);
+        _frame.setBackgroundResource(R.drawable.panel_body);
+        _frame.setClipChildren(false);
         _frame.addView(_contents, lp);
+        
+        super.addView(_titleView, lp);
+        super.addView(_frame, lp);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+	    	setLayerType(LAYER_TYPE_HARDWARE, null);
+	    	_contents.setLayerType(LAYER_TYPE_HARDWARE, null);
+	    	_frame.setLayerType(LAYER_TYPE_HARDWARE, null);
+    	}
     }
     
     /**
@@ -150,15 +157,27 @@ public class PanelView extends LinearLayout implements OnClickListener {
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
+    
+    public void expand() {
+    	if(_expanded) return;
+    	_frame.setVisibility(View.VISIBLE);
+        _contents.startAnimation(new PanelAnimation(0, _contentHeight));
+        _expanded = true;
+    }
+    
+    public void collapse() {
+    	if(!_expanded) return;
+    	if(_contents.getHeight()<_contentHeight)
+    		_contentHeight = _contents.getHeight();
+    	_contents.setVisibility(View.INVISIBLE);
+        _contents.startAnimation(new PanelAnimation(_contentHeight, 0));
+        _expanded=false;
+    }
 
     public void onClick(View v) {
-        if(_expanded) { //collapsing
-            _contents.setVisibility(View.INVISIBLE);
-            _contents.startAnimation(new PanelAnimation(_contentHeight, 0));
-        } else {                //expanding
-            _frame.setVisibility(View.VISIBLE);
-            _contents.startAnimation(new PanelAnimation(0, _contentHeight));
-        }
-        _expanded = !_expanded;
+        if(_expanded)
+        	collapse();
+        else
+            expand();
     }
 }

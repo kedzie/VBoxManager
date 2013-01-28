@@ -3,6 +3,7 @@ package com.kedzie.vbox.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -56,7 +57,7 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
             tx.commit();
         } else {
             startActivityForResult(new Intent(ServerListPickActivity.this, MachineListPickActivity.class)
-                    .putExtra(VBoxSvc.BUNDLE, vboxApi)
+                    .putExtra(VBoxSvc.BUNDLE, (Parcelable)vboxApi)
                     .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId), 0);
         }
     }

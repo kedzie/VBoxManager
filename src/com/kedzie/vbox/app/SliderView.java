@@ -8,6 +8,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -24,7 +25,8 @@ import com.kedzie.vbox.R;
  * </ul>
  */
 public class SliderView extends LinearLayout {
-    
+    private static final String TAG = "SliderView";
+	
     public static interface OnSliderViewChangeListener {
         public void onSliderValidValueChanged(int newValue);
         public void onSliderInvalidValueChanged(int newValue);
@@ -40,7 +42,7 @@ public class SliderView extends LinearLayout {
         private Paint _tickPaint;
         private Paint _textPaint;
         /** How many pixels in a single unit */
-        private int _pixelsPerUnit;
+        private float _pixelsPerUnit;
         
         private Drawable mThumb;
         
@@ -74,7 +76,7 @@ public class SliderView extends LinearLayout {
             _tickPaint.setStyle(Style.STROKE);
             _tickPaint.setStrokeWidth(2f);
             _textPaint = new Paint();
-            _textPaint.setColor(0xFF000000);
+            _textPaint.setColor(getResources().getColor(android.R.color.primary_text_dark));
             _textPaint.setTextSize(Utils.dpiToPixels(getContext(), 12));
         }
         
@@ -85,9 +87,10 @@ public class SliderView extends LinearLayout {
         }
         
         void updateProperties() {
-        	_pixelsPerUnit = getWidth()/(_maxValue-_minValue);
-            int validLeft = (_minValidValue-_minValue)*_pixelsPerUnit+getLeft()+getPaddingLeft();
-            int validRight = getRight()-getPaddingRight()-(_maxValue-_maxValidValue)*_pixelsPerUnit;
+        	_pixelsPerUnit = ((float)getWidth())/(_maxValue-_minValue);
+        	Log.d(TAG, "PixelsPerUnit="+_pixelsPerUnit);
+            int validLeft = (int) ((_minValidValue-_minValue)*_pixelsPerUnit+getLeft()+getPaddingLeft());
+            int validRight =(int) (getRight()-getPaddingRight()-(_maxValue-_maxValidValue)*_pixelsPerUnit);
             int bottom = getBottom()-getPaddingBottom()-(int)_textPaint.getTextSize();
             int top = bottom-VALID_RANGE_BAR_HEIGHT;
             _invalidRect = new Rect(getLeft()+getPaddingLeft(), top, getRight()-getPaddingRight(), bottom);

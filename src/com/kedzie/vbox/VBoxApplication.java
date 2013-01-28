@@ -4,9 +4,17 @@ package com.kedzie.vbox;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.app.Utils;
@@ -18,6 +26,8 @@ import com.kedzie.vbox.machine.PreferencesActivity;
  * @apiviz.stereotype application
  */
 public class VBoxApplication extends Application {
+	private static final String TAG = "VBoxApplication";
+	
     private Map<String,Integer> resources = new HashMap<String, Integer>();
 	private Map<String,Integer> resources_color = new HashMap<String, Integer>();
 	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
@@ -62,7 +72,7 @@ public class VBoxApplication extends Application {
 		putResource(VMAction.TAKE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_add, R.drawable.ic_list_snapshot_add_c);		
 		putResource(VMAction.RESTORE_SNAPSHOT.name(), R.drawable.ic_list_snapshot, R.drawable.ic_list_snapshot_c);		
 		putResource(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del, R.drawable.ic_list_snapshot_del_c);		
-		putResource(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metric, R.drawable.ic_menu_metric);		
+		putResource(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metrics, R.drawable.ic_menu_metrics);		
 		putResource(VMAction.TAKE_SCREENSHOT.name(), R.drawable.ic_list_snapshot_add, R.drawable.ic_list_snapshot_add_c);
 		putResource(VMAction.EDIT_SETTINGS.name(), R.drawable.ic_menu_edit, R.drawable.ic_menu_edit);
 	}
@@ -135,5 +145,46 @@ public class VBoxApplication extends Application {
 		if(!metricColor.containsKey(name)) 
 			metricColor.put(name, context.getResources().getColor( context.getResources().getIdentifier(name, "color", context.getPackageName())) );
 		return metricColor.get(name);
+	}
+	
+	/**
+	 * Is user authorized to edit machine settings?
+	 * @return <code>true</code> if authorized, <code>false</code> otherwise
+	 */
+	public boolean isSettingsEnabled() {
+		return true;
+	}
+	
+	/**
+	 * Launch activity with custom animations (if API > 16)
+	 * @param parent		parent activity
+	 * @param intent			intent to launch
+	 */
+	public static void launchActivity(Activity parent, Intent intent) {
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN)
+    		parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+    	else
+    		parent.startActivity(intent);
+	}
+	
+	/**
+	 * Scale a bitmap to fit within the desired size
+	 * @param bitmap	input bitmap
+	 * @param width		desired width
+	 * @param height	desired height
+	 * @return	scaled bitmap which will fit in desired size
+	 */
+	public static Bitmap scale(Bitmap bitmap, int width, int height) {
+        int bWidth=bitmap.getWidth(), bHeight=bitmap.getHeight();
+        if(bWidth<=width && bHeight<=height) 
+        	return bitmap;
+        Log.d(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
+        float wScale = ((float)width)/bWidth;
+        float hScale = ((float)height)/bHeight;
+        float scale = Math.min(wScale, hScale);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        Log.d(TAG, "Scale factor: " + scale);
+        return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
 	}
 }

@@ -18,7 +18,7 @@ public interface IProgress extends IManagedObjectRef {
 	@KSOAP(cacheable=true) public String getDescription() ;
 	@KSOAP(cacheable=true) public Integer getPercent() ;
 	@KSOAP(cacheable=true) public Integer getTimeRemaining() ;
-	@KSOAP(cacheable=true) public String getOperation() ;
+	@KSOAP(cacheable=true) public Integer getOperation() ;
 	@KSOAP(cacheable=true) public Integer getOperationCount() ;
 	@KSOAP(cacheable=true) public String getOperationDescription() ;
 	@KSOAP(cacheable=true) public Integer getOperationPercent() ;

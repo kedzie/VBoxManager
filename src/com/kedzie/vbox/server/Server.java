@@ -1,11 +1,16 @@
 package com.kedzie.vbox.server;
 
-import com.kedzie.vbox.app.Utils;
+import java.io.Serializable;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Server implements Parcelable {
+import com.kedzie.vbox.app.Utils;
+
+public class Server implements Parcelable, Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public final static String BUNDLE = "server";
 
 	public static final Parcelable.Creator<Server> CREATOR = new Parcelable.Creator<Server>() {
@@ -107,8 +112,16 @@ public class Server implements Parcelable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public String toUriString() {
+		return (ssl ? "https://" : "http://") + getHost() + ":" + getPort();
+	}
+	
+	public Uri toURL() {
+		return Uri.parse(toUriString());
+	}
+	
 	public String toString() {
-		return !Utils.isEmpty(name) ? name : (ssl ? "https://" : "http://") + getHost() + ":" + getPort();
+		return !Utils.isEmpty(name) ? name : toUriString();
 	}
 	@Override
 	public int hashCode() {

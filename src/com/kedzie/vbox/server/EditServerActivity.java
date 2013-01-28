@@ -1,5 +1,6 @@
 package com.kedzie.vbox.server;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ public class EditServerActivity extends SherlockActivity {
 	public static final String INTENT_SERVER = "server";
 	
 	protected Server _server;
+	private ServerSQlite _db;
 
 	private TextView nameText;
 	private TextView hostText;
@@ -25,8 +27,8 @@ public class EditServerActivity extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle state) {
 		super.onCreate(state);
-		setResult(RESULT_CANCELED);
 		setContentView(R.layout.server);
+		_db = new ServerSQlite(this);
 		_server = (Server)(state==null ? getIntent().getParcelableExtra(INTENT_SERVER) : state.getParcelable(INTENT_SERVER));
 		nameText = (TextView)findViewById(R.id.server_name);
 		hostText = (TextView)findViewById(R.id.server_host);
@@ -43,7 +45,7 @@ public class EditServerActivity extends SherlockActivity {
 		startActionMode(new ActionMode.Callback() {
 			@Override
 			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				mode.setTitle("Edit Server");
+				mode.setTitle(R.string.edit_server_actionmode_title);
 				mode.getMenuInflater().inflate(R.menu.server_actions, menu);
 				return true;
 			}
@@ -56,12 +58,14 @@ public class EditServerActivity extends SherlockActivity {
 				switch(item.getItemId()) {
 				case R.id.server_list_option_menu_save:
 					populateServer();
-					getIntent().putExtra(INTENT_SERVER, _server);
-					setResult(ServerListFragment.RESULT_CODE_SAVE, getIntent());
+					if(_server.getId().equals(-1L))
+						_db.insert(_server);
+					else
+						_db.update(_server);
 					finish();
 					return true;
 				case R.id.server_list_option_menu_delete:
-					setResult(ServerListFragment.RESULT_CODE_DELETE, getIntent());
+					_db.delete(_server.getId());
 					finish();
 					return true;
 				default:
@@ -70,7 +74,7 @@ public class EditServerActivity extends SherlockActivity {
 			}
 			@Override
 			public void onDestroyActionMode(ActionMode mode) {	
-				setResult(RESULT_CANCELED, getIntent());
+				setResult(RESULT_CANCELED, new Intent());
 				finish();
 			}
 		});
@@ -89,5 +93,17 @@ public class EditServerActivity extends SherlockActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		populateServer();
 		outState.putParcelable(INTENT_SERVER, _server);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		_db.close();
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+		super.finalize();
 	}
 }

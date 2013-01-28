@@ -8,54 +8,54 @@
 	   
 	<com.kedzie.vbox.app.PanelView vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Name: " android:layout_gravity="left"  />
-			<TextView style="@style/SmallText" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
+			<TextView style="@style/SmallTextPrimary" android:text="Name: " android:layout_gravity="left"  />
+			<TextView style="@style/SmallTextPrimary" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Operating System:" android:layout_gravity="left" />
-			<TextView style="@style/SmallText" android:id="@+id/ostype" android:layout_weight="1"/>
+			<TextView style="@style/SmallTextPrimary" android:text="Operating System:" android:layout_gravity="left" />
+			<TextView style="@style/SmallTextPrimary" android:id="@+id/ostype" android:layout_weight="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Groups:" android:layout_gravity="left" />
-			<TextView style="@style/SmallText" android:id="@+id/groups" android:layout_weight="1"/>
+			<TextView style="@style/SmallTextPrimary" android:text="Groups:" android:layout_gravity="left" />
+			<TextView style="@style/SmallTextPrimary" android:id="@+id/groups" android:layout_weight="1"/>
 		</LinearLayout>
 	</com.kedzie.vbox.app.PanelView>   
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_list_vbox" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"  android:text="Base Memory:" android:layout_gravity="left" />
-			<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1"/>
+			<TextView  style="@style/SmallTextPrimary"  android:text="Base Memory:" android:layout_gravity="left" />
+			<TextView  style="@style/SmallTextPrimary"  android:id="@+id/baseMemory"  android:layout_weight="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"   android:text="Processors:"  android:layout_gravity="left"  />
-			<TextView  style="@style/SmallText" android:id="@+id/processors"  android:layout_weight="1"/>
+			<TextView  style="@style/SmallTextPrimary"   android:text="Processors:"  android:layout_gravity="left"  />
+			<TextView  style="@style/SmallTextPrimary" android:id="@+id/processors"  android:layout_weight="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"  android:text="Boot Order:"  android:layout_gravity="left"  />
-			<TextView style="@style/SmallText"  android:id="@+id/bootOrder"  android:layout_weight="1"/>
+			<TextView  style="@style/SmallTextPrimary"  android:text="Boot Order:"  android:layout_gravity="left"  />
+			<TextView style="@style/SmallTextPrimary"  android:id="@+id/bootOrder"  android:layout_weight="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="Acceleration:" android:layout_gravity="left"  />
-			<TextView style="@style/SmallText"  android:id="@+id/acceleration" android:layout_weight="1"/>
+			<TextView style="@style/SmallTextPrimary" android:text="Acceleration:" android:layout_gravity="left"  />
+			<TextView style="@style/SmallTextPrimary"  android:id="@+id/acceleration" android:layout_weight="1"/>
 		</LinearLayout>
 	</com.kedzie.vbox.app.PanelView>
 		
 	<com.kedzie.vbox.app.PanelView vbox:name="Display" vbox:headerIcon="@drawable/ic_settings_display" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView   style="@style/SmallText"   android:text="Video Memory"  android:layout_gravity="left" />
-			<TextView style="@style/SmallText"  android:id="@+id/videoMemory"     android:layout_weight="1"/>
+			<TextView   style="@style/SmallTextPrimary"   android:text="Video Memory"  android:layout_gravity="left" />
+			<TextView style="@style/SmallTextPrimary"  android:id="@+id/videoMemory"     android:layout_weight="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"   android:text="Acceleration" android:layout_gravity="left"  />
-			<TextView style="@style/SmallText"  android:id="@+id/accelerationVideo"     android:layout_weight="1"/>
+			<TextView  style="@style/SmallTextPrimary"   android:text="Acceleration" android:layout_gravity="left"  />
+			<TextView style="@style/SmallTextPrimary"  android:id="@+id/accelerationVideo"     android:layout_weight="1"/>
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText"     android:text="Remote Desktop Port" android:layout_gravity="left" />
-			<TextView  style="@style/SmallText" android:id="@+id/rdpPort"    android:layout_weight="1"/>
+			<TextView style="@style/SmallTextPrimary"     android:text="Remote Desktop Port" android:layout_gravity="left" />
+			<TextView  style="@style/SmallTextPrimary" android:id="@+id/rdpPort"    android:layout_weight="1"/>
 		</LinearLayout>
 	</com.kedzie.vbox.app.PanelView>
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="Storage" vbox:headerIcon="@drawable/ic_menu_info_details" android:layout_width="match_parent" android:layout_height="wrap_content" >
-	    <TextView style="@style/SmallText"  android:text="Not Implemented"  android:layout_weight="1" />
+	<com.kedzie.vbox.app.PanelView vbox:name="Storage" vbox:headerIcon="@drawable/ic_settings_storage" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	    <TextView android:id="@+id/storage" style="@style/SmallTextPrimary"  android:text="Storage"  android:layout_weight="1" />
 	</com.kedzie.vbox.app.PanelView>   
 </LinearLayout>
