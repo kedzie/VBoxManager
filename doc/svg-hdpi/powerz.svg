@@ -17,9 +17,9 @@
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="powerz.svg"
    style="enable-background:new"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-mdpi/working/Color/ic_list_poweroff.png"
-   inkscape:export-xdpi="60"
-   inkscape:export-ydpi="60"
+   inkscape:export-filename="/home/kedzie/Development/git/VirtualBox-Manager/VBoxManager/res/drawable-xhdpi/ic_list_poweroff_c.png"
+   inkscape:export-xdpi="135"
+   inkscape:export-ydpi="135"
    enable-background="new">
   <defs
      id="defs4">
@@ -84,7 +84,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.4236332"
-     inkscape:cx="30.84594"
+     inkscape:cx="15.8305"
      inkscape:cy="20.546417"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
@@ -151,10 +151,11 @@
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Color">
+     inkscape:label="Color"
+     style="display:inline">
     <path
        transform="translate(0,16)"
-       style="enable-background:new;display:inline;fill:#eb1313;fill-opacity:1;stroke:none"
+       style="fill:#eb1313;fill-opacity:1;stroke:none;display:inline;enable-background:new"
        d="M 42,26 18.990356,23.123437 23,12 6,-1 19,-10 35,6 31.254779,18.432633 z"
        id="path3765"
        inkscape:connector-curvature="0"

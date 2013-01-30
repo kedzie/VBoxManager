@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="start.svg"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Color/ic_list_start.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90"
+   inkscape:export-filename="/home/kedzie/Development/git/VirtualBox-Manager/VBoxManager/res/drawable-xhdpi/ic_list_start_c.png"
+   inkscape:export-xdpi="135"
+   inkscape:export-ydpi="135"
    style="enable-background:new">
   <defs
      id="defs4">
@@ -61,7 +61,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="12.24"
-     inkscape:cx="27.50071"
+     inkscape:cx="16.103651"
      inkscape:cy="30.754394"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
@@ -133,13 +133,14 @@
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Color">
+     inkscape:label="Color"
+     style="display:inline">
     <path
        transform="translate(0,-1004.3622)"
        sodipodi:nodetypes="cccccccccc"
        inkscape:connector-curvature="0"
        id="path3763"
        d="m 26.400001,1010.3622 -7.2,6.0001 5.999998,7.2 -19.199999,0 0,9.5998 19.199999,0 -5.999998,7.2 7.2,6.0001 c 5.237712,-5.9298 10.194349,-12.2216 15.599999,-18 -5.070107,-6.201 -10.337915,-11.9621 -15.599999,-18 z"
-       style="enable-background:accumulate;display:inline;font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#8bc53f;fill-opacity:1;stroke:none;stroke-width:8;marker:none;visibility:visible;overflow:visible;font-family:Sans;-inkscape-font-specification:Sans" />
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#8bc53f;fill-opacity:1;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
   </g>
 </svg>

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.1.2</version>
+		<version>3.1.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vbox-app</artifactId>
@@ -45,8 +45,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.actionbarsherlock</groupId>
-			<artifactId>library</artifactId>
-			<version>4.2.0</version>
+			<artifactId>actionbarsherlock</artifactId>
+			<version>4.2.1-SNAPSHOT</version>
 			<type>apklib</type>
 		</dependency>
 	</dependencies>
@@ -101,12 +101,6 @@
 					<override>true</override>
 				</configuration>
 				<executions>
-					<execution>
-						<phase>site</phase>
-						<goals>
-							<goal>upload</goal>
-						</goals>
-					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -147,7 +141,7 @@
 						<configuration>
 							<removeExistingSignatures>true</removeExistingSignatures>
 							<archive>${project.build.directory}/${project.build.finalName}.apk</archive>
-							<keystore>doc/android.keystore</keystore>
+							<keystore>../doc/android.keystore</keystore>
 							<storepass>android</storepass>
 							<alias>kedzieandroid</alias>
 							<keypass>android</keypass>

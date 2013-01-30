@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="reset.svg"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Color/ic_list_reset.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90"
+   inkscape:export-filename="/home/kedzie/Development/git/VirtualBox-Manager/VBoxManager/res/drawable-xhdpi/ic_list_reset_c.png"
+   inkscape:export-xdpi="135"
+   inkscape:export-ydpi="135"
    style="enable-background:new"
    enable-background="new">
   <defs
@@ -57,17 +57,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="13.32"
-     inkscape:cx="11.980743"
+     inkscape:cx="30.909957"
      inkscape:cy="25.375465"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
-     inkscape:window-width="1278"
-     inkscape:window-height="870"
-     inkscape:window-x="0"
-     inkscape:window-y="72"
+     inkscape:window-width="1106"
+     inkscape:window-height="836"
+     inkscape:window-x="503"
+     inkscape:window-y="190"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -120,12 +120,13 @@
   <g
      inkscape:groupmode="layer"
      id="layer1"
-     inkscape:label="Color">
+     inkscape:label="Color"
+     style="display:inline">
     <path
        transform="translate(0,16)"
        id="path3762"
        d="m 24,-10 c -9.941125,0 -18,8.0588747 -18,18 0,9.941125 8.058875,18 18,18 9.941125,0 18,-8.058875 18,-18 0,-9.9411253 -8.058875,-18 -18,-18 z m 0.3,7.6124999 c 5.727554,0 10.3875,4.6599471 10.3875,10.3875001 0,5.727554 -4.659946,10.387501 -10.3875,10.387501 -5.727551,0 -10.387499,-4.659947 -10.387499,-10.387501 0,-5.727553 4.659948,-10.3875001 10.387499,-10.3875001 z m 0,2.17499998 c -4.544942,0 -8.2125,3.66755672 -8.2125,8.21250012 0,4.544943 3.667558,8.2125 8.2125,8.2125 4.544943,0 8.2125,-3.667557 8.2125,-8.2125 0,-4.5449434 -3.667557,-8.21250012 -8.2125,-8.21250012 z"
-       style="enable-background:new;display:inline;fill:#a466aa;fill-opacity:1;stroke:none"
+       style="fill:#a466aa;fill-opacity:1;stroke:none;display:inline;enable-background:new"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

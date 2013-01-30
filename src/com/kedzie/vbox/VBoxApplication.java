@@ -9,6 +9,7 @@ import android.app.ActivityOptions;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
@@ -152,7 +153,7 @@ public class VBoxApplication extends Application {
 	 * @return <code>true</code> if authorized, <code>false</code> otherwise
 	 */
 	public boolean isSettingsEnabled() {
-		return true;
+		return getPackageManager().checkSignatures("com.kedzie.vbox", "com.kedzie.vbox.pro") == PackageManager.SIGNATURE_MATCH;
 	}
 	
 	/**

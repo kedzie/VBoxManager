@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="save.svg"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Color/ic_list_save.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90"
+   inkscape:export-filename="/home/kedzie/Development/git/VirtualBox-Manager/VBoxManager/res/drawable-xhdpi/ic_list_save_c.png"
+   inkscape:export-xdpi="135"
+   inkscape:export-ydpi="135"
    enable-background="new">
   <defs
      id="defs4">
@@ -52,10 +52,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.95"
-     inkscape:cx="6.2070079"
+     inkscape:cx="-7.8130926"
      inkscape:cy="27.778488"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1278"
      inkscape:window-height="778"
@@ -85,6 +85,17 @@
     </rdf:RDF>
   </metadata>
   <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Holo-Light"
+     style="display:none">
+    <path
+       inkscape:connector-curvature="0"
+       id="path3832"
+       d="M 6,6 6,19.199982 6,42 42,42 42,19.199982 42,13.349993 33.75,6 31.2,6 l 0,13.199982 -19.2,0 L 12,6 6,6 z m 14.4,1.2000339 0,9.5999581 7.2,0 0,-9.5999581 -7.2,0 z M 12,22.800005 l 24,0 0,15.599971 -24,0 0,-15.599971 z m 2.4,3.599946 0,2.399989 19.200001,0 0,-2.399989 -19.200001,0 z m 0,6.000012 0,2.39999 19.200001,0 0,-2.39999 -19.200001,0 z"
+       style="fill:#333333;fill-opacity:0.6;stroke:none;display:inline" />
+  </g>
+  <g
      inkscape:label="Holo-Dark"
      inkscape:groupmode="layer"
      id="layer1"
@@ -98,21 +109,11 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Holo-Light"
-     style="display:none">
-    <path
-       inkscape:connector-curvature="0"
-       id="path3832"
-       d="M 6,6 6,19.199982 6,42 42,42 42,19.199982 42,13.349993 33.75,6 31.2,6 l 0,13.199982 -19.2,0 L 12,6 6,6 z m 14.4,1.2000339 0,9.5999581 7.2,0 0,-9.5999581 -7.2,0 z M 12,22.800005 l 24,0 0,15.599971 -24,0 0,-15.599971 z m 2.4,3.599946 0,2.399989 19.200001,0 0,-2.399989 -19.200001,0 z m 0,6.000012 0,2.39999 19.200001,0 0,-2.39999 -19.200001,0 z"
-       style="fill:#333333;fill-opacity:0.6;stroke:none;display:inline" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Color">
+     inkscape:label="Color"
+     style="display:inline">
     <path
-       style="display:inline;fill:#f7901e;fill-opacity:1;stroke:none"
+       style="fill:#f7901e;fill-opacity:1;stroke:none;display:inline"
        d="M 6,6 6,19.199982 6,42 42,42 42,19.199982 42,13.349993 33.75,6 31.2,6 l 0,13.199982 -19.2,0 L 12,6 6,6 z m 14.4,1.2000339 0,9.5999581 7.2,0 0,-9.5999581 -7.2,0 z M 12,22.800005 l 24,0 0,15.599971 -24,0 0,-15.599971 z m 2.4,3.599946 0,2.399989 19.200001,0 0,-2.399989 -19.200001,0 z m 0,6.000012 0,2.39999 19.200001,0 0,-2.39999 -19.200001,0 z"
        id="path3761"
        inkscape:connector-curvature="0" />
