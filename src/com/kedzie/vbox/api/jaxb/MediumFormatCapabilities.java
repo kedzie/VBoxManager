@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum MediumFormatCapabilities {
+import java.io.Serializable;
+
+public enum MediumFormatCapabilities implements Serializable{
     UUID("Uuid"),
     CREATE_FIXED("CreateFixed"),
     CREATE_DYNAMIC("CreateDynamic"),

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum FileSeekType {
+public enum FileSeekType implements java.io.Serializable{
     SET("Set"),
     CURRENT("Current");
     private final String value;

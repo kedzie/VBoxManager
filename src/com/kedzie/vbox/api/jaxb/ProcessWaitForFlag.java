@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessWaitForFlag {
+import java.io.Serializable;
+
+public enum ProcessWaitForFlag implements Serializable{
     NONE("None"),
     START("Start"),
     TERMINATE("Terminate"),

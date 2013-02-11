@@ -80,11 +80,12 @@ public class GroupInfoFragment extends SherlockFragment {
     
 	class LoadInfoTask extends ActionBarTask<VMGroup, ArrayList<MachineInfo>> {
 
-		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), null); }
+		public LoadInfoTask() { 
+			super("LoadGroupInfoTask", getSherlockActivity(), null); 
+		}
 
 		@Override 
 		protected ArrayList<MachineInfo> work(VMGroup... g) throws Exception {
-		    Log.d(TAG, "Loading Group Info");
 		    ArrayList<MachineInfo> info = new ArrayList<MachineInfo>();
 		    for(TreeNode child : g[0].getChildren()) {
 		        if(child instanceof IMachine) {
@@ -104,7 +105,7 @@ public class GroupInfoFragment extends SherlockFragment {
 						mi.screenshot.scaleBitmap(size, size);
 		            }else if(m.getState().equals(MachineState.RUNNING)) {
 		            	try { 
-		            		mi.screenshot = m.getVBoxAPI().takeScreenshot(m, size, size);
+		            		mi.screenshot = m.getAPI().takeScreenshot(m, size, size);
 		            	} catch(IOException e) {
 		            		Log.e(TAG, "Exception taking screenshot", e);
 		            	}

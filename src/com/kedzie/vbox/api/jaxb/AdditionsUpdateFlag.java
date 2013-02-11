@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AdditionsUpdateFlag {
+public enum AdditionsUpdateFlag implements java.io.Serializable{
     NONE("None"),
     WAIT_FOR_UPDATE_START_ONLY("WaitForUpdateStartOnly");
     private final String value;

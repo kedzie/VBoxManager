@@ -10,9 +10,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
-import com.kedzie.vbox.machine.MachineListFragmentActivity;
+import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.machine.MachineView;
-import com.kedzie.vbox.machine.settings.CategoryListFragmentActivity;
+import com.kedzie.vbox.machine.settings.CategoryActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -68,7 +68,7 @@ public class HarnessActivity extends BaseActivity {
 		@Override
 		protected void onResult(IMachine result) {
 			super.onResult(result);
-			startActivity(new Intent(HarnessActivity.this, CategoryListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi).putExtra(IMachine.BUNDLE, result));
+			startActivity(new Intent(HarnessActivity.this, CategoryActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi).putExtra(IMachine.BUNDLE, result));
 		}
 	}
 
@@ -90,7 +90,7 @@ public class HarnessActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.harness_machineList:
-				startActivity(new Intent(this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi));
+				startActivity(new Intent(this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi));
 				return true;
 			case R.id.harness_machineSettings:
 				new MachineSettingsTask(_vboxApi).execute(0);

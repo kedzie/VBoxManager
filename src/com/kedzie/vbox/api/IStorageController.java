@@ -13,8 +13,8 @@ import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public interface IStorageController extends IManagedObjectRef, Parcelable {
-	
-static final ClassLoader LOADER = IMachine.class.getClassLoader();
+	public static final String BUNDLE = "controller";
+	static final ClassLoader LOADER = IMachine.class.getClassLoader();
 	
 	public static final Parcelable.Creator<IStorageController> CREATOR = new Parcelable.Creator<IStorageController>() {
 		public IStorageController createFromParcel(Parcel in) {

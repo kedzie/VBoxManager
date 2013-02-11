@@ -11,7 +11,7 @@
     <declare-styleable name="Panel">
        <attr name="name" format="string" />
        <attr name="headerIcon" format="reference" />
-       <attr name="collapseDrawable" format="reference" />
+       <attr name="collapseRotation" format="integer" />
    </declare-styleable>
    
     <declare-styleable name="SliderView">

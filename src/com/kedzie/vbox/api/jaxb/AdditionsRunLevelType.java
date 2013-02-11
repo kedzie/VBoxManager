@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AdditionsRunLevelType {
+public enum AdditionsRunLevelType implements java.io.Serializable{
     NONE("None"),
     SYSTEM("System"),
     USERLAND("Userland"),

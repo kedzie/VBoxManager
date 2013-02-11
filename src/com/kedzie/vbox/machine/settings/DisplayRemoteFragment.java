@@ -1,72 +1,149 @@
 package com.kedzie.vbox.machine.settings;
 
+import java.util.Arrays;
+
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.kedzie.vbox.api.IHost;
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IVRDEServer;
+import com.kedzie.vbox.api.jaxb.AuthType;
+import com.kedzie.vbox.api.jaxb.IVRDEServerInfo;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.Tuple;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
- * 
+ * Edit remote desktop server
  * @apiviz.stereotype fragment
  */
 public class DisplayRemoteFragment extends SherlockFragment {
 	
-	class LoadInfoTask extends ActionBarTask<IMachine, IHost> {
-		public LoadInfoTask() { super("DisplayRemoteFragment", getSherlockActivity(), _machine.getVBoxAPI()); }
+	/**
+	 * load Remote Desktop Server info
+	 */
+	class LoadDataTask extends ActionBarTask<IMachine, Tuple<IVRDEServer, IVRDEServerInfo>> {
+		
+		public LoadDataTask() { 
+			super("DisplayRemoteFragment", getSherlockActivity(), _machine.getAPI()); 
+		}
+		
 		@Override 
-		protected IHost work(IMachine... m) throws Exception {
-			IHost host = _vmgr.getVBox().getHost();
-			return host;
+		protected Tuple<IVRDEServer, IVRDEServerInfo> work(IMachine... m) throws Exception {
+			IVRDEServerInfo info = _vmgr.getVBox().getSessionObject().getConsole().getVRDEServerInfo();
+			IVRDEServer server = m[0].getVRDEServer();
+			Log.i(TAG, "VRDE Properties: " + Arrays.toString(server.getVRDEProperties()));
+			server.getAuthTimeout();
+			server.getAuthType();
+			server.getAllowMultiConnection();
+			return new Tuple<IVRDEServer, IVRDEServerInfo>(server, info);
 		}
 		@Override
-		protected void onResult(IHost result) {
-		        _host = result;
-				populateViews(_machine, _host);
+		protected void onResult(Tuple<IVRDEServer, IVRDEServerInfo> result) {
+		        _server = result.first;
+		        _info = result.second;
+				populate();
 		}
 	}
 	
-	private IMachine _machine;
-	private IHost _host;
 	private View _view;
+	private EditText _portText;
+	private Spinner _authMethodSpinner;
+	private ArrayAdapter<AuthType>_authMethodAdapter; 
+	private EditText _authTimeoutText;
+	private CheckBox _multipleConnectionsCheckBox;
+	
+	private IMachine _machine;
+	private IVRDEServer _server;
+	private IVRDEServerInfo _info;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		_machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
+		_machine = (IMachine)getArguments().getParcelable(IMachine.BUNDLE);
 		if(savedInstanceState!=null) {
-            _host = BundleBuilder.getProxy(savedInstanceState, "host", IHost.class);
+			_server = (IVRDEServer)savedInstanceState.getParcelable(IVRDEServer.BUNDLE);
+			_info = (IVRDEServerInfo)savedInstanceState.getSerializable("info");
 		}
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//		_view = inflater.inflate(R.layout.settings_display_video, null);
-		_view = new FrameLayout(getActivity());
+		_view = inflater.inflate(R.layout.settings_display_remote, null);
+		_portText = (EditText)_view.findViewById(R.id.server_port);
+		_authTimeoutText = (EditText)_view.findViewById(R.id.auth_timeout);
+		_authMethodSpinner = (Spinner)_view.findViewById(R.id.auth_method);
+		_authMethodAdapter = new ArrayAdapter<AuthType>(getActivity(), android.R.layout.simple_spinner_item, AuthType.values());
+		_authMethodSpinner.setAdapter(_authMethodAdapter);
+		_multipleConnectionsCheckBox = (CheckBox)_view.findViewById(R.id.multiple_connections);
 		return _view;
 	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState!=null) 
-			populateViews(_machine, _host);
+		if(_server!=null) 
+			populate();
 		else 
-			new LoadInfoTask().execute(_machine);
+			new LoadDataTask().execute(_machine);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
-		BundleBuilder.putProxy(outState, "host", _host);
+		super.onSaveInstanceState(outState);
+		BundleBuilder.putProxy(outState, IVRDEServer.BUNDLE, _server);
+		outState.putSerializable("info", _info);
 	}
 
-	private void populateViews(IMachine m, IHost host) {
+	private void populate() {
+		_portText.setText(_info.getPort()+"");
+		_portText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+		});
+		_authMethodSpinner.setSelection(Utils.indexOf(AuthType.values(), _server.getAuthType()));
+		_authMethodSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				_server.setAuthType(_authMethodAdapter.getItem(position));
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
+			});
+		_authTimeoutText.setText(_server.getAuthTimeout()+"");
+		_authTimeoutText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+				_server.setAuthTimeout(Integer.valueOf(_authTimeoutText.getText().toString()));
+			}
+			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+		});
+		_multipleConnectionsCheckBox.setChecked(_server.getAllowMultiConnection());
+		_multipleConnectionsCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_server.setAllowMultiConnection(isChecked);
+			}
+		});
 	}
 }

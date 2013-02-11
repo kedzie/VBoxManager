@@ -22,7 +22,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemAccelerationFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IMachine> {
-		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getVBoxAPI(), "Loading Data"); }
+		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
 
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {
@@ -56,6 +56,7 @@ public class SystemAccelerationFragment extends SherlockFragment {
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
         outState.putParcelable(IMachine.BUNDLE, _machine);
         outState.putParcelable("errors", _errorHandler);
     }
@@ -64,19 +65,7 @@ public class SystemAccelerationFragment extends SherlockFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_view = inflater.inflate(R.layout.settings_system_acceleration, null);
 		_vtxCheckbox = (CheckBox) _view.findViewById(R.id.vtx_amdv);
-		_vtxCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_machine.setHWVirtExProperty(HWVirtExPropertyType.ENABLED, isChecked);
-			}
-		});
 		_nestedPagingCheckbox = (CheckBox) _view.findViewById(R.id.nested_paging);
-		_nestedPagingCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_machine.setHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING, isChecked);
-			}
-		});
 		_errorText = (TextView)_view.findViewById(R.id.error_message);
 		_errorHandler.setTextView(_errorText);
 		_errorHandler.showErrors();
@@ -91,6 +80,18 @@ public class SystemAccelerationFragment extends SherlockFragment {
 
 	private void populateViews(IMachine m) {
 		_vtxCheckbox.setChecked(_machine.getHWVirtExProperty(HWVirtExPropertyType.ENABLED));
+		_vtxCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.setHWVirtExProperty(HWVirtExPropertyType.ENABLED, isChecked);
+			}
+		});
 		_nestedPagingCheckbox.setChecked(_machine.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING));
+		_nestedPagingCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.setHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING, isChecked);
+			}
+		});
 	}
 }

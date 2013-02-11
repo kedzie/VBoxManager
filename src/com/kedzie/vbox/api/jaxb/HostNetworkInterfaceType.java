@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum HostNetworkInterfaceType {
+import java.io.Serializable;
+
+public enum HostNetworkInterfaceType implements Serializable{
     BRIDGED("Bridged"),
     HOST_ONLY("HostOnly");
     private final String value;

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessPriority {
+import java.io.Serializable;
+
+public enum ProcessPriority implements Serializable{
     INVALID("Invalid"),
     DEFAULT("Default");
     private final String value;

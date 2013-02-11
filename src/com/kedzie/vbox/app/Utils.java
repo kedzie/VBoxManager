@@ -1,6 +1,7 @@
 package com.kedzie.vbox.app;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -16,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -149,11 +151,10 @@ public class Utils {
      * @param dialog        the {@link DialogFragment} implementation
      */
     public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
-        FragmentTransaction tx = manager.beginTransaction();
+    	FragmentTransaction tx = manager.beginTransaction().addToBackStack(tag);
         Fragment prev = manager.findFragmentByTag(tag);
         if(prev!=null)
             tx.remove(prev);
-        tx.addToBackStack(tag);
         dialog.show(tx, tag);
     }
     
@@ -168,6 +169,31 @@ public class Utils {
         Fragment existing = manager.findFragmentByTag(tag);
         if(existing!=null)
             tx.detach(existing);
+    }
+    
+    /**
+     * Detach an existing fragment
+     * @param manager         fragment manager
+     * @param tx                    existing transaction
+     * @param id                   container id
+     */
+    public static void detachExistingFragment(FragmentManager manager, FragmentTransaction tx, int id) {
+        Fragment existing = manager.findFragmentById(id);
+        if(existing!=null)
+            tx.detach(existing);
+    }
+    
+    /**
+     * Instantiate or reattach existing Fragment
+     * @param context          context
+     * @param manager         fragment manager
+     * @param containerId     container
+     * @param info                  fragment definition
+     */
+    public static void addOrAttachFragment(Context context, FragmentManager manager, int containerId, FragmentElement element) {
+    	FragmentTransaction tx = manager.beginTransaction();
+    	addOrAttachFragment(context, manager, tx, containerId, element);
+    	tx.commit();
     }
     
     /**
@@ -191,6 +217,35 @@ public class Utils {
     }
     
     /**
+     * Remove existing fragment with same tag and add new one.
+     * @param context          context
+     * @param manager         fragment manager
+     * @param containerId     container
+     * @param info                  fragment definition
+     */
+    public static void addFragment(Context context, FragmentManager manager, int containerId, FragmentElement element) {
+    	FragmentTransaction tx = manager.beginTransaction();
+    	addFragment(context, manager, tx, containerId, element);
+    	tx.commit();
+    }
+    
+    /**
+     * Remove existing fragment with same tag and add new one.
+     * @param context          context
+     * @param manager         fragment manager
+     * @param tx                    existing transaction
+     * @param containerId     container
+     * @param info                  fragment definition
+     */
+    public static void addFragment(Context context, FragmentManager manager, FragmentTransaction tx, int containerId, FragmentElement element) {
+    	Fragment existing = manager.findFragmentByTag(element.name);
+    	if(existing!=null)
+    		tx.remove(existing);
+    	Log.d("FragmentManager",  "Instantiated new Fragment: " + element.name);
+    	tx.add(containerId, element.instantiate(context), element.name);
+    }
+    
+    /**
      * Set the contents of a {@link TextView}
      * @param view     parent view
      * @param id           textview id
@@ -198,6 +253,36 @@ public class Utils {
      */
     public static void setTextView(View parent, int id, String text) {
         ((TextView)parent.findViewById(id)).setText(text);
+    }
+    
+    /**
+     * Set the contents of a {@link TextView}
+     * @param view     parent view
+     * @param id           textview id
+     * @param text     text contents
+     */
+    public static void setTextView(View parent, int id, int text) {
+        ((TextView)parent.findViewById(id)).setText(text+"");
+    }
+    
+    /**
+     * Set the contents of a {@link TextView}
+     * @param holder    view holder
+     * @param id           textview id
+     * @param text     text contents
+     */
+    public static void setTextView(SparseArray<View> holder, int id, String text) {
+        ((TextView)holder.get(id)).setText(text);
+    }
+    
+    /**
+     * Set the contents of a {@link TextView}
+     * @param holder    view holder
+     * @param id           textview id
+     * @param text     text contents
+     */
+    public static void setTextView(SparseArray<View> holder, int id, int text) {
+        ((TextView)holder.get(id)).setText(text+"");
     }
     
     /**
@@ -227,5 +312,35 @@ public class Utils {
      */
     public static int getScreenSize(Configuration config) {
         return config.screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
+    }
+    
+    /**
+     * Find an element within an array
+     * @param array			the array
+     * @param object		the object to find
+     * @return	the index of the object in array, or -1 if not found
+     */
+    public static int indexOf(Object[] array, Object object) {
+    	for(int i=0; i<array.length; i++) {
+    		if(array[i].equals(object))
+    			return i;
+    	}
+    	return -1;
+    }
+    
+    /**
+     * Remove "NULL" element of a <code>enum</code> array
+     * @param array		array of <code>enum.values()</code>
+     * @return	array with the "NULL" element removed
+     */
+    @SuppressWarnings("unchecked")
+	public static <T> T[] removeNull(T[] array) {
+    	T[] ret = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length-1);
+    	int retIndex = 0;
+    	for(int i=0; i<array.length; i++) {
+    		if(!array[i].toString().equals("Null"))
+    			ret[retIndex++] = array[i];
+    	}
+    	return ret;
     }
 }

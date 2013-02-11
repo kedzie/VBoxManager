@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum SettingsVersion {
+import java.io.Serializable;
+
+public enum SettingsVersion implements Serializable{
     NULL("Null"),
     V_1_0("v1_0"),
     V_1_1("v1_1"),

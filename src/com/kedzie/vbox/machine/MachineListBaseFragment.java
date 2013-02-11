@@ -118,7 +118,6 @@ public class MachineListBaseFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		_listView = new ListView(getActivity());
-		_listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
        	_listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -162,9 +161,6 @@ public class MachineListBaseFragment extends SherlockFragment {
 	}
 	
 	void showDetails(int index) {
-        _curCheckPosition = index;
-        _listView.setSelection(index);
-       	_listView.setItemChecked(index, true);
        	_machineSelectedListener.onMachineSelected(getAdapter().getItem(index));
     }
 }

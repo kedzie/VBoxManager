@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum USBDeviceState {
+import java.io.Serializable;
+
+public enum USBDeviceState implements Serializable{
     NOT_SUPPORTED("NotSupported"),
     UNAVAILABLE("Unavailable"),
     BUSY("Busy"),

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum CopyFileFlag {
+public enum CopyFileFlag implements java.io.Serializable{
     NONE("None"),
     RECURSIVE("Recursive"),
     UPDATE("Update"),

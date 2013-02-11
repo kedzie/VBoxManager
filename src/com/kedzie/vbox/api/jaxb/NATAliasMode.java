@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum NATAliasMode {
+import java.io.Serializable;
+
+public enum NATAliasMode implements Serializable{
     ALIAS_LOG("AliasLog"),
     ALIAS_PROXY_ONLY("AliasProxyOnly"),
     ALIAS_USE_SAME_PORTS("AliasUseSamePorts");

@@ -7,18 +7,18 @@
 	android:layout_weight="1" >
 	   
 	<com.kedzie.vbox.app.PanelView vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallTextPrimary" android:text="Name: " android:layout_gravity="left"  />
-			<TextView style="@style/SmallTextPrimary" android:id="@+id/name" android:layout_weight="1" android:text="VM Name"/>
-		</LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallTextPrimary" android:text="Operating System:" android:layout_gravity="left" />
-			<TextView style="@style/SmallTextPrimary" android:id="@+id/ostype" android:layout_weight="1"/>
-		</LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallTextPrimary" android:text="Groups:" android:layout_gravity="left" />
-			<TextView style="@style/SmallTextPrimary" android:id="@+id/groups" android:layout_weight="1"/>
-		</LinearLayout>
+	    	<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
+
+	    	    <TextView android:id="@+id/name_label" style="@style/SmallTextPrimary" android:text="@string/name" />
+	    	    <TextView android:id="@+id/name" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/name_label" android:layout_toRightOf="@id/name_label" />
+
+	    	    <TextView android:id="@+id/ostype_label" style="@style/SmallTextPrimary" android:text="@string/operating_system" android:layout_below="@id/name_label"/>
+	    	    <TextView android:id="@+id/ostype" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/ostype_label" android:layout_toRightOf="@id/ostype_label" />
+	    	    
+	    	    <TextView android:id="@+id/groups_label" style="@style/SmallTextPrimary" android:text="@string/groups" android:layout_below="@id/ostype_label"/>
+	    	    <TextView android:id="@+id/groups" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/groups_label" android:layout_toRightOf="@id/groups_label" />
+	    	    
+		</RelativeLayout>
 	</com.kedzie.vbox.app.PanelView>   
 	
 	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >

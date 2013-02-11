@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum KeyboardHIDType {
+import java.io.Serializable;
+
+public enum KeyboardHIDType implements Serializable{
     NONE("None"),
     PS_2_KEYBOARD("PS2Keyboard"),
     USB_KEYBOARD("USBKeyboard"),

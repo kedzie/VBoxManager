@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DirectoryOpenFlag {
+public enum DirectoryOpenFlag implements java.io.Serializable{
     NONE("None"),
     NO_SYMLINKS("NoSymlinks");
     private final String value;

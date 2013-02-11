@@ -15,8 +15,8 @@ import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public interface INetworkAdapter extends IManagedObjectRef, Parcelable {
-	
-static final ClassLoader LOADER = INetworkAdapter.class.getClassLoader();
+	public static final String BUNDLE = "network";
+	static final ClassLoader LOADER = INetworkAdapter.class.getClassLoader();
 	
 	public static final Parcelable.Creator<INetworkAdapter> CREATOR = new Parcelable.Creator<INetworkAdapter>() {
 		public INetworkAdapter createFromParcel(Parcel in) {
@@ -43,7 +43,7 @@ static final ClassLoader LOADER = INetworkAdapter.class.getClassLoader();
 	@Asyncronous public void setMACAddress(@KSOAP("MACAddress") String macAddress);
 
 	@KSOAP(cacheable=true) public NetworkAttachmentType getAttachmentType();
-	@Asyncronous public void setAdapterType(@KSOAP("attachmentType") NetworkAttachmentType attachmentType);
+	@Asyncronous public void setAttachmentType(@KSOAP("attachmentType") NetworkAttachmentType attachmentType);
 
 	@KSOAP(cacheable=true) public String getBridgedInterface();
 	@Asyncronous public void setBridgedInterface(@KSOAP("bridgedInterface") String bridgedInterface);
@@ -75,104 +75,14 @@ static final ClassLoader LOADER = INetworkAdapter.class.getClassLoader();
 	@KSOAP(cacheable=true) public String getTraceFile();
 	@Asyncronous public void setTraceFile(@KSOAP("traceFile") String traceFile);
 	
-//     <!-- readonly attribute INetworkAdapter::NATEngine-->
-//     <xsd:element name="INetworkAdapter_getNATEngine">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="_this" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_getNATEngineResponse">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="returnval" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-	
 	@KSOAP(cacheable=true) public Integer getBootPriority();
 	@Asyncronous public void setBootPriority(@KSOAP("bootPriority") int bootPriority);
 	
-//     <!-- read/write attribute INetworkAdapter::bandwidthGroup-->
-//     <xsd:element name="INetworkAdapter_getBandwidthGroup">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="_this" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_getBandwidthGroupResponse">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="returnval" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_setBandwidthGroup">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="_this" type="xsd:string"/>
-//           <xsd:element name="bandwidthGroup" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_setBandwidthGroupResponse">
-//       <xsd:complexType>
-//         <xsd:sequence/>
-//       </xsd:complexType>
-//     </xsd:element>
+//	@KSOAP(cacheable=true) public IBandwidthGroup getBandwidthGroup();
+//	@Asyncronous public void setBandwidthGroup(@KSOAP("bandwidthGroup") IBandwidthGroup bandwidthGroup);
+//	KSOAP(cacheable=true) public INATEngine getNATEngine();
 	
-//     <!-- method INetworkAdapter::getProperty-->
-//     <xsd:element name="INetworkAdapter_getProperty">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="_this" type="xsd:string"/>
-//           <xsd:element name="key" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_getPropertyResponse">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="returnval" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-	
-//     <!-- method INetworkAdapter::setProperty-->
-//     <xsd:element name="INetworkAdapter_setProperty">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="_this" type="xsd:string"/>
-//           <xsd:element name="key" type="xsd:string"/>
-//           <xsd:element name="value" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_setPropertyResponse">
-//       <xsd:complexType>
-//         <xsd:sequence/>
-//       </xsd:complexType>
-//     </xsd:element>
-	
-//     <!-- method INetworkAdapter::getProperties-->
-//     <xsd:element name="INetworkAdapter_getProperties">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="_this" type="xsd:string"/>
-//           <xsd:element name="names" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-//     <xsd:element name="INetworkAdapter_getPropertiesResponse">
-//       <xsd:complexType>
-//         <xsd:sequence>
-//           <xsd:element name="returnNames" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-//           <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-//         </xsd:sequence>
-//       </xsd:complexType>
-//     </xsd:element>
-	
+	@KSOAP(cacheable=true) String getProperty(@KSOAP("key") String key);
+	@Asyncronous public void setProperty(@KSOAP("key") String key, @KSOAP("value") String value);
 	@KSOAP(cacheable=true) public Map<String, List<String>> getProperties(@KSOAP("names") String names);
 }

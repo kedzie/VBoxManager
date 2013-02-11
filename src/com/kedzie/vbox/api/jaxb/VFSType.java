@@ -1,8 +1,10 @@
 package com.kedzie.vbox.api.jaxb;
 
+import java.io.Serializable;
 
 
-public enum VFSType {
+
+public enum VFSType implements Serializable{
     FILE("File"),
     CLOUD("Cloud"),
     S_3("S3"),

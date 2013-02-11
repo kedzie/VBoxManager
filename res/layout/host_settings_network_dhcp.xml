@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/dhcpTab"
+    android:padding="8dp" >
+
+    <CheckBox
+        android:id="@+id/dhcp_enabled"
+        style="@style/SmallTextPrimary"
+        android:text="Enabled" />
+
+    <TextView
+        android:id="@+id/dhcp_address_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_alignRight="@+id/dhcp_lowerbound_label"
+        android:layout_below="@id/dhcp_enabled"
+        android:text="@string/dhcp_ip" />
+
+    <EditText
+        android:id="@+id/dhcp_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/dhcp_address_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/dhcp_address_label" />
+
+    <TextView
+        android:id="@+id/dhcp_mask_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_alignRight="@+id/dhcp_lowerbound_label"
+        android:layout_below="@id/dhcp_address_label"
+        android:text="@string/dhcp_mask" />
+    
+    <EditText
+        android:id="@+id/dhcp_mask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dhcp_mask_label"
+        android:layout_alignBaseline="@id/dhcp_mask_label"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/dhcp_lowerbound_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/dhcp_mask_label"
+        android:text="@string/dhcp_lower_bound" />
+    
+    <EditText
+        android:id="@+id/dhcp_lowerbound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dhcp_lowerbound_label"
+        android:layout_alignBaseline="@id/dhcp_lowerbound_label"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/dhcp_upperbound_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_alignRight="@id/dhcp_lowerbound_label"
+        android:layout_below="@id/dhcp_lowerbound_label"
+        android:text="@string/dhcp_upper_bound" />
+    
+    <EditText
+        android:id="@+id/dhcp_upperbound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dhcp_upperbound_label"
+        android:layout_alignBaseline="@id/dhcp_upperbound_label"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

@@ -57,10 +57,11 @@ public class UpdateWidgetService extends IntentService {
 	private IMachine loginAndFindMachine(VBoxSvc vboxApi, String machineName) {
 	    try {
             vboxApi.logon();
-            for(IMachine m : vboxApi.getVBox().getMachines()) {
-                if(m.getName().equals(machineName))
-                    return m;
-            }
+            return vboxApi.getVBox().findMachine(machineName);
+//            for(IMachine m : vboxApi.getVBox().getMachines()) {
+//                if(m.getName().equals(machineName))
+//                    return m;
+//            }
         } catch (IOException e) {
             Log.e(TAG, "Error logging on", e);
         }

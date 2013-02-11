@@ -2,15 +2,15 @@ package com.kedzie.vbox.machine.settings;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 
-public class DisplayFragment extends Fragment {
+public class DisplayFragment extends SherlockFragment {
     private FragmentTabHost mTabHost;
 
     @Override

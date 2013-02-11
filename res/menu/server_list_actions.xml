@@ -3,6 +3,6 @@
 
     <item android:id="@+id/server_list_option_menu_add" 
         android:icon="@drawable/ic_menu_add" 
-        android:title="@string/menu_options_server_add"
+        android:title="@string/add"
         android:showAsAction="ifRoom"/>
 </menu>

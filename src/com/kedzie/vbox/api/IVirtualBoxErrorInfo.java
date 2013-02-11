@@ -8,4 +8,7 @@ import com.kedzie.vbox.soap.KSOAP;
 public interface IVirtualBoxErrorInfo extends IManagedObjectRef {
 	public Integer getResultCode() throws IOException;
 	public String getText() throws IOException;
+	public IVirtualBoxErrorInfo getNext() throws IOException;
+	public String getComponent() throws IOException;
+	public String getInterfaceID() throws IOException;
 }

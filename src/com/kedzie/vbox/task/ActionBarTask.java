@@ -11,7 +11,9 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @author Marek Kędzierski
  */
 public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Output> {
-
+	
+	/** # of active tasks, use to enable/disable indeterminate progress  */
+	private static int _numActiveTasks;
 	protected SherlockFragmentActivity _sherlockActivity;
 	
 	/**
@@ -26,12 +28,14 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 	
 	@Override
 	protected void onPreExecute()		{
+		_numActiveTasks++;
 		_sherlockActivity.setSupportProgressBarIndeterminateVisibility(true);
 	}
 	
 	@Override
 	protected final void onPostExecute(Output result)	{
-		_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
+		if(--_numActiveTasks==0)
+			_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
 		_sherlockActivity.setSupportProgressBarVisibility(false);
 		super.onPostExecute(result);
 	}

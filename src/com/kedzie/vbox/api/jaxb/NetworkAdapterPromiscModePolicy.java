@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum NetworkAdapterPromiscModePolicy {
+import java.io.Serializable;
+
+public enum NetworkAdapterPromiscModePolicy implements Serializable{
     DENY("Deny"),
     ALLOW_NETWORK("AllowNetwork"),
     ALLOW_ALL("AllowAll");

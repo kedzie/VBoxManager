@@ -25,7 +25,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemProcessorsFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IHost> {
-		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getVBoxAPI(), "Loading Data"); }
+		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {
@@ -64,6 +64,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
         outState.putParcelable(IMachine.BUNDLE, _machine);
         outState.putParcelable("host", _host);
         outState.putParcelable("errors", _errorHandler);
@@ -75,12 +76,6 @@ public class SystemProcessorsFragment extends SherlockFragment {
 		_processorsBar = (SliderView)_view.findViewById(R.id.processors);
 		_executionCapBar = (SliderView)_view.findViewById(R.id.execution_cap);
 		_paeCheckBox = (CheckBox) _view.findViewById(R.id.pae_nx);
-		_paeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_machine.setCPUProperty(CPUPropertyType.PAE, isChecked);
-			}
-		});
 		_errorText = (TextView)_view.findViewById(R.id.error_message);
 		_errorHandler.setTextView(_errorText);
 		_errorHandler.showErrors();
@@ -98,6 +93,12 @@ public class SystemProcessorsFragment extends SherlockFragment {
 
 	private void populateViews(IMachine m, IHost host) {
 		_paeCheckBox.setChecked(m.getCPUProperty(CPUPropertyType.PAE));
+		_paeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.setCPUProperty(CPUPropertyType.PAE, isChecked);
+			}
+		});
 	    _processorsBar.setMinValue(1);
 	    _processorsBar.setMinValidValue(1);
 	    _processorsBar.setMaxValidValue(host.getProcessorOnlineCount());

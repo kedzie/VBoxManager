@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/storage_attributes"
+        style="@style/MediumText"
+        android:text="@string/storage_attributes" />
+
+    <TextView
+        android:id="@+id/storage_hard_disk"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/storage_attributes"
+        android:text="@string/storage_hard_disk" />
+    
+    <Spinner 
+        android:id="@+id/storage_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/storage_hard_disk"
+    	android:layout_toLeftOf="@+id/storage_mount"
+        android:layout_alignTop="@id/storage_hard_disk"/>
+    
+    <ImageButton android:id="@+id/storage_mount"
+        android:src="@drawable/ic_button_hdd_c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    	android:layout_alignParentRight="true"
+        android:layout_below="@id/storage_attributes"/>
+
+    <CheckBox android:id="@+id/storage_solid_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Solid-state Drive"
+        android:layout_below="@id/storage_port"
+        android:layout_alignLeft="@id/storage_port"/>
+    
+    <TextView
+        android:id="@+id/storage_information"
+        style="@style/MediumText"
+        android:text="@string/storage_information"
+        android:layout_below="@id/storage_solid_state"
+        android:layout_marginTop="12dp" />
+    
+    <TextView
+        android:id="@+id/storage_type_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/storage_information"
+        android:text="Type (Format):" />
+    
+    <TextView
+        android:id="@+id/storage_type"
+        style="@style/SmallTextPrimary"
+        android:layout_alignBaseline="@id/storage_type_label"
+        android:layout_toRightOf="@id/storage_type_label"/>
+
+    <TextView
+        android:id="@+id/storage_virtual_size_label"
+        style="@style/SmallTextPrimary"
+    	android:layout_marginTop="8dp"
+        android:layout_below="@id/storage_type_label"
+        android:layout_alignRight="@id/storage_type_label"
+        android:text="Virtual Size:" />
+    
+    <TextView
+        android:id="@+id/storage_virtual_size"
+        style="@style/SmallTextPrimary"
+        android:layout_alignBaseline="@id/storage_virtual_size_label"
+        android:layout_toRightOf="@id/storage_virtual_size_label"/>
+
+    <TextView
+        android:id="@+id/storage_actual_size_label"
+        style="@style/SmallTextPrimary"
+    	android:layout_marginTop="8dp"
+        android:layout_below="@id/storage_virtual_size_label"
+        android:layout_alignRight="@id/storage_virtual_size_label"
+        android:text="Actual Size:" />
+    
+    <TextView
+        android:id="@+id/storage_actual_size"
+        style="@style/SmallTextPrimary"
+        android:layout_alignBaseline="@id/storage_actual_size_label"
+        android:layout_toRightOf="@id/storage_actual_size_label"/>
+</RelativeLayout>

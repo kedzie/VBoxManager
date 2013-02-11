@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum VirtualSystemDescriptionValueType {
+import java.io.Serializable;
+
+public enum VirtualSystemDescriptionValueType implements Serializable{
     REFERENCE("Reference"),
     ORIGINAL("Original"),
     AUTO("Auto"),

@@ -18,6 +18,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+
       <!-- readonly attribute IMachine::accessible-->
       <xsd:element name="IMachine_getAccessible">
         <xsd:complexType>
@@ -33,6 +34,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+
       <!-- readonly attribute IMachine::accessError-->
       <xsd:element name="IMachine_getAccessError">
         <xsd:complexType>
@@ -77,6 +79,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+
       <!-- read/write attribute IMachine::hardwareUUID-->
       <xsd:element name="IMachine_getHardwareUUID">
         <xsd:complexType>
@@ -192,6 +195,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- read/write attribute IMachine::VideoCaptureFile-->
       <xsd:element name="IMachine_getVideoCaptureFile">
         <xsd:complexType>
@@ -220,6 +224,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- read/write attribute IMachine::VideoCaptureWidth-->
       <xsd:element name="IMachine_getVideoCaptureWidth">
         <xsd:complexType>
@@ -248,6 +253,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- read/write attribute IMachine::VideoCaptureHeight-->
       <xsd:element name="IMachine_getVideoCaptureHeight">
         <xsd:complexType>
@@ -336,35 +342,6 @@
         </xsd:complexType>
       </xsd:element>
       
-      <!-- read/write attribute IMachine::HPETEnabled-->
-      <xsd:element name="IMachine_getHPETEnabled">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getHPETEnabledResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setHPETEnabled">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="HPETEnabled" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setHPETEnabledResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-    
       <!-- read/write attribute IMachine::snapshotFolder-->
       <xsd:element name="IMachine_getSnapshotFolder">
         <xsd:complexType>
@@ -391,22 +368,6 @@
       <xsd:element name="IMachine_setSnapshotFolderResponse">
         <xsd:complexType>
           <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      
-      <!-- readonly attribute IMachine::VRDEServer-->
-      <xsd:element name="IMachine_getVRDEServer">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVRDEServerResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
       
@@ -500,22 +461,6 @@
         </xsd:complexType>
       </xsd:element>
       
-      <!-- readonly attribute IMachine::settingsModified-->
-      <xsd:element name="IMachine_getSettingsModified">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getSettingsModifiedResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-     
       <!-- readonly attribute IMachine::sessionPID-->
       <xsd:element name="IMachine_getSessionPID">
         <xsd:complexType>
@@ -547,6 +492,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- readonly attribute IMachine::stateFilePath-->
       <xsd:element name="IMachine_getStateFilePath">
         <xsd:complexType>
@@ -562,6 +508,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- readonly attribute IMachine::logFolder-->
       <xsd:element name="IMachine_getLogFolder">
         <xsd:complexType>
@@ -578,22 +525,6 @@
         </xsd:complexType>
       </xsd:element>
     
-      <!-- readonly attribute IMachine::snapshotCount-->
-      <xsd:element name="IMachine_getSnapshotCount">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getSnapshotCountResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      
       <!-- readonly attribute IMachine::sharedFolders-->
       <xsd:element name="IMachine_getSharedFolders">
         <xsd:complexType>
@@ -958,64 +889,6 @@
         </xsd:complexType>
       </xsd:element>
      
-      <!-- read/write attribute IMachine::IOCacheEnabled-->
-      <xsd:element name="IMachine_getIOCacheEnabled">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getIOCacheEnabledResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setIOCacheEnabled">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="IOCacheEnabled" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setIOCacheEnabledResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      
-      <!-- read/write attribute IMachine::IOCacheSize-->
-      <xsd:element name="IMachine_getIOCacheSize">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getIOCacheSizeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setIOCacheSize">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="IOCacheSize" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setIOCacheSizeResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      
       <!-- readonly attribute IMachine::PCIDeviceAssignments-->
       <xsd:element name="IMachine_getPCIDeviceAssignments">
         <xsd:complexType>
@@ -1376,6 +1249,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::getParallelPort-->
       <xsd:element name="IMachine_getParallelPort">
         <xsd:complexType>
@@ -1392,53 +1266,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- method IMachine::getExtraDataKeys-->
-      <xsd:element name="IMachine_getExtraDataKeys">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getExtraDataKeysResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IMachine::getExtraData-->
-      <xsd:element name="IMachine_getExtraData">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="key" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getExtraDataResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IMachine::setExtraData-->
-      <xsd:element name="IMachine_setExtraData">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="key" type="xsd:string"/>
-            <xsd:element name="value" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setExtraDataResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-    
+      
       <!-- method IMachine::getCPUIDLeaf-->
       <xsd:element name="IMachine_getCPUIDLeaf">
         <xsd:complexType>
@@ -1458,6 +1286,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::setCPUIDLeaf-->
       <xsd:element name="IMachine_setCPUIDLeaf">
         <xsd:complexType>
@@ -1476,6 +1305,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::removeCPUIDLeaf-->
       <xsd:element name="IMachine_removeCPUIDLeaf">
         <xsd:complexType>
@@ -1490,6 +1320,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::removeAllCPUIDLeaves-->
       <xsd:element name="IMachine_removeAllCPUIDLeaves">
         <xsd:complexType>
@@ -1520,6 +1351,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::delete-->
       <xsd:element name="IMachine_delete">
         <xsd:complexType>
@@ -1536,6 +1368,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::export-->
       <xsd:element name="IMachine_export">
         <xsd:complexType>
@@ -1553,6 +1386,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::findSnapshot-->
       <xsd:element name="IMachine_findSnapshot">
         <xsd:complexType>
@@ -1569,6 +1403,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::createSharedFolder-->
       <xsd:element name="IMachine_createSharedFolder">
         <xsd:complexType>
@@ -1586,6 +1421,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::removeSharedFolder-->
       <xsd:element name="IMachine_removeSharedFolder">
         <xsd:complexType>
@@ -1600,6 +1436,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::canShowConsoleWindow-->
       <xsd:element name="IMachine_canShowConsoleWindow">
         <xsd:complexType>
@@ -1615,6 +1452,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::showConsoleWindow-->
       <xsd:element name="IMachine_showConsoleWindow">
         <xsd:complexType>
@@ -1630,6 +1468,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::getGuestProperty-->
       <xsd:element name="IMachine_getGuestProperty">
         <xsd:complexType>
@@ -1648,6 +1487,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::getGuestPropertyValue-->
       <xsd:element name="IMachine_getGuestPropertyValue">
         <xsd:complexType>
@@ -1664,6 +1504,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::getGuestPropertyTimestamp-->
       <xsd:element name="IMachine_getGuestPropertyTimestamp">
         <xsd:complexType>
@@ -1680,6 +1521,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::setGuestProperty-->
       <xsd:element name="IMachine_setGuestProperty">
         <xsd:complexType>
@@ -1696,6 +1538,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::setGuestPropertyValue-->
       <xsd:element name="IMachine_setGuestPropertyValue">
         <xsd:complexType>
@@ -1711,6 +1554,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::deleteGuestProperty-->
       <xsd:element name="IMachine_deleteGuestProperty">
         <xsd:complexType>
@@ -1725,6 +1569,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::enumerateGuestProperties-->
       <xsd:element name="IMachine_enumerateGuestProperties">
         <xsd:complexType>
@@ -1744,6 +1589,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::querySavedGuestScreenInfo-->
       <xsd:element name="IMachine_querySavedGuestScreenInfo">
         <xsd:complexType>
@@ -1764,24 +1610,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- method IMachine::querySavedThumbnailSize-->
-      <xsd:element name="IMachine_querySavedThumbnailSize">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="screenId" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_querySavedThumbnailSizeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="size" type="xsd:unsignedInt"/>
-            <xsd:element name="width" type="xsd:unsignedInt"/>
-            <xsd:element name="height" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
+      
       <!-- method IMachine::readSavedThumbnailToArray-->
       <xsd:element name="IMachine_readSavedThumbnailToArray">
         <xsd:complexType>
@@ -1802,25 +1631,6 @@
         </xsd:complexType>
       </xsd:element>
     
-      <!-- method IMachine::querySavedScreenshotPNGSize-->
-      <xsd:element name="IMachine_querySavedScreenshotPNGSize">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="screenId" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_querySavedScreenshotPNGSizeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="size" type="xsd:unsignedInt"/>
-            <xsd:element name="width" type="xsd:unsignedInt"/>
-            <xsd:element name="height" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-    
       <!-- method IMachine::hotPlugCPU-->
       <xsd:element name="IMachine_hotPlugCPU">
         <xsd:complexType>
@@ -1835,6 +1645,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::hotUnplugCPU-->
       <xsd:element name="IMachine_hotUnplugCPU">
         <xsd:complexType>
@@ -1849,6 +1660,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::getCPUStatus-->
       <xsd:element name="IMachine_getCPUStatus">
         <xsd:complexType>
@@ -1865,6 +1677,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IMachine::queryLogFilename-->
       <xsd:element name="IMachine_queryLogFilename">
         <xsd:complexType>

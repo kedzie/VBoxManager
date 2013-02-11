@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+    
+    <CheckBox
+        android:id="@+id/enabled"
+        style="@style/SmallTextPrimary"
+        android:text="Enable Server" />
+
+    <TextView
+        android:id="@+id/server_port_label"
+        style="@style/SmallTextPrimary"
+        android:layout_alignRight="@+id/auth_timeout_label"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/enabled"
+        android:text="Server Port:" />
+
+    <EditText
+        android:id="@+id/server_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBaseline="@id/server_port_label"
+        android:layout_toRightOf="@id/server_port_label" />
+
+    <TextView
+        android:id="@+id/auth_method_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/server_port_label"
+        android:layout_alignRight="@id/auth_timeout_label"
+        android:text="Authentication Method:" />
+    
+    <Spinner
+        android:id="@+id/auth_method"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/auth_method_label"
+        android:layout_alignTop="@id/auth_method_label"
+        android:layout_alignParentRight="true"/>
+    
+    <TextView
+        android:id="@+id/auth_timeout_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/auth_method"
+        android:text="Authentication Timeout" />
+    
+    <EditText
+        android:id="@+id/auth_timeout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/auth_timeout_label"
+        android:layout_alignBaseline="@id/auth_timeout_label"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/extended_features"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/auth_timeout_label"
+        android:text="@string/extended_features" />
+    
+    <CheckBox
+        android:id="@+id/multiple_connections"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/extended_features"
+        android:layout_centerHorizontal="true"
+        android:text="Allow Multiple Connections" />
+
+</RelativeLayout>

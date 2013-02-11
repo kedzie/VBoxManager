@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ImportOptions {
+import java.io.Serializable;
+
+public enum ImportOptions implements Serializable{
     KEEP_ALL_MA_CS("KeepAllMACs"),
     KEEP_NATMA_CS("KeepNATMACs");
     private final String value;

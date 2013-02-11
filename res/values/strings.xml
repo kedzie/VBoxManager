@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:ff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">VirtualBox® Manager</string>
     <string name="server_name">Display Name</string>
@@ -9,22 +9,9 @@
     <string name="server_password">Password</string>
     <string name="metric_cpu">CPU Load</string>
     <string name="metric_ram">Memory Usage</string>
-    <string name="menu_options_refresh">Refresh</string>
-    <string name="menu_options_host_metrics">Host Metrics</string>
-    <string name="menu_options_preferences">Preferences</string>
-    <string name="menu_context_machine_start">Start</string>
-    <string name="menu_context_machine_reset">Reset</string>
-    <string name="menu_context_machine_poweroff">Power Off</string>
-    <string name="menu_context_machine_pause">Pause</string>
-    <string name="menu_context_machine_resume">Resume</string>
-    <string name="menu_context_machine_acpi">Power Button</string>
-    <string name="menu_options_server_add">Add</string>
-    <string name="menu_options_server_save">Save</string>
-    <string name="menu_options_server_delete">Delete</string>
     <string name="menu_context_snapshot_restore">Restore Snapshot</string>
     <string name="menu_context_snapshot_delete">Delete Snapshot</string>
     <string name="menu_context_snapshot_details">View Details</string>
-    <string name="menu_options_snapshot_add">Add</string>
     <string name="pref_metric_period_title">Interval</string>
     <string name="pref_metric_period_summary">Metric Sampling Rate (seconds)</string>
     <string name="pref_widget_interval_title">Widget Update Interval</string>
@@ -39,9 +26,9 @@
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_category_metrics">Metrics</string>
     <string name="firstrun_welcome">Welcome</string>
-    <string name="firstrun_message" >Make sure you VirtualBox® web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
-    <string name="event_handler_notification_title" >VirtualBox® is connected</string>
-    <string name="event_handler_notification_content" >You are connected to VirtualBox® server at <ff:g id="server">%1$s</ff:g>.  Events are being processed in real-time.</string>
+    <string name="firstrun_message">Make sure you VirtualBox® web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
+    <string name="event_handler_notification_title">VirtualBox® is connected</string>
+    <string name="event_handler_notification_content">You are connected to VirtualBox® server at <ff:g id="server">%1$s</ff:g>.  Events are being processed in real-time.</string>
     <string name="add_server_question_title">Add new VirtualBox® server?</string>
     <string name="add_server_question">You have no servers defined.  Would you like to add one?</string>
     <string name="snapshot_name">Name</string>
@@ -76,11 +63,54 @@
     <string name="settings_2d_acceleration">2D Acceleration</string>
     <string name="vm_start">Start</string>
     <string name="add_server_title">No Servers</string>
-    <string name="add_server_cannot">Currently servers cannot be created within widget configuration.  Use regular application to create a Server.</string>
     <string name="edit_server_actionmode_title">Edit Server</string>
     <string name="server_connect">Connect</string>
-    <string name="server_edit">Edit</string>
     <string name="cancelling_operation_toast">Cancelling Operation...</string>
     <string name="progress_message">Operation <ff:g id="operation">%1$d</ff:g>/<ff:g id="operationCount">%2$d</ff:g> [<ff:g id="operationDescription">%3$s</ff:g>] <ff:g id="operationPercent">%4$d</ff:g>%% remaining<ff:g id="timeRemaining">%5$d</ff:g> secs</string>
     <string name="logging_off_progress">Logging Off</string>
+    <string name="progress_taking_snapshot">Taking Snapshot</string>
+    <string name="progress_saving_state">Saving State</string>
+    <string name="progress_discarding_state">Discarding State</string>
+    <string name="progress_starting">Starting</string>
+    <string name="progress_powering_off">Powering Off</string>
+    <string name="progress_acpi_down">ACPI Powering Down</string>
+    <string name="progress_resuming">Resuming</string>
+    <string name="progress_pausing">Pausing</string>
+    <string name="progress_restarting">Restarting</string>
+    <string name="pro_key_required_dialog_title">Not Authorized</string>
+    <string name="pro_key_required_dialog_message">This feature requires the Premium Version of the application.  Would you like to upgrade?</string>
+    <string name="pro_key_required_dialog_ok_button">Upgrade</string>
+    <string name="pro_key_required_dialog_cancel_button">Not Now</string>
+    <string name="dhcp_mask">Server Mask</string>
+    <string name="dhcp_lower_bound">Lower Address Bound</string>
+    <string name="dhcp_upper_bound">Upper Address Bound</string>
+    <string name="dhcp_ip">Server Address</string>
+    <string name="host_interface_ipv4_ip">IPv4 Address</string>
+    <string name="host_interface_ipv4_mask">IPv4 Mask</string>
+    <string name="host_interface_ipv6_ip">IPv6 Address</string>
+    <string name="host_interface_ipv6_mask">IPv6 Mask</string>
+    <string name="settings_general">General</string>
+    <string name="settings_system">System</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_network">Network</string>
+    <string name="settings_audio">Audio</string>
+    <string name="settings_storage">Storage</string>
+    <string name="settings_usb">USB</string>
+    <string name="settings_shared_folders">Shared Folders</string>
+    <string name="host_interface_adapter">Adapter:</string>
+    <string name="host_interface_dhcp_enabled">DHCP Enabled:</string>
+    <string name="storage_attributes">Attributes</string>
+    <string name="storage_information">Information</string>
+    <string name="storage_use_host_io_cache">Use Host IO Cache</string>
+    <string name="storage_hard_disk">Hard Disk:</string>
+    <string name="storage_cd_dvd_drive">CD/DVD Drive:</string>
+    <string name="enabled">Enabled</string>
+    <string name="extended_features">Extended Features:</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="toast_discarding_settings">Discarded Settings</string>
+    <string name="toast_saved_settings">Saved Settings</string>
+    <string name="progress_creating_network_interface">Creating Network Interface</string>
 </resources>

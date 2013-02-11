@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum BandwidthGroupType {
+public enum BandwidthGroupType implements java.io.Serializable{
     NULL("Null"),
     DISK("Disk"),
     NETWORK("Network");

@@ -30,4 +30,18 @@ public enum StorageControllerType implements Serializable {
         }
         throw new IllegalArgumentException(v);
     }
+    
+    public static StorageControllerType[] getValidTypes(StorageBus bus) {
+    	if(bus.equals(StorageBus.SCSI)) 
+    		return new StorageControllerType[] { StorageControllerType.LSI_LOGIC, StorageControllerType.BUS_LOGIC };
+    	else if(bus.equals(StorageBus.IDE)) 
+    		return new StorageControllerType[] { StorageControllerType.PIIX_3, StorageControllerType.PIIX_4, StorageControllerType.ICH_6 };
+    	else if(bus.equals(StorageBus.SAS)) 
+    		return new StorageControllerType[] { StorageControllerType.LSI_LOGIC_SAS };
+    	else if(bus.equals(StorageBus.SATA)) 
+    		return new StorageControllerType[] { StorageControllerType.INTEL_AHCI};
+    	else if(bus.equals(StorageBus.FLOPPY)) 
+    		return new StorageControllerType[] { StorageControllerType.I_82078 };
+    	return new StorageControllerType[0];
+    }
 }

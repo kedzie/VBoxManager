@@ -11,4 +11,7 @@ public interface IEventSource extends IManagedObjectRef {
 	public void unregisterListener(@KSOAP("listener") IEventListener l) throws IOException;
 	public void eventProcessed(@KSOAP("listener")IEventListener l, @KSOAP("event")IEvent event) throws IOException;
 	public IEvent getEvent(@KSOAP("listener")IEventListener l, @KSOAP(type="int", value="timeout") int timeout) throws IOException;
+	public IEventSource createAggregator(@KSOAP("subordinates") IEventSource...subordinates) throws IOException;
+	public void handleEvent(@KSOAP("event")IEvent event) throws IOException;
+	public boolean fireEvent(@KSOAP("event")IEvent event, @KSOAP(type="unsignedInt", value="timeout") int timeout) throws IOException;
 }

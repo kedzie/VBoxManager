@@ -39,7 +39,7 @@
         android:id="@+id/extended_features"
         style="@style/SmallTextPrimary"
         android:layout_below="@id/numMonitors"
-        android:text="Extended Features:" />
+        android:text="@string/extended_features" />
 
     <CheckBox
         android:id="@+id/acceleration3D"

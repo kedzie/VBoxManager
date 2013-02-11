@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AccessMode {
+import java.io.Serializable;
+
+public enum AccessMode implements Serializable {
     READ_ONLY("ReadOnly"),
     READ_WRITE("ReadWrite");
     private final String value;

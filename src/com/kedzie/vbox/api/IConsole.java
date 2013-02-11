@@ -2,6 +2,7 @@ package com.kedzie.vbox.api;
 
 import java.io.IOException;
 
+import com.kedzie.vbox.api.jaxb.IVRDEServerInfo;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.soap.KSOAP;
 
@@ -20,6 +21,8 @@ public interface IConsole extends IManagedObjectRef {
 	@KSOAP(cacheable=true) public IGuest getGuest() throws IOException;
 	
 	public MachineState getState() throws IOException;
+	
+	@KSOAP(cacheable=true) public IVRDEServerInfo getVRDEServerInfo();
 
 	/**
 	 * <p>Starts the virtual machine execution using the current machine state (that is, its current execution state, current settings and current storage devices).</p>

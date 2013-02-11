@@ -10,18 +10,23 @@ import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
- * Machine operation without VirtualBox progress handling
+ * Operation on {@link IMachine} with progress handling
+ * 
  * @author Marek Kedzierski
- * @Aug 8, 2011
  */
 public abstract class MachineTask<Input, Output> extends DialogTask<Input, Output> {
 
-		protected boolean indeterminate;
 		protected IMachine _machine;
 		
-		public MachineTask(String TAG, Context ctx, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
-			super(TAG, ctx, vmgr, msg);
-			this.indeterminate=indeterminate;
+		public MachineTask(Context context, VBoxSvc vmgr, int msg, boolean indeterminate, IMachine m) {
+			super(context.getResources().getString(msg), context, vmgr, msg);
+			_indeterminate=indeterminate;
+			_machine=m;
+		}
+		
+		public MachineTask(Context context, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
+			super(msg, context, vmgr, msg);
+			_indeterminate=indeterminate;
 			_machine=m;
 		}
 		
@@ -31,7 +36,7 @@ public abstract class MachineTask<Input, Output> extends DialogTask<Input, Outpu
 			if( session.getState().equals(SessionState.UNLOCKED)) 
 				_machine.lockMachine(session, LockType.SHARED);
 			try {
-				if(indeterminate)
+				if(_indeterminate)
 					return work(_machine, session.getConsole(), inputs);
 				else
 					handleProgress( workWithProgress(_machine, session.getConsole(), inputs) );

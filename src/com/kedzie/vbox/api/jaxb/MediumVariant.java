@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum MediumVariant {
+import java.io.Serializable;
+
+public enum MediumVariant implements Serializable{
     STANDARD("Standard"),
     VMDK_SPLIT_2_G("VmdkSplit2G"),
     VMDK_RAW_DISK("VmdkRawDisk"),

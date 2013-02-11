@@ -41,7 +41,7 @@ public interface IManagedObjectRef  {
 	/**
 	 * @return VirtualBox JAXWS API
 	 */
-	public VBoxSvc getVBoxAPI();
+	public VBoxSvc getAPI();
 	
 	/**
 	 * Returns the name of the interface that this managed object represents, for example, "IMachine", as a string. 

@@ -1,8 +1,5 @@
 package com.kedzie.vbox.machine.group;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,30 +11,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.view.ActionMode;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VMAction;
-import com.kedzie.vbox.api.IConsole;
+import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventNotificationReceiver;
+import com.kedzie.vbox.host.HostSettingsActivity;
 import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.PreferencesActivity;
-import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeLongClickListener;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
-import com.kedzie.vbox.task.LaunchVMProcessTask;
-import com.kedzie.vbox.task.MachineTask;
 
 /**
- * 
- * @author Marek Kędzierski
+ * Show Virtual Machines/Groups in a hierarchical layout
  * @apiviz.stereotype fragment
  */
 public class MachineGroupListFragment extends MachineGroupListBaseFragment {
@@ -75,110 +67,9 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 		}
 	}
 	
-	/**
-	 * Action Mode
-	 * @author Marek Kędzierski
-	 */
-	class ActionCallback implements ActionMode.Callback {
-        private IMachine _machine;
-        
-        public ActionCallback(IMachine machine) {
-            _machine = machine;
-        }
-        
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.machine_list_context, menu);
-            return true;
-        }
-        
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, com.actionbarsherlock.view.Menu menu) {
-            List<VMAction> actions = Arrays.asList(VMAction.getVMActions(_machine.getState()));
-            if(!actions.contains(VMAction.START))
-                menu.removeItem(R.id.machines_context_menu_start);
-            if(!actions.contains(VMAction.POWER_OFF))
-                menu.removeItem(R.id.machines_context_menu_poweroff);
-            if(!actions.contains(VMAction.POWER_BUTTON))    
-                menu.removeItem(R.id.machines_context_menu_acpi);
-            if(!actions.contains(VMAction.RESET))
-                menu.removeItem(R.id.machines_context_menu_reset);
-            if(!actions.contains(VMAction.PAUSE))
-                menu.removeItem(R.id.machines_context_menu_pause);
-            if(!actions.contains(VMAction.RESUME))
-                menu.removeItem(R.id.machines_context_menu_resume);
-            return true;
-        }
-        
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, com.actionbarsherlock.view.MenuItem item) {
-            switch (item.getItemId()) {
-              case R.id.machines_context_menu_start:  
-                  new LaunchVMProcessTask(getActivity(), _vmgr).execute(_machine);    
-                  mode.finish();
-                  return true;
-              case R.id.machines_context_menu_poweroff:   
-                  new MachineTask<IMachine, Void>("PoweroffTask", getActivity(), _vmgr, "Powering Off", false, _machine) {  
-                      protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception {  
-                          return console.powerDown();
-                      }
-                  }.execute(_machine);
-                  mode.finish();
-                  return true;
-              case R.id.machines_context_menu_reset:     
-                  new MachineTask<IMachine, Void>("ResetTask", getActivity(), _vmgr, "Resetting", true, _machine) { 
-                      protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception {   
-                          console.reset(); 
-                          return null;
-                      }
-                      }.execute(_machine);
-                      mode.finish();
-                      return true;
-              case R.id.machines_context_menu_resume:     
-                  new MachineTask<IMachine, Void>("ResumeTask", getActivity(), _vmgr, "Resuming", true, _machine) { 
-                      protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception {   
-                          console.resume(); 
-                          return null;
-                      }
-                  }.execute(_machine);
-                  mode.finish();
-                  return true;
-              case R.id.machines_context_menu_pause:      
-                  new MachineTask<IMachine, Void>("PauseTask", getActivity(), _vmgr, "Pausing", true, _machine) {   
-                      protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
-                          console.pause();  
-                          return null;
-                      }
-                  }.execute(_machine);
-                  mode.finish();
-                  return true;
-              case R.id.machines_context_menu_acpi:   
-                  new MachineTask<IMachine, Void>("ACPITask", getActivity(), _vmgr, "ACPI Power Down", true, _machine) {
-                      protected Void work(IMachine m,  IConsole console,IMachine...i) throws Exception {    
-                          console.powerButton();    
-                          return null;
-                      }
-                  }.execute(_machine);
-                  mode.finish();
-                  return true;
-              }
-              return false;
-        }
-        
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {}
-    }
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		_listView.setOnTreeNodeLongClickListener(new OnTreeNodeLongClickListener() {
-            @Override
-            public void onTreeNodeLongClick(TreeNode node) {
-                if(node instanceof IMachine)
-                    getSherlockActivity().startActionMode(new ActionCallback((IMachine)node));
-            }
-        });
 		return _listView;
 	}
 	
@@ -219,7 +110,7 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 		switch(item.getItemId()) {
 		case R.id.option_menu_refresh:
 			new LoadGroupsTask(_vmgr).execute();
-			return true;
+			return false;
 		case R.id.machine_list_option_menu_metrics:
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 					.putExtra(MetricActivity.INTENT_TITLE, getResources().getString(R.string.host_metrics))
@@ -230,6 +121,12 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 			return true;
 		case R.id.option_menu_preferences:
 			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class),REQUEST_CODE_PREFERENCES);
+			return true;
+		case R.id.machine_list_option_menu_host_settings:
+			if(VBoxApplication.getInstance().isPremiumVersion())
+				startActivity(new Intent(getActivity(), HostSettingsActivity.class).putExtra(IHost.BUNDLE, _vmgr.getVBox().getHost()));
+			else
+				VBoxApplication.getInstance().showPremiumOffer(getActivity());
 			return true;
 		}
 		return false;

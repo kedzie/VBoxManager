@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum PathRenameFlag {
+import java.io.Serializable;
+
+public enum PathRenameFlag implements Serializable{
     NONE("None"),
     NO_REPLACE("NoReplace"),
     REPLACE("Replace"),

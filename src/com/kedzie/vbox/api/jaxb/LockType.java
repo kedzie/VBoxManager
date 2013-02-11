@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum LockType {
+import java.io.Serializable;
+
+public enum LockType implements Serializable{
     WRITE("Write"),
     SHARED("Shared"),
     VM("VM");

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum FaultToleranceState {
+public enum FaultToleranceState implements java.io.Serializable{
     INACTIVE("Inactive"),
     MASTER("Master"),
     STANDBY("Standby");

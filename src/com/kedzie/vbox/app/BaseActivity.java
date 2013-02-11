@@ -19,13 +19,14 @@ public class BaseActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_PROGRESS);
+		setProgressBarIndeterminateVisibility(false);
+		setProgressBarVisibility(false);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		setProgressBarIndeterminateVisibility(false);
-		setProgressBarVisibility(false);
 	}
 	
 	public VBoxApplication getApp() {

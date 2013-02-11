@@ -3,7 +3,7 @@ package com.kedzie.vbox.api;
 import com.kedzie.vbox.api.jaxb.FsObjType;
 import com.kedzie.vbox.soap.KSOAP;
 
-@KSOAP(prefix="IFsObjInfo")
+@KSOAP(prefix="IFsObjInfo", cacheable=true)
 public interface IFsObjInfo extends IManagedObjectRef {
 
 	public Long getAccessTime();

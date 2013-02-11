@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum HostNetworkInterfaceMediumType {
+import java.io.Serializable;
+
+public enum HostNetworkInterfaceMediumType implements Serializable{
     UNKNOWN("Unknown"),
     ETHERNET("Ethernet"),
     PPP("PPP"),

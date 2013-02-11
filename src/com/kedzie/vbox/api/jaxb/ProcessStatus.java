@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessStatus {
+import java.io.Serializable;
+
+public enum ProcessStatus implements Serializable{
     UNDEFINED("Undefined"),
     STARTING("Starting"),
     STARTED("Started"),

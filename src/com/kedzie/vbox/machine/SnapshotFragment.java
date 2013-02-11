@@ -123,13 +123,8 @@ public class SnapshotFragment extends SherlockFragment {
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_TAKEN.name())) {
+            if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_TAKEN.name()) || intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_DELETED.name()))
                 refresh();
-//                new HandleTakenEventTask(_vmgr).execute(intent.getExtras());
-            }  else if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_DELETED.name())) {
-                refresh();
-//                new HandleDeletedEventTask(_vmgr).execute(intent.getExtras());
-            }
         }
     };
     
@@ -153,19 +148,14 @@ public class SnapshotFragment extends SherlockFragment {
     }
 	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		if(savedInstanceState==null) 
-			new LoadSnapshotsTask(_vmgr).execute(_machine);
-	}
-	
-	@Override
     public void onStart() {
         super.onStart();
         _lbm = LocalBroadcastManager.getInstance(getActivity());
         _lbm.registerReceiver(_receiver, Utils.createIntentFilter(
                 VBoxEventType.ON_SNAPSHOT_DELETED.name(),
                 VBoxEventType.ON_SNAPSHOT_TAKEN.name()));
+        if(_rootSnapshot==null) 
+			new LoadSnapshotsTask(_vmgr).execute(_machine);
     }
 
     @Override
@@ -258,7 +248,7 @@ public class SnapshotFragment extends SherlockFragment {
 		        return true;
 		    case R.id.context_menu_delete_snapshot:  
 		        nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-		        new MachineTask<ISnapshot, Void>("DeleteSnapshotTask", getActivity(), _vmgr, "Deleting Snapshot", false, _machine) { 
+		        new MachineTask<ISnapshot, Void>(getActivity(), _vmgr, "Deleting Snapshot", false, _machine) { 
 		            protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 		                return console.deleteSnapshot(s[0].getId());
 		            }
@@ -266,7 +256,7 @@ public class SnapshotFragment extends SherlockFragment {
 		        return true;
 		    case R.id.context_menu_restore_snapshot:
 		        nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-		        new MachineTask<ISnapshot, Void>("RestoreSnapshotTask", getActivity(), _vmgr, "Restoring Snapshot", false, _machine) { 
+		        new MachineTask<ISnapshot, Void>(getActivity(), _vmgr, "Restoring Snapshot", false, _machine) { 
 		            protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 		                return console.restoreSnapshot(s[0]);
 		            }
@@ -275,56 +265,4 @@ public class SnapshotFragment extends SherlockFragment {
 		}
 		return false;
 	}
-	
-	/*    class HandleTakenEventTask extends ActionBarTask<Bundle, ISnapshot> {
-    
-    public HandleTakenEventTask(VBoxSvc vmgr) {  
-        super( "HandleTakenEventTask", getSherlockActivity(), vmgr);
-    }
-
-    @Override
-    protected ISnapshot work(Bundle... params) throws Exception {
-        _machine.clearCache();
-        ISnapshot newSnapshot = _machine.getCurrentSnapshot();
-        newSnapshot.getParent();
-        newSnapshot.getName();
-        return newSnapshot;
-    }
-
-    @Override
-    protected void onResult(ISnapshot result)    {
-        _treeBuilder.addRelation(result.getParent(), result);
-    }
-}
-
-class HandleDeletedEventTask extends ActionBarTask<Bundle, ISnapshot> {
-    
-    public HandleDeletedEventTask(VBoxSvc vmgr) {  
-        super( "HandleDeletedEventTask", getSherlockActivity(), vmgr);
-    }
-
-    @Override
-    protected ISnapshot work(Bundle... params) throws Exception {
-        ISnapshotDeletedEvent event = (ISnapshotDeletedEvent)BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent.class);
-        ISnapshot deleted = getSnapshotById(event.getSnapshotId(), _rootSnapshot);
-        return deleted;
-    }
-
-    @Override
-    protected void onResult(ISnapshot result)    {
-        Utils.toastLong(getActivity(), "Snapshot Deleted: "+result);
-        _stateManager.removeNodeRecursively(result);
-    }
-}
-
-ISnapshot getSnapshotById(String id, ISnapshot current) {
-    if(current.getId().equals(id))
-        return current;
-    for(ISnapshot child : current.getChildren()) {
-        ISnapshot found = getSnapshotById(id, child);
-        if(found!=null)
-            return found;
-    }
-    return null;
-}*/
 }

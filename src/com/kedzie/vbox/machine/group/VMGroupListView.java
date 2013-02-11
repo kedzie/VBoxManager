@@ -5,18 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnDragListener;
 import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.kedzie.vbox.R;
@@ -30,7 +35,8 @@ import com.kedzie.vbox.machine.group.VMGroupPanel.OnDrillDownListener;
  * 
  * @author Marek Kędzierski
  */
-public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener {
+public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener, OnDragListener {
+    private static final String TAG = "VMGroupListView";
     
     /**
      * Callback for element selection
@@ -43,17 +49,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         public void onTreeNodeSelect(TreeNode node);
     }
     
-    /**
-     * Callback for element long-click
-     */
-    public static interface OnTreeNodeLongClickListener {
-        /**
-         * An element has been long-clicked
-         * @param node	the element which received the long-click
-         */
-        public void onTreeNodeLongClick(TreeNode node);
-    }
-    
     /** View associated with the currently selected element */
     private View _selected;
     
@@ -62,28 +57,22 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     
     private OnTreeNodeSelectListener _listener;
     
-    private OnTreeNodeLongClickListener _longClickListener;
-    
     /** Maintains reference from a particular Machine to all views which reference it.  Used for updating views when events are received. */
     private Map<IMachine, List<MachineView>> _machineViewMap = new HashMap<IMachine, List<MachineView>>();
+    /** Maintains reference from a particular <code>VMGroup</code> to all views which reference it.  Used for updating views when groups chnage. */
+    private Map<VMGroup, List<VMGroupPanel>> _groupViewMap = new HashMap<VMGroup, List<VMGroupPanel>>();
     
-    private Animation _slideInLeft, _slideInRight, _slideOutLeft, _slideOutRight;
+    private Animation _slideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
+    private Animation _slideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
+    private Animation _slideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
+    private Animation _slideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
     
     public VMGroupListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public VMGroupListView(Context context) {
         super(context);
-        init();
-    }
-    
-    public void init() {
-        _slideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
-        _slideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
-        _slideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
-        _slideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
     }
     
     public void setRoot(VMGroup group) {
@@ -109,16 +98,12 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         _listener = listener;
     }
     
-    public void setOnTreeNodeLongClickListener(OnTreeNodeLongClickListener listener) {
-        _longClickListener = listener;
-    }
-    
     public boolean isSelectionEnabled() {
         return _selectionEnabled;
     }
 
-    public void setSelectionEnabled(boolean _selectionEnabled) {
-        this._selectionEnabled = _selectionEnabled;
+    public void setSelectionEnabled(boolean selectionEnabled) {
+        _selectionEnabled = selectionEnabled;
     }
 
     /**
@@ -129,8 +114,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private View createGroupListView(VMGroup group) {
         ScrollView scrollView = new ScrollView(getContext());
         LinearLayout _contents = new LinearLayout(getContext());
-        scrollView.addView(_contents);
         _contents.setOrientation(LinearLayout.VERTICAL);
+        scrollView.addView(_contents);
         if(!group.getName().equals("/")) {
             LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
             ((ImageView)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
@@ -139,9 +124,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     drillOut();
                 }
             });
-            ((TextView)header.findViewById(R.id.group_title)).setText(group.getName());
-            ((TextView)header.findViewById(R.id.group_num_groups)).setText(group.getNumGroups()+"");
-            ((TextView)header.findViewById(R.id.group_num_machine)).setText(group.getNumMachines()+"");
+            Utils.setTextView(header, R.id.group_title, group.getName());
+            Utils.setTextView(header, R.id.group_num_groups, group.getNumGroups());
+            Utils.setTextView(header, R.id.group_num_machine, group.getNumMachines());
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             lp.bottomMargin = Utils.dpiToPixels(getContext(), 4);
             _contents.addView(header, lp);
@@ -163,7 +148,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             MachineView view = new MachineView(getContext());
             IMachine m = (IMachine)node;
             view.update(m);
-            view.setBackgroundResource(R.drawable.list_selector_background);
+            view.setBackgroundResource(R.drawable.list_selector_color);
             view.setClickable(true);
             view.setOnClickListener(this);
             view.setOnLongClickListener(this);
@@ -175,10 +160,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             VMGroup group = (VMGroup)node;
             VMGroupPanel groupView = new VMGroupPanel(getContext(), group);
             groupView.setOnClickListener(this);
-            groupView.setOnLongClickListener(this);
             groupView.setOnDrillDownListener(this);
+            groupView.setOnDragListener(this);
             for(TreeNode child : group.getChildren())
                 groupView.addChild(createView(child));
+            if(!_groupViewMap.containsKey(group))
+                _groupViewMap.put(group, new ArrayList<VMGroupPanel>());
+            _groupViewMap.get(group).add(groupView);
             return groupView;
         }
         throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");
@@ -201,15 +189,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             notifyListener(v);
             return;
         }
-        //Deselect existing selection
-        if(_selected==v) {      
+        if(_selected==v) {      //Deselect existing selection
             _selected.setSelected(false);
             _selected=null;
             _listener.onTreeNodeSelect(null);
             return;
         } 
-        //Make new Selection
-        if(_selected!=null)
+        if(_selected!=null)	//Make new Selection
             _selected.setSelected(false);
         _selected=v;
         _selected.setSelected(true);
@@ -225,12 +211,58 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     
     @Override
     public boolean onLongClick(View v) {
-        if(_longClickListener==null)
-            return true;
-        if(v instanceof MachineView)
-            _longClickListener.onTreeNodeLongClick(((MachineView)v).getMachine());
-        else if(v instanceof VMGroupPanel)
-            _longClickListener.onTreeNodeLongClick(((VMGroupPanel)v).getGroup());
+    	if(v instanceof MachineView) {
+    		MachineView view = (MachineView)v;
+    		ClipData data = ClipData.newPlainText("Machine Drag", view.getMachine().getIdRef());
+    		v.startDrag(data, new DragShadowBuilder(v), null, 0);
+    	}
         return true;
     }
+
+	@Override
+	public boolean onDrag(View v, DragEvent event) {
+		if(!(v instanceof VMGroupPanel))
+			return false;
+		VMGroupPanel view = (VMGroupPanel)v;
+		
+        final int action = event.getAction();
+        switch(action) {
+            case DragEvent.ACTION_DRAG_STARTED:
+                    return true;
+            case DragEvent.ACTION_DRAG_ENTERED: 
+                view.setBackgroundColor(Color.RED);
+                view.invalidate();
+                return true;
+                case DragEvent.ACTION_DRAG_LOCATION:
+                	for(int i=0; i<view.getChildCount(); i++) {
+                		View child = view.getChildAt(i);
+                		Rect frame = new Rect();
+                		child.getHitRect(frame);
+                		if(frame.contains((int)event.getX(), (int)event.getY())) {
+                			Log.d(TAG, "Drag inside " + child);
+                		}
+                	}
+                    return true;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    view.invalidate();
+                    return true;
+                case DragEvent.ACTION_DROP:
+                	view.setBackgroundColor(Color.TRANSPARENT);
+                    view.invalidate();
+                    ClipData.Item item = event.getClipData().getItemAt(0);
+                    String machineIdRef = item.getText().toString();
+                    Utils.toastLong(getContext(), "Dragged data is " + machineIdRef);
+                    return true;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                    view.invalidate();
+                    if (event.getResult())
+                    	Utils.toastShort(getContext(), "The drop was handled.");
+                    else
+                    	Utils.toastShort(getContext(), "The drop didn't work.");
+                    return true;
+        }
+		return false;
+	}
 }

@@ -8,7 +8,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -25,7 +24,6 @@ import com.kedzie.vbox.R;
  * </ul>
  */
 public class SliderView extends LinearLayout {
-    private static final String TAG = "SliderView";
 	
     public static interface OnSliderViewChangeListener {
         public void onSliderValidValueChanged(int newValue);
@@ -88,7 +86,6 @@ public class SliderView extends LinearLayout {
         
         void updateProperties() {
         	_pixelsPerUnit = ((float)getWidth())/(_maxValue-_minValue);
-        	Log.d(TAG, "PixelsPerUnit="+_pixelsPerUnit);
             int validLeft = (int) ((_minValidValue-_minValue)*_pixelsPerUnit+getLeft()+getPaddingLeft());
             int validRight =(int) (getRight()-getPaddingRight()-(_maxValue-_maxValidValue)*_pixelsPerUnit);
             int bottom = getBottom()-getPaddingBottom()-(int)_textPaint.getTextSize();
@@ -110,7 +107,7 @@ public class SliderView extends LinearLayout {
             }
             dw += getPaddingLeft() + getPaddingRight();
             dh += getPaddingTop() + getPaddingBottom() + VALID_RANGE_BAR_HEIGHT+_textPaint.getTextSize();
-            setMeasuredDimension(resolveSizeAndState(dw, widthMeasureSpec, 0), resolveSizeAndState(dh, heightMeasureSpec, 0));
+            setMeasuredDimension(resolveSize(dw, widthMeasureSpec), resolveSize(dh, heightMeasureSpec));
         }
 
         @Override
@@ -150,11 +147,7 @@ public class SliderView extends LinearLayout {
     private OnSliderViewChangeListener _onSliderChangeListener;
     
     public SliderView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-    
-    public SliderView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+        super(context, attrs);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SliderView, 0, 0);
         try {
             _tickSpacing = a.getInt(R.styleable.SliderView_tickSpacing, 1);
@@ -168,7 +161,7 @@ public class SliderView extends LinearLayout {
         }
         init();
     }
-
+    
     public SliderView(Context context) {
         super(context);
         init();

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AdditionsFacilityType {
+public enum AdditionsFacilityType implements java.io.Serializable{
     NONE("None"),
     V_BOX_GUEST_DRIVER("VBoxGuestDriver"),
     AUTO_LOGON("AutoLogon"),

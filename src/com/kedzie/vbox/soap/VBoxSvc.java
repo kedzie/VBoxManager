@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
@@ -37,10 +38,14 @@ import android.util.NoSuchPropertyException;
 
 import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IHost;
+import com.kedzie.vbox.api.IHostNetworkInterface;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineStateChangedEvent;
 import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IMedium;
 import com.kedzie.vbox.api.INetworkAdapter;
+import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
 import com.kedzie.vbox.api.ISnapshotDeletedEvent;
@@ -50,6 +55,7 @@ import com.kedzie.vbox.api.Screenshot;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricQuery;
 import com.kedzie.vbox.server.Server;
@@ -141,12 +147,11 @@ public class VBoxSvc implements Parcelable, Externalizable {
 						_cache.remove(name); 
 					return null;
 				}
-				if(method.getName().equals("getVBoxAPI")) return VBoxSvc.this;
+				if(method.getName().equals("getAPI")) return VBoxSvc.this;
 				if(method.getName().equals("describeContents")) return 0;
 				if(method.getName().equals("getCache")) return _cache;
 				if(method.getName().equals("writeToParcel")) {
 					Parcel out = (Parcel)args[0];
-//					out.writeSerializable(_type);
 					out.writeParcelable(VBoxSvc.this, 0);
 					out.writeString(_uiud);
 					out.writeMap(_cache);
@@ -175,6 +180,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				envelope.setOutputSoapObject(request);
 				envelope.setAddAdornments(false);
 				
+				Log.v(TAG, "Remote call: " + request.getName());
 				if(method.isAnnotationPresent(Asyncronous.class)) {
 					new AsynchronousThread(NAMESPACE+request.getName(), envelope).start();
 					return null;
@@ -241,8 +247,10 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			boolean IS_MAP = Map.class.isAssignableFrom(returnType);
 			boolean IS_ARRAY = returnType.isArray() && !returnType.getComponentType().equals(byte.class);
 			KvmSerializable ks = (KvmSerializable) bodyIn;
-			if ((ks.getPropertyCount()==0 && !IS_COLLECTION && !IS_MAP) || (ks.getPropertyCount() == 1 && ks.getProperty(0).toString().equals("anyType{}")))
+			if ((ks.getPropertyCount()==0 && !IS_COLLECTION && !IS_MAP)) {
+				Log.w(TAG, "returning NULL because property count is 0");
 				return null;
+			}
 			if(IS_MAP) {
 			    Type valueType = ((ParameterizedType)genericType).getActualTypeArguments()[1];
 			    if(!(valueType instanceof Class)) {  //Map<String, List<String>>
@@ -255,7 +263,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	                    map.get(info.getName()).add(   ks.getProperty(i).toString() );
 	                }
 	                return map;
-			    } else {
+			    } else {		//Map<String,String>
 			        Map<String, String> map = new HashMap<String, String>();
 			        PropertyInfo info = new PropertyInfo();
                     for (int i = 0; i < ks.getPropertyCount(); i++) {
@@ -310,14 +318,15 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			        Log.v(TAG, "Unmarshalling Complex Object: " + returnType.getName());
                     Object pojo = returnType.newInstance();
                     SoapObject soapObject = (SoapObject)ret;
+                    PropertyInfo propertyInfo = new PropertyInfo();
                     for(int i=0; i<soapObject.getPropertyCount(); i++) {
-                        PropertyInfo propertyInfo = new PropertyInfo();
                         soapObject.getPropertyInfo(i, propertyInfo);
                         Method setterMethod = findSetterMethod(returnType, propertyInfo.getName());
+                        if(setterMethod==null) continue;
                         Class<?> propertyType = setterMethod.getParameterTypes()[0];
                         Object value = unmarshal(propertyType, propertyType, propertyInfo.getValue());
-                        Log.v(TAG, String.format("Setting property: %1$s.%2$s=%3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
-                        setterMethod.invoke(pojo, value);
+                       	Log.v(TAG, String.format("Setting property: %1$s.%2$s=%3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
+                       	setterMethod.invoke(pojo, value);
                     }
                     return pojo;
                 } catch (Exception e) {
@@ -327,6 +336,13 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			return ret;
 		}
 		
+		/**
+		 * Find and cache the setter method for a particular property
+		 * @param clazz			object type
+		 * @param property	property name
+		 * @return	the setter method
+		 * @throws {@link NoSuchPropertyException}	if setter method is not found
+		 */
 		public Method findSetterMethod(Class<?> clazz, String property) {
 			if(!typeCache.containsKey(clazz))
 				typeCache.put(clazz, new HashMap<String, Method>());
@@ -339,7 +355,9 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					typeDescription.put(property, method);
 					return method;
 				}
-			throw new NoSuchPropertyException(setterMethodName);
+			Log.w(TAG, "No Setter Found: " + setterMethodName);
+			return null;
+//			throw new NoSuchPropertyException(setterMethodName);
 		}
 	}
 
@@ -386,6 +404,21 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(_server, 0);
 		dest.writeString(_vbox.getIdRef());
+	}
+	
+	@Override
+	public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
+		_server=(Server)input.readObject();
+		_transport = _server.isSSL() ? new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
+					new HttpTransport("http://"+_server.getHost() + ":" + _server.getPort(), TIMEOUT);
+		_vbox = getProxy(IVirtualBox.class, input.readUTF());
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput output) throws IOException {
+		Log.d(TAG, "Serializing");
+		output.writeObject(_server);
+		output.writeUTF(_vbox.getIdRef());
 	}
 
 	/**
@@ -532,19 +565,43 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * @return
 	 * @throws IOException
 	 */
-	public Map<String, String> getNetworkProperties(INetworkAdapter adapter, String...names) throws IOException {
-		String nameString = "";
+	public Properties getProperties(INetworkAdapter adapter, String...names) throws IOException {
+		StringBuffer nameString = new StringBuffer();
 		for(String name : names)
-			nameString+=(nameString.equals("") ? "" : ",") + name;
-		Map<String, List<String>> val = adapter.getProperties(nameString);
+			Utils.appendWithComma(nameString, name);
+		return getProperties(adapter.getProperties(nameString.toString()));
+	}
+
+	/**
+	 * Load medium properties
+	 * @param medium		the medium
+	 * @param names  Property names to load, or empty for all
+	 * @return	properties
+	 * @throws IOException
+	 */
+	public Properties getProperties(IMedium medium, String...names) throws IOException {
+		StringBuffer nameString = new StringBuffer();
+		for(String name : names)
+			Utils.appendWithComma(nameString, name);
+		return getProperties(medium.getProperties(nameString.toString()) );
+	}
+	
+	private Properties getProperties(Map<String, List<String>> val, String...names) throws IOException {
 		List<String> returnNames = val.get("returnNames");
 		List<String> values = val.get("returnval");
-		Map<String, String> properties = new HashMap<String, String>();
+		Properties properties = new Properties();
 		for(int i=0; i<returnNames.size(); i++)
 			properties.put(returnNames.get(i), values.get(i));
 		return properties;
 	}
-
+	
+	public Tuple<IHostNetworkInterface, IProgress> createHostOnlyNetworkInterface(IHost host) throws IOException {
+		Map<String, String> val = host.createHostOnlyNetworkInterface();
+		IHostNetworkInterface networkInterface = getProxy(IHostNetworkInterface.class, val.get("hostInterface"));
+		IProgress progress = getProxy(IProgress.class, val.get("returnval"));
+		return new Tuple<IHostNetworkInterface, IProgress>(networkInterface, progress);
+	}
+	
 	/**
 	 * Ping a HTTPS server using SSL and prompt user to trust certificate
 	 * @param handler {@link Handler} to prompt user to trust server certificate
@@ -557,20 +614,5 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		envelope.setAddAdornments(false);
 		InteractiveTrustedHttpsTransport transport = new InteractiveTrustedHttpsTransport(_server, TIMEOUT, handler);
 		transport.call(NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
-	}
-
-	@Override
-	public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
-		_server=(Server)input.readObject();
-		_transport = _server.isSSL() ? new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
-					new HttpTransport("http://"+_server.getHost() + ":" + _server.getPort(), TIMEOUT);
-		_vbox = getProxy(IVirtualBox.class, input.readUTF());
-	}
-
-	@Override
-	public void writeExternal(ObjectOutput output) throws IOException {
-		Log.d(TAG, "Serializing");
-		output.writeObject(_server);
-		output.writeUTF(_vbox.getIdRef());
 	}
 }

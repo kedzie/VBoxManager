@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum VirtualSystemDescriptionType {
+import java.io.Serializable;
+
+public enum VirtualSystemDescriptionType implements Serializable{
     IGNORE("Ignore"),
     OS("OS"),
     NAME("Name"),

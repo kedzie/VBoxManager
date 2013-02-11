@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum NATProtocol {
+import java.io.Serializable;
+
+public enum NATProtocol implements Serializable{
     UDP,
     TCP;
     public String value() {

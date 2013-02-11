@@ -84,7 +84,7 @@ public class EditServerActivity extends SherlockActivity {
 		_server.setName( nameText.getText().toString() );
 		_server.setHost( hostText.getText().toString() );
 		_server.setSSL(sslBox.isChecked());
-		_server.setPort( Integer.parseInt( portText.getText().toString()) );
+		_server.setPort( Integer.parseInt( portText.getText().toString().trim()) );
 		_server.setUsername( userText.getText().toString() );
 		_server.setPassword( passText.getText().toString() );
 	}

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum PortMode {
+import java.io.Serializable;
+
+public enum PortMode implements Serializable{
     DISCONNECTED("Disconnected"),
     HOST_PIPE("HostPipe"),
     HOST_DEVICE("HostDevice"),

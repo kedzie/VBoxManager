@@ -21,12 +21,13 @@
    <color name="RAM_Usage_Total">#ff00ffff</color>
    <color name="RAM_Usage_Total_Fill">#3C00ffff</color>
    
-   <color name="gray_dark">#ffa6aca9</color>
-   <color name="gray_light">#ffe3e9e3</color>
-   <color name="yellow">#fffffc8b</color>
-   <color name="green">#ff8bc53f</color>
-   <color name="red">#ffeb1313</color>
-   <color name="blue">#ff33b5e5</color>
+   <color name="gray_dark">#FFA6ACA9</color>
+   <color name="gray_light">#FFE3E9E3</color>
+   <color name="yellow">#FFFFFC8B</color>
+   <color name="green">#FF8BC53F</color>
+   <color name="red">#FFEB1313</color>
+   <color name="blue">#FF33B5E5</color>
+   <color name="blue_alpha">#9633B5E5</color>
    <color name="purple">#ffa466aa</color>
    <color name="orange">#fff7901e</color>
 </resources>

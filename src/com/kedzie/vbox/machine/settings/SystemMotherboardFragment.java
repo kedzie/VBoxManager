@@ -30,7 +30,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemMotherboardFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IHost> {
-		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getVBoxAPI(), "Loading Data"); }
+		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {
@@ -76,6 +76,7 @@ public class SystemMotherboardFragment extends SherlockFragment {
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
         outState.putParcelable(IMachine.BUNDLE, _machine);
         outState.putParcelable("host", _host);
         outState.putParcelable("errors", _errorHandler);
@@ -86,38 +87,11 @@ public class SystemMotherboardFragment extends SherlockFragment {
 		_view = inflater.inflate(R.layout.settings_system_motherboard, null);
 		_baseMemoryBar = (SliderView)_view.findViewById(R.id.baseMemory);
 		_ioApicCheckbox = (CheckBox) _view.findViewById(R.id.io_apic);
-		_ioApicCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_machine.getBIOSSettings().setIOAPICEnabled(isChecked);
-			}
-		});
 		_efiCheckbox = (CheckBox) _view.findViewById(R.id.efi);
-		_efiCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					_machine.setFirmwareType(isChecked ? FirmwareType.EFI : FirmwareType.BIOS);
-			}
-		});
 		_utcCheckbox = (CheckBox) _view.findViewById(R.id.utc);
-		_utcCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_machine.setRTCUseUTC(isChecked);
-			}
-		});
 		_chipsetSpinner = (Spinner) _view.findViewById(R.id.chipset);
 		_chipsetAdapter = new ArrayAdapter<ChipsetType>(getActivity(), android.R.layout.simple_spinner_item, new ChipsetType [] { ChipsetType.PIIX_3, ChipsetType.ICH_9 } );
 		_chipsetSpinner.setAdapter(_chipsetAdapter);
-		_chipsetSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				_machine.setChipsetType(_chipsetAdapter.getItem(position));
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-			}
-		});
 		_errorText = (TextView)_view.findViewById(R.id.error_message);
 		_errorHandler.setTextView(_errorText);
 		_errorHandler.showErrors();
@@ -135,13 +109,40 @@ public class SystemMotherboardFragment extends SherlockFragment {
 
 	private void populateViews(IMachine m, IHost host) {
 		_utcCheckbox.setChecked(_machine.getRTCUseUTC());
+		_utcCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.setRTCUseUTC(isChecked);
+			}
+		});
 		FirmwareType type = _machine.getFirmwareType();
 		_efiCheckbox.setChecked(type.equals(FirmwareType.EFI) || 
 				type.equals(FirmwareType.EFI_32) ||
 				type.equals(FirmwareType.EFI_64) ||
 				type.equals(FirmwareType.EFIDUAL));
+		_efiCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					_machine.setFirmwareType(isChecked ? FirmwareType.EFI : FirmwareType.BIOS);
+			}
+		});
 		_ioApicCheckbox.setChecked(_machine.getBIOSSettings().getIOAPICEnabled());
+		_ioApicCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.getBIOSSettings().setIOAPICEnabled(isChecked);
+			}
+		});
 		_chipsetSpinner.setSelection(_machine.getChipsetType().equals(ChipsetType.PIIX_3) ? 0 : 1);
+		_chipsetSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				_machine.setChipsetType(_chipsetAdapter.getItem(position));
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
 		_baseMemoryBar.setMinValue(1);
 		_baseMemoryBar.setMinValidValue(1);
 		_baseMemoryBar.setMaxValidValue((int)(host.getMemorySize()*.8f));

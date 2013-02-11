@@ -19,14 +19,14 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineFragmentActivity;
+import com.kedzie.vbox.machine.MachineActivity;
 import com.kedzie.vbox.machine.PreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class Provider extends AppWidgetProvider {
     /**  Widget update interval */
     private static int UPDATE_INTERVAL;
-    private static final String TAG = "ExampleAppWidgetProvider";
+    private static final String TAG = "AppWidgetProvider";
     private static final String PREFS_NAME = "com.kedzie.vbox.widget";
     static final String KEY_IDREF = "_idRef";
     static final String KEY_NAME = "_name";
@@ -75,7 +75,7 @@ public class Provider extends AppWidgetProvider {
         views.setTextViewText(R.id.machine_list_item_snapshot, snapshotText);
                             
         views.setOnClickPendingIntent(R.id.machine_view, PendingIntent.getService(context, 0, 
-                new Intent(context, MachineFragmentActivity.class) .putExtra(IMachine.BUNDLE, vm).putExtra(VBoxSvc.BUNDLE, (Parcelable)vm.getVBoxAPI()), 0));
+                new Intent(context, MachineActivity.class).putExtra(IMachine.BUNDLE, vm).putExtra(VBoxSvc.BUNDLE, (Parcelable)vm.getAPI()), 0));
         
         AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
     }
@@ -114,7 +114,6 @@ public class Provider extends AppWidgetProvider {
         } else
             super.onReceive(context, intent);
     }
-    
     
     private PendingIntent getBroadcastIntent(Context context) {
         return PendingIntent.getBroadcast(context, 0, new Intent(context, Provider.class), 0);

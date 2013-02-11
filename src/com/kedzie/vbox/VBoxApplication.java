@@ -6,13 +6,18 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -28,7 +33,9 @@ import com.kedzie.vbox.machine.PreferencesActivity;
  */
 public class VBoxApplication extends Application {
 	private static final String TAG = "VBoxApplication";
-	
+	private static final String APPLICATION_PRO_KEY_PACKAGE = "com.kedzie.vbox.pro";
+	private static final String APPLICATION_PACKAGE = "com.kedzie.vbox";
+
     private Map<String,Integer> resources = new HashMap<String, Integer>();
 	private Map<String,Integer> resources_color = new HashMap<String, Integer>();
 	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
@@ -61,6 +68,16 @@ public class VBoxApplication extends Application {
 		putResource(MachineState.RESTORING.name(), R.drawable.ic_list_save, R.drawable.ic_list_save_c);		
 		putResource(MachineState.ABORTED.name(), R.drawable.ic_list_abort, R.drawable.ic_list_abort_c);		
 		putResource(MachineState.STUCK.name(), R.drawable.ic_list_stuck, R.drawable.ic_list_stuck_c);		
+		//TODO make new drawables for following states
+		putResource(MachineState.TELEPORTED.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.TELEPORTING.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.TELEPORTING_IN.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.TELEPORTING_PAUSED_VM.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.FIRST_ONLINE.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.FIRST_TRANSIENT.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.LAST_ONLINE.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.LAST_TRANSIENT.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.SETTING_UP.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
 		
 		putResource( VMAction.START.name(), R.drawable.ic_list_start , R.drawable.ic_list_start_c );		
 		putResource(VMAction.POWER_OFF.name(), R.drawable.ic_list_poweroff, R.drawable.ic_list_poweroff_c);		
@@ -81,8 +98,8 @@ public class VBoxApplication extends Application {
 	/**
 	 * Populate the drawable cache
 	 * @param name                     name of drawable resource
-	 * @param bwResource           id of black & white drawable
-	 * @param colorResource        id of color drawable
+	 * @param bwResource			B/W drawable id
+	 * @param colorResource		Color drawable id
 	 */
 	private void putResource(String name, int bwResource, int colorResource) {
 	    resources.put(name, bwResource);
@@ -90,16 +107,17 @@ public class VBoxApplication extends Application {
 	}
 
 	/**
-	 * @return black/white or colored icons based on Shared Preferences
+	 * Get correct drawable <code>Map</code> based on user's preferences
+	 * @return B/W or Color icons, depending on Shared Preferences
 	 */
 	private Map<String,Integer> getDrawables() {
 		return Utils.getBooleanPreference(this, PreferencesActivity.ICON_COLORS)	? resources_color :  resources;
 	}
 	
 	/**
-	 * Get Drawable Resource based on the name
-	 * @param name name of resource
-	 * @return address of resource
+	 * Get identifer of a <code>Drawable</code> resource from the name
+	 * @param name		resource name
+	 * @return				resource identifier
 	 */
 	private int getDrawable(String name) {
 		if(!getDrawables().containsKey(name)) {
@@ -149,15 +167,44 @@ public class VBoxApplication extends Application {
 	}
 	
 	/**
-	 * Is user authorized to edit machine settings?
-	 * @return <code>true</code> if authorized, <code>false</code> otherwise
+	 * Is the Premium Key application installed?
+	 * @return <code>true</code> if premium user, <code>false</code> otherwise
 	 */
-	public boolean isSettingsEnabled() {
-		return getPackageManager().checkSignatures("com.kedzie.vbox", "com.kedzie.vbox.pro") == PackageManager.SIGNATURE_MATCH;
+	public boolean isPremiumVersion() {
+		return getPackageManager().checkSignatures(APPLICATION_PACKAGE, APPLICATION_PRO_KEY_PACKAGE)==PackageManager.SIGNATURE_MATCH;
 	}
 	
 	/**
-	 * Launch activity with custom animations (if API > 16)
+	 * Show a dialog offer user option to open Google Play Store to install 'VirtualBox Manager Premium Key'
+	 * @param context		Android context
+	 */
+	public void showPremiumOffer(final Context context) {
+		new AlertDialog.Builder(context)
+			.setCancelable(true)
+			.setTitle(R.string.pro_key_required_dialog_title)
+			.setMessage(R.string.pro_key_required_dialog_message)
+			.setPositiveButton(R.string.pro_key_required_dialog_ok_button, new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					try {
+					    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+APPLICATION_PRO_KEY_PACKAGE)));
+					} catch (ActivityNotFoundException e) {
+					    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id="+APPLICATION_PRO_KEY_PACKAGE)));
+					}
+				}
+			})
+			.setNegativeButton(R.string.pro_key_required_dialog_cancel_button, new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			})
+			.show();
+	}
+	
+	/**
+	 * Launch activity using custom animations if API > 16
 	 * @param parent		parent activity
 	 * @param intent			intent to launch
 	 */
@@ -179,13 +226,13 @@ public class VBoxApplication extends Application {
         int bWidth=bitmap.getWidth(), bHeight=bitmap.getHeight();
         if(bWidth<=width && bHeight<=height) 
         	return bitmap;
-        Log.d(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
+        Log.v(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
         float wScale = ((float)width)/bWidth;
         float hScale = ((float)height)/bHeight;
         float scale = Math.min(wScale, hScale);
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
-        Log.d(TAG, "Scale factor: " + scale);
+        Log.v(TAG, "Scale factor: " + scale);
         return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
 	}
 }

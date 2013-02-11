@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum FramebufferPixelFormat {
+public enum FramebufferPixelFormat implements java.io.Serializable{
     OPAQUE("Opaque"),
     FOURCC_RGB("FOURCC_RGB");
     private final String value;

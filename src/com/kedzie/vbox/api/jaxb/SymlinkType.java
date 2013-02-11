@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum SymlinkType {
+import java.io.Serializable;
+
+public enum SymlinkType implements Serializable{
     UNKNOWN("Unknown"),
     DIRECTORY("Directory"),
     FILE("File");

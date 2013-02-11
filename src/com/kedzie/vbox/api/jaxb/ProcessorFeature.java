@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessorFeature {
+import java.io.Serializable;
+
+public enum ProcessorFeature implements Serializable{
     HW_VIRT_EX("HWVirtEx"),
     PAE("PAE"),
     LONG_MODE("LongMode"),

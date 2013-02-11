@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DataType {
+public enum DataType implements java.io.Serializable{
     INT_32("Int32"),
     INT_8("Int8"),
     STRING("String");

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum SymlinkReadFlag {
+import java.io.Serializable;
+
+public enum SymlinkReadFlag implements Serializable{
     NONE("None"),
     NO_SYMLINKS("NoSymlinks");
     private final String value;

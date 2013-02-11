@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -25,8 +26,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
     /**
      * Animation for collapsing/expanding the panel contents
      */
-    protected class PanelAnimation extends Animation {
-    	static final int COLLAPSE_DURATION = 600;
+    private class PanelAnimation extends Animation {
     	
         private final int mStartHeight;
         private final int mDeltaHeight;
@@ -34,26 +34,37 @@ public class PanelView extends LinearLayout implements OnClickListener {
         private final int mDeltaRotation;
 
         public PanelAnimation(int startHeight, int endHeight) {
-            setDuration(COLLAPSE_DURATION);
+            setDuration(getResources().getInteger(android.R.integer.config_longAnimTime));
+            setInterpolator( AnimationUtils.loadInterpolator(getContext(), android.R.anim.accelerate_interpolator));
             mStartHeight = startHeight;
             mDeltaHeight = endHeight - startHeight;
-            if(startHeight==0) { //Expanding
-            	mStartRotation= -90;
-               	mDeltaRotation= 90;
-            } else { //Collapsing
-            	mStartRotation= 0;
-               	mDeltaRotation= -90 ;
+            if(isExpanding()) {
+            	mStartRotation = _collapseRotation;
+            	mDeltaRotation = _collapseRotation*-1;
+            } else {
+            	mStartRotation = 0;
+            	mDeltaRotation = _collapseRotation;
             }
             setAnimationListener(new AnimationListener() {
             	@Override public void onAnimationRepeat(Animation animation) {}
-                @Override public void onAnimationStart(Animation animation) {}
+            	
+                @Override
+                public void onAnimationStart(Animation animation) { 
+                	if(isCollapsing())
+                		_contents.setVisibility(View.INVISIBLE);
+                }
                 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if(mStartHeight==0) //expanding 
+                    if(isExpanding()) {
                         _contents.setVisibility(View.VISIBLE);
-                    else       //collapsing
+                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
+                        	_collapseButton.setImageDrawable(_collapseDrawable);
+                    } else {
                         _frame.setVisibility(View.GONE);
+                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
+                        	_collapseButton.setImageDrawable(_expandDrawable);
+                    }
                 }
             });
         }   
@@ -63,26 +74,37 @@ public class PanelView extends LinearLayout implements OnClickListener {
             ViewGroup.LayoutParams lp = _contents.getLayoutParams();
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             _contents.setLayoutParams(lp);
-            _collapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
+            	_collapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
         }
 
         @Override
         public boolean willChangeBounds() {
             return true;
         }
+        
+        private boolean isExpanding() {
+        	return mStartHeight==0;
+        }
+        
+        private boolean isCollapsing() {
+        	return !isExpanding();
+        }
     }
     
-    protected int BORDER_WIDTH = Utils.dpiToPixels(getContext(), 8);
+    private final int DEFAULT_COLLAPSE_ROTATION=90;
     
-    protected boolean _expanded=true;
+    private boolean _expanded=true;
     protected ImageView _collapseButton;
-    protected View _titleView;
-    protected LinearLayout _contents;
-    protected FrameLayout _frame;
-    protected Drawable _collapseDrawable;
-    protected Drawable _icon;
-    protected int _contentHeight;
+    private View _titleView;
+    private LinearLayout _contents;
+    private FrameLayout _frame;
+    private Drawable _collapseDrawable;
+    private Drawable _expandDrawable;
+    private Drawable _icon;
+    private int _contentHeight;
     private String _title;
+    private int _collapseRotation=DEFAULT_COLLAPSE_ROTATION;
     
     public PanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -90,9 +112,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
         try {
             _title = a.hasValue(R.styleable.Panel_name) ? a.getString(R.styleable.Panel_name) : "";
             _icon = a.getDrawable(R.styleable.Panel_headerIcon);
-            _collapseDrawable = a.hasValue(R.styleable.Panel_collapseDrawable) ? 
-            		a.getDrawable(R.styleable.Panel_collapseDrawable) :
-            		context.getResources().getDrawable(R.drawable.ic_menu_collapse);
+            _collapseRotation = a.getInt(R.styleable.Panel_collapseRotation, DEFAULT_COLLAPSE_ROTATION);
         } finally {
             a.recycle();
         }
@@ -105,9 +125,13 @@ public class PanelView extends LinearLayout implements OnClickListener {
     }
     
     protected void init(Context context) {
-        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    	_collapseDrawable = context.getResources().getDrawable(R.drawable.ic_menu_collapse);
+        _expandDrawable = context.getResources().getDrawable(R.drawable.ic_menu_expand);
+    	
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         setOrientation(VERTICAL);
         _titleView=getTitleLayout();
+        
         _contents = new LinearLayout(context);
         _contents.setClipChildren(false);
         _contents.setOrientation(VERTICAL);
@@ -150,6 +174,23 @@ public class PanelView extends LinearLayout implements OnClickListener {
     }
     
     @Override
+    public void setPressed(boolean pressed) {
+        super.setPressed(pressed);
+        _titleView.setPressed(pressed);
+        _frame.setPressed(pressed);
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        _titleView.setSelected(selected);
+        _frame.setSelected(selected);
+        if(selected)
+            for(int i=0; i<_contents.getChildCount(); i++)
+                _contents.getChildAt(i).setSelected(false);
+    }
+    
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (_contentHeight == 0) {
             _contents.measure(widthMeasureSpec, MeasureSpec.UNSPECIFIED);
@@ -169,7 +210,6 @@ public class PanelView extends LinearLayout implements OnClickListener {
     	if(!_expanded) return;
     	if(_contents.getHeight()<_contentHeight)
     		_contentHeight = _contents.getHeight();
-    	_contents.setVisibility(View.INVISIBLE);
         _contents.startAnimation(new PanelAnimation(_contentHeight, 0));
         _expanded=false;
     }
@@ -179,5 +219,13 @@ public class PanelView extends LinearLayout implements OnClickListener {
         	collapse();
         else
             expand();
+    }
+    
+    protected boolean isExpanded() {
+    	return _expanded;
+    }
+    
+    protected void setCollapseRotation(int rotation) {
+    	_collapseRotation=rotation;
     }
 }

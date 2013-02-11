@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessInputFlag {
+import java.io.Serializable;
+
+public enum ProcessInputFlag implements Serializable{
     NONE("None"),
     END_OF_FILE("EndOfFile");
     private final String value;

@@ -73,7 +73,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 			public void onClick(View arg0) {
 				dismiss();
 				if(_snapshot!=null) {
-    				new ActionBarTask<ISnapshot, Void>("UpdateSnapshotTask", getSherlockActivity(), _vmgr) { 
+    				new ActionBarTask<ISnapshot, Void>("SaveSnapshot", getSherlockActivity(), _vmgr) { 
                         protected Void work(ISnapshot...s) throws Exception {     
                             s[0].setName(snapshotName.getText().toString());
                             s[0].setDescription(snapshotDescription.getText().toString());
@@ -81,7 +81,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
                         }
                     }.execute(_snapshot);    
 				} else {
-    				new MachineTask<Void, Void>("TakeSnapshotTask", getActivity(), _vmgr, "Taking Snapshot", false, _machine) {	
+    				new MachineTask<Void, Void>(getActivity(), _vmgr, "Taking Snapshot", false, _machine) {	
     					protected IProgress workWithProgress(IMachine m, IConsole console, Void...i) throws Exception { 	
     						return console.takeSnapshot( snapshotName.getText().toString(),  snapshotDescription.getText().toString()); 
     					}

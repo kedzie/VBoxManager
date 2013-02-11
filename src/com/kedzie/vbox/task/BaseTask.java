@@ -1,6 +1,7 @@
 package com.kedzie.vbox.task;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import org.ksoap2.SoapFault;
 
@@ -30,7 +31,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
-	protected Context _context;
+	protected WeakReference<Context> _context;
 	protected final String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
@@ -44,7 +45,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	protected Handler _alertHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-				new AlertDialog.Builder(_context)
+				new AlertDialog.Builder(_context.get())
 					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle(msg.getData().getString("title"))
 					.setMessage(msg.getData().getString("msg"))
@@ -59,12 +60,15 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	protected Handler _cancelHandler = new Handler() {
 	    @Override
 	    public void handleMessage(Message msg) {
-	        Log.i(TAG, "Cancel Handler received Cancel Message");
-	        Utils.toastLong(_context, _context.getString(R.string.cancelling_operation_toast));
-	        IProgress progress = BundleBuilder.getProxy(msg.getData(), IProgress.BUNDLE, IProgress.class);
+	        Log.w(TAG, "Cancel Handler received Cancel Message");
+	        Utils.toastLong(_context.get(), _context.get().getString(R.string.cancelling_operation_toast));
+	        IProgress progress = null;
+	        if(msg.getData().containsKey(IProgress.BUNDLE))
+	        	progress = BundleBuilder.getProxy(msg.getData(), IProgress.BUNDLE, IProgress.class);
 	        try {
-	            progress.cancel();
-	            BaseTask.this.cancel(true);
+	        	BaseTask.this.cancel(true);
+	        	if(progress!=null)
+	        		progress.cancel();
 	        } catch (IOException e) {
 	            Log.e(TAG, "Error cancelling operation", e);
 	        }
@@ -75,10 +79,10 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
 	 */
-	protected BaseTask(String TAG, Context ctx, VBoxSvc vmgr) {
+	protected BaseTask(String TAG, Context context, VBoxSvc vmgr) {
 		this.TAG = TAG;
 		_vmgr=vmgr;
-		_context=ctx;
+		_context=new WeakReference<Context>(context);
 	}
 
 	@Override
@@ -86,8 +90,11 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		try	{
 			Log.d(TAG, "Performing work...");
 			return work(params);
+		} catch(SoapFault e) {
+			if(!_cancelled)
+				showAlert(e);
 		} catch(Exception e) {
-		    if(!_cancelled)
+		    if(!_cancelled) 
 		        showAlert(e);
 		}
 		return null;
@@ -104,7 +111,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected void onPostExecute(Output result) {
 		super.onPostExecute(result);
-		if(result!=null && _context!=null)
+		if(result!=null && _context.get()!=null && !_cancelled)
 			onResult(result);
 	}
 	
@@ -116,7 +123,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	
 	@Override
     protected void onCancelled() {
-	    Log.i(TAG, "Task Cancelled");
+	    Log.w(TAG, "Task Cancelled");
         _cancelled=true;
         super.onCancelled();
     }

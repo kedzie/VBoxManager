@@ -17,7 +17,7 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineListFragmentActivity;
+import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.server.ServerListFragment.OnSelectServerListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.soap.ssl.SSLUtil.AddCertificateToKeystoreTask;
@@ -36,7 +36,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
      */
     class LogonTask extends DialogTask<Server, IVirtualBox> {
         public LogonTask() { 
-            super( "LogonTask", ServerListFragmentActivity.this, null, "Connecting");
+            super( "LogonTask", ServerListFragmentActivity.this, null, "Connecting", true);
         }
 
         @Override
@@ -49,8 +49,9 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
 
         @Override 
         protected void onResult(IVirtualBox vbox) {
+        	super.onResult(vbox);
             Utils.toastLong(ServerListFragmentActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-            VBoxApplication.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
+            VBoxApplication.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
         }
     }
     
@@ -80,7 +81,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
 	    						@Override
 	    						protected void onResult(Boolean result) {
 	    							super.onResult(result);
-	    							Utils.toastLong(_context, "Successfully updated keystore");
+	    							Utils.toastLong(_context.get(), "Successfully updated keystore");
 	    							new LogonTask().execute(server);
 	    						};
 	    					}.execute(chain);

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <CheckBox
+        android:id="@+id/network_enabled"
+        style="@style/SmallTextPrimary"
+        android:text="Enable Network Adapter" />
+    
+    <TextView android:id="@+id/network_attached_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/network_enabled" 
+        android:layout_alignRight="@+id/network_promiscuous_label"
+        android:text="Attached to:" />
+    
+    <Spinner android:id="@+id/network_attached"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/network_attached_label"
+        android:layout_alignTop="@id/network_attached_label"/>
+    
+    <TextView android:id="@+id/network_name_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/network_attached" 
+        android:layout_alignRight="@id/network_promiscuous_label"
+        android:text="Name:" />
+    
+    <FrameLayout
+        android:id="@+id/network_name_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/network_name_label"
+        android:layout_alignTop="@id/network_name_label"
+        android:layout_alignParentRight="true">
+        
+    <Spinner android:id="@+id/network_name_spinner"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"/>
+
+	<EditText android:id="@+id/network_name_text"
+	    android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    </FrameLayout>
+
+    <TextView android:id="@+id/network_adapter_type_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/network_name_label" 
+        android:layout_alignRight="@id/network_promiscuous_label"
+        android:text="Adapter Type:" />
+    
+    <Spinner android:id="@+id/network_adapter_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/network_adapter_type_label"
+        android:layout_alignTop="@id/network_adapter_type_label"/>
+    
+    <TextView android:id="@id/network_promiscuous_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/network_adapter_type" 
+        android:text="Promiscuous Mode:" />
+    
+    <Spinner android:id="@+id/network_promiscuous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/network_promiscuous_label"
+        android:layout_alignTop="@id/network_promiscuous_label"/>
+    
+    <TextView android:id="@+id/network_mac_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/network_promiscuous"
+        android:layout_alignRight="@id/network_promiscuous_label" 
+        android:text="MAC Address:" />
+    
+    <EditText android:id="@+id/network_mac"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/network_mac_label"
+        android:layout_alignBaseline="@id/network_mac_label"
+        android:layout_alignParentRight="true"/>
+    
+    <CheckBox
+        android:id="@+id/network_cable_connected"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/network_mac_label"
+        android:layout_alignLeft="@id/network_mac"
+        android:text="Cable Connected" />
+    
+</RelativeLayout>

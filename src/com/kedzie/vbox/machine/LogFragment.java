@@ -59,8 +59,8 @@ public class LogFragment extends SherlockFragment {
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public void onStart() {
+		super.onStart();
 		if(_log!=null) 
 			_logText.setText(_log);
 		else
