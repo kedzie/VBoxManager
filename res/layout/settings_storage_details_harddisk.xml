@@ -85,4 +85,18 @@
         style="@style/SmallTextPrimary"
         android:layout_alignBaseline="@id/storage_actual_size_label"
         android:layout_toRightOf="@id/storage_actual_size_label"/>
+    
+    <TextView
+        android:id="@+id/storage_location_label"
+        style="@style/SmallTextPrimary"
+    	android:layout_marginTop="8dp"
+        android:layout_below="@id/storage_actual_size_label"
+        android:layout_alignRight="@id/storage_actual_size_label"
+        android:text="Location:" />
+    
+    <TextView
+        android:id="@+id/storage_location"
+        style="@style/SmallTextPrimary"
+        android:layout_alignBaseline="@id/storage_location_label"
+        android:layout_toRightOf="@id/storage_location_label"/>
 </RelativeLayout>

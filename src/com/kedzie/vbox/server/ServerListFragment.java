@@ -123,14 +123,14 @@ public class ServerListFragment extends SherlockFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        _listView = new ListView(getActivity());
+        _listView = (ListView)inflater.inflate(R.layout.list, container, false);
         _dualPane = getActivity().findViewById(R.id.details)!=null;
         _listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
         _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	if(_dualPane)
-            		_listView.setItemChecked(position, true);
+            		_listView.setSelection(position);
                 _listener.onSelectServer(getAdapter().getItem(position));
             }
         });

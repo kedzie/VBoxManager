@@ -14,6 +14,7 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.CPUPropertyType;
+import com.kedzie.vbox.api.jaxb.ProcessorFeature;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
@@ -32,6 +33,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 			m[0].getCPUCount(); 
 			m[0].getCPUProperty(CPUPropertyType.PAE);
 			IHost host = _vmgr.getVBox().getHost();
+			host.getProcessorFeature(ProcessorFeature.PAE);
 			host.getProcessorCount();
 			host.getProcessorOnlineCount();
 			return host;
@@ -92,6 +94,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	}
 
 	private void populateViews(IMachine m, IHost host) {
+		_paeCheckBox.setEnabled(_host.getProcessorFeature(ProcessorFeature.PAE));
 		_paeCheckBox.setChecked(m.getCPUProperty(CPUPropertyType.PAE));
 		_paeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override

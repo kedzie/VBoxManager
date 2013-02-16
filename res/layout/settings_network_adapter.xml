@@ -6,7 +6,8 @@
 
     <CheckBox
         android:id="@+id/network_enabled"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Enable Network Adapter" />
     
     <TextView android:id="@+id/network_attached_label"
@@ -85,7 +86,8 @@
     
     <CheckBox
         android:id="@+id/network_cable_connected"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/network_mac_label"
         android:layout_alignLeft="@id/network_mac"
         android:text="Cable Connected" />

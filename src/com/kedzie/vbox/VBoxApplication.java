@@ -50,7 +50,7 @@ public class VBoxApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		_instance=this;
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues(this, R.xml.general_preferences, false);
 		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, false);
 		
 		putResource(MachineState.RUNNING.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
@@ -92,7 +92,7 @@ public class VBoxApplication extends Application {
 		putResource(VMAction.DELETE_SNAPSHOT.name(), R.drawable.ic_list_snapshot_del, R.drawable.ic_list_snapshot_del_c);		
 		putResource(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metrics, R.drawable.ic_menu_metrics);		
 		putResource(VMAction.TAKE_SCREENSHOT.name(), R.drawable.ic_list_snapshot_add, R.drawable.ic_list_snapshot_add_c);
-		putResource(VMAction.EDIT_SETTINGS.name(), R.drawable.ic_menu_edit, R.drawable.ic_menu_edit);
+		putResource(VMAction.EDIT_SETTINGS.name(), R.drawable.ic_menu_settings, R.drawable.ic_menu_edit_settings_c);
 	}
 	
 	/**

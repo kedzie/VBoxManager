@@ -42,7 +42,8 @@
     
     <CheckBox android:id="@+id/controller_host_io_cache"
         android:text="Use host I/O cache"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 	android:layout_marginTop="8dp"
         android:layout_below="@id/controller_type"
         android:layout_alignLeft="@id/controller_type"/>

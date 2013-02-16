@@ -138,6 +138,7 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
 		Log.d(TAG, "Selected category: " + category.name);
 	    if(_dualPane) {
 	        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+	        tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 	        Utils.detachExistingFragment(getSupportFragmentManager(), tx, currentCategory);
             Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
             tx.commit();

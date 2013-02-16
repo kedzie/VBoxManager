@@ -2,12 +2,12 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="180dp"
     android:minHeight="48dp"
+    android:minResizeWidth="180dp"
+    android:minResizeHeight="48dp"
+    android:resizeMode="horizontal"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/appwidget_provider"
     android:initialKeyguardLayout="@layout/appwidget_provider"
     android:widgetCategory="keyguard|home_screen" 
-    android:minResizeWidth="180dp"
-    android:minResizeHeight="48dp"
-    android:resizeMode="horizontal"
     android:configure="com.kedzie.vbox.widget.ServerListPickActivity"  />
 

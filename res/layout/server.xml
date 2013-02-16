@@ -3,6 +3,7 @@
 			android:orientation="vertical" 
 			android:layout_width="fill_parent" 
 			android:layout_height="fill_parent"
+			android:layoutAnimation="@anim/layout_bottom_to_top_slide"
 			android:padding="8dp"	>
     
     <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content">

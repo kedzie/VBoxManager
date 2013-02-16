@@ -30,7 +30,7 @@ public interface IStorageController extends IManagedObjectRef, Parcelable {
 	};
 
 	@KSOAP(cacheable=true) public String getName();
-	@KSOAP(cacheable=true) public Integer getDevicesPerPortCount();
+	@KSOAP(cacheable=true) public Integer getMaxDevicesPerPortCount();
 	@KSOAP(cacheable=true) public Integer getMinPortCount();
 	@KSOAP(cacheable=true) public Integer getMaxPortCount();
 	@KSOAP(cacheable=true) public StorageBus getBus();

@@ -43,14 +43,16 @@
 
     <CheckBox
         android:id="@+id/acceleration3D"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/extended_features"
         android:layout_centerHorizontal="true"
         android:text="@string/settings_3d_acceleration" />
 
     <CheckBox
         android:id="@+id/acceleration2D"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/acceleration3D"
         android:layout_centerHorizontal="true"
         android:text="@string/settings_2d_acceleration" />

@@ -34,7 +34,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
 import android.util.Log;
-import android.util.NoSuchPropertyException;
 
 import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
@@ -88,19 +87,46 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		}
 	};
 	
+	public static interface FutureValue {
+		public void handleValue(Object obj);
+	}
+	
 	public class AsynchronousThread extends Thread {
 		private String name;
-		private SoapSerializationEnvelope envelope;
+		private SerializationEnvelope envelope;
+		private FutureValue future;
+		private Class<?> returnType;
+		private Type genericType;
+		private String cacheKey;
+		private Map<String, Object> _cache;
+		private KSOAP methodKSOAP;
 		
-		public AsynchronousThread(String name, SoapSerializationEnvelope envelope) {
+		public AsynchronousThread(String name, SerializationEnvelope envelope) {
 			this.name=name;
 			this.envelope = envelope;
+		}
+		
+		public AsynchronousThread(String name, SerializationEnvelope envelope, FutureValue future, Class<?> returnType, Type genericType, String cacheKey, Map<String, Object> cache, KSOAP ksoap) {
+			this.name=name;
+			this.envelope = envelope;
+			this.future=future;
+			this.returnType=returnType;
+			this.genericType=genericType;
+			this.cacheKey=cacheKey;
+			this._cache=cache;
+			this.methodKSOAP = ksoap;
 		}
 		
 		@Override
 		public void run() {
 			try {
 				_transport.call(name, envelope);
+				if(future!=null) {
+					Object ret = envelope.getResponse(returnType, genericType);
+					if(methodKSOAP!=null && methodKSOAP.cacheable()) 
+						_cache.put(cacheKey, ret);
+					future.handleValue(ret);
+				}
 			} catch (Exception e) {
 				Log.e(TAG, "Error invoking asynchronous method", e);
 			}
@@ -129,6 +155,9 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
 			synchronized(VBoxSvc.this) {
+				String methodName = method.getName();
+				boolean isPopulateView = methodName.equals("populateView");
+				FutureValue future = null;
 				if(method.getName().equals("getIdRef")) return this._uiud;
 				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
 				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
@@ -157,6 +186,10 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					out.writeMap(_cache);
 					return null;
 				}
+				if(isPopulateView) {
+					methodName = (String)args[0];
+					future = (FutureValue)args[1];
+				}
 				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? method.getDeclaringClass().getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
 				
 				String cacheKey = method.getName();
@@ -164,9 +197,13 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					for(Object arg : args)
 						cacheKey+="-"+arg.toString();
 				}
-				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(cacheKey))
-					return _cache.get(cacheKey);
-				
+				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(cacheKey)) {
+					if(isPopulateView) {
+						future.handleValue(_cache.get(cacheKey));
+						return null;
+					} else
+						return _cache.get(cacheKey);
+				}
 				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? _type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
 				if(methodKSOAP==null)
 					request.addProperty("_this", this._uiud);
@@ -183,6 +220,9 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				Log.v(TAG, "Remote call: " + request.getName());
 				if(method.isAnnotationPresent(Asyncronous.class)) {
 					new AsynchronousThread(NAMESPACE+request.getName(), envelope).start();
+					return null;
+				} else if(isPopulateView) {
+					new AsynchronousThread(NAMESPACE+request.getName(), envelope, future, method.getReturnType(), method.getGenericReturnType(), cacheKey, _cache, methodKSOAP).start();
 					return null;
 				} else {
 					_transport.call(NAMESPACE+request.getName(), envelope);

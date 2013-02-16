@@ -15,6 +15,13 @@
             	</intent-filter>
         </activity>
         
+	<activity android:configChanges="orientation" android:label="Test Harness" android:name=".harness.HarnessActivity" android:uiOptions="splitActionBarWhenNarrow">
+		<intent-filter>
+                	<action android:name="android.intent.action.MAIN"/>
+                	<category android:name="android.intent.category.LAUNCHER"/>
+            	</intent-filter>
+        </activity>
+        
         <activity android:configChanges="orientation" android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity">
 		<meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
 	</activity>
@@ -38,8 +45,6 @@
 	<activity android:label="Metrics" android:name=".metrics.MetricActivity"/>
 	
 	<activity android:configChanges="orientation" android:label="Preferences" android:name=".machine.PreferencesActivity"/>
-	
-	<activity android:configChanges="orientation" android:label="Preferences" android:name=".metrics.MetricPreferencesActivity"/>
 	
 	<service android:name=".event.EventIntentService"/>
 	<service android:name=".event.EventNotificationService"/>

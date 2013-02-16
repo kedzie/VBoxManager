@@ -93,6 +93,8 @@ public class StorageListFragment extends SherlockFragment {
 			_controllers = result;
 			_listAdapter = new ItemAdapter(getSherlockActivity(), result);
 			_listView.setAdapter(_listAdapter);
+			for(int i=0; i<result.keySet().size(); i++)
+				_listView.expandGroup(i, true);
 		}
 	}
 
@@ -212,14 +214,14 @@ public class StorageListFragment extends SherlockFragment {
 
 		@Override
 		public boolean hasStableIds() {
-			return false;
+			return true;
 		}
 
 		@Override
 		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			final IStorageController controller = (IStorageController)getGroup(groupPosition);
 			if(convertView==null) {
-				convertView = _inflater.inflate(android.R.layout.simple_expandable_list_item_1, parent, false);
+				convertView = _inflater.inflate(R.layout.settings_storage_controller_list_item, parent, false);
 				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
 			}
 			TextView text1 = (TextView)convertView.getTag();
@@ -236,7 +238,7 @@ public class StorageListFragment extends SherlockFragment {
 				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
 			}
 			TextView text1 = (TextView)convertView.getTag();
-			text1.setText(attachment.getMedium().getName());
+			text1.setText(attachment.getMedium()!=null ? attachment.getMedium().getName() : "Empty");
 			if(attachment.getType().equals(DeviceType.HARD_DISK))
 				text1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_button_hdd_c, 0, 0, 0);
 			if(attachment.getType().equals(DeviceType.DVD))
@@ -264,6 +266,7 @@ public class StorageListFragment extends SherlockFragment {
 		_listView.setOnGroupClickListener(new OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+				parent.expandGroup(groupPosition,true);
 				parent.setSelectedGroup(groupPosition);
 				if(_controllerListener!=null)
 					_controllerListener.onStorageControllerClicked((IStorageController)_listAdapter.getGroup(groupPosition));

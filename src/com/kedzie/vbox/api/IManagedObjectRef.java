@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
+import com.kedzie.vbox.soap.VBoxSvc.FutureValue;
 
 /**
  * <p>Managed object reference.</p>
@@ -37,6 +38,8 @@ public interface IManagedObjectRef  {
 	 * Get property cache
 	 */
 	public Map<String, Object> getCache();
+	
+	public void populateView(String method, FutureValue future);
 	
 	/**
 	 * @return VirtualBox JAXWS API

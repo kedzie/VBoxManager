@@ -69,8 +69,9 @@ public class InfoFragment extends SherlockFragment {
 			for(IStorageController controller : controllers) {
 				controller.getBus();
 				for(IMediumAttachment a : m[0].getMediumAttachmentsOfController(controller.getName())) {
-					if(a.getMedium()!=null)
-						a.getMedium().getName();
+					if(a.getMedium()!=null) {
+						a.getMedium().getName(); a.getMedium().getBase().getName();
+					}
 				}
 			}
 			//network adapters
@@ -105,7 +106,6 @@ public class InfoFragment extends SherlockFragment {
 	
 	private IMachine _machine;
 	private MachineInfo _machineInfo;
-	private int _maxBootPosition;
 	private View _view;
 	private TextView _nameText;
 	private TextView _descriptionText;
@@ -144,7 +144,6 @@ public class InfoFragment extends SherlockFragment {
 		if(savedInstanceState!=null) {
 			_machine = BundleBuilder.getProxy(savedInstanceState, IMachine.BUNDLE, IMachine.class);
 			_machineInfo = savedInstanceState.getParcelable("info");
-			_maxBootPosition = savedInstanceState.getInt("maxBootPosition");
 		}
 	}
 	
@@ -195,9 +194,9 @@ public class InfoFragment extends SherlockFragment {
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
 		outState.putParcelable("info", _machineInfo);
-		outState.putInt("maxBootPosition", _maxBootPosition);
 	}
 
 	private void populateViews(MachineInfo info) {
@@ -231,17 +230,17 @@ public class InfoFragment extends SherlockFragment {
 		StringBuffer storage = new StringBuffer();
 		List<IStorageController> controllers = m.getStorageControllers();
 		for(IStorageController controller : controllers) {
-			storage.append("Controller: ").append(controller.getName());
+			storage.append("Controller: ").append(controller.getName()).append("\n");
 			if(controller.getBus().equals(StorageBus.SATA)) {
 				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
-					storage.append(String.format("\nSATA Port %1$d\t\t%2$s", a.getPort(), a.getMedium()==null ? "" : a.getMedium().getName()));
+					storage.append(String.format("SATA Port %1$d\t\t%2$s\n", a.getPort(), a.getMedium()==null ? "" : a.getMedium().getName()));
 			} else if (controller.getBus().equals(StorageBus.IDE)){
 				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName())) {
-					storage.append(String.format("\nIDE %1$s %2$s\t\t%3$s", a.getPort()==0 ? "Primary" : "Secondary", a.getDevice()==0 ? "Master" : "Slave", a.getMedium()==null ? "" : a.getMedium().getName()));
+					storage.append(String.format("IDE %1$s %2$s\t\t%3$s\n", a.getPort()==0 ? "Primary" : "Secondary", a.getDevice()==0 ? "Master" : "Slave", a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
 				}
 			} else {
 				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
-					storage.append(String.format("\nPort %1$d Device %2$d\t\t%3$s", a.getPort(), a.getDevice(), a.getMedium()==null ? "" : a.getMedium().getName()));
+					storage.append(String.format("Port: %1$d Device: %2$d\t\t%3$s\n", a.getPort(), a.getDevice(), a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
 			}
 		}
 		_storageText.setText(storage.toString());

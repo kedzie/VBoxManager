@@ -9,14 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.kedzie.vbox.R;
+import com.nineoldandroids.view.animation.AnimatorProxy;
 
 /**
  * Animated collapsible Panel
@@ -35,7 +36,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
 
         public PanelAnimation(int startHeight, int endHeight) {
             setDuration(getResources().getInteger(android.R.integer.config_longAnimTime));
-            setInterpolator( AnimationUtils.loadInterpolator(getContext(), android.R.anim.accelerate_interpolator));
+            setInterpolator(new AccelerateInterpolator());
             mStartHeight = startHeight;
             mDeltaHeight = endHeight - startHeight;
             if(isExpanding()) {
@@ -58,12 +59,12 @@ public class PanelView extends LinearLayout implements OnClickListener {
                 public void onAnimationEnd(Animation animation) {
                     if(isExpanding()) {
                         _contents.setVisibility(View.VISIBLE);
-                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
-                        	_collapseButton.setImageDrawable(_collapseDrawable);
+//                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
+//                        	_collapseButton.setImageDrawable(_collapseDrawable);
                     } else {
                         _frame.setVisibility(View.GONE);
-                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
-                        	_collapseButton.setImageDrawable(_expandDrawable);
+//                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
+//                        	_collapseButton.setImageDrawable(_expandDrawable);
                     }
                 }
             });
@@ -74,8 +75,9 @@ public class PanelView extends LinearLayout implements OnClickListener {
             ViewGroup.LayoutParams lp = _contents.getLayoutParams();
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             _contents.setLayoutParams(lp);
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
-            	_collapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
+            AnimatorProxy.wrap(_collapseButton).setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
+//            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
+//            	_collapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
         }
 
         @Override

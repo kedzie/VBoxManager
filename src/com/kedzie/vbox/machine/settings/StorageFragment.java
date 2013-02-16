@@ -59,11 +59,11 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     
     @Override
 	public void onMediumAttachmentClicked(IMediumAttachment element) {
-    	FragmentElement details = new FragmentElement("medium_"+element.getMedium().getName(), null, new BundleBuilder().putAll(getArguments()).putParcelable(IMedium.BUNDLE, element).create());
+    	FragmentElement details = new FragmentElement("medium_"+element.getMedium(), null, new BundleBuilder().putAll(getArguments()).putParcelable(IMedium.BUNDLE, element).create());
     	if(element.getType().equals(DeviceType.HARD_DISK))
     		details.clazz = StorageHardDiskFragment.class;
-//    	else if(element.getType().equals(DeviceType.DVD))
-//    		details.clazz = StorageDVDFragment.class;
+    	else if(element.getType().equals(DeviceType.DVD))
+    		details.clazz = StorageDVDFragment.class;
 //    	else if(element.getType().equals(DeviceType.FLOPPY))
 //    		details.clazz = StorageFloppyFragment.class;
         show(details);
@@ -71,8 +71,8 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     
     private void show(FragmentElement details) {
     	if(_dualPane) {
-    		getChildFragmentManager().beginTransaction().replace(R.id.details, details.instantiate(getActivity())).commit();
-//        	FragmentTransaction tx = getChildFragmentManager().beginTransaction();
+    		getChildFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.details, details.instantiate(getActivity())).commit();
+//        	FragmentTransaction tx = getChildFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 //        	Utils.detachExistingFragment(getChildFragmentManager(), tx, R.id.details);
 //            Utils.addOrAttachFragment(getActivity(), getChildFragmentManager(), tx, R.id.details, details);
 //            tx.commit();
@@ -83,14 +83,14 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if(_listFragment !=null &&_listFragment.isVisible())
+        if(_listFragment !=null)
             _listFragment.onCreateOptionsMenu(menu, inflater);
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(_listFragment != null &&_listFragment.isVisible())
-             _listFragment.onOptionsItemSelected(item);
+        if(_listFragment != null)
+             return _listFragment.onOptionsItemSelected(item);
         return false;
     }
 }

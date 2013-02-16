@@ -31,7 +31,10 @@ import com.kedzie.vbox.task.DialogTask;
 public class AudioFragment extends SherlockFragment {
 	
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<IAudioAdapter, AudioDriverType[]>> {
-		public LoadInfoTask() { super("NetworkAdapterFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
+		
+		public LoadInfoTask() { 
+			super("NetworkAdapterFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); 
+		}
 
 		@Override 
 		protected Tuple<IAudioAdapter, AudioDriverType[]> work(IMachine...params) throws Exception {
@@ -47,7 +50,7 @@ public class AudioFragment extends SherlockFragment {
 			super.onResult(result);
 			_adapter = result.first;
 		    _types = result.second;
-		    Log.d(TAG, "Audio Driver Types: " + _types);
+		    Log.d(TAG, "Audio Driver: " + _adapter.getAudioDriver());
 		    _audioDriverAdapter = new ArrayAdapter<AudioDriverType>(getActivity(), android.R.layout.simple_spinner_item, _types);
 			_audioDriverSpinner.setAdapter(_audioDriverAdapter);
 		    populate();

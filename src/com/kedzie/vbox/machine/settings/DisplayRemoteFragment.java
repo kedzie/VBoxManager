@@ -67,6 +67,8 @@ public class DisplayRemoteFragment extends SherlockFragment {
 	private Spinner _authMethodSpinner;
 	private ArrayAdapter<AuthType>_authMethodAdapter; 
 	private EditText _authTimeoutText;
+	private CheckBox _enabledCheckBox;
+	
 	private CheckBox _multipleConnectionsCheckBox;
 	
 	private IMachine _machine;
@@ -91,6 +93,7 @@ public class DisplayRemoteFragment extends SherlockFragment {
 		_authMethodSpinner = (Spinner)_view.findViewById(R.id.auth_method);
 		_authMethodAdapter = new ArrayAdapter<AuthType>(getActivity(), android.R.layout.simple_spinner_item, AuthType.values());
 		_authMethodSpinner.setAdapter(_authMethodAdapter);
+		_enabledCheckBox = (CheckBox)_view.findViewById(R.id.enabled);
 		_multipleConnectionsCheckBox = (CheckBox)_view.findViewById(R.id.multiple_connections);
 		return _view;
 	}
@@ -112,6 +115,13 @@ public class DisplayRemoteFragment extends SherlockFragment {
 	}
 
 	private void populate() {
+		_enabledCheckBox.setChecked(_server.getEnabled());
+		_enabledCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_server.setEnabled(isChecked);
+			}
+		});
 		_portText.setText(_info.getPort()+"");
 		_portText.addTextChangedListener(new TextWatcher() {
 			@Override

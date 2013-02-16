@@ -4,6 +4,7 @@
 	android:orientation="vertical" 
 	android:layout_width="match_parent" 
 	android:layout_height="match_parent" 
+	android:layoutAnimation="@anim/layout_animation_fade"
 	android:layout_weight="1" >
 	
 	<com.kedzie.vbox.app.PanelView vbox:name="Audio" vbox:headerIcon="@drawable/ic_settings_audio" android:layout_width="match_parent" android:layout_height="wrap_content" >

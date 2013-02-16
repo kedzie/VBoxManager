@@ -30,7 +30,7 @@ public interface IMedium extends IManagedObjectRef, Parcelable {
 			return new IMedium[size]; 
 		}
 	};
-
+	
      @KSOAP(cacheable=true) public String getId();
      
      @KSOAP(cacheable=true) public String getDescription();

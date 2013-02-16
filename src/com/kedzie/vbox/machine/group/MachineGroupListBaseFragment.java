@@ -16,8 +16,8 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineView;
+import com.kedzie.vbox.machine.PreferencesActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
-import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -73,8 +73,8 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	            }
 	            VMGroup root = get("/");
 	            _vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-	                    Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD), 
-	                    Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT), 
+	                    Utils.getIntPreference(getActivity(), PreferencesActivity.PERIOD), 
+	                    Utils.getIntPreference(getActivity(), PreferencesActivity.COUNT), 
 	                    (IManagedObjectRef)null);
 	            return root;
 	        }

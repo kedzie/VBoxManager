@@ -23,21 +23,22 @@ import com.kedzie.vbox.task.ActionBarTask;
  */
 public class StorageControllerFragment extends SherlockFragment {
 
-    class LoadInfoTask extends ActionBarTask<Void, Void> {
+    class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
     	
         public LoadInfoTask() { 
         	super("LoadInfoTask", getSherlockActivity(), null); 
         }
         
         @Override 
-        protected Void work(Void...params) throws Exception {
-        	_controller.getName();
-        	_controller.getBus();
-        	_controller.getUseHostIOCache();
-            return null;
+        protected IStorageController work(IStorageController...params) throws Exception {
+        	params[0].getName();
+        	params[0].getBus();
+        	params[0].getUseHostIOCache();
+            return params[0];
         }
         @Override
-        protected void onResult(Void result) {
+        protected void onResult(IStorageController result) {
+        	_controller=result;
             populate();
         }
     }
@@ -69,7 +70,7 @@ public class StorageControllerFragment extends SherlockFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		new LoadInfoTask().execute();
+			new LoadInfoTask().execute(_controller);
 	}
 
 	private void populate() {

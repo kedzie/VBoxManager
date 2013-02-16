@@ -52,15 +52,15 @@ public class HarnessActivity extends BaseActivity {
 		}
 	}
 
-	private class MachineSettingsTask extends ActionBarTask<Integer, IMachine> {
+	private class MachineSettingsTask extends ActionBarTask<String, IMachine> {
 
 		public MachineSettingsTask(VBoxSvc vmgr) {
 			super("MachineSettingsTask", HarnessActivity.this, vmgr);
 		}
 
 		@Override
-		protected IMachine work(Integer... params) throws Exception {
-			IMachine machine = _vmgr.getVBox().getMachines().get(params[0]);
+		protected IMachine work(String... params) throws Exception {
+			IMachine machine = _vmgr.getVBox().findMachine(params[0]);
 			MachineView.cacheProperties(machine);
 			return machine;
 		}
@@ -93,7 +93,7 @@ public class HarnessActivity extends BaseActivity {
 				startActivity(new Intent(this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi));
 				return true;
 			case R.id.harness_machineSettings:
-				new MachineSettingsTask(_vboxApi).execute(0);
+				new MachineSettingsTask(_vboxApi).execute("TEST");
 				return true;
 		}
 		return false;

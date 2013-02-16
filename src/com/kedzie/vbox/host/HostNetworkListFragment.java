@@ -3,6 +3,8 @@ package com.kedzie.vbox.host;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ksoap2.SoapFault;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -112,10 +114,15 @@ public class HostNetworkListFragment extends SherlockFragment {
 				net.getName();
 				net.getNetworkName();
 				net.getDHCPEnabled();
+				try {
 				IDHCPServer dhcp = _vmgr.getVBox().findDHCPServerByNetworkName(net.getNetworkName());
 				if(dhcp!=null)
 					dhcp.getEnabled();
 				_dhcpServers.add(dhcp);
+				} catch(SoapFault e) {
+					Log.e(TAG, "SoapFault finding DHCP Server", e);
+					_dhcpServers.add(null);
+				}
 			}
 			return data;
 		}

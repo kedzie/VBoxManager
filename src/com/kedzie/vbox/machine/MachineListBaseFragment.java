@@ -20,7 +20,6 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -67,8 +66,8 @@ public class MachineListBaseFragment extends SherlockFragment {
 			for(IMachine m :  machines)
 				MachineView.cacheProperties(m);
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD), 
-					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT), 
+					Utils.getIntPreference(getActivity(), PreferencesActivity.PERIOD), 
+					Utils.getIntPreference(getActivity(), PreferencesActivity.COUNT), 
 					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
 			return machines;

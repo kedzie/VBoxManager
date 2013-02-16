@@ -147,9 +147,9 @@ public class NetworkAdapterFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if(_adapter.getCache().containsKey("getEnabled")) 
-			populate();
-		else 
+//		if(_adapter.getCache().containsKey("getEnabled")) 
+//			populate();
+//		else 
 			new LoadInfoTask().execute(_adapter);
 	}
 

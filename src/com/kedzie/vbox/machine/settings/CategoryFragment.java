@@ -70,7 +70,7 @@ public class CategoryFragment extends SherlockFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	if(_dualPane)
-            		_listView.setItemChecked(position, true);
+            		_listView.setSelection(position);
                 if(_listener!=null)
                     _listener.onSelectCategory(_adapter.getItem(position));
             }

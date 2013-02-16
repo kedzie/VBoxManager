@@ -23,7 +23,6 @@ import com.kedzie.vbox.host.HostSettingsActivity;
 import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.PreferencesActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
-import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
@@ -137,8 +136,8 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute(
-					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD),	
-					Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT) );
+					Utils.getIntPreference(getActivity(), PreferencesActivity.PERIOD),	
+					Utils.getIntPreference(getActivity(), PreferencesActivity.COUNT) );
 		}
 	}
 }

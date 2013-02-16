@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/list_selector_color"
+    android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+    android:paddingRight="8dip">
+    
+    <TextView android:id="@android:id/text1"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"   />
+    
+</LinearLayout>

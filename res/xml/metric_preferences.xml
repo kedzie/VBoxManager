@@ -10,8 +10,8 @@
             		android:defaultValue="30"
             		android:entries="@array/metric_count_entries"
                 	android:entryValues="@array/metric_count_entryValues"
-                	android:dialogTitle="@string/pref_metric_count_title"
-            		/>
+                	android:dialogTitle="@string/pref_metric_count_title"/>
+        	
         	<ListPreference 
                 	android:key="metric_period"
                 	android:title="@string/pref_metric_period_title"
@@ -19,8 +19,8 @@
                 	android:defaultValue="2"
                 	android:entries="@array/metric_period_entries"
                 	android:entryValues="@array/metric_period_entryValues"    
-                	android:dialogTitle="@string/pref_metric_period_title"        	
-                	/>
+                	android:dialogTitle="@string/pref_metric_period_title" />
+        	
     </PreferenceCategory>
     
 </PreferenceScreen>  

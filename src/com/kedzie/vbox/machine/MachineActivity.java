@@ -15,7 +15,6 @@ import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportActionBarViewPager;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 /**
@@ -82,8 +81,8 @@ public class MachineActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(this, _machine.getAPI()).execute(
-					Utils.getIntPreference(this, MetricPreferencesActivity.PERIOD),	
-					Utils.getIntPreference(this, MetricPreferencesActivity.COUNT) );
+					Utils.getIntPreference(this, PreferencesActivity.PERIOD),	
+					Utils.getIntPreference(this, PreferencesActivity.COUNT) );
 		}
 	}
 }

@@ -52,7 +52,7 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
 
     @Override
     public void startUpdate(ViewGroup container) {
-        mCurTransaction = mFragmentManager.beginTransaction();
+        mCurTransaction = mFragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override

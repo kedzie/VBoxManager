@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
+import com.kedzie.vbox.api.jaxb.ProcessorFeature;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -26,6 +28,9 @@ public class SystemAccelerationFragment extends SherlockFragment {
 
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {
+			_host = _vmgr.getVBox().getHost();
+			_host.getProcessorFeature(ProcessorFeature.HW_VIRT_EX);
+			_host.getProcessorFeature(ProcessorFeature.NESTED_PAGING);
 			_machine.getHWVirtExProperty(HWVirtExPropertyType.ENABLED);
 			_machine.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING);
 			return _machine;
@@ -39,6 +44,7 @@ public class SystemAccelerationFragment extends SherlockFragment {
 	}
 	
 	private IMachine _machine;
+	private IHost _host;
 	private View _view;
 	private TextView _errorText;
 	private CheckBox _vtxCheckbox;
@@ -58,6 +64,7 @@ public class SystemAccelerationFragment extends SherlockFragment {
     public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
         outState.putParcelable(IMachine.BUNDLE, _machine);
+        
         outState.putParcelable("errors", _errorHandler);
     }
 	
@@ -73,12 +80,13 @@ public class SystemAccelerationFragment extends SherlockFragment {
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public void onStart() {
+		super.onStart();
 		new LoadInfoTask().execute(_machine);
 	}
 
 	private void populateViews(IMachine m) {
+		_vtxCheckbox.setEnabled(_host.getProcessorFeature(ProcessorFeature.HW_VIRT_EX));
 		_vtxCheckbox.setChecked(_machine.getHWVirtExProperty(HWVirtExPropertyType.ENABLED));
 		_vtxCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -86,6 +94,7 @@ public class SystemAccelerationFragment extends SherlockFragment {
 				_machine.setHWVirtExProperty(HWVirtExPropertyType.ENABLED, isChecked);
 			}
 		});
+		_nestedPagingCheckbox.setEnabled(_host.getProcessorFeature(ProcessorFeature.NESTED_PAGING));
 		_nestedPagingCheckbox.setChecked(_machine.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING));
 		_nestedPagingCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override

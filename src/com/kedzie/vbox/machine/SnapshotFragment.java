@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -100,15 +99,18 @@ public class SnapshotFragment extends SherlockFragment {
 
 		@Override 
 		public View getNewChildView(TreeNodeInfo<ISnapshot> treeNodeInfo) {
-			View v = LayoutInflater.from(getActivity()).inflate(R.layout.machine_action_item, null);
+			View v = LayoutInflater.from(getActivity()).inflate(R.layout.simple_selectable_list_item, null);
+			TextView text1 = (TextView)v.findViewById(android.R.id.text1);
+			v.setTag(text1);
 			updateView(v, treeNodeInfo);
 			return v;
 		}
 
 		@Override 
 		public View updateView(View view, TreeNodeInfo<ISnapshot> treeNodeInfo) {
-			((TextView)view.findViewById(R.id.action_item_text)).setText(treeNodeInfo.getId().getName());
-			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawable(VMAction.RESTORE_SNAPSHOT) );
+			TextView text1 = (TextView)view.getTag();
+	        text1.setText(treeNodeInfo.getId().getName());
+	        text1.setCompoundDrawablesWithIntrinsicBounds(getApp().getDrawable(VMAction.RESTORE_SNAPSHOT) , 0, 0, 0);
 			return view;
 		}
 	}

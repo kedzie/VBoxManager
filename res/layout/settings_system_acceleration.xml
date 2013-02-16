@@ -12,7 +12,8 @@
     
     <CheckBox
         android:id="@+id/vtx_amdv"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/extended_features"
         android:layout_alignLeft="@+id/nested_paging"
         android:layout_centerHorizontal="true"
@@ -20,7 +21,8 @@
     
     <CheckBox
         android:id="@id/nested_paging"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/vtx_amdv"
         android:layout_centerHorizontal="true"
         android:text="Enable Nested Paging" />

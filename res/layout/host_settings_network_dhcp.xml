@@ -8,7 +8,8 @@
 
     <CheckBox
         android:id="@+id/dhcp_enabled"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Enabled" />
 
     <TextView

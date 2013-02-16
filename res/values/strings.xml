@@ -23,8 +23,11 @@
     <string name="pref_notifications">Event Notifications</string>
     <string name="pref_notifications_summary">Publish VirtualBox® event notifications</string>
     <string name="pref_category_general">General</string>
+    <string name="pref_category_general_summary">General settings</string>
     <string name="pref_category_appearance">Appearance</string>
+    <string name="pref_category_appearance_summary">Application visual appearance</string>
     <string name="pref_category_metrics">Metrics</string>
+    <string name="pref_category_metrics_summary">Settings for displaying metric graphs</string>
     <string name="firstrun_welcome">Welcome</string>
     <string name="firstrun_message">Make sure you VirtualBox® web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
     <string name="event_handler_notification_title">VirtualBox® is connected</string>

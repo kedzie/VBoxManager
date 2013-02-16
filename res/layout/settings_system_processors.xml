@@ -49,7 +49,8 @@
     
     <CheckBox
         android:id="@+id/pae_nx"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/extended_features"
         android:layout_centerHorizontal="true"
         android:text="Enable PAE/NX" />
