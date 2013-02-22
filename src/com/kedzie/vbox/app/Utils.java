@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -30,7 +31,7 @@ import android.widget.Toast;
 public class Utils {
 
     public static int getIntPreference(Context ctx, String name) {
-		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, ""));
+		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, "0"));
 	}
 	
 	public static boolean getBooleanPreference(Context ctx, String name) {
@@ -86,6 +87,19 @@ public class Utils {
     public static boolean isEmpty(List<?> list) {
         return list==null || list.isEmpty();
     }
+    
+    /**
+     * Make a nice printout of map contents.
+     * @param title		title to show above contents
+     * @param map	the data
+     * @return	string representation
+     */
+    public static String toString(String title, Map<?,?> map) {
+    	StringBuffer buf = new StringBuffer(title).append("\n=========================\n{");
+    	for(Map.Entry<?,?> entry : map.entrySet())
+    		buf.append(entry.getKey()).append("==>").append(entry.getValue()).append("\n");
+    	return buf.append("}\n").toString();
+    }
 	
 	/**
 	 * Append an element to a comma seperated string
@@ -106,20 +120,21 @@ public class Utils {
      * @return type parameter
      */
     public static Class<?> getTypeParameter(Type genericType, int index) {
+    	if(!(genericType instanceof ParameterizedType))
+    		return null;
         return (Class<?>)((ParameterizedType)genericType).getActualTypeArguments()[index];
     }
     
     /**
-     * Get Class-level annotation
+     * Search an array for a specific type of annotation
      * @param clazz	the class
      * @param a		type of annotation
-     * @return		the annotation if found
+     * @return	the annotation or <code>null</code> if not found
      */
-    @SuppressWarnings("unchecked")
-	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []a) {
-		for(Annotation at : a)
-			if(at.annotationType().equals(clazz))
-				return (T)at;
+	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []annotations) {
+		for(Annotation a : annotations)
+			if(a.annotationType().equals(clazz))
+				return clazz.cast(a);
 		return null;
 	}
 	
@@ -151,7 +166,7 @@ public class Utils {
      * @param dialog        the {@link DialogFragment} implementation
      */
     public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
-    	FragmentTransaction tx = manager.beginTransaction().addToBackStack(tag);
+    	FragmentTransaction tx = manager.beginTransaction().addToBackStack(null);
         Fragment prev = manager.findFragmentByTag(tag);
         if(prev!=null)
             tx.remove(prev);
@@ -165,7 +180,8 @@ public class Utils {
      * @param tag                   tag of existing fragment
      */
     public static void detachExistingFragment(FragmentManager manager, FragmentTransaction tx, String tag) {
-        if(isEmpty(tag)) return;
+        if(isEmpty(tag)) 
+        	throw new IllegalArgumentException("tag cannot be null");
         Fragment existing = manager.findFragmentByTag(tag);
         if(existing!=null)
             tx.detach(existing);
@@ -303,6 +319,15 @@ public class Utils {
      */
     public static void setImageView(View parent, int id, Bitmap image) {
         ((ImageView)parent.findViewById(id)).setImageBitmap(image);
+    }
+    
+    /**
+     * Perform a {@link Thread#sleep} and ignore any {@link InterruptedException}
+     */
+    public static void sleep(int time) {
+    	try {
+    		Thread.sleep(time);
+    	} catch(InterruptedException e) {}
     }
     
     /**

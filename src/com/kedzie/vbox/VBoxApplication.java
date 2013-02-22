@@ -21,10 +21,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.machine.SettingsActivity;
 
 /**
  * Stores a resource map storing Operating System, VMAction, and MachineState Icons.
@@ -38,6 +39,8 @@ public class VBoxApplication extends Application {
 
     private Map<String,Integer> resources = new HashMap<String, Integer>();
 	private Map<String,Integer> resources_color = new HashMap<String, Integer>();
+	private SparseArray<Integer> generalResources = new SparseArray<Integer>();
+	private SparseArray<Integer> generalResources_color = new SparseArray<Integer>();
 	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
 	
 	private static VBoxApplication _instance;
@@ -52,6 +55,7 @@ public class VBoxApplication extends Application {
 		_instance=this;
 		PreferenceManager.setDefaultValues(this, R.xml.general_preferences, false);
 		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, false);
+		Log.i(TAG, "Period: " + PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsActivity.PREF_PERIOD, "null"));
 		
 		putResource(MachineState.RUNNING.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
 		putResource(MachineState.STARTING.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
@@ -93,6 +97,11 @@ public class VBoxApplication extends Application {
 		putResource(VMAction.VIEW_METRICS.name(), R.drawable.ic_menu_metrics, R.drawable.ic_menu_metrics);		
 		putResource(VMAction.TAKE_SCREENSHOT.name(), R.drawable.ic_list_snapshot_add, R.drawable.ic_list_snapshot_add_c);
 		putResource(VMAction.EDIT_SETTINGS.name(), R.drawable.ic_menu_settings, R.drawable.ic_menu_edit_settings_c);
+		
+		putResource(R.drawable.ic_button_hdd, R.drawable.ic_button_hdd, R.drawable.ic_button_hdd_c);
+		putResource(R.drawable.ic_menu_hdd_add, R.drawable.ic_menu_hdd_add, R.drawable.ic_menu_hdd_add_c);
+		putResource(R.drawable.ic_button_dvd, R.drawable.ic_button_dvd, R.drawable.ic_button_dvd_c);
+		putResource(R.drawable.ic_menu_dvd_add, R.drawable.ic_menu_dvd_add, R.drawable.ic_menu_dvd_add_c);
 	}
 	
 	/**
@@ -105,13 +114,32 @@ public class VBoxApplication extends Application {
 	    resources.put(name, bwResource);
 	    resources_color.put(name,  colorResource);
 	}
+	
+	/**
+	 * Populate the drawable cache
+	 * @param name                     name of drawable resource
+	 * @param bwResource			B/W drawable id
+	 * @param colorResource		Color drawable id
+	 */
+	private void putResource(int id, int bwResource, int colorResource) {
+	    generalResources.put(id, bwResource);
+	    generalResources_color.put(id,  colorResource);
+	}
 
 	/**
 	 * Get correct drawable <code>Map</code> based on user's preferences
 	 * @return B/W or Color icons, depending on Shared Preferences
 	 */
 	private Map<String,Integer> getDrawables() {
-		return Utils.getBooleanPreference(this, PreferencesActivity.ICON_COLORS)	? resources_color :  resources;
+		return Utils.getBooleanPreference(this, SettingsActivity.PREF_ICON_COLORS)	? resources_color :  resources;
+	}
+	
+	/**
+	 * Get correct drawable <code>Map</code> based on user's preferences
+	 * @return B/W or Color icons, depending on Shared Preferences
+	 */
+	private SparseArray<Integer> getGeneralDrawables() {
+		return Utils.getBooleanPreference(this, SettingsActivity.PREF_ICON_COLORS)	? generalResources_color :  generalResources;
 	}
 	
 	/**
@@ -152,6 +180,15 @@ public class VBoxApplication extends Application {
 	 */
 	public int getDrawable(MachineState state) {
 		return getDrawables().get(state.name());	
+	}
+	
+	/**
+	 * Get {@link Drawable} for given {@link MachineState}
+	 * @param state    The {@link MachineState}
+	 * @return     Android resource id
+	 */
+	public int getDrawable(int id) {
+		return getGeneralDrawables().get(id);	
 	}
 	
 	/**
@@ -210,7 +247,7 @@ public class VBoxApplication extends Application {
 	 */
 	public static void launchActivity(Activity parent, Intent intent) {
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN)
-    		parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+    		parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, android.R.anim.fade_in, android.R.anim.fade_out).toBundle());
     	else
     		parent.startActivity(intent);
 	}

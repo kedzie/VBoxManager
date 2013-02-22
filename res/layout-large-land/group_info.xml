@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
+	android:layout_width="match_parent" 
+	android:layout_height="wrap_content" >
+	
+	<com.kedzie.vbox.app.PanelView 
+	    vbox:name="General" 
+	    vbox:headerIcon="@drawable/ic_settings_general" 
+	    android:id="@+id/general_panel"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content" 
+	    android:layout_toLeftOf="@+id/previewPanel"
+	    android:layout_alignParentLeft="true">
+	    
+	    	<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
+	    	    <TextView android:id="@+id/name_label" style="@style/SmallTextPrimary" android:text="@string/name" />
+	    	    <TextView android:id="@+id/name" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/name_label" android:layout_toRightOf="@id/name_label" />
+
+	    	    <TextView android:id="@+id/ostype_label" style="@style/SmallTextPrimary" android:text="@string/operating_system" android:layout_below="@id/name_label"/>
+	    	    <TextView android:id="@+id/ostype" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/ostype_label" android:layout_toRightOf="@id/ostype_label" />
+	    	    
+	    	    <TextView android:id="@+id/groups_label" style="@style/SmallTextPrimary" android:text="@string/groups" android:layout_below="@id/ostype_label"/>
+	    	    <TextView android:id="@+id/groups" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/groups_label" android:layout_toRightOf="@id/groups_label" />
+		</RelativeLayout>
+	</com.kedzie.vbox.app.PanelView>   
+	
+	<com.kedzie.vbox.app.PanelView 
+	    vbox:name="System" 
+	    vbox:headerIcon="@drawable/ic_list_vbox" 
+	    android:id="@+id/system_panel"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content" 
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@id/general_panel"
+	    android:layout_toLeftOf="@id/previewPanel">
+	    	
+	    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
+	    	    <TextView android:id="@+id/baseMemory_label" style="@style/SmallTextPrimary" android:text="@string/base_memory" />
+	    	    <TextView android:id="@+id/baseMemory" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/baseMemory_label" android:layout_toRightOf="@+id/baseMemory_label" />
+
+	    	    <TextView android:id="@+id/processors_label" style="@style/SmallTextPrimary" android:text="@string/processors" android:layout_below="@+id/baseMemory_label"/>
+	    	    <TextView android:id="@+id/processors" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/processors_label" android:layout_toRightOf="@+id/processors_label" />
+	    	    
+	    	    <TextView android:id="@+id/bootOrder_label" style="@style/SmallTextPrimary" android:text="@string/boot_order" android:layout_below="@+id/processors_label"/>
+	    	    <TextView android:id="@+id/bootOrder" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/bootOrder_label" android:layout_toRightOf="@+id/bootOrder_label" />
+	    	    
+	    	    <TextView android:id="@+id/acceleration_label" style="@style/SmallTextPrimary" android:text="@string/acceleration" android:layout_below="@+id/bootOrder_label"/>
+	    	    <TextView android:id="@+id/acceleration" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/acceleration_label" android:layout_toRightOf="@+id/acceleration_label" />
+		</RelativeLayout>
+	</com.kedzie.vbox.app.PanelView>
+		
+	
+    	<com.kedzie.vbox.app.PanelView 
+    	    android:id="@id/previewPanel" 
+    	    vbox:name="Preview" 
+    	    vbox:headerIcon="@drawable/ic_settings_general" 
+    	    android:layout_width="wrap_content" 
+    	    android:layout_height="wrap_content" 
+    	    android:layout_alignParentRight="true">
+		<ImageView android:id="@+id/preview" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
+	</com.kedzie.vbox.app.PanelView>
+	
+</RelativeLayout>

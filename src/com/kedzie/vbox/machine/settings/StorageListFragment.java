@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ksoap2.SoapFault;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,12 +15,16 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -26,7 +32,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IMedium;
 import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.ISystemProperties;
 import com.kedzie.vbox.api.jaxb.ChipsetType;
@@ -81,6 +89,7 @@ public class StorageListFragment extends SherlockFragment {
 				for(IMediumAttachment a : attachments) {
 					if(a.getMedium()!=null)
 						a.getMedium().getName();
+						a.getMedium().getBase().getName();
 				}
 				controllers.put(c, attachments);
 			}
@@ -167,6 +176,134 @@ public class StorageListFragment extends SherlockFragment {
 			_listAdapter.notifyDataSetChanged();
 		}
 	}
+	
+	/**
+	 * Move the medium to a different slot within controller.
+	 */
+	abstract class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
+
+		private IStorageController controller;
+		private DeviceType deviceType;
+		
+		public ListMediumsTask(IStorageController controller, DeviceType type) { 
+			super("ListMediumsTask", getSherlockActivity(), _machine.getAPI()); 
+			this.controller = controller;
+			this.deviceType = type;
+		}
+		
+		public abstract List<IMedium> getMediums() throws Exception;
+
+		@Override 
+		protected List<IMedium> work(Void...params) throws Exception {
+			List<IMedium> mediums = getMediums();
+			for(IMedium m : mediums) {
+					m.getName();
+			}
+			return mediums;
+		}
+		
+		@Override
+		protected void onResult(final List<IMedium> result) {
+			super.onResult(result);
+			final CharSequence []items = new CharSequence[result.size()];
+			for(int i=0; i<result.size(); i++)
+				items[i] = result.get(i).getName();
+			new AlertDialog.Builder(getActivity())
+				.setTitle("Select Medium")
+				.setItems(items, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						new MountTask(controller, deviceType).execute(result.get(item));
+					}
+				}).show();
+		}
+	}
+	
+	/**
+	 * List mountable mediums
+	 */
+	class ListDVDMediumsTask extends ActionBarTask<Void, List<IMedium>> {
+
+		private IStorageController controller;
+		
+		public ListDVDMediumsTask(IStorageController controller) { 
+			super("ListDVDMediumsTask", getSherlockActivity(),_machine.getAPI()); 
+			this.controller=controller;
+		}
+
+		@Override 
+		protected List<IMedium> work(Void...params) throws Exception {
+			List<IMedium> mediums = _vmgr.getVBox().getHost().getDVDDrives();
+			mediums.addAll( _vmgr.getVBox().getDVDImages() );
+			for(IMedium m : mediums) {
+				m.getName(); m.getHostDrive();
+			}
+			return mediums;
+		}
+
+		@Override
+		protected void onResult(final List<IMedium> result) {
+			super.onResult(result);
+			final CharSequence []items = new CharSequence[result.size()+1];
+			for(int i=0; i<result.size(); i++) {
+				IMedium m = result.get(i);
+				items[i] = (m.getHostDrive() ? "Host Drive " : "") + m.getName();
+			}
+			items[items.length-1] = "No Disc"; 
+
+			new AlertDialog.Builder(getActivity())
+			.setTitle("Select Disk")
+			.setItems(items, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					CharSequence selected = items[item];
+					new MountTask(controller, DeviceType.DVD).execute(selected.equals("No Disc") ? null : result.get(item));
+				}
+			}).show();
+		}
+	}
+
+	/**
+	 * Move the medium to a different slot within controller.
+	 */
+	class MountTask extends DialogTask<IMedium, IMediumAttachment> {
+
+		private IStorageController controller;
+		private DeviceType deviceType;
+		
+		public MountTask(IStorageController controller, DeviceType type) { 
+			super("MountTask", getSherlockActivity(), _machine.getAPI(), "Mounting medium"); 
+			this.controller = controller;
+			this.deviceType = type;
+		}
+
+		@Override 
+		protected IMediumAttachment work(IMedium...params) throws Exception {
+			IMedium medium = params[0];
+			IMediumAttachment attachment = new IMediumAttachment();
+			int devicesPerPort = controller.getMaxDevicesPerPortCount();
+			for(int i=0; i<controller.getMaxPortCount(); i++) {
+				for(int j=0; j<devicesPerPort; j++) {
+					try {
+					IMediumAttachment a = _machine.getMediumAttachment(controller.getName(), i, j);
+					} catch(SoapFault e) {
+						attachment.setPort(i);
+						attachment.setDevice(j);
+						break;
+					}
+				}
+			}
+			_machine.attachDevice(controller.getName(), attachment.getPort(), attachment.getDevice(), deviceType, medium);
+			attachment.setMedium(medium);
+			return attachment;
+		}
+		
+		@Override
+		protected void onResult(IMediumAttachment result) {
+			super.onResult(result);
+			Utils.toastShort(getContext(), "Attached medium to slot " + result.getSlot());
+			_controllers.get(controller).add(result);
+			_listAdapter.notifyDataSetChanged();
+		}
+	}
 
 	private class ItemAdapter extends BaseExpandableListAdapter {
 
@@ -176,10 +313,20 @@ public class StorageListFragment extends SherlockFragment {
 
 		public ItemAdapter(Context context, Map<IStorageController, List<IMediumAttachment>> data) {
 			_inflater = LayoutInflater.from(context);
+			this.data = data;
+			update();
+		}
+		
+		private void update() {
 			controllers = new ArrayList<IStorageController>(data.keySet().size());
 			for(IStorageController controller : data.keySet())
 				controllers.add(controller);
-			this.data = data;
+		}
+		
+		@Override
+		public void notifyDataSetChanged() {
+			update();
+			super.notifyDataSetChanged();
 		}
 
 		@Override
@@ -220,12 +367,40 @@ public class StorageListFragment extends SherlockFragment {
 		@Override
 		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			final IStorageController controller = (IStorageController)getGroup(groupPosition);
-			if(convertView==null) {
+//			if(convertView==null) {
 				convertView = _inflater.inflate(R.layout.settings_storage_controller_list_item, parent, false);
 				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
-			}
+//			}
 			TextView text1 = (TextView)convertView.getTag();
 			text1.setText(controller.getName());
+			LinearLayout linear = (LinearLayout)convertView;
+			for(DeviceType type : _systemProperties.getDeviceTypesForStorageBus(controller.getBus())) {
+				ImageButton button = new ImageButton(getActivity());
+				button.setFocusable(false);
+				if(type.equals(DeviceType.HARD_DISK)) {
+					button.setImageResource(VBoxApplication.getInstance().getDrawable(R.drawable.ic_menu_hdd_add));
+					button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							new ListMediumsTask(controller, DeviceType.HARD_DISK) {
+								@Override
+								public List<IMedium> getMediums() throws Exception {
+									return _vmgr.getVBox().getHardDisks();
+								}
+							}.execute();
+						}
+					});
+				} else if(type.equals(DeviceType.DVD)) {
+					button.setImageResource(VBoxApplication.getInstance().getDrawable(R.drawable.ic_menu_dvd_add));
+					button.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							new ListDVDMediumsTask(controller).execute();
+						}
+					});
+				}
+				linear.addView(button, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			}
 			//	        text1.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
 			return convertView;
 		}
@@ -240,9 +415,9 @@ public class StorageListFragment extends SherlockFragment {
 			TextView text1 = (TextView)convertView.getTag();
 			text1.setText(attachment.getMedium()!=null ? attachment.getMedium().getName() : "Empty");
 			if(attachment.getType().equals(DeviceType.HARD_DISK))
-				text1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_button_hdd_c, 0, 0, 0);
+				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getDrawable(R.drawable.ic_button_hdd), 0, 0, 0);
 			if(attachment.getType().equals(DeviceType.DVD))
-				text1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_button_dvd_c, 0, 0, 0);
+				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getDrawable(R.drawable.ic_button_dvd), 0, 0, 0);
 			return convertView;
 		}
 
@@ -303,6 +478,8 @@ public class StorageListFragment extends SherlockFragment {
 		else {
 			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers);
 			_listView.setAdapter(_listAdapter);
+			for(int i=0; i<_controllers.keySet().size(); i++)
+				_listView.expandGroup(i, true);
 		}
 	}
 

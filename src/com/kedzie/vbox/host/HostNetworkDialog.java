@@ -21,7 +21,7 @@ import com.kedzie.vbox.api.IHostNetworkInterface;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.ActionBarTask;
 
-public class HostNetworkDialog2Fragment extends SherlockDialogFragment {
+public class HostNetworkDialog extends SherlockDialogFragment {
 
 	/**
 	 * Load Data
@@ -36,7 +36,7 @@ public class HostNetworkDialog2Fragment extends SherlockDialogFragment {
 		protected Tuple<IHostNetworkInterface, IDHCPServer> work(IHostNetworkInterface... params) throws Exception {
 			params[0].getIPAddress(); params[0].getNetworkMask();
 			params[0].getIPV6Address(); params[0].getIPV6NetworkMaskPrefixLength();
-			IDHCPServer dhcp = _vmgr.getVBox().findDHCPServerByNetworkName(params[0].getNetworkName());
+			IDHCPServer dhcp = _vmgr.findDHCPServerByNetworkName(params[0].getNetworkName());
 			if(dhcp!=null) {
 				dhcp.getIPAddress(); dhcp.getLowerIP(); dhcp.getUpperIP(); dhcp.getNetworkMask();
 			}
@@ -81,8 +81,8 @@ public class HostNetworkDialog2Fragment extends SherlockDialogFragment {
 		}
 	}
 
-	public static HostNetworkDialog2Fragment getInstance(Bundle arguments) {
-		HostNetworkDialog2Fragment fragment = new HostNetworkDialog2Fragment();
+	public static HostNetworkDialog getInstance(Bundle arguments) {
+		HostNetworkDialog fragment = new HostNetworkDialog();
 		fragment.setArguments(arguments);
 		return fragment;
 	}
@@ -120,7 +120,7 @@ public class HostNetworkDialog2Fragment extends SherlockDialogFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.host_settings_network2, container, false);
+		View view = inflater.inflate(R.layout.host_settings_network, container, false);
 		_ipv4IpText =(EditText)view.findViewById(R.id.hostnet_ipv4_ip);
 		_ipv4MaskText =(EditText)view.findViewById(R.id.hostnet_ipv4_mask);
 		_ipv6IpText =(EditText)view.findViewById(R.id.hostnet_ipv6_ip);

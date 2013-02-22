@@ -66,8 +66,8 @@ public class MachineListBaseFragment extends SherlockFragment {
 			for(IMachine m :  machines)
 				MachineView.cacheProperties(m);
 			_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-					Utils.getIntPreference(getActivity(), PreferencesActivity.PERIOD), 
-					Utils.getIntPreference(getActivity(), PreferencesActivity.COUNT), 
+					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_PERIOD), 
+					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_COUNT), 
 					(IManagedObjectRef)null);
 			_vmgr.getVBox().getVersion();
 			return machines;

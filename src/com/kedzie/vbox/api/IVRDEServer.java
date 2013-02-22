@@ -11,6 +11,7 @@ import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IVRDEServer extends IManagedObjectRef, Parcelable {
 	public static final String BUNDLE = "vrde";
 	static final ClassLoader LOADER = IVRDEServer.class.getClassLoader();

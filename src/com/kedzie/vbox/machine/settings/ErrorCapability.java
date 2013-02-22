@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import android.widget.TextView;
 
 /**
- * Show error messages in VM settings
+ * Show error messages
  */
 public class ErrorCapability implements Parcelable {
 	

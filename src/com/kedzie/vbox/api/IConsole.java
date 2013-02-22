@@ -12,6 +12,7 @@ import com.kedzie.vbox.soap.KSOAP;
  * Methods of the {@link IConsole} interface allow the caller to query the current virtual machine execution state, pause the machine or power it down, save the machine state or take a snapshot, attach and detach removable media and so on.</p>
  * @see {@link ISession}
  */
+@KSOAP
 public interface IConsole extends IManagedObjectRef {
 	
 	@KSOAP(cacheable=true) public IEventSource getEventSource() throws IOException;

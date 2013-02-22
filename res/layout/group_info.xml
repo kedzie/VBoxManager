@@ -5,6 +5,16 @@
 	android:layout_width="match_parent" 
 	android:layout_height="wrap_content" >
 	
+    <com.kedzie.vbox.app.PanelView 
+    	    android:id="@+id/previewPanel" 
+    	    vbox:name="Preview" 
+    	    vbox:headerIcon="@drawable/ic_settings_general" 
+    	    android:layout_width="match_parent" 
+    	    android:layout_height="wrap_content"
+    	    android:gravity="center_horizontal" >
+		<ImageView android:id="@+id/preview" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
+	</com.kedzie.vbox.app.PanelView>
+	
 	<com.kedzie.vbox.app.PanelView vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
 	    	<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
 
@@ -21,30 +31,19 @@
 	</com.kedzie.vbox.app.PanelView>   
 	
 	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"  android:text="@string/base_memory" android:layout_gravity="left" />
-			<TextView  style="@style/SmallText"  android:id="@+id/baseMemory"  android:layout_weight="1" android:layout_width="0dip"/>
-		</LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"   android:text="@string/processors"  android:layout_gravity="left"  />
-			<TextView  style="@style/SmallText" android:id="@+id/processors"  android:layout_weight="1" android:layout_width="0dip"/>
-		</LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView  style="@style/SmallText"  android:text="@string/boot_order"  android:layout_gravity="left"  />
-			<TextView style="@style/SmallText"  android:id="@+id/bootOrder"  android:layout_weight="1" android:layout_width="0dip"/>
-		</LinearLayout>
-		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/SmallText" android:text="@string/acceleration" android:layout_gravity="left"  />
-			<TextView style="@style/SmallText"  android:id="@+id/acceleration" android:layout_weight="1" android:layout_width="0dip"/>
-		</LinearLayout>
+		<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
+	    	    <TextView android:id="@+id/baseMemory_label" style="@style/SmallTextPrimary" android:text="@string/base_memory" />
+	    	    <TextView android:id="@+id/baseMemory" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/baseMemory_label" android:layout_toRightOf="@+id/baseMemory_label" />
+
+	    	    <TextView android:id="@+id/processors_label" style="@style/SmallTextPrimary" android:text="@string/processors" android:layout_below="@+id/baseMemory_label"/>
+	    	    <TextView android:id="@+id/processors" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/processors_label" android:layout_toRightOf="@+id/processors_label" />
+	    	    
+	    	    <TextView android:id="@+id/bootOrder_label" style="@style/SmallTextPrimary" android:text="@string/boot_order" android:layout_below="@+id/processors_label"/>
+	    	    <TextView android:id="@+id/bootOrder" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/bootOrder_label" android:layout_toRightOf="@+id/bootOrder_label" />
+	    	    
+	    	    <TextView android:id="@+id/acceleration_label" style="@style/SmallTextPrimary" android:text="@string/acceleration" android:layout_below="@+id/bootOrder_label"/>
+	    	    <TextView android:id="@+id/acceleration" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/acceleration_label" android:layout_toRightOf="@+id/acceleration_label" />
+		</RelativeLayout>
 	</com.kedzie.vbox.app.PanelView>
-	
-    	<com.kedzie.vbox.app.PanelView 
-    	    android:id="@+id/previewPanel" 
-    	    vbox:name="Preview" 
-    	    vbox:headerIcon="@drawable/ic_settings_general" 
-    	    android:layout_width="wrap_content" 
-    	    android:layout_height="wrap_content" >
-		<ImageView android:id="@+id/preview" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
-	</com.kedzie.vbox.app.PanelView>
+    	
 </LinearLayout>

@@ -21,7 +21,7 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventNotificationReceiver;
 import com.kedzie.vbox.host.HostSettingsActivity;
 import com.kedzie.vbox.machine.MachineView;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -119,7 +119,7 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
 			return true;
 		case R.id.option_menu_preferences:
-			startActivityForResult(new Intent(getActivity(), PreferencesActivity.class),REQUEST_CODE_PREFERENCES);
+			startActivityForResult(new Intent(getActivity(), SettingsActivity.class),REQUEST_CODE_PREFERENCES);
 			return true;
 		case R.id.machine_list_option_menu_host_settings:
 			if(VBoxApplication.getInstance().isPremiumVersion())
@@ -136,8 +136,8 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(getActivity(), _vmgr).execute(
-					Utils.getIntPreference(getActivity(), PreferencesActivity.PERIOD),	
-					Utils.getIntPreference(getActivity(), PreferencesActivity.COUNT) );
+					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_PERIOD),	
+					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_COUNT) );
 		}
 	}
 }

@@ -70,7 +70,7 @@ public class MachineActivity extends BaseActivity {
 		    NavUtils.navigateUpTo(this, new Intent(this, MachineListActivity.class).putExtras(getIntent()));
 			return true;
 		case R.id.option_menu_preferences:
-			startActivityForResult(new Intent(this, PreferencesActivity.class), REQUEST_CODE_PREFERENCES);
+			startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_PREFERENCES);
 			return true;
 		}
 		return false;
@@ -81,8 +81,8 @@ public class MachineActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
 			new ConfigureMetricsTask(this, _machine.getAPI()).execute(
-					Utils.getIntPreference(this, PreferencesActivity.PERIOD),	
-					Utils.getIntPreference(this, PreferencesActivity.COUNT) );
+					Utils.getIntPreference(this, SettingsActivity.PREF_PERIOD),	
+					Utils.getIntPreference(this, SettingsActivity.PREF_COUNT) );
 		}
 	}
 }

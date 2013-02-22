@@ -12,6 +12,7 @@ import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IHostNetworkInterface extends IManagedObjectRef, Parcelable {
 	public static final String BUNDLE = "hostNetwork";
 	static final ClassLoader LOADER = IHostNetworkInterface.class.getClassLoader();

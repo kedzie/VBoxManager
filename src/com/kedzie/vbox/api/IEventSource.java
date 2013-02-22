@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.soap.KSOAP;
 
+@KSOAP
 public interface IEventSource extends IManagedObjectRef {
 	public IEventListener createListener() ;
 	public void registerListener(@KSOAP("listener")IEventListener l, @KSOAP("interesting") VBoxEventType []events, @KSOAP("active") boolean active);

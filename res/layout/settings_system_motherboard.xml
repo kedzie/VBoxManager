@@ -66,10 +66,9 @@
 
     <TextView
         android:id="@+id/error_message"
-        style="@style/SmallTextPrimary"
-        android:layout_below="@id/extended_features"
+        style="@style/ErrorMessage"
+        android:layout_below="@id/utc"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:textColor="#FFFF0000" />
+        android:layout_marginTop="18dp"/>
 
 </RelativeLayout>

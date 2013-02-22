@@ -78,8 +78,10 @@ public class SnapshotFragment extends SherlockFragment {
 
 		@Override
 		protected void onResult(ISnapshot result)	{
-		    _rootSnapshot=result;
-			populate(null, _rootSnapshot);
+		    _stateManager = new InMemoryTreeStateManager<ISnapshot>();
+	        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
+	        _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
+			populate(null, result);
 		}
 	}
 	
@@ -99,7 +101,7 @@ public class SnapshotFragment extends SherlockFragment {
 
 		@Override 
 		public View getNewChildView(TreeNodeInfo<ISnapshot> treeNodeInfo) {
-			View v = LayoutInflater.from(getActivity()).inflate(R.layout.simple_selectable_list_item, null);
+			View v = LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_list_item_1, null);
 			TextView text1 = (TextView)v.findViewById(android.R.id.text1);
 			v.setTag(text1);
 			updateView(v, treeNodeInfo);
@@ -117,7 +119,6 @@ public class SnapshotFragment extends SherlockFragment {
 	
 	protected VBoxSvc _vmgr;
 	protected IMachine _machine;
-	private ISnapshot _rootSnapshot;
 	protected TreeViewList _treeView;
 	protected TreeStateManager<ISnapshot> _stateManager;
 	protected TreeBuilder<ISnapshot> _treeBuilder;
@@ -125,27 +126,37 @@ public class SnapshotFragment extends SherlockFragment {
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_TAKEN.name()) || intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_DELETED.name()))
+            if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_TAKEN.name()) || intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_DELETED.name())){
+            	Utils.toastShort(getActivity(), "Snapshot event: %1$s", intent.getAction());
                 refresh();
+            }
         }
     };
     
     @Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putSerializable("manager", _stateManager);
+	}
+    
     @SuppressWarnings("unchecked")
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	setHasOptionsMenu(true);
+    	_vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
         _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
         _machine = _vmgr.getProxy(IMachine.class, _machine.getIdRef());
-        
-        View view = inflater.inflate(R.layout.snapshot_tree, null);
+        if(savedInstanceState!=null) {
+        	_stateManager = (TreeStateManager<ISnapshot>)savedInstanceState.getSerializable("manager");
+    	}
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.snapshot_tree, container, false);
         _treeView = (TreeViewList)view.findViewById(R.id.mainTreeView);
-        _treeView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        _treeView.setChoiceMode(ListView.CHOICE_MODE_NONE);
         registerForContextMenu(_treeView);
-        
-        _stateManager = savedInstanceState==null ? new InMemoryTreeStateManager<ISnapshot>()  : (TreeStateManager<ISnapshot>)savedInstanceState.getSerializable("manager");
-        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
-        _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
         return view;
     }
 	
@@ -156,14 +167,19 @@ public class SnapshotFragment extends SherlockFragment {
         _lbm.registerReceiver(_receiver, Utils.createIntentFilter(
                 VBoxEventType.ON_SNAPSHOT_DELETED.name(),
                 VBoxEventType.ON_SNAPSHOT_TAKEN.name()));
-        if(_rootSnapshot==null) 
+        
+        if(_stateManager==null) 
 			new LoadSnapshotsTask(_vmgr).execute(_machine);
+        else {
+           	_treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
+             _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
+        }
     }
 
     @Override
     public void onStop() {
+    	_lbm.unregisterReceiver(_receiver);
         super.onStop();
-        _lbm.unregisterReceiver(_receiver);
     }
 
     /**
@@ -171,13 +187,13 @@ public class SnapshotFragment extends SherlockFragment {
 	 * @param parent
 	 * @param child
 	 */
-	protected void populate(ISnapshot parent, ISnapshot child) {
+	protected void populate(ISnapshot parent, ISnapshot snapshot) {
 		if(parent==null)
-			_treeBuilder.sequentiallyAddNextNode(child, 0);
+			_treeBuilder.sequentiallyAddNextNode(snapshot, 0);
 		else
-			_treeBuilder.addRelation(parent, child);
-		for(ISnapshot c : child.getChildren())
-			populate(child, c);	
+			_treeBuilder.addRelation(parent, snapshot);
+		for(ISnapshot child : snapshot.getChildren())
+			populate(snapshot, child);	
 	}
 	
 	/**
@@ -185,16 +201,10 @@ public class SnapshotFragment extends SherlockFragment {
 	 */
 	private void refresh() {
 	    _stateManager.clear();
-        _rootSnapshot=null;
         _stateManager = new InMemoryTreeStateManager<ISnapshot>();
         _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
         _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
         new LoadSnapshotsTask( _vmgr).execute(_machine);
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable("manager", _stateManager);
 	}
 	
 	private VBoxApplication getApp() {

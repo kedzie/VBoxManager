@@ -51,14 +51,11 @@ public class PanelView extends LinearLayout implements OnClickListener {
             	
                 @Override
                 public void onAnimationStart(Animation animation) { 
-                	if(isCollapsing())
-                		_contents.setVisibility(View.INVISIBLE);
                 }
                 
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if(isExpanding()) {
-                        _contents.setVisibility(View.VISIBLE);
 //                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
 //                        	_collapseButton.setImageDrawable(_collapseDrawable);
                     } else {
@@ -100,9 +97,10 @@ public class PanelView extends LinearLayout implements OnClickListener {
     protected ImageView _collapseButton;
     private View _titleView;
     private LinearLayout _contents;
+    private int _contentGravity=0;
     private FrameLayout _frame;
-    private Drawable _collapseDrawable;
-    private Drawable _expandDrawable;
+//    private Drawable _collapseDrawable;
+//    private Drawable _expandDrawable;
     private Drawable _icon;
     private int _contentHeight;
     private String _title;
@@ -127,8 +125,8 @@ public class PanelView extends LinearLayout implements OnClickListener {
     }
     
     protected void init(Context context) {
-    	_collapseDrawable = context.getResources().getDrawable(R.drawable.ic_menu_collapse);
-        _expandDrawable = context.getResources().getDrawable(R.drawable.ic_menu_expand);
+//    	_collapseDrawable = context.getResources().getDrawable(R.drawable.ic_menu_collapse);
+//        _expandDrawable = context.getResources().getDrawable(R.drawable.ic_menu_expand);
     	
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         setOrientation(VERTICAL);
@@ -137,6 +135,7 @@ public class PanelView extends LinearLayout implements OnClickListener {
         _contents = new LinearLayout(context);
         _contents.setClipChildren(false);
         _contents.setOrientation(VERTICAL);
+       	_contents.setGravity(_contentGravity);
         
         _frame = new FrameLayout(context);
         _frame.setBackgroundResource(R.drawable.panel_body);
@@ -173,6 +172,11 @@ public class PanelView extends LinearLayout implements OnClickListener {
     @Override
     public void addView(View child, ViewGroup.LayoutParams params) {
         _contents.addView(child, params);
+    }
+    
+    @Override
+    public void setGravity(int gravity) {
+    	_contentGravity=gravity;
     }
     
     @Override

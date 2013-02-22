@@ -5,13 +5,12 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -26,6 +25,7 @@ import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.jaxb.IMediumAttachment;
 import com.kedzie.vbox.api.jaxb.IMediumAttachment.Slot;
 import com.kedzie.vbox.api.jaxb.StorageBus;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -38,13 +38,12 @@ public class StorageDVDFragment extends SherlockFragment {
 	class LoadInfoTask extends ActionBarTask<Void, IStorageController> {
 
 		public LoadInfoTask() { 
-			super("LoadInfoTask", getSherlockActivity(), null); 
+			super("LoadInfoTask", getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
 		protected IStorageController work(Void...params) throws Exception {
 			if(_attachment.getMedium()!=null) {
-				Log.i(TAG, "Medium properties: " + _attachment.getMedium().getAPI().getProperties(_attachment.getMedium()));
 				_attachment.getMedium().getSize();
 				_attachment.getMedium().getType();
 				_attachment.getMedium().getLocation();
@@ -69,11 +68,13 @@ public class StorageDVDFragment extends SherlockFragment {
 	class MoveTask extends ActionBarTask<Slot, Void> {
 
 		public MoveTask() { 
-			super("MoveTask", getSherlockActivity(), _attachment.getMedium().getAPI()); 
+			super("MoveTask", getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
-		protected Void work(Slot...params) throws Exception {
+		protected Void work(Slot...params) throws Exception { 
+			if(params[0].equals(_attachment.getSlot()))
+				return null;
 			_machine.detachDevice(_controller.getName(), _attachment.getPort(), _attachment.getDevice());
 			if(_attachment.getMedium()!=null)
 				_machine.attachDevice(_controller.getName(), params[0].port, params[0].device, _attachment.getType(), _attachment.getMedium());
@@ -89,7 +90,7 @@ public class StorageDVDFragment extends SherlockFragment {
 	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
 		public ListMediumsTask() { 
-			super("ListMediumsTask", getSherlockActivity(), _attachment.getMedium().getAPI()); 
+			super("ListMediumsTask", getSherlockActivity(),_machine.getAPI()); 
 		}
 
 		@Override 
@@ -97,7 +98,7 @@ public class StorageDVDFragment extends SherlockFragment {
 			List<IMedium> mediums = _vmgr.getVBox().getHost().getDVDDrives();
 			mediums.addAll( _vmgr.getVBox().getDVDImages() );
 			for(IMedium m : mediums) {
-				m.getName();
+				m.getName(); m.getHostDrive();
 			}
 			return mediums;
 		}
@@ -129,7 +130,7 @@ public class StorageDVDFragment extends SherlockFragment {
 	class MountTask extends DialogTask<IMedium, Void> {
 
 		public MountTask() { 
-			super("MountTask", getSherlockActivity(), _attachment.getMedium().getAPI(), "Mounting medium"); 
+			super("MountTask", getSherlockActivity(), _machine.getAPI(), "Mounting medium"); 
 		}
 
 		@Override 
@@ -218,11 +219,15 @@ public class StorageDVDFragment extends SherlockFragment {
 		}
 		_slotAdapter = new ArrayAdapter<Slot>(getActivity(), android.R.layout.simple_spinner_item, _slots);
 		_slotSpinner.setAdapter(_slotAdapter);
-		_slotSpinner.setOnItemClickListener(new OnItemClickListener() {
+		_slotSpinner.setSelection(Utils.indexOf(_slots, _attachment.getSlot()));
+		
+		_slotSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				new MoveTask().execute(_slotAdapter.getItem(position));
 			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
 		});
 		if(_attachment.getMedium()!=null) {
 			_storageTypeText.setText( _attachment.getMedium().getType().toString() );

@@ -16,8 +16,6 @@ import com.kedzie.vbox.soap.KSOAP;
 @KSOAP
 public interface IGuestSession extends IManagedObjectRef {
 
-	
-
     /**
      * Returns the user name used by this session to impersonate users on the guest.
      */

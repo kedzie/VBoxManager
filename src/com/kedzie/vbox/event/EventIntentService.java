@@ -40,7 +40,7 @@ public class EventIntentService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		_lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+		_lbm = LocalBroadcastManager.getInstance(this);
 		_vmgr = intent.getParcelableExtra(VBoxSvc.BUNDLE);
 		_interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
 //		sendNotification();

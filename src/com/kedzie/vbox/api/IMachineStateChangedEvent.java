@@ -10,6 +10,7 @@ import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IMachineStateChangedEvent extends IMachineEvent, Parcelable {
 
 	static ClassLoader loader = IMachineStateChangedEvent.class.getClassLoader();

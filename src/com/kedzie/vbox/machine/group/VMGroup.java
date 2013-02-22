@@ -63,6 +63,14 @@ public class VMGroup implements TreeNode {
         }
     }
     
+    public void removeChild(TreeNode child) {
+    	getChildren().remove(child);
+    	if(child instanceof VMGroup)
+            _numGroups--;
+        else if(child instanceof IMachine)
+            _numMachines--;
+    }
+    
     public String getName() {
         return _name;
     }

@@ -14,11 +14,32 @@ import com.kedzie.vbox.app.FragmentActivity;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.host.HostSettingsListFragment.OnSelectHostCategoryListener;
+import com.kedzie.vbox.task.ActionBarTask;
 
 /**
  * @apiviz.stereotype activity
  */
 public class HostSettingsActivity extends BaseActivity implements OnSelectHostCategoryListener {
+	
+	private class UpdateIconTask extends ActionBarTask<IHost, IHost> {
+		
+		public UpdateIconTask() {
+			super("UpdateIconTask", HostSettingsActivity.this, _host.getAPI());
+		}
+		
+		@Override
+		protected IHost work(IHost... params) throws Exception {
+			params[0].getOperatingSystem();
+			params[0].getOSVersion();
+			return params[0];
+		}
+		
+		@Override
+		protected void onResult(IHost result) {
+			super.onResult(result);
+			Utils.toastLong(HostSettingsActivity.this, "Operating System: %1$s v.%2$s", result.getOperatingSystem(), result.getOSVersion());
+		}
+	}
 
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
@@ -32,6 +53,7 @@ public class HostSettingsActivity extends BaseActivity implements OnSelectHostCa
 		
 		getSupportActionBar().setTitle("Host Settings");
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		new UpdateIconTask().execute(_host);
 		
 		setContentView(R.layout.fragment_list_layout);
 		FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);

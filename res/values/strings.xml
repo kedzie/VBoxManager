@@ -116,4 +116,5 @@
     <string name="toast_discarding_settings">Discarded Settings</string>
     <string name="toast_saved_settings">Saved Settings</string>
     <string name="progress_creating_network_interface">Creating Network Interface</string>
+    <string name="virtualbox_error_dialog_title">VirtualBox Error</string>
 </resources>

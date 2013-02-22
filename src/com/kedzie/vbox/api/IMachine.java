@@ -43,6 +43,7 @@ in a separate interface called {@link IConsole}.<p>
 <dl><dt><b>See also:</b></dt><dd>{@link ISession}, {@link IConsole}</dd></dl>
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
+@KSOAP
 public interface IMachine extends IManagedObjectRef, TreeNode {
 	public static String BUNDLE = "machine";
 	static final ClassLoader LOADER = IMachine.class.getClassLoader();
@@ -162,7 +163,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
 	 */
 	@KSOAP(cacheable=true) public List<String> getGroups();
-	public void setGroups(@KSOAP("groups")String...group);
+	@Asyncronous public void setGroups(@KSOAP("groups")String...group);
 	
 	@KSOAP(cacheable=true) public IBIOSSettings getBIOSSettings();
 	
@@ -177,9 +178,9 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	
 	@KSOAP(cacheable=true) public IAudioAdapter getAudioAdapter();
 	
-	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment>getMediumAttachments();
-	@KSOAP(cacheable=true) public IMedium getMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device);
-	@KSOAP(cacheable=true) public IMediumAttachment getMediumAttachment(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device);
+	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment>getMediumAttachments() throws IOException;
+	@KSOAP(cacheable=true) public IMedium getMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
+	@KSOAP(cacheable=true) public IMediumAttachment getMediumAttachment(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
 	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment> getMediumAttachmentsOfController(@KSOAP("name") String name);
 	
 	@KSOAP(cacheable=true) public ArrayList<IStorageController>getStorageControllers();
@@ -189,8 +190,8 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	public IStorageController addStorageController(@KSOAP("name") String name, @KSOAP("connectionType") StorageBus connectionType) throws IOException;
 	@Asyncronous public void setStorageControllerBootable(@KSOAP("name") String name, @KSOAP("bootable") boolean bootable) throws IOException;
 	
-	public void attachDevice(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("type") DeviceType type, @KSOAP("medium") IMedium medium) throws IOException;
-	public void attachDeviceWithoutMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("type") DeviceType type) throws IOException;
+	public void attachDevice(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("type") DeviceType type, @KSOAP("medium") IMedium medium) throws IOException;
+	public void attachDeviceWithoutMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("type") DeviceType type) throws IOException;
 	
 	/**
 	 * <p>Detaches the device attached to a device slot of the specified bus. </p>
@@ -207,10 +208,10 @@ operation should be explicitly performed by the caller after the medium is succe
 	 * @param controllerPort		Port number to detach the medium from.
 	 * @param device		Device slot number to detach the medium from.
 	 */
-	public void detachDevice(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device) throws IOException;
+	public void detachDevice(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
 	
-	public void mountMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("medium") IMedium medium, @KSOAP("force") boolean force) throws IOException;
-	public void unmountMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("force") boolean force) throws IOException;
+	public void mountMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("medium") IMedium medium, @KSOAP("force") boolean force) throws IOException;
+	public void unmountMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("force") boolean force) throws IOException;
 		
  	/**
 	 * @return  Full path to the directory used to store snapshot data (differencing media and saved state files) of this machine. 

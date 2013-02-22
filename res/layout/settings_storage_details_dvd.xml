@@ -14,12 +14,13 @@
         android:id="@+id/storage_dvd"
         style="@style/SmallTextPrimary"
         android:layout_below="@id/storage_attributes"
-        android:text="CD/DVD" />
+        android:text="CD/DVD:" />
     
     <Spinner 
         android:id="@+id/storage_port"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:layout_toRightOf="@id/storage_dvd"
     	android:layout_toLeftOf="@+id/storage_mount"
         android:layout_alignTop="@id/storage_dvd"/>

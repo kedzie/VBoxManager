@@ -19,6 +19,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * are available, what the host operating system is, and so on) and also allows for manipulating some of the host's 
  * hardware, such as global USB device filters and host interface networking.
  */
+@KSOAP
 public interface IHost extends IManagedObjectRef, Parcelable {
 	public static final String BUNDLE = "host";
 	static ClassLoader loader = IHost.class.getClassLoader();

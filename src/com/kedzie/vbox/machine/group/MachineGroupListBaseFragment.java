@@ -16,7 +16,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineView;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
@@ -66,15 +66,15 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	            for(IMachine machine : _vmgr.getVBox().getMachines()) {
 	                MachineView.cacheProperties(machine);
 	                List<String> groups = machine.getGroups();
-	                if(groups.isEmpty() || groups.get(0).equals("") || groups.get(0).equals("/"))
+	                if(groups.isEmpty() || Utils.isEmpty(groups.get(0))  || groups.get(0).equals("/"))
 	                    get("/").addChild(machine);
 	                else
 	                    get(groups.get(0)).addChild(machine);
 	            }
 	            VMGroup root = get("/");
 	            _vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-	                    Utils.getIntPreference(getActivity(), PreferencesActivity.PERIOD), 
-	                    Utils.getIntPreference(getActivity(), PreferencesActivity.COUNT), 
+	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_PERIOD), 
+	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_COUNT), 
 	                    (IManagedObjectRef)null);
 	            return root;
 	        }

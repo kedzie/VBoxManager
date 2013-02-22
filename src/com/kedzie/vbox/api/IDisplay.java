@@ -11,6 +11,7 @@ import com.kedzie.vbox.soap.KSOAP;
  */
 @KSOAP
 public interface IDisplay extends IManagedObjectRef {
+	
 	public Map<String, String> getScreenResolution(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 	
 	public byte[] takeScreenShotToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId, @KSOAP(type="unsignedInt", value="width") int width, @KSOAP(type="unsignedInt", value="height") int height);

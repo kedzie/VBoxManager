@@ -20,7 +20,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineActivity;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class Provider extends AppWidgetProvider {
@@ -86,7 +86,7 @@ public class Provider extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         Log.d(TAG, "onEnabled");
-        UPDATE_INTERVAL = Utils.getIntPreference(context, PreferencesActivity.PREF_WIDGET_INTERVAL);
+        UPDATE_INTERVAL = Utils.getIntPreference(context, SettingsActivity.PREF_WIDGET_INTERVAL);
         getAlarmManager(context).setRepeating(AlarmManager.RTC, UPDATE_INTERVAL, UPDATE_INTERVAL, getBroadcastIntent(context));
         LocalBroadcastManager.getInstance(context).registerReceiver(this, new IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
     }
@@ -103,7 +103,7 @@ public class Provider extends AppWidgetProvider {
         if(intent.getAction()==null || intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED)) {
             context.startService(new Intent(context, UpdateWidgetService.class).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, getAppWidgetIds(context)));
             
-            int newInterval = Utils.getIntPreference(context, PreferencesActivity.PREF_WIDGET_INTERVAL);
+            int newInterval = Utils.getIntPreference(context, SettingsActivity.PREF_WIDGET_INTERVAL);
             if(newInterval != UPDATE_INTERVAL) {
                 Log.i(TAG, "Changed widget update interval");
                 UPDATE_INTERVAL=newInterval;

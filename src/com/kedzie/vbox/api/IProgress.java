@@ -10,6 +10,7 @@ import android.os.Parcelable;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IProgress extends IManagedObjectRef, Parcelable {
     public static final String BUNDLE = "progress";
     

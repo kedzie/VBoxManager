@@ -10,8 +10,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="327"
-   height="327"
+   width="72"
+   height="72"
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.48.3.1 r9886"
@@ -455,10 +455,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.94221278"
-     inkscape:cx="-7.5256085"
+     inkscape:cx="-19.945433"
      inkscape:cy="177.08932"
      inkscape:document-units="px"
-     inkscape:current-layer="layer7"
+     inkscape:current-layer="layer4"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1154"
@@ -485,7 +485,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -493,7 +493,7 @@
      inkscape:label="Color"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-89.645035,-113.19746)"
+     transform="translate(-89.645035,-368.19746)"
      style="display:inline">
     <g
        id="g2267"
@@ -550,7 +550,7 @@
          inkscape:connector-curvature="0" />
       <path
          transform="matrix(0.8860136,0,0,0.8860136,29.474768,60.037006)"
-         d="m 471.42857,480.93362 a 74.285713,74.285713 0 1 1 -148.57143,0 74.285713,74.285713 0 1 1 148.57143,0 z"
+         d="m 471.42857,480.93362 c 0,41.02687 -33.25885,74.28572 -74.28572,74.28572 -41.02686,0 -74.28571,-33.25885 -74.28571,-74.28572 0,-41.02686 33.25885,-74.28571 74.28571,-74.28571 41.02687,0 74.28572,33.25885 74.28572,74.28571 z"
          sodipodi:ry="74.285713"
          sodipodi:rx="74.285713"
          sodipodi:cy="480.93362"
@@ -562,24 +562,10 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Remove"
-     style="display:none">
-    <rect
-       style="fill:#eb1313;fill-opacity:1;stroke:none;display:inline;enable-background:new"
-       id="rect3801"
-       width="150"
-       height="50"
-       x="160"
-       y="207"
-       rx="9.6883717"
-       ry="7.0942173" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Add"
-     style="display:none">
+     style="display:inline"
+     transform="translate(0,-255)">
     <path
        style="fill:#eb1313;fill-opacity:1;stroke:none;display:inline;enable-background:new"
        d="m 217.03125,157 c -3.93022,0 -7.03118,4.39824 -7.03118,9.76562 l 0,40.23438 -40.23439,0 C 164.39826,207 160,210.10107 160,214.03125 l 0,35.9375 c 0,3.93017 4.39826,7.03125 9.76568,7.03125 l 40.23439,0 0,40.23438 c 0,5.36737 3.10096,9.76562 7.03118,9.76562 l 35.9375,0 c 3.93032,0 7.03129,-4.39825 7.03129,-9.76562 l 0,-40.23438 40.2344,0 C 305.60173,257 310,253.89892 310,249.96875 l 0,-35.9375 C 310,210.10107 305.60173,207 300.23444,207 l -40.2344,0 0,-40.23438 c 0,-5.36738 -3.10097,-9.76562 -7.03129,-9.76562 l -35.9375,0 z"
@@ -590,7 +576,8 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="Holo-Light"
-     style="display:none">
+     style="display:inline"
+     transform="translate(0,-255)">
     <g
        id="layer10"
        transform="matrix(20.701128,0,0,20.701128,6603.027,-9257.1053)"
@@ -611,7 +598,8 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Holo-Dark"
-     style="display:none">
+     style="display:inline"
+     transform="translate(0,-255)">
     <g
        style="fill:#ffffff;fill-opacity:0.8;display:inline"
        transform="matrix(20.701128,0,0,20.701128,6603.027,-9257.1053)"
@@ -630,24 +618,10 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer6"
-     inkscape:label="Remove BW"
-     style="display:none">
-    <rect
-       ry="7.0942173"
-       rx="9.6883717"
-       y="207"
-       x="160"
-       height="50"
-       width="150"
-       id="rect3958"
-       style="fill:#a6aca9;fill-opacity:1;stroke:none;display:inline;enable-background:new" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
      id="layer7"
      inkscape:label="Add BW"
-     style="display:none">
+     style="display:inline"
+     transform="translate(0,-255)">
     <path
        inkscape:connector-curvature="0"
        id="path3964"

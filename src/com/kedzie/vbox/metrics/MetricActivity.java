@@ -20,7 +20,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.PreferencesActivity;
+import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
@@ -53,8 +53,8 @@ public class MetricActivity extends BaseActivity  {
 		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
-		_count = Utils.getIntPreference(this, PreferencesActivity.COUNT);
-        _period = Utils.getIntPreference(this, PreferencesActivity.PERIOD);
+		_count = Utils.getIntPreference(this, SettingsActivity.PREF_COUNT);
+        _period = Utils.getIntPreference(this, SettingsActivity.PREF_PERIOD);
         
         View content = LayoutInflater.from(this).inflate(R.layout.metrics, null);
         cpuV = (MetricView) content.findViewById(R.id.cpu_metrics);
@@ -88,8 +88,8 @@ public class MetricActivity extends BaseActivity  {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFS) {
-			_count = Utils.getIntPreference(this, PreferencesActivity.COUNT);
-			_period = Utils.getIntPreference(this, PreferencesActivity.PERIOD);
+			_count = Utils.getIntPreference(this, SettingsActivity.PREF_COUNT);
+			_period = Utils.getIntPreference(this, SettingsActivity.PREF_PERIOD);
 			cpuV.setMetricPrefs(_count, _period);
 			ramV.setMetricPrefs(_count, _period);
 		}
@@ -105,7 +105,7 @@ public class MetricActivity extends BaseActivity  {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.metrics_option_menu_preferences:
-			startActivityForResult(new Intent(this, PreferencesActivity.class), REQUEST_CODE_PREFS);
+			startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_PREFS);
 			return true;
 		}
 		return true;
@@ -114,7 +114,7 @@ public class MetricActivity extends BaseActivity  {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		_thread = new DataThread(this, _vmgr, _object, Utils.getIntPreference(this, PreferencesActivity.PERIOD), cpuV, ramV);
+		_thread = new DataThread(this, _vmgr, _object, Utils.getIntPreference(this, SettingsActivity.PREF_PERIOD), cpuV, ramV);
 		_thread.start();
 	}	
 	

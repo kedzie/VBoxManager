@@ -33,4 +33,9 @@
         <item name="android:padding">4dp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
+    
+    <style name="ErrorMessage" parent="@style/MediumText">
+        <item name="android:textColor">#FFFF0000</item>
+        <item name="android:textStyle">italic</item>
+    </style>
 </resources>

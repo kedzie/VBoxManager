@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -38,15 +38,21 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class LoadInfoTask extends ActionBarTask<Void, IStorageController> {
 
 		public LoadInfoTask() { 
-			super("LoadInfoTask", getSherlockActivity(), _attachment.getMedium().getAPI()); 
+			super("LoadInfoTask", getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
 		protected IStorageController work(Void...params) throws Exception {
+			_attachment.getMedium().getName();
 			_attachment.getMedium().getSize();
 			_attachment.getMedium().getType();
 			_attachment.getMedium().getLocation();
 			_attachment.getMedium().getLogicalSize();
+			_attachment.getMedium().getBase().getName();
+			_attachment.getMedium().getBase().getSize();
+			_attachment.getMedium().getBase().getType();
+			_attachment.getMedium().getBase().getLocation();
+			_attachment.getMedium().getBase().getLogicalSize();
 			IStorageController controller = _machine.getStorageControllerByName(_attachment.getController());
 			controller.getBus();
 			controller.getMaxPortCount();
@@ -66,11 +72,13 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class MoveTask extends ActionBarTask<Slot, Void> {
 
 		public MoveTask() { 
-			super("MoveTask", getSherlockActivity(), _attachment.getMedium().getAPI()); 
+			super("MoveTask", getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
 		protected Void work(Slot...params) throws Exception {
+			if(params[0].equals(_attachment.getSlot()))
+				return null;
 			_machine.detachDevice(_controller.getName(), _attachment.getPort(), _attachment.getDevice());
 			_machine.attachDevice(_controller.getName(), params[0].port, params[0].device, _attachment.getType(), _attachment.getMedium());
 			return null;
@@ -83,14 +91,14 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
 		public ListMediumsTask() { 
-			super("ListMediumsTask", getSherlockActivity(), _attachment.getMedium().getAPI()); 
+			super("ListMediumsTask", getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
 		protected List<IMedium> work(Void...params) throws Exception {
 			List<IMedium> mediums = _vmgr.getVBox().getHardDisks();
 			for(IMedium m : mediums) {
-				m.getName();
+				m.getName(); m.getBase();
 			}
 			return mediums;
 		}
@@ -119,7 +127,7 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class MountTask extends DialogTask<IMedium, Void> {
 
 		public MountTask() { 
-			super("MountTask", getSherlockActivity(), _attachment.getMedium().getAPI(), "Mounting medium"); 
+			super("MountTask", getSherlockActivity(), _machine.getAPI(), "Mounting medium"); 
 		}
 
 		@Override 
@@ -207,15 +215,17 @@ public class StorageHardDiskFragment extends SherlockFragment {
 		}
 		_slotAdapter = new ArrayAdapter<Slot>(getActivity(), android.R.layout.simple_spinner_item, _slots);
 		_slotSpinner.setAdapter(_slotAdapter);
-		_slotSpinner.setOnItemClickListener(new OnItemClickListener() {
+		_slotSpinner.setSelection(Utils.indexOf(_slots, _attachment.getSlot()));
+		_slotSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				new MoveTask().execute(_slotAdapter.getItem(position));
 			}
+			@Override public void onNothingSelected(AdapterView<?> parent) {}
 		});
 		_storageTypeText.setText( _attachment.getMedium().getType().toString() );
 		_virtualSizeText.setText(_attachment.getMedium().getLogicalSize()/1024+" MB");
 		_actualSizeText.setText(_attachment.getMedium().getSize()/1024+" MB");
-		_locationText.setText(_attachment.getMedium().getLocation());
+		_locationText.setText(_attachment.getMedium().getBase().getLocation());
 	}
 }

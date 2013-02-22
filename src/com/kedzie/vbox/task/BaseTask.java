@@ -31,7 +31,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
-	protected WeakReference<Context> _context;
+	private WeakReference<Context> _context;
 	protected final String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
@@ -84,6 +84,10 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		_vmgr=vmgr;
 		_context=new WeakReference<Context>(context);
 	}
+	
+	protected Context getContext() {
+		return _context.get();
+	}
 
 	@Override
 	protected Output doInBackground(Input... params)	{
@@ -111,7 +115,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected void onPostExecute(Output result) {
 		super.onPostExecute(result);
-		if(result!=null && _context.get()!=null && !_cancelled)
+		if(result!=null && getContext()!=null && !_cancelled)
 			onResult(result);
 	}
 	
@@ -144,7 +148,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param e <code>Throwable</code> which caused the error
 	 */
 	protected void showAlert(SoapFault e) {
-		Log.e(TAG, "caught SoapFault", e);
+		Log.e(TAG, "SoapFault", e);
 		new BundleBuilder().putString("title", "Soap Fault")
 				.putString("msg", String.format("Code: %1$s\nActor: %2$s\nString: %3$s", e.faultcode, e.faultactor, e.faultstring))
 				.sendMessage(_alertHandler, 0);
@@ -158,7 +162,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	protected void showAlert(int code, String msg) {
 		Log.e(TAG, "Alert error: " + msg);
 		new BundleBuilder()
-				.putString("title", "VirtualBox error")
+				.putString("title", getContext().getString(R.string.virtualbox_error_dialog_title))
 				.putString("msg", "Result Code: " + code + " - " + msg)
 				.sendMessage(_alertHandler, 0);
 	}
@@ -174,7 +178,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
-			try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
+			Utils.sleep(PROGRESS_INTERVAL);
 		}
 		Log.d(TAG, "Operation Completed. result code: " + p.getResultCode());
 		if(p.getResultCode()!=0) {

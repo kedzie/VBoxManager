@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.kedzie.vbox.soap.KSOAP;
 
+@KSOAP
 public interface IMediumFormat extends IManagedObjectRef {
 
     @KSOAP(cacheable=true) public String getId();

@@ -14,9 +14,8 @@ import com.kedzie.vbox.soap.VBoxSvc.FutureValue;
  * @apiviz.stereotype Proxy
  * @apiviz.category Proxy
  */
+@KSOAP
 public interface IManagedObjectRef  {
-	
-	public Class<? extends IManagedObjectRef> getInterface();
 	
 	/**
 	 * @return Managed object identifier

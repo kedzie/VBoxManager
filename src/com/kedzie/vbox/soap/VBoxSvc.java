@@ -35,6 +35,8 @@ import android.os.Parcelable;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.common.base.Objects;
+import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IHost;
@@ -76,10 +78,13 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	private static final String TAG = "VBoxSvc";
 	protected static final int TIMEOUT = 20000;
 	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
+	private static final ClassLoader LOADER = VBoxSvc.class.getClassLoader();
+	
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
 		public VBoxSvc createFromParcel(Parcel in) {
-			VBoxSvc svc = new VBoxSvc((Server)in.readParcelable(VBoxSvc.class.getClassLoader()));
+			VBoxSvc svc = new VBoxSvc((Server)in.readParcelable(LOADER));
 			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
+			svc.init();
 			return svc;
 		}
 		public VBoxSvc[] newArray(int size) {
@@ -158,14 +163,15 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				String methodName = method.getName();
 				boolean isPopulateView = methodName.equals("populateView");
 				FutureValue future = null;
-				if(method.getName().equals("getIdRef")) return this._uiud;
-				if(method.getName().equals("hashCode")) return _uiud==null ? 0 : _uiud.hashCode();
-				if(method.getName().equals("toString")) return _type.getSimpleName() + "#" + _uiud.toString();
-				if(method.getName().equals("getInterface")) return _type;
+				if(method.getName().equals("hashCode")) return Objects.hashCode(_uiud);
+				if(method.getName().equals("toString")) {
+					return _type.getSimpleName() + " #" + _uiud + Utils.toString("Cache", _cache);
+				}
 				if(method.getName().equals("equals")) {
+					if(args[0]==null) return false;
 					if(!(args[0] instanceof IManagedObjectRef) || !_type.isAssignableFrom(args[0].getClass())) 
 						return false;
-					return _uiud.equals(((IManagedObjectRef)args[0]).getIdRef());
+					return Objects.equal(_uiud, ((IManagedObjectRef)args[0]).getIdRef());
 				}
 				if(method.getName().equals("clearCache")) { 
 						_cache.clear(); 
@@ -179,6 +185,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				if(method.getName().equals("getAPI")) return VBoxSvc.this;
 				if(method.getName().equals("describeContents")) return 0;
 				if(method.getName().equals("getCache")) return _cache;
+				if(method.getName().equals("getIdRef")) return _uiud;
 				if(method.getName().equals("writeToParcel")) {
 					Parcel out = (Parcel)args[0];
 					out.writeParcelable(VBoxSvc.this, 0);
@@ -190,25 +197,25 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					methodName = (String)args[0];
 					future = (FutureValue)args[1];
 				}
-				KSOAP methodKSOAP = method.getAnnotation(KSOAP.class)==null ? method.getDeclaringClass().getAnnotation(KSOAP.class) : method.getAnnotation(KSOAP.class);
+				KSOAP ksoap = method.getAnnotation(KSOAP.class);
+				if(ksoap==null)
+					ksoap=method.getDeclaringClass().getAnnotation(KSOAP.class);
 				
 				String cacheKey = method.getName();
 				if(args!=null) {
 					for(Object arg : args)
 						cacheKey+="-"+arg.toString();
 				}
-				if(methodKSOAP!=null && methodKSOAP.cacheable() && _cache.containsKey(cacheKey)) {
+				if(ksoap.cacheable() && _cache.containsKey(cacheKey)) {
 					if(isPopulateView) {
 						future.handleValue(_cache.get(cacheKey));
 						return null;
 					} else
 						return _cache.get(cacheKey);
 				}
-				SoapObject request = new SoapObject(NAMESPACE, (methodKSOAP==null || methodKSOAP.prefix().equals("") ? _type.getSimpleName() : methodKSOAP.prefix())+"_"+method.getName());
-				if(methodKSOAP==null)
-					request.addProperty("_this", this._uiud);
-				else if ( !"".equals(methodKSOAP.thisReference()))
-					request.addProperty(methodKSOAP.thisReference(), this._uiud);
+				SoapObject request = new SoapObject(NAMESPACE, (Utils.isEmpty(ksoap.prefix()) ? _type.getSimpleName() : ksoap.prefix())+"_"+method.getName());
+				if (!Utils.isEmpty(ksoap.thisReference()))
+					request.addProperty(ksoap.thisReference(), _uiud);
 				if(args!=null) {
 					for(int i=0; i<args.length; i++)
 						marshal(request, Utils.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
@@ -222,13 +229,18 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					new AsynchronousThread(NAMESPACE+request.getName(), envelope).start();
 					return null;
 				} else if(isPopulateView) {
-					new AsynchronousThread(NAMESPACE+request.getName(), envelope, future, method.getReturnType(), method.getGenericReturnType(), cacheKey, _cache, methodKSOAP).start();
+					new AsynchronousThread(NAMESPACE+request.getName(), envelope, future, method.getReturnType(), method.getGenericReturnType(), cacheKey, _cache, ksoap).start();
 					return null;
 				} else {
 					_transport.call(NAMESPACE+request.getName(), envelope);
 					Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
-					if(methodKSOAP!=null && methodKSOAP.cacheable()) 
+					if(ksoap!=null && ksoap.cacheable()) 
 						_cache.put(cacheKey, ret);
+					//update cache value of property if we are calling a setter
+					if(methodName.startsWith("set")) {
+						String getterName = "get"+methodName.substring(3);
+						_cache.put(getterName, ret);
+					}
 					return ret;
 				}
 			}
@@ -251,7 +263,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				Class<?> pClazz = Utils.getTypeParameter(gType,0);
 				for(Object o : (List<?>)obj) 
 					marshal(request, ksoap, pClazz, gType,  o );
-			} else if(!ksoap.type().equals("")) //if annotation specifies SOAP datatype, i.e. unsignedint
+			} else if(!Utils.isEmpty(ksoap.type())) //if annotation specifies SOAP datatype, i.e. unsignedint
 				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
 			else if(IManagedObjectRef.class.isAssignableFrom(clazz))
 				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
@@ -383,16 +395,16 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		 * @return	the setter method
 		 * @throws {@link NoSuchPropertyException}	if setter method is not found
 		 */
-		public Method findSetterMethod(Class<?> clazz, String property) {
+		private Method findSetterMethod(Class<?> clazz, String property) {
 			if(!typeCache.containsKey(clazz))
 				typeCache.put(clazz, new HashMap<String, Method>());
 			Map<String, Method> typeDescription = typeCache.get(clazz);
-			if(typeDescription.containsKey(property)) 
-				return typeDescription.get(property);
+			if(typeDescription.containsKey("set_"+property)) 
+				return typeDescription.get("set_"+property);
 			String setterMethodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
 			for(Method method : clazz.getMethods()) 
 				if(method.getName().equals(setterMethodName)) {
-					typeDescription.put(property, method);
+					typeDescription.put("set_"+property, method);
 					return method;
 				}
 			Log.w(TAG, "No Setter Found: " + setterMethodName);
@@ -404,6 +416,10 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	protected Server _server;
 	protected IVirtualBox _vbox;
 	protected HttpTransportSE  _transport;
+	protected Map<String, CustomMethodHandler> _methodHandlers = new HashMap<String, CustomMethodHandler>();
+	protected List<RequestProcessor> _requestProcessors = new ArrayList<RequestProcessor>();
+	protected List<Marshaller> _marshallers = new ArrayList<Marshaller>();
+	
 	
 	/**
 	 * @param server	VirtualBox webservice server
@@ -412,6 +428,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		_server=server;
 		_transport = server.isSSL() ? new KeystoreTrustedHttpsTransport(server, TIMEOUT) : 
 					new HttpTransport("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
+		init();
 	}
 
 	/**
@@ -421,6 +438,11 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	public VBoxSvc(VBoxSvc copy) {
 		this(copy._server);
 		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
+		init();
+	}
+	
+	private void init() {
+		
 	}
 	
 	public IVirtualBox getVBox() {
@@ -452,6 +474,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		_transport = _server.isSSL() ? new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
 					new HttpTransport("http://"+_server.getHost() + ":" + _server.getPort(), TIMEOUT);
 		_vbox = getProxy(IVirtualBox.class, input.readUTF());
+		init();
 	}
 
 	@Override
@@ -479,7 +502,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * @return 				remote invocation proxy
 	 */
 	public <T> T getProxy(Class<T> clazz, String id, Map<String, Object> cache) {
-		T proxy = clazz.cast( Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class [] { clazz }, new KSOAPInvocationHandler(id, clazz, cache)));
+		T proxy = clazz.cast( Proxy.newProxyInstance(LOADER, new Class [] { clazz }, new KSOAPInvocationHandler(id, clazz, cache)));
 		if(IEvent.class.equals(clazz)) {
 			VBoxEventType type = ((IEvent)proxy).getType();
 			if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))
@@ -640,6 +663,23 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		IHostNetworkInterface networkInterface = getProxy(IHostNetworkInterface.class, val.get("hostInterface"));
 		IProgress progress = getProxy(IProgress.class, val.get("returnval"));
 		return new Tuple<IHostNetworkInterface, IProgress>(networkInterface, progress);
+	}
+	
+	/**
+	 * Searches a DHCP server settings to be used for the given internal network name. 
+	 * <p><dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
+	 * <td>{@link IVirtualBox#E_INVALIDARG}</td><td>Host network interface <em>name</em> already exists.  </td></tr>
+	 * </tbody></table></dd></dl></p>
+	 * @param name		server name
+	 * @param server	DHCP server settings
+	 */
+	public IDHCPServer findDHCPServerByNetworkName(String name) throws IOException {
+		try {
+			return getVBox().findDHCPServerByNetworkName(name);
+		} catch(SoapFault e) {
+			Log.e(TAG, "Couldn't find DHCP Server: " + e.getMessage());
+			return null;
+		}
 	}
 	
 	/**

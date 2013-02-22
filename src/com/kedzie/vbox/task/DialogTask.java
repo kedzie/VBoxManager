@@ -50,7 +50,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 */
 	public DialogTask(String TAG, Context context, VBoxSvc vmgr, String msg, boolean cancelable) {
 		super(TAG, context, vmgr);
-		pDialog = new ProgressDialog(_context.get());
+		pDialog = new ProgressDialog(getContext());
 		pDialog.setMessage(msg);
 		pDialog.setIndeterminate(true);
 		pDialog.setCancelable(cancelable);
@@ -79,7 +79,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	protected void onProgressUpdate(IProgress... p) {
 		if(pDialog.isIndeterminate()) {	//Dismiss Indeterminate progress dialog and display the determinate one.
 			pDialog.dismiss();
-			pDialog = new ProgressDialog(_context.get());
+			pDialog = new ProgressDialog(getContext());
 			pDialog.setTitle(p[0].getDescription());
 			pDialog.setIndeterminate(false);
 			pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -91,7 +91,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 			}
 			pDialog.show();
 		}
-		pDialog.setMessage(_context.get().getResources().getString(R.string.progress_message, p[0].getOperation(), p[0].getOperationCount(), p[0].getOperationDescription(), p[0].getOperationPercent(),p[0].getTimeRemaining() ));
+		pDialog.setMessage(getContext().getResources().getString(R.string.progress_message, p[0].getOperation(), p[0].getOperationCount(), p[0].getOperationDescription(), p[0].getOperationPercent(),p[0].getTimeRemaining() ));
 		pDialog.setProgress(p[0].getPercent());
 		pDialog.setSecondaryProgress(p[0].getOperationPercent());
 	}

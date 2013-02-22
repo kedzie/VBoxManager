@@ -54,12 +54,12 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
 
     @Override
     public void onStorageControllerClicked(IStorageController element) {
-        show(new FragmentElement("controller_"+element.getName(), StorageControllerFragment.class, new BundleBuilder().putAll(getArguments()).putParcelable(IStorageController.BUNDLE, element).create()));
+        show(new FragmentElement(element.getName(), R.drawable.ic_settings_storage, StorageControllerFragment.class, new BundleBuilder().putAll(getArguments()).putParcelable(IStorageController.BUNDLE, element).create()));
     }
     
     @Override
 	public void onMediumAttachmentClicked(IMediumAttachment element) {
-    	FragmentElement details = new FragmentElement("medium_"+element.getMedium(), null, new BundleBuilder().putAll(getArguments()).putParcelable(IMedium.BUNDLE, element).create());
+    	FragmentElement details = new FragmentElement("Attachment", R.drawable.ic_settings_storage, null, new BundleBuilder().putAll(getArguments()).putParcelable(IMedium.BUNDLE, element).create());
     	if(element.getType().equals(DeviceType.HARD_DISK))
     		details.clazz = StorageHardDiskFragment.class;
     	else if(element.getType().equals(DeviceType.DVD))
@@ -72,10 +72,6 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     private void show(FragmentElement details) {
     	if(_dualPane) {
     		getChildFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.details, details.instantiate(getActivity())).commit();
-//        	FragmentTransaction tx = getChildFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-//        	Utils.detachExistingFragment(getChildFragmentManager(), tx, R.id.details);
-//            Utils.addOrAttachFragment(getActivity(), getChildFragmentManager(), tx, R.id.details, details);
-//            tx.commit();
         } else {
         	startActivity(new Intent(getActivity(), FragmentActivity.class).putExtra(FragmentElement.BUNDLE, details));
         }

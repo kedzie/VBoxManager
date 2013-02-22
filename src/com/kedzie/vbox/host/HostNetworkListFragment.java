@@ -164,7 +164,7 @@ public class HostNetworkListFragment extends SherlockFragment {
 	void showInterfaceDialog(IHostNetworkInterface hostInterface) {
 //		FragmentElement category = new FragmentElement(hostInterface.getName(), HostNetworkDialog2Fragment.class, new BundleBuilder().putParcelable(IHostNetworkInterface.BUNDLE, hostInterface).create());
 //		startActivity(new Intent(getActivity(), FragmentActivity.class).putExtra(FragmentElement.BUNDLE, category));
-		Utils.showDialog(getFragmentManager(), "dialog", HostNetworkDialog2Fragment.getInstance(new BundleBuilder().putParcelable(IHostNetworkInterface.BUNDLE, hostInterface).create()));
+		Utils.showDialog(getFragmentManager(), "dialog", HostNetworkDialog.getInstance(new BundleBuilder().putParcelable(IHostNetworkInterface.BUNDLE, hostInterface).create()));
 	}
 	
 	@Override

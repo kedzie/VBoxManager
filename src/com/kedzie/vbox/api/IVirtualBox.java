@@ -22,6 +22,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * <p>An instance of {@link IVirtualBox} is required for the product to do anything useful. Even though the interface does not expose this, internally, {@link IVirtualBox} is implemented as a singleton and actually lives in the process of the VirtualBox server <code>(VBoxSVC.exe)</code>. This makes sure that {@link IVirtualBox} can track the state of all virtual machines on a particular host, regardless of which frontend started them.
  * <p>To enumerate all the virtual machines on the host, use the {@link IVirtualBox#getMachines} attribute.
  */
+@KSOAP
 public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	static ClassLoader loader = IVirtualBox.class.getClassLoader();
 

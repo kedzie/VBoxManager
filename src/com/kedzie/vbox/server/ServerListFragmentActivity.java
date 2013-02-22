@@ -81,7 +81,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
 	    						@Override
 	    						protected void onResult(Boolean result) {
 	    							super.onResult(result);
-	    							Utils.toastLong(_context.get(), "Successfully updated keystore");
+	    							Utils.toastLong(getContext(), "Successfully updated keystore");
 	    							new LogonTask().execute(server);
 	    						};
 	    					}.execute(chain);

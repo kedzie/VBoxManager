@@ -14,6 +14,7 @@ import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface INetworkAdapter extends IManagedObjectRef, Parcelable {
 	public static final String BUNDLE = "network";
 	static final ClassLoader LOADER = INetworkAdapter.class.getClassLoader();

@@ -17,6 +17,8 @@ public class FragmentActivity extends BaseActivity {
         
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(element.name);
+        if(element.icon!=-1)
+        	getSupportActionBar().setIcon(element.icon);
         
         if(savedInstanceState==null) {
         	Utils.addFragment(this, getSupportFragmentManager(), android.R.id.content, element);

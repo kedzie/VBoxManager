@@ -111,6 +111,7 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
 		
 		getSupportActionBar().setTitle(_machine.getName() + " Settings");
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
 		
 		setContentView(R.layout.fragment_list_layout);
 		FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
@@ -135,7 +136,6 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
 	
 	@Override
     public void onSelectCategory(FragmentElement category) {
-		Log.d(TAG, "Selected category: " + category.name);
 	    if(_dualPane) {
 	        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
 	        tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -197,6 +197,7 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
 	}
 	
 	private void discardSettings() {
-	    new DiscardSettingsTask().execute(_mutable);
+		if(_mutable!=null)
+			new DiscardSettingsTask().execute(_mutable);
 	}
 }

@@ -11,6 +11,7 @@ import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IBIOSSettings extends IManagedObjectRef, Parcelable {
 	
 static final ClassLoader LOADER = IBIOSSettings.class.getClassLoader();
