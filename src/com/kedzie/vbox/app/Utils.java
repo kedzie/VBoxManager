@@ -250,7 +250,7 @@ public class Utils {
      */
     public static void detachExistingFragment(FragmentManager manager, FragmentTransaction tx, String tag) {
         if(isEmpty(tag)) 
-        	throw new IllegalArgumentException("tag cannot be null");
+        	return;
         Fragment existing = manager.findFragmentByTag(tag);
         if(existing!=null)
             tx.detach(existing);

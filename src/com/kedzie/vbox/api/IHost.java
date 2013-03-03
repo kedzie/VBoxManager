@@ -67,7 +67,7 @@ public interface IHost extends IManagedObjectRef, Parcelable {
 	 * @param cpuId		Identifier of the CPU
 	 * @return 	Speed value. 0 is returned if value is not known or cpuId is invalid.
 	 */
-	@KSOAP(cacheable=true) public Integer getProcessorSpeed(@KSOAP(type="unsignedint", value="cpuId") int cpuId);
+	@KSOAP(cacheable=true) public Integer getProcessorSpeed(@KSOAP(type="unsignedInt", value="cpuId") int cpuId);
 	
 	/**
 	 * @return	Name of the host system's operating system. 

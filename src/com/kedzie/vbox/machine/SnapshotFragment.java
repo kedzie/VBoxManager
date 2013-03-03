@@ -81,7 +81,8 @@ public class SnapshotFragment extends SherlockFragment {
 		    _stateManager = new InMemoryTreeStateManager<ISnapshot>();
 	        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
 	        _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
-			populate(null, result);
+	        if(result!=null)
+	        	populate(null, result);
 		}
 	}
 	
