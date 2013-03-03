@@ -15,8 +15,8 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineActivity;
-import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
@@ -36,7 +36,7 @@ public class EventNotificationService extends IntentService {
 		Log.i(TAG, "Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
 		Intent i = new Intent(EventNotificationService.this, MachineActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)eventMachine.getAPI());
-		MachineView.cacheProperties(eventMachine);
+		Utils.cacheProperties(eventMachine);
 		BundleBuilder.addProxy(i, IMachine.BUNDLE, eventMachine);
 		String title = getString(R.string.notification_title, eventMachine.getName(), eventMachine.getState());
 		Notification n =  new NotificationCompat.Builder(EventNotificationService.this)

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import org.ksoap2.SoapFault;
+import org.kxml2.kdom.Node;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
@@ -31,13 +32,14 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
-	private WeakReference<Context> _context;
+	private WeakReference<SherlockFragmentActivity> _context;
 	protected final String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
 	 protected boolean _indeterminate=true;
 	 /** <code>true</code> if user pressed back button while task is executing */
 	protected boolean _cancelled=false;
+	protected boolean _failed;
 		
 	/** 
 	 * Show an Alert Dialog 
@@ -54,38 +56,27 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		}
 	};
 	
-	/** 
-     * Cancel the current operation
-     */
-	protected Handler _cancelHandler = new Handler() {
-	    @Override
-	    public void handleMessage(Message msg) {
-	        Log.w(TAG, "Cancel Handler received Cancel Message");
-	        Utils.toastLong(_context.get(), _context.get().getString(R.string.cancelling_operation_toast));
-	        IProgress progress = null;
-	        if(msg.getData().containsKey(IProgress.BUNDLE))
-	        	progress = BundleBuilder.getProxy(msg.getData(), IProgress.BUNDLE, IProgress.class);
-	        try {
-	        	BaseTask.this.cancel(true);
-	        	if(progress!=null)
-	        		progress.cancel();
-	        } catch (IOException e) {
-	            Log.e(TAG, "Error cancelling operation", e);
-	        }
-	    }
-	};
-
 	/**
 	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
 	 */
-	protected BaseTask(String TAG, Context context, VBoxSvc vmgr) {
-		this.TAG = TAG;
+	protected BaseTask(SherlockFragmentActivity context, VBoxSvc vmgr) {
+		TAG = getClass().getSimpleName();
 		_vmgr=vmgr;
-		_context=new WeakReference<Context>(context);
+		_context = new WeakReference<SherlockFragmentActivity>(context);
 	}
 	
-	protected Context getContext() {
+	/**
+	 * @param TAG LogCat tag
+	 * @param vmgr VirtualBox API service
+	 */
+	protected BaseTask(String TAG, SherlockFragmentActivity context, VBoxSvc vmgr) {
+		this.TAG = TAG;
+		_vmgr=vmgr;
+		_context=new WeakReference<SherlockFragmentActivity>(context);
+	}
+	
+	protected SherlockFragmentActivity getContext() {
 		return _context.get();
 	}
 
@@ -101,6 +92,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		    if(!_cancelled) 
 		        showAlert(e);
 		}
+		_failed=true;
 		return null;
 	}
 	
@@ -115,15 +107,22 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected void onPostExecute(Output result) {
 		super.onPostExecute(result);
-		if(result!=null && getContext()!=null && !_cancelled)
-			onResult(result);
+		if(!_failed && getContext()!=null && !_cancelled)
+			onSuccess(result);
+		else if(_failed)
+			onFailure();
 	}
 	
 	/**
-	 * Handle not-null result
+	 * Handle not-<code>null</code> result
 	 * @param result the result
 	 */
-	protected void onResult(Output result) {}
+	protected void onSuccess(Output result) {}
+	
+	/**
+	 * If work function threw exception
+	 */
+	protected void onFailure() {}
 	
 	@Override
     protected void onCancelled() {
@@ -149,6 +148,11 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 */
 	protected void showAlert(SoapFault e) {
 		Log.e(TAG, "SoapFault", e);
+		Node detail = e.detail;
+		while(detail.getChildCount()>0) {
+			detail = (Node) detail.getChild(0);
+			Log.i(TAG, "isText(0)? : " + detail.isText(0));
+		}
 		new BundleBuilder().putString("title", "Soap Fault")
 				.putString("msg", String.format("Code: %1$s\nActor: %2$s\nString: %3$s", e.faultcode, e.faultactor, e.faultstring))
 				.sendMessage(_alertHandler, 0);

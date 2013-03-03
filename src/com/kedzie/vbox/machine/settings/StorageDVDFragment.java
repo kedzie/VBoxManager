@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine.settings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -12,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.google.common.base.Objects;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMedium;
@@ -35,29 +36,30 @@ import com.kedzie.vbox.task.DialogTask;
  */
 public class StorageDVDFragment extends SherlockFragment {
 
-	class LoadInfoTask extends ActionBarTask<Void, IStorageController> {
+	/**
+	 * Fetch DVD/Medium details
+	 */
+	class LoadInfoTask extends ActionBarTask<Void, Void> {
 
 		public LoadInfoTask() { 
-			super("LoadInfoTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
-		protected IStorageController work(Void...params) throws Exception {
-			if(_attachment.getMedium()!=null) {
-				_attachment.getMedium().getSize();
-				_attachment.getMedium().getType();
-				_attachment.getMedium().getLocation();
-				_attachment.getMedium().getLogicalSize();
-			}
-			IStorageController controller = _machine.getStorageControllerByName(_attachment.getController());
-			controller.getBus();
-			controller.getMaxPortCount();
-			controller.getMaxDevicesPerPortCount();
-			return controller;
+		protected Void work(Void...params) throws Exception {
+			if(_attachment.getMedium()!=null) 
+				Utils.cacheProperties(_attachment.getMedium());
+			
+			_controller = _machine.getStorageControllerByName(_attachment.getController());
+			_controller.getBus();
+			_controller.getMaxPortCount();
+			_controller.getMaxDevicesPerPortCount();
+			_attachments = _machine.getMediumAttachmentsOfController(_controller.getName());
+			return null;
 		}
+		
 		@Override
-		protected void onResult(IStorageController result) {
-			_controller=result;
+		protected void onSuccess(Void result) {
 			populate();
 		}
 	}
@@ -68,7 +70,7 @@ public class StorageDVDFragment extends SherlockFragment {
 	class MoveTask extends ActionBarTask<Slot, Void> {
 
 		public MoveTask() { 
-			super("MoveTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
@@ -90,7 +92,7 @@ public class StorageDVDFragment extends SherlockFragment {
 	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
 		public ListMediumsTask() { 
-			super("ListMediumsTask", getSherlockActivity(),_machine.getAPI()); 
+			super(getSherlockActivity(),_machine.getAPI()); 
 		}
 
 		@Override 
@@ -104,8 +106,8 @@ public class StorageDVDFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(final List<IMedium> result) {
-			super.onResult(result);
+		protected void onSuccess(final List<IMedium> result) {
+			super.onSuccess(result);
 			final CharSequence []items = new CharSequence[result.size()+1];
 			for(int i=0; i<result.size(); i++) {
 				IMedium m = result.get(i);
@@ -113,7 +115,7 @@ public class StorageDVDFragment extends SherlockFragment {
 			}
 			items[items.length-1] = "No Disc"; 
 
-			new AlertDialog.Builder(getActivity())
+			new AlertDialog.Builder(getContext())
 			.setTitle("Select Disk")
 			.setItems(items, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -130,7 +132,7 @@ public class StorageDVDFragment extends SherlockFragment {
 	class MountTask extends DialogTask<IMedium, Void> {
 
 		public MountTask() { 
-			super("MountTask", getSherlockActivity(), _machine.getAPI(), "Mounting medium"); 
+			super(getSherlockActivity(), _machine.getAPI(),R.string.progress_mounting_medium); 
 		}
 
 		@Override 
@@ -151,8 +153,8 @@ public class StorageDVDFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(Void result) {
-			super.onResult(result);
+		protected void onSuccess(Void result) {
+			super.onSuccess(result);
 			populate();
 		}
 	}
@@ -160,14 +162,14 @@ public class StorageDVDFragment extends SherlockFragment {
 	private IMachine _machine;
 	private IMediumAttachment _attachment;
 	private IStorageController _controller;
+	private ArrayList<IMediumAttachment> _attachments;
 
 	private View _view;
 	private Spinner _slotSpinner;
-	private Slot[] _slots;
+	private ArrayList<Slot> _slots;
 	private ArrayAdapter<Slot> _slotAdapter;
 
 	private ImageButton _mountButton;
-	private CheckBox _liveCheckbox;
 	private TextView _storageTypeText;
 	private TextView _sizeText;
 	private TextView _locationText;
@@ -181,7 +183,7 @@ public class StorageDVDFragment extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.settings_storage_details_harddisk, null);
+		_view = inflater.inflate(R.layout.settings_storage_details_dvd, null);
 		_slotSpinner = (Spinner)_view.findViewById(R.id.storage_port);
 		_mountButton = (ImageButton)_view.findViewById(R.id.storage_mount);
 		_mountButton.setOnClickListener(new OnClickListener() {
@@ -190,7 +192,6 @@ public class StorageDVDFragment extends SherlockFragment {
 				new ListMediumsTask().execute();
 			}
 		});
-		_liveCheckbox = (CheckBox)_view.findViewById(R.id.storage_live);
 		_storageTypeText = (TextView)_view.findViewById(R.id.storage_type);
 		_sizeText = (TextView)_view.findViewById(R.id.storage_size);
 		_locationText = (TextView)_view.findViewById(R.id.storage_location);
@@ -205,11 +206,20 @@ public class StorageDVDFragment extends SherlockFragment {
 
 	private void populate() {
 		int devicesPerPort = _controller.getMaxDevicesPerPortCount();
-		_slots = new Slot[devicesPerPort*_controller.getMaxPortCount()];
+		
+		_slots = new ArrayList<Slot>(devicesPerPort*_controller.getMaxPortCount());
 		for(int i=0; i<_controller.getMaxPortCount(); i++) {
 			for(int j=0; j<devicesPerPort; j++) {
 				Slot slot = new Slot(i, j);
-				_slots[ i*devicesPerPort+j] = slot;
+				boolean isUsed=false;
+				for(IMediumAttachment a : _attachments) {
+					if(a.getSlot().equals(slot) && !Objects.equal(a.getMedium(),_attachment.getMedium())) {
+						isUsed=true;
+						break;
+					}
+				}
+				if(!isUsed)
+					_slots.add(slot);
 				if(devicesPerPort==1)
 					slot.name = new StringBuffer(_controller.getBus().toString()).append(" Port ").append(i).toString(); 
 				else if (_controller.getBus().equals(StorageBus.IDE)) {
@@ -219,7 +229,7 @@ public class StorageDVDFragment extends SherlockFragment {
 		}
 		_slotAdapter = new ArrayAdapter<Slot>(getActivity(), android.R.layout.simple_spinner_item, _slots);
 		_slotSpinner.setAdapter(_slotAdapter);
-		_slotSpinner.setSelection(Utils.indexOf(_slots, _attachment.getSlot()));
+		_slotSpinner.setSelection(_slots.indexOf(_attachment.getSlot()));
 		
 		_slotSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override

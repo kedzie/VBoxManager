@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -33,11 +33,15 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	protected VMGroupListView _listView;
 	protected OnTreeNodeSelectListener _selectListener;
 	
-	 class LoadGroupsTask extends  DialogTask<Void, VMGroup> {
+	 /**
+	 * Load Groups and VMs
+	 */
+	class LoadGroupsTask extends  DialogTask<Void, VMGroup> {
+		
 	        private Map<String, VMGroup> groupCache = new HashMap<String, VMGroup>();
 
 	        public LoadGroupsTask(VBoxSvc vboxApi) { 
-	            super("LoadGroupsTask", getSherlockActivity(), vboxApi, "Loading Machines"); 
+	            super(getSherlockActivity(), vboxApi, R.string.progress_loading_machines); 
 	        }
 
 	        private VMGroup get(String name) {
@@ -64,22 +68,28 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                get("/").addChild(get(tmp));
 	            }
 	            for(IMachine machine : _vmgr.getVBox().getMachines()) {
-	                MachineView.cacheProperties(machine);
+	                Utils.cacheProperties(machine);
 	                List<String> groups = machine.getGroups();
-	                if(groups.isEmpty() || Utils.isEmpty(groups.get(0))  || groups.get(0).equals("/"))
-	                    get("/").addChild(machine);
-	                else
-	                    get(groups.get(0)).addChild(machine);
+	                if(groups.isEmpty())
+	                	Log.w(TAG, "=======Groups list came back EMPTY=======");
+	                else if(Utils.isEmpty(groups.get(0)))
+	                	Log.w(TAG, "=======Group name came back EMPTY=======");
+	                else if(groups.get(0).equals("/"))
+	                	Log.w(TAG, "=======Group name came back as ROOT=======");
+//	                if(groups.isEmpty() || Utils.isEmpty(groups.get(0))  || groups.get(0).equals("/"))
+//	                    get("/").addChild(machine);
+//	                else
+	                get(groups.get(0)).addChild(machine);
 	            }
-	            VMGroup root = get("/");
 	            _vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_PERIOD), 
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_COUNT), 
 	                    (IManagedObjectRef)null);
-	            return root;
+	            return get("/");
 	        }
+	        
 	        @Override
-	        protected void onResult(VMGroup root) {
+	        protected void onSuccess(VMGroup root) {
 	            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
 	            _listView.setRoot(root);
 	            _root = root;
@@ -89,7 +99,11 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		_selectListener = (OnTreeNodeSelectListener)activity;
+		try {
+			_selectListener = (OnTreeNodeSelectListener)activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " does not implement OnTreeNodeSelectListener");
+		}
 	}
 
 	@Override

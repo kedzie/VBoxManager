@@ -29,7 +29,7 @@ public class HostNetworkDialog extends SherlockDialogFragment {
 	private class LoadDataTask extends ActionBarTask<IHostNetworkInterface , Tuple<IHostNetworkInterface, IDHCPServer>> {
 
 		public LoadDataTask() {
-			super("LoadNetworkDataTask", getSherlockActivity(), _interface.getAPI());
+			super(getSherlockActivity(), _interface.getAPI());
 		}
 
 		@Override
@@ -44,8 +44,8 @@ public class HostNetworkDialog extends SherlockDialogFragment {
 		}
 
 		@Override
-		protected void onResult(Tuple<IHostNetworkInterface, IDHCPServer> result) {
-			super.onResult(result);
+		protected void onSuccess(Tuple<IHostNetworkInterface, IDHCPServer> result) {
+			super.onSuccess(result);
 			_interface = result.first;
 			_dhcp = result.second;
 			populate();
@@ -56,7 +56,7 @@ public class HostNetworkDialog extends SherlockDialogFragment {
 	private class SaveTask extends ActionBarTask<Void, Void> {
 
 		public SaveTask() {
-			super("SaveTask", getSherlockActivity(), null);
+			super(getSherlockActivity(), null);
 		}
 
 		@Override
@@ -75,8 +75,8 @@ public class HostNetworkDialog extends SherlockDialogFragment {
 		}
 
 		@Override
-		protected void onResult(Void result) {
-			super.onResult(result);
+		protected void onSuccess(Void result) {
+			super.onSuccess(result);
 			new LoadDataTask().execute(_interface);
 		}
 	}

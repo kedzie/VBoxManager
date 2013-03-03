@@ -45,13 +45,13 @@ public class InfoFragment extends SherlockFragment {
 	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
 
 		public LoadInfoTask() { 
-			super("LoadInfoTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
 		protected MachineInfo work(IMachine... m) throws Exception {
 			//cache values
-			MachineView.cacheProperties(m[0]);
+			Utils.cacheProperties(m[0]);
 			m[0].getMemorySize(); m[0].getCPUCount(); m[0].getVRAMSize(); 
 			m[0].getAccelerate2DVideoEnabled(); m[0].getAccelerate3DEnabled(); 
 			m[0].getDescription(); m[0].getGroups();
@@ -97,7 +97,7 @@ public class InfoFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(MachineInfo result) {
+		protected void onSuccess(MachineInfo result) {
 		    _machine=result.machine;
 		    _machineInfo = result;
 		    populateViews(result);
@@ -233,7 +233,7 @@ public class InfoFragment extends SherlockFragment {
 			storage.append("Controller: ").append(controller.getName()).append("\n");
 			if(controller.getBus().equals(StorageBus.SATA)) {
 				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
-					storage.append(String.format("SATA Port %1$d\t\t%2$s\n", a.getPort(), a.getMedium()==null ? "" : a.getMedium().getName()));
+					storage.append(String.format("SATA Port %1$d\t\t%2$s\n", a.getPort(), a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
 			} else if (controller.getBus().equals(StorageBus.IDE)){
 				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName())) {
 					storage.append(String.format("IDE %1$s %2$s\t\t%3$s\n", a.getPort()==0 ? "Primary" : "Secondary", a.getDevice()==0 ? "Master" : "Slave", a.getMedium()==null ? "" : a.getMedium().getBase().getName()));

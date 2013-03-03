@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:smoothScrollbar="true"
-        app:indent_width="4dp"
-        app:row_background="@drawable/list_selector_color" />
+        vbox:indent_width="4dp"
+        android:animateLayoutChanges="true" />
 
 </FrameLayout>

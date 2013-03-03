@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="12dip" >
+    android:padding="8dip" >
 
 	<TextView
 	    android:id="@+id/snapshot_name_label"
@@ -16,6 +16,7 @@
 	    android:inputType="textCapWords"
 	    android:text="@string/snapshot_name_new"
 	    android:gravity="start"
+	    android:nextFocusDown="@+id/snapshot_description"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignTop="@id/snapshot_name_label"

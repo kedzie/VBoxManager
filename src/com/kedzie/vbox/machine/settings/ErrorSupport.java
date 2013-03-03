@@ -8,27 +8,27 @@ import android.widget.TextView;
 /**
  * Show error messages
  */
-public class ErrorCapability implements Parcelable {
+public class ErrorSupport implements Parcelable {
 	
-	public static Parcelable.Creator<ErrorCapability> CREATOR = new Parcelable.Creator<ErrorCapability>() {
+	public static Parcelable.Creator<ErrorSupport> CREATOR = new Parcelable.Creator<ErrorSupport>() {
 		@Override
-		public ErrorCapability createFromParcel(Parcel in) {
-			return new ErrorCapability(in.readBundle());
+		public ErrorSupport createFromParcel(Parcel in) {
+			return new ErrorSupport(in.readBundle());
 		}
 		@Override
-		public ErrorCapability[] newArray(int size) {
-			return new ErrorCapability[size];
+		public ErrorSupport[] newArray(int size) {
+			return new ErrorSupport[size];
 		}
 	};
 	
 	private TextView _textView;
 	private Bundle _bundle;
 	
-	public ErrorCapability() {
+	public ErrorSupport() {
 		_bundle = new Bundle();
 	}
 	
-	private ErrorCapability(Bundle bundle) {
+	private ErrorSupport(Bundle bundle) {
 		_bundle = bundle;
 	}
 	
@@ -45,6 +45,10 @@ public class ErrorCapability implements Parcelable {
 		else
 			_bundle.putString(field, msg);
 		showErrors();
+	}
+	
+	public boolean hasErrors() {
+		return !_bundle.isEmpty();
 	}
 
 	@Override

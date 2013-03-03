@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -27,30 +26,35 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
+ * Obtain a write-lock and then edit virtual machine settings
  * 
  * @apiviz.stereotype activity
  */
-public class CategoryActivity extends BaseActivity implements OnSelectCategoryListener {
-	private static final String TAG = "CategoryActivity";
+public class VMSettingsActivity extends BaseActivity implements OnSelectCategoryListener {
     public static final String MUTABLE_KEY = "mutable";
 
     /**
      * Get Write Lock on machine 
      */
     class LockMachineTask extends ActionBarTask<IMachine, IMachine> {
-        public LockMachineTask() { super("LockMachineTask", CategoryActivity.this, CategoryActivity.this._vmgr); }
+    	
+        public LockMachineTask() { 
+        	super(VMSettingsActivity.this, VMSettingsActivity.this._vmgr);
+        
+        }
         @Override 
         protected IMachine work(IMachine... m) throws Exception {
             ISession session = _vmgr.getVBox().getSessionObject();
             m[0].lockMachine(session, LockType.WRITE);
             return session.getMachine();
         }
+        
         @Override
-        protected void onResult(IMachine result) {
-            super.onResult(result);
+        protected void onSuccess(IMachine result) {
+            super.onSuccess(result);
             _mutable = result;
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.add(R.id.list, Fragment.instantiate(CategoryActivity.this, CategoryFragment.class.getName(), new BundleBuilder().putProxy(IMachine.BUNDLE, _mutable).create()));
+            tx.add(R.id.list, Fragment.instantiate(VMSettingsActivity.this, CategoryFragment.class.getName(), new BundleBuilder().putProxy(IMachine.BUNDLE, _mutable).create()));
             tx.commit();
         }
     }
@@ -59,7 +63,10 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
      * Save settings
      */
     class SaveSettingsTask extends ActionBarTask<IMachine, Integer> {
-        public SaveSettingsTask() { super("SaveSettingsTask", CategoryActivity.this, CategoryActivity.this._vmgr); }
+    	
+        public SaveSettingsTask() {
+        	super(VMSettingsActivity.this, VMSettingsActivity.this._vmgr);
+        }
 
         @Override 
         protected Integer work(IMachine... m) throws Exception {
@@ -69,9 +76,9 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
         }
         
         @Override
-        protected void onResult(Integer result) {
-            super.onResult(result);
-            Utils.toastLong(CategoryActivity.this, CategoryActivity.this.getString(R.string.toast_saved_settings));
+        protected void onSuccess(Integer result) {
+            super.onSuccess(result);
+            Utils.toastLong(VMSettingsActivity.this, VMSettingsActivity.this.getString(R.string.toast_saved_settings));
             finish();
         }
     }
@@ -80,7 +87,11 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
      * Discard settings
      */
     class DiscardSettingsTask extends ActionBarTask<IMachine, Integer> {
-        public DiscardSettingsTask() { super("DiscardSettingsTask", CategoryActivity.this, CategoryActivity.this._vmgr); }
+    	
+        public DiscardSettingsTask() { 
+        	super(VMSettingsActivity.this, VMSettingsActivity.this._vmgr);
+        }
+        
         @Override 
         protected Integer work(IMachine... m) throws Exception {
             m[0].discardSettings();
@@ -88,19 +99,26 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
             return 1;
         }
         @Override
-        protected void onResult(Integer result) {
-            super.onResult(result);
-            Utils.toastLong(CategoryActivity.this, getString(R.string.toast_discarding_settings));
+        protected void onSuccess(Integer result) {
+            super.onSuccess(result);
+            Utils.toastLong(VMSettingsActivity.this, getString(R.string.toast_discarding_settings));
             finish();
         }
     }
     
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
+	
 	/** VirtualBox API */
 	private VBoxSvc _vmgr;
+	
+	/** Immutable vm reference */
 	private IMachine _machine;
+	
+	/** Mutable vm reference.  Initialized when machine is successfully WRITE-Locked */
 	private IMachine _mutable;
+	
+	/** Currently selected settings category */
 	private String currentCategory;
 
 	@Override
@@ -117,12 +135,11 @@ public class CategoryActivity extends BaseActivity implements OnSelectCategoryLi
 		FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility()==View.VISIBLE;
 		
-		if(savedInstanceState==null) 
+		if(_mutable==null) 
 		    new LockMachineTask().execute(_machine);
 		else {
 		    currentCategory = savedInstanceState.getString("currentCategory");
-		    if(savedInstanceState.containsKey(MUTABLE_KEY))
-		        _mutable = BundleBuilder.getProxy(savedInstanceState, MUTABLE_KEY, IMachine.class);
+	        _mutable = savedInstanceState.getParcelable(MUTABLE_KEY);
 		}
 	}
 	

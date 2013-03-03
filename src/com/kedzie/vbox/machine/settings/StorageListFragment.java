@@ -5,12 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ksoap2.SoapFault;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -45,13 +44,31 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
 
+/**
+ * 
+ */
 public class StorageListFragment extends SherlockFragment {
 
+	/**
+	 * Listener for Storage Controller clicks
+	 */
 	public static interface OnStorageControllerClickedListener {
+		
+		/**
+		 * @param element		the {@link IStorageController} click event
+		 */
 		public void onStorageControllerClicked(IStorageController element);
 	}
 
+	/**
+	 * Listener for Medium attachment clicks
+	 */
 	public static interface OnMediumAttachmentClickedListener {
+		
+		/**
+		 * Handle Medium attachment click event
+		 * @param element		the {@link IMediumAttachment} click event
+		 */
 		public void onMediumAttachmentClicked(IMediumAttachment element);
 	}
 
@@ -71,7 +88,7 @@ public class StorageListFragment extends SherlockFragment {
 	private class LoadDataTask extends DialogTask<IMachine, Map<IStorageController, List<IMediumAttachment>>> {
 
 		public LoadDataTask() {
-			super("LoadStorageControllersTask", getSherlockActivity(), _machine.getAPI(), "Loading Storage Controllers");
+			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_load_storage_controllers);
 		}
 
 		@Override
@@ -84,12 +101,15 @@ public class StorageListFragment extends SherlockFragment {
 			}
 			Map<IStorageController, List<IMediumAttachment>> controllers = new HashMap<IStorageController, List<IMediumAttachment>>();
 			for(IStorageController c : params[0].getStorageControllers()) {
+				params[0].clearCacheNamed("getMediumAttachmentsOrController-"+c.getName());
 				ArrayList<IMediumAttachment> attachments = params[0].getMediumAttachmentsOfController(c.getName());
 				c.getBus(); c.getControllerType();
 				for(IMediumAttachment a : attachments) {
-					if(a.getMedium()!=null)
+					if(a.getMedium()!=null) {
+						a.getMedium().clearCache();
 						a.getMedium().getName();
 						a.getMedium().getBase().getName();
+					}
 				}
 				controllers.put(c, attachments);
 			}
@@ -97,8 +117,8 @@ public class StorageListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(Map<IStorageController, List<IMediumAttachment>> result) {
-			super.onResult(result);
+		protected void onSuccess(Map<IStorageController, List<IMediumAttachment>> result) {
+			super.onSuccess(result);
 			_controllers = result;
 			_listAdapter = new ItemAdapter(getSherlockActivity(), result);
 			_listView.setAdapter(_listAdapter);
@@ -113,7 +133,7 @@ public class StorageListFragment extends SherlockFragment {
 	private class AddControllerTask extends ActionBarTask<StorageBus, IStorageController> {
 
 		public AddControllerTask() {
-			super("AddControllerTask", getSherlockActivity(), _machine.getAPI());
+			super(getSherlockActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -124,8 +144,8 @@ public class StorageListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(IStorageController result) {
-			super.onResult(result);
+		protected void onSuccess(IStorageController result) {
+			super.onSuccess(result);
 			_controllers.put(result, new ArrayList<IMediumAttachment>());
 			_listAdapter.notifyDataSetChanged();
 		}
@@ -137,7 +157,7 @@ public class StorageListFragment extends SherlockFragment {
 	private class DeleteControllerTask extends ActionBarTask<IStorageController, IStorageController> {
 
 		public DeleteControllerTask() {
-			super("DeleteControllerTask", getSherlockActivity(), _machine.getAPI());
+			super(getSherlockActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -147,8 +167,8 @@ public class StorageListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(IStorageController result) {
-			super.onResult(result);
+		protected void onSuccess(IStorageController result) {
+			super.onSuccess(result);
 			_controllers.remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
@@ -160,7 +180,7 @@ public class StorageListFragment extends SherlockFragment {
 	private class DetachMediumTask extends ActionBarTask<IMediumAttachment, IMediumAttachment> {
 
 		public DetachMediumTask() {
-			super("DetachMediumTask", getSherlockActivity(), _machine.getAPI());
+			super(getSherlockActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -170,9 +190,11 @@ public class StorageListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(IMediumAttachment result) {
-			super.onResult(result);
-			_controllers.get(result.getController()).remove(result);
+		protected void onSuccess(IMediumAttachment result) {
+			super.onSuccess(result);
+			for(IStorageController c : _controllers.keySet())
+				if(c.getName().equals(result.getController()))
+					_controllers.get(c).remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
 	}
@@ -186,7 +208,7 @@ public class StorageListFragment extends SherlockFragment {
 		private DeviceType deviceType;
 		
 		public ListMediumsTask(IStorageController controller, DeviceType type) { 
-			super("ListMediumsTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 			this.controller = controller;
 			this.deviceType = type;
 		}
@@ -203,8 +225,8 @@ public class StorageListFragment extends SherlockFragment {
 		}
 		
 		@Override
-		protected void onResult(final List<IMedium> result) {
-			super.onResult(result);
+		protected void onSuccess(final List<IMedium> result) {
+			super.onSuccess(result);
 			final CharSequence []items = new CharSequence[result.size()];
 			for(int i=0; i<result.size(); i++)
 				items[i] = result.get(i).getName();
@@ -226,7 +248,7 @@ public class StorageListFragment extends SherlockFragment {
 		private IStorageController controller;
 		
 		public ListDVDMediumsTask(IStorageController controller) { 
-			super("ListDVDMediumsTask", getSherlockActivity(),_machine.getAPI()); 
+			super(getSherlockActivity(),_machine.getAPI()); 
 			this.controller=controller;
 		}
 
@@ -241,8 +263,8 @@ public class StorageListFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(final List<IMedium> result) {
-			super.onResult(result);
+		protected void onSuccess(final List<IMedium> result) {
+			super.onSuccess(result);
 			final CharSequence []items = new CharSequence[result.size()+1];
 			for(int i=0; i<result.size(); i++) {
 				IMedium m = result.get(i);
@@ -270,7 +292,7 @@ public class StorageListFragment extends SherlockFragment {
 		private DeviceType deviceType;
 		
 		public MountTask(IStorageController controller, DeviceType type) { 
-			super("MountTask", getSherlockActivity(), _machine.getAPI(), "Mounting medium"); 
+			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_mounting_medium); 
 			this.controller = controller;
 			this.deviceType = type;
 		}
@@ -282,23 +304,30 @@ public class StorageListFragment extends SherlockFragment {
 			int devicesPerPort = controller.getMaxDevicesPerPortCount();
 			for(int i=0; i<controller.getMaxPortCount(); i++) {
 				for(int j=0; j<devicesPerPort; j++) {
-					try {
-					IMediumAttachment a = _machine.getMediumAttachment(controller.getName(), i, j);
-					} catch(SoapFault e) {
+					boolean isUsed = false;
+					for(IMediumAttachment a : _controllers.get(controller)) {
+						if(a.getPort()==i && a.getDevice()==j) {
+							isUsed=true;
+							break;
+						}
+					}
+					if(!isUsed) {
 						attachment.setPort(i);
 						attachment.setDevice(j);
-						break;
 					}
 				}
 			}
+			Log.d(TAG, "Attaching to slot: " + attachment.getSlot());
 			_machine.attachDevice(controller.getName(), attachment.getPort(), attachment.getDevice(), deviceType, medium);
 			attachment.setMedium(medium);
+			attachment.setType(deviceType);
+			attachment.setController(controller.getName());
 			return attachment;
 		}
 		
 		@Override
-		protected void onResult(IMediumAttachment result) {
-			super.onResult(result);
+		protected void onSuccess(IMediumAttachment result) {
+			super.onSuccess(result);
 			Utils.toastShort(getContext(), "Attached medium to slot " + result.getSlot());
 			_controllers.get(controller).add(result);
 			_listAdapter.notifyDataSetChanged();
@@ -327,6 +356,8 @@ public class StorageListFragment extends SherlockFragment {
 		public void notifyDataSetChanged() {
 			update();
 			super.notifyDataSetChanged();
+			for(int i=0; i<controllers.size(); i++)
+				_listView.expandGroup(i, true);
 		}
 
 		@Override
@@ -413,7 +444,7 @@ public class StorageListFragment extends SherlockFragment {
 				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
 			}
 			TextView text1 = (TextView)convertView.getTag();
-			text1.setText(attachment.getMedium()!=null ? attachment.getMedium().getName() : "Empty");
+			text1.setText(attachment.getMedium()!=null ? attachment.getMedium().getBase().getName() : "Empty");
 			if(attachment.getType().equals(DeviceType.HARD_DISK))
 				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getDrawable(R.drawable.ic_button_hdd), 0, 0, 0);
 			if(attachment.getType().equals(DeviceType.DVD))
@@ -508,6 +539,9 @@ public class StorageListFragment extends SherlockFragment {
 							Utils.toastLong(getActivity(), bus.toString());
 						}
 					}).show();
+				return true;
+			case R.id.menu_refresh:
+				new LoadDataTask().execute(_machine);
 				return true;
 		}
 		return false;

@@ -23,7 +23,7 @@ public class GeneralDescriptionFragment extends SherlockFragment {
     class LoadInfoTask extends ActionBarTask<IMachine, IMachine> {
     	
         public LoadInfoTask() { 
-        	super("LoadInfoTask", getSherlockActivity(), null); 
+        	super(getSherlockActivity(), null); 
         }
         
         @Override 
@@ -33,7 +33,7 @@ public class GeneralDescriptionFragment extends SherlockFragment {
         }
         
         @Override
-        protected void onResult(IMachine result) {
+        protected void onSuccess(IMachine result) {
             _machine = result;
             populate();
         }

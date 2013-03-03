@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.Utils.AnimationAdapter;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 
 /**
@@ -46,23 +47,11 @@ public class PanelView extends LinearLayout implements OnClickListener {
             	mStartRotation = 0;
             	mDeltaRotation = _collapseRotation;
             }
-            setAnimationListener(new AnimationListener() {
-            	@Override public void onAnimationRepeat(Animation animation) {}
-            	
-                @Override
-                public void onAnimationStart(Animation animation) { 
-                }
-                
+            setAnimationListener(new AnimationAdapter() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if(isExpanding()) {
-//                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
-//                        	_collapseButton.setImageDrawable(_collapseDrawable);
-                    } else {
+                    if(isCollapsing())
                         _frame.setVisibility(View.GONE);
-//                        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB)
-//                        	_collapseButton.setImageDrawable(_expandDrawable);
-                    }
                 }
             });
         }   
@@ -73,8 +62,6 @@ public class PanelView extends LinearLayout implements OnClickListener {
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             _contents.setLayoutParams(lp);
             AnimatorProxy.wrap(_collapseButton).setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
-//            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
-//            	_collapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
         }
 
         @Override
@@ -99,8 +86,6 @@ public class PanelView extends LinearLayout implements OnClickListener {
     private LinearLayout _contents;
     private int _contentGravity=0;
     private FrameLayout _frame;
-//    private Drawable _collapseDrawable;
-//    private Drawable _expandDrawable;
     private Drawable _icon;
     private int _contentHeight;
     private String _title;
@@ -125,30 +110,23 @@ public class PanelView extends LinearLayout implements OnClickListener {
     }
     
     protected void init(Context context) {
-//    	_collapseDrawable = context.getResources().getDrawable(R.drawable.ic_menu_collapse);
-//        _expandDrawable = context.getResources().getDrawable(R.drawable.ic_menu_expand);
-    	
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         setOrientation(VERTICAL);
         _titleView=getTitleLayout();
         
         _contents = new LinearLayout(context);
-        _contents.setClipChildren(false);
         _contents.setOrientation(VERTICAL);
        	_contents.setGravity(_contentGravity);
         
         _frame = new FrameLayout(context);
         _frame.setBackgroundResource(R.drawable.panel_body);
-        _frame.setClipChildren(false);
         _frame.addView(_contents, lp);
         
         super.addView(_titleView, lp);
         super.addView(_frame, lp);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+        
+        if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
 	    	setLayerType(LAYER_TYPE_HARDWARE, null);
-	    	_contents.setLayerType(LAYER_TYPE_HARDWARE, null);
-	    	_frame.setLayerType(LAYER_TYPE_HARDWARE, null);
-    	}
     }
     
     /**
@@ -177,6 +155,8 @@ public class PanelView extends LinearLayout implements OnClickListener {
     @Override
     public void setGravity(int gravity) {
     	_contentGravity=gravity;
+    	if(_contents!=null)
+    		_contents.setGravity(gravity);
     }
     
     @Override

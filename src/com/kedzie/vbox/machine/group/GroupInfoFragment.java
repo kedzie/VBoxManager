@@ -31,7 +31,6 @@ import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.PanelView;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -81,7 +80,7 @@ public class GroupInfoFragment extends SherlockFragment {
 	class LoadInfoTask extends ActionBarTask<VMGroup, ArrayList<MachineInfo>> {
 
 		public LoadInfoTask() { 
-			super("LoadGroupInfoTask", getSherlockActivity(), null); 
+			super(getSherlockActivity(), null); 
 		}
 
 		@Override 
@@ -90,7 +89,7 @@ public class GroupInfoFragment extends SherlockFragment {
 		    for(TreeNode child : g[0].getChildren()) {
 		        if(child instanceof IMachine) {
 		            IMachine m = (IMachine)child;
-		            MachineView.cacheProperties(m);
+		            Utils.cacheProperties(m);
 		            m.getGroups(); m.getMemorySize(); m.getCPUCount();
 		            m.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING);
 					m.getHWVirtExProperty(HWVirtExPropertyType.ENABLED);
@@ -117,7 +116,7 @@ public class GroupInfoFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(ArrayList<MachineInfo> result) {
+		protected void onSuccess(ArrayList<MachineInfo> result) {
 				_info = result;
 				populateViews(result);
 		}

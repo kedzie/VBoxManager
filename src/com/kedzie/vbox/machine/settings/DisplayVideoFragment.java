@@ -25,7 +25,11 @@ import com.kedzie.vbox.task.DialogTask;
 public class DisplayVideoFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<ISystemProperties, IHost>> {
-		public LoadInfoTask() { super("DisplayVIdeoFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
+		
+		public LoadInfoTask() {
+			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_loading_data_generic);
+		}
+		
 		@Override 
 		protected Tuple<ISystemProperties, IHost> work(IMachine... m) throws Exception {
 			m[0].getVRAMSize(); 
@@ -40,8 +44,9 @@ public class DisplayVideoFragment extends SherlockFragment {
 			host.getAcceleration3DAvailable();
 			return new Tuple<ISystemProperties, IHost>(props, host);
 		}
+		
 		@Override
-		protected void onResult(Tuple<ISystemProperties, IHost> result) {
+		protected void onSuccess(Tuple<ISystemProperties, IHost> result) {
 		        _systemProperties = result.first;
 		        _host = result.second;
 				populateViews(_machine, _systemProperties, _host);

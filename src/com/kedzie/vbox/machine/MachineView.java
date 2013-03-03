@@ -11,8 +11,8 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 
 /**
+ * Show VM information
  * 
- * @author Marek Kędzierski
  * @apiviz.stereotype view
  */
 public class MachineView extends FrameLayout {
@@ -44,28 +44,12 @@ public class MachineView extends FrameLayout {
 			stateIcon.setImageResource( _app.getDrawable(m.getState()) );
 			stateText.setText(m.getState().value());
 			if(m.getCurrentSnapshot()!=null)  
-				snapshotText.setText("("+m.getCurrentSnapshot().getName() + ")" + (m.getCurrentStateModified() ? "*" : ""));
+				snapshotText.setText(new StringBuffer("(").append(m.getCurrentSnapshot().getName()).append(")").append((m.getCurrentStateModified() ? "*" : "")).toString());
 			else 
 				snapshotText.setText("");
 		}
 	}
 
-	/**
-	 * Cache commonly used Machine properties
-	 * @param m
-	 */
-	public static void cacheProperties(IMachine m) {
-		synchronized(m) {
-			m.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
-			m.getName();
-			m.getState();
-			m.getCurrentStateModified(); 
-			m.getOSTypeId();
-			if(m.getCurrentSnapshot()!=null) 
-				m.getCurrentSnapshot().getName();
-		}
-	}
-	
 	public IMachine getMachine() {
 	    return _machine;
 	}

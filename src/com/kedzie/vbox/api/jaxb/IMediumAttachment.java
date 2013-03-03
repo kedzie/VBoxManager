@@ -91,7 +91,7 @@ public class IMediumAttachment implements Parcelable {
 		public String toString() {
 			if (!Utils.isEmpty(name))
 				return name;
-			return new StringBuffer(port).append(", ").append(device).toString();
+			return new StringBuffer(port+"").append(", ").append(device).toString();
 		}
 
 		@Override
@@ -114,11 +114,11 @@ public class IMediumAttachment implements Parcelable {
 	private String controller;
 	private DeviceType type;
 	private Slot slot = new Slot();
-	private Boolean passthrough;
-	private Boolean temporaryEject;
-	private Boolean isEjected;
-	private Boolean nonRotational;
-	private Boolean discard;
+	private boolean passthrough;
+	private boolean temporaryEject;
+	private boolean isEjected;
+	private boolean nonRotational;
+	private boolean discard;
 	private String bandwidthGroup;
 
 	@Override
@@ -258,6 +258,6 @@ public class IMediumAttachment implements Parcelable {
 		if (obj == null || !(obj instanceof IMediumAttachment))
 			return false;
 		IMediumAttachment that = (IMediumAttachment) obj;
-		return Objects.equal(slot, that.slot) && Objects.equal(controller, that.controller);
+		return Objects.equal(slot, that.slot) && Objects.equal(controller, that.controller) && Objects.equal(medium , that.medium);
 	}
 }

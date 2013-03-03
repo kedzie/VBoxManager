@@ -26,7 +26,7 @@ public class StorageControllerFragment extends SherlockFragment {
     class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
     	
         public LoadInfoTask() { 
-        	super("LoadInfoTask", getSherlockActivity(), null); 
+        	super(getSherlockActivity(), null); 
         }
         
         @Override 
@@ -37,7 +37,7 @@ public class StorageControllerFragment extends SherlockFragment {
             return params[0];
         }
         @Override
-        protected void onResult(IStorageController result) {
+        protected void onSuccess(IStorageController result) {
         	_controller=result;
             populate();
         }

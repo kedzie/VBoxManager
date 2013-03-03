@@ -10,9 +10,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListActivity;
-import com.kedzie.vbox.machine.MachineView;
-import com.kedzie.vbox.machine.settings.CategoryActivity;
+import com.kedzie.vbox.machine.settings.VMSettingsActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -27,7 +27,7 @@ public class HarnessActivity extends BaseActivity {
 	private class LogonTask extends ActionBarTask<Server, Void> {
 
 		public LogonTask(VBoxSvc vmgr) {
-			super("LogonTask", HarnessActivity.this, vmgr);
+			super(HarnessActivity.this, vmgr);
 		}
 
 		@Override
@@ -42,7 +42,7 @@ public class HarnessActivity extends BaseActivity {
 	private class LogoffTask extends ActionBarTask<Void, Void> {
 
 		public LogoffTask(VBoxSvc vmgr) {
-			super("LogoffTask", HarnessActivity.this, vmgr);
+			super(HarnessActivity.this, vmgr);
 		}
 
 		@Override
@@ -55,20 +55,20 @@ public class HarnessActivity extends BaseActivity {
 	private class MachineSettingsTask extends ActionBarTask<String, IMachine> {
 
 		public MachineSettingsTask(VBoxSvc vmgr) {
-			super("MachineSettingsTask", HarnessActivity.this, vmgr);
+			super(HarnessActivity.this, vmgr);
 		}
 
 		@Override
 		protected IMachine work(String... params) throws Exception {
 			IMachine machine = _vmgr.getVBox().findMachine(params[0]);
-			MachineView.cacheProperties(machine);
+			Utils.cacheProperties(machine);
 			return machine;
 		}
 
 		@Override
-		protected void onResult(IMachine result) {
-			super.onResult(result);
-			startActivity(new Intent(HarnessActivity.this, CategoryActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi).putExtra(IMachine.BUNDLE, result));
+		protected void onSuccess(IMachine result) {
+			super.onSuccess(result);
+			startActivity(new Intent(HarnessActivity.this, VMSettingsActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vboxApi).putExtra(IMachine.BUNDLE, result));
 		}
 	}
 
@@ -78,6 +78,12 @@ public class HarnessActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		new LogonTask( _vboxApi).execute(new Server(null,"192.168.1.10", false, 18083, "kedzie", "Mk0204$$"));
+	}
+	
+	@Override
+	protected void onDestroy() {
+		new LogoffTask(_vboxApi).execute();
+		super.onDestroy();
 	}
 
 	@Override
@@ -97,11 +103,5 @@ public class HarnessActivity extends BaseActivity {
 				return true;
 		}
 		return false;
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		new LogoffTask(_vboxApi).execute();
 	}
 }

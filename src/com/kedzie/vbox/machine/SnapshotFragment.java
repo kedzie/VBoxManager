@@ -41,7 +41,6 @@ import com.kedzie.vbox.task.MachineTask;
 
 /**
  * 
- * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
 public class SnapshotFragment extends SherlockFragment {
@@ -50,8 +49,9 @@ public class SnapshotFragment extends SherlockFragment {
 	 *	Load complete snapshot tree.
 	 */
 	class LoadSnapshotsTask extends ActionBarTask<IMachine, ISnapshot>	{
+		
 		public LoadSnapshotsTask(VBoxSvc vmgr) { 
-			super( "LoadSnapshotsTask", getSherlockActivity(), vmgr); 	
+			super(getSherlockActivity(), vmgr); 	
 		}
 
 		@Override
@@ -77,7 +77,7 @@ public class SnapshotFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(ISnapshot result)	{
+		protected void onSuccess(ISnapshot result)	{
 		    _stateManager = new InMemoryTreeStateManager<ISnapshot>();
 	        _treeBuilder = new TreeBuilder<ISnapshot>(_stateManager);
 	        _treeView.setAdapter(new SnapshotTreeAdapter(getActivity(), _stateManager, 10));
@@ -135,6 +135,7 @@ public class SnapshotFragment extends SherlockFragment {
     
     @Override
 	public void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
 		outState.putSerializable("manager", _stateManager);
 	}
     
@@ -144,7 +145,7 @@ public class SnapshotFragment extends SherlockFragment {
     	super.onCreate(savedInstanceState);
     	setHasOptionsMenu(true);
     	_vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
-        _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+        _machine = getArguments().getParcelable(IMachine.BUNDLE);
         _machine = _vmgr.getProxy(IMachine.class, _machine.getIdRef());
         if(savedInstanceState!=null) {
         	_stateManager = (TreeStateManager<ISnapshot>)savedInstanceState.getSerializable("manager");
@@ -220,9 +221,7 @@ public class SnapshotFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_add:
-		    Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), 
-		                        "snapshotDialog", 
-		                        TakeSnapshotFragment.getInstance(getArguments()) );
+		    Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(getArguments()) );
 			return true;
 		case R.id.option_menu_refresh:
 		    refresh();
@@ -233,9 +232,9 @@ public class SnapshotFragment extends SherlockFragment {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	    menu.add(Menu.NONE, R.id.context_menu_restore_snapshot, Menu.NONE, VMAction.RESTORE_SNAPSHOT.toString());
-		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, VMAction.DELETE_SNAPSHOT.toString());
-		menu.add(Menu.NONE, R.id.context_menu_details_snapshot, Menu.NONE, R.string.edit_snapshot);
+	    menu.add(Menu.NONE, R.id.context_menu_restore_snapshot, Menu.NONE, R.string.action_restore_snapshot);
+		menu.add(Menu.NONE, R.id.context_menu_delete_snapshot, Menu.NONE, R.string.action_delete_snapshot);
+		menu.add(Menu.NONE, R.id.context_menu_details_snapshot, Menu.NONE, R.string.action_edit_snapshot);
 	}
 	
 	private SnapshotTreeAdapter getTreeAdapter() {
@@ -254,13 +253,11 @@ public class SnapshotFragment extends SherlockFragment {
 		                    .putParcelable(IMachine.BUNDLE, _machine)
 		                    .putParcelable("snapshot", nodeinfo.getId())
 		                    .create();
-		        Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), 
-                        "snapshotDialog", 
-                        TakeSnapshotFragment.getInstance(arguments) );
+		        Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(arguments) );
 		        return true;
 		    case R.id.context_menu_delete_snapshot:  
 		        nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-		        new MachineTask<ISnapshot, Void>(getActivity(), _vmgr, "Deleting Snapshot", false, _machine) { 
+		        new MachineTask<ISnapshot, Void>(getSherlockActivity(), _vmgr, R.string.progress_deleting_snapshot, false, _machine) { 
 		            protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 		                return console.deleteSnapshot(s[0].getId());
 		            }
@@ -268,7 +265,7 @@ public class SnapshotFragment extends SherlockFragment {
 		        return true;
 		    case R.id.context_menu_restore_snapshot:
 		        nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-		        new MachineTask<ISnapshot, Void>(getActivity(), _vmgr, "Restoring Snapshot", false, _machine) { 
+		        new MachineTask<ISnapshot, Void>(getSherlockActivity(), _vmgr, R.string.progress_restore_snapshot, false, _machine) { 
 		            protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
 		                return console.restoreSnapshot(s[0]);
 		            }

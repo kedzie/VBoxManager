@@ -33,7 +33,7 @@ public class AudioFragment extends SherlockFragment {
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<IAudioAdapter, AudioDriverType[]>> {
 		
 		public LoadInfoTask() { 
-			super("NetworkAdapterFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); 
+			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); 
 		}
 
 		@Override 
@@ -46,8 +46,8 @@ public class AudioFragment extends SherlockFragment {
 			return new Tuple<IAudioAdapter, AudioDriverType[]>(adapter, types);
 		}
 		@Override
-		protected void onResult(Tuple<IAudioAdapter, AudioDriverType[]> result) {
-			super.onResult(result);
+		protected void onSuccess(Tuple<IAudioAdapter, AudioDriverType[]> result) {
+			super.onSuccess(result);
 			_adapter = result.first;
 		    _types = result.second;
 		    Log.d(TAG, "Audio Driver: " + _adapter.getAudioDriver());

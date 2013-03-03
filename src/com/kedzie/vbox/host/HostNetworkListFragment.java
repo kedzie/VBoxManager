@@ -56,7 +56,7 @@ public class HostNetworkListFragment extends SherlockFragment {
 	private class AddInterfaceTask extends DialogTask<IHost, IHostNetworkInterface> {
 		
 		public AddInterfaceTask() {
-			super("AddInterfaceTask", getSherlockActivity(), _host.getAPI(), R.string.progress_creating_network_interface);
+			super(getSherlockActivity(), _host.getAPI(), R.string.progress_creating_network_interface);
 		}
 		
 		@Override
@@ -67,8 +67,8 @@ public class HostNetworkListFragment extends SherlockFragment {
 		};
 		
 		@Override
-		protected void onResult(IHostNetworkInterface result) {
-			super.onResult(result);
+		protected void onSuccess(IHostNetworkInterface result) {
+			super.onSuccess(result);
 			new LoadDataTask().execute();
 			showInterfaceDialog(result);
 		}
@@ -80,7 +80,7 @@ public class HostNetworkListFragment extends SherlockFragment {
 	private class DeleteInterfaceTask extends ActionBarTask<IHostNetworkInterface, IHostNetworkInterface> {
 		
 		public DeleteInterfaceTask() {
-			super("DeleteInterfaceTask", getSherlockActivity(), _host.getAPI());
+			super(getSherlockActivity(), _host.getAPI());
 		}
 		
 		@Override
@@ -90,8 +90,8 @@ public class HostNetworkListFragment extends SherlockFragment {
 		};
 		
 		@Override
-		protected void onResult(IHostNetworkInterface result) {
-			super.onResult(result);
+		protected void onSuccess(IHostNetworkInterface result) {
+			super.onSuccess(result);
 			new LoadDataTask().execute();
 		}
 	}
@@ -102,7 +102,7 @@ public class HostNetworkListFragment extends SherlockFragment {
 	private class LoadDataTask extends ActionBarTask<IHost, ArrayList<IHostNetworkInterface>> {
 		
 		public LoadDataTask() {
-			super("LoadInterfacesTask", getSherlockActivity(), _host.getAPI());
+			super(getSherlockActivity(), _host.getAPI());
 		}
 		
 		@Override
@@ -128,8 +128,8 @@ public class HostNetworkListFragment extends SherlockFragment {
 		}
 		
 		@Override
-		protected void onResult(ArrayList<IHostNetworkInterface> result) {
-			super.onResult(result);
+		protected void onSuccess(ArrayList<IHostNetworkInterface> result) {
+			super.onSuccess(result);
 			_interfaces = result;
 			Log.d(TAG, "# of interfaces: " + _interfaces.size());
 			_listAdapter = new ItemAdapter(getActivity(), _interfaces);

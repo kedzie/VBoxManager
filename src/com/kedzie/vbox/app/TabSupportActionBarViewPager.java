@@ -20,45 +20,46 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 /**
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
- * @author Marek Kedzierski
+ * 
+ * @author Marek Kędzierski
  */
 public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
 	private static final String TAG = "TabSupportViewPager";
 
-	private SherlockFragmentActivity _activity;
-	private ActionBar _actionBar;
-    private ViewPager _viewPager;
-    private List<FragmentElement> _tabs = new ArrayList<FragmentElement>();
+	private SherlockFragmentActivity mActivity;
+	private ActionBar mActionBar;
+    private ViewPager mViewPager;
+    private List<FragmentElement> mTabs = new ArrayList<FragmentElement>();
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction;
     private Fragment mCurrentPrimaryItem;
     
     public TabSupportActionBarViewPager(SherlockFragmentActivity activity, int container) {
         mFragmentManager = activity.getSupportFragmentManager();
-        _activity=activity;
-        _actionBar=activity.getSupportActionBar();
-        _actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mActivity=activity;
+        mActionBar=activity.getSupportActionBar();
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
-        _viewPager=new ViewPager(_activity);
-        _viewPager.setId(99);
-        _viewPager.setOffscreenPageLimit(4);
+        mViewPager=new ViewPager(mActivity);
+        mViewPager.setId(99);
+        mViewPager.setOffscreenPageLimit(4);
         if(container==android.R.id.content)
-            _activity.setContentView(_viewPager);
+            mActivity.setContentView(mViewPager);
         else
-            ((ViewGroup)_activity.findViewById(container)).addView(_viewPager);
-        _viewPager.setAdapter(this);
-        _viewPager.setOnPageChangeListener(this);
+            ((ViewGroup)mActivity.findViewById(container)).addView(mViewPager);
+        mViewPager.setAdapter(this);
+        mViewPager.setOnPageChangeListener(this);
     }
 
     @Override
     public void startUpdate(ViewGroup container) {
-        mCurTransaction = mFragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        mCurTransaction = Utils.setCustomAnimations(mFragmentManager.beginTransaction());
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        FragmentElement info = _tabs.get(position);
-        Utils.addOrAttachFragment(_activity, mFragmentManager, mCurTransaction, container.getId(), info);
+        FragmentElement info = mTabs.get(position);
+        Utils.addOrAttachFragment(mActivity, mFragmentManager, mCurTransaction, container.getId(), info);
         if (info.fragment != mCurrentPrimaryItem) {
             info.fragment.setMenuVisibility(false);
             info.fragment.setUserVisibleHint(false);
@@ -104,7 +105,7 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
 
     @Override
     public int getItemPosition(Object object) {
-        for(FragmentElement info : _tabs){
+        for(FragmentElement info : mTabs){
             if(info.fragment==object)
                 return POSITION_UNCHANGED;
         }
@@ -113,51 +114,51 @@ public class TabSupportActionBarViewPager extends PagerAdapter  implements TabSu
     
     @Override
     public int getCount() {
-        return _tabs.size(); 
+        return mTabs.size(); 
     }
 
     @Override
     public void addTab(FragmentElement info)  {
-        Tab tab = _actionBar.newTab().setTag(info.name).setTabListener(this);
+        Tab tab = mActionBar.newTab().setTag(info.name).setTabListener(this);
         if(info.icon!=-1)
             tab.setIcon(info.icon);
         else
             tab.setText(info.name);
-       _actionBar.addTab( tab );
-        _tabs.add(info);
+       mActionBar.addTab( tab );
+        mTabs.add(info);
         notifyDataSetChanged();
     }
     
     @Override
 	public void removeTab(String name) {
         FragmentElement info = new FragmentElement(name, null, null);
-    	_actionBar.removeTabAt(_tabs.indexOf(info));
-    	_tabs.remove(info);
+    	mActionBar.removeTabAt(mTabs.indexOf(info));
+    	mTabs.remove(info);
     	notifyDataSetChanged();
 	}
 
 	@Override
 	public void removeAllTabs() {
-		_actionBar.removeAllTabs();
-		_tabs.clear();
+		mActionBar.removeAllTabs();
+		mTabs.clear();
 		notifyDataSetChanged();
 	}
 	
 	@Override
     public void setCurrentTab(int position) {
-	    _actionBar.setSelectedNavigationItem(position);
+	    mActionBar.setSelectedNavigationItem(position);
     }
 	
 	@Override
     public void onPageSelected(int position) {
-        _activity.getSupportActionBar().setSelectedNavigationItem(position);
+        mActivity.getSupportActionBar().setSelectedNavigationItem(position);
     }
 	
 	@Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        for (int i=0; i<_tabs.size(); i++) 
-            if (_tabs.get(i).name == tab.getTag()) 
-                _viewPager.setCurrentItem(i);
+        for (int i=0; i<mTabs.size(); i++) 
+            if (mTabs.get(i).name == tab.getTag()) 
+                mViewPager.setCurrentItem(i);
     }
 	
 	@Override

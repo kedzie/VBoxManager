@@ -23,7 +23,7 @@ public class LogFragment extends SherlockFragment {
 	
 	class LoadLogTask extends ActionBarTask<IMachine, String> {
 		public LoadLogTask() {
-			super("LoadLogTask", getSherlockActivity(), null);
+			super(getSherlockActivity(), null);
 		}
 
 		@Override 
@@ -32,7 +32,7 @@ public class LogFragment extends SherlockFragment {
 		}
 
 		@Override
-		protected void onResult(String result) {
+		protected void onSuccess(String result) {
 			if(result.length()==MAX_LOG_SIZE)	
 			    Log.w(TAG,"Log size: " + result.length());
 			_logText.setText(_log=result);

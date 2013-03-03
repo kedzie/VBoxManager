@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="316" android:versionName="3.1.6" package="com.kedzie.vbox">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="317" android:versionName="3.1.7" package="com.kedzie.vbox">
     
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
     
@@ -15,12 +15,12 @@
             	</intent-filter>
         </activity>
         
-	<activity android:configChanges="orientation" android:label="Test Harness" android:name=".harness.HarnessActivity" android:uiOptions="splitActionBarWhenNarrow">
-		<intent-filter>
-                	<action android:name="android.intent.action.MAIN"/>
-                	<category android:name="android.intent.category.LAUNCHER"/>
-            	</intent-filter>
-        </activity>
+<!-- 	<activity android:configChanges="orientation" android:label="Test Harness" android:name=".harness.HarnessActivity" android:uiOptions="splitActionBarWhenNarrow"> -->
+<!-- 		<intent-filter> -->
+<!--                 	<action android:name="android.intent.action.MAIN"/> -->
+<!--                 	<category android:name="android.intent.category.LAUNCHER"/> -->
+<!--             	</intent-filter> -->
+<!--         </activity> -->
         
         <activity android:configChanges="orientation" android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity">
 		<meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
@@ -38,7 +38,7 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".machine.MachineListFragmentActivity"/>
 	</activity>
 	
-        <activity android:name="com.kedzie.vbox.machine.settings.CategoryActivity" android:uiOptions="splitActionBarWhenNarrow"/>
+        <activity android:name="com.kedzie.vbox.machine.settings.VMSettingsActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 	
         <activity android:name=".app.FragmentActivity" android:uiOptions="splitActionBarWhenNarrow"/>
         

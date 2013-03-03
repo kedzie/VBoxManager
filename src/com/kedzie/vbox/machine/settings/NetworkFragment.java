@@ -35,12 +35,12 @@ public class NetworkFragment extends SherlockFragment {
     class LoadDataTask extends ActionBarTask<IMachine, ArrayList<INetworkAdapter>> {
     	
     	public LoadDataTask() {
-    		super("LoadDataTask", getSherlockActivity(), _machine.getAPI());
+    		super(getSherlockActivity(), _machine.getAPI());
     	}
     	
     	@Override
     	protected ArrayList<INetworkAdapter> work(IMachine... params) throws Exception {
-    		int maxNumAdapters = 4;//_vmgr.getVBox().getSystemProperties().getMaxNetworkAdapters(params[0].getChipsetType());
+    		int maxNumAdapters = 4;
     		ArrayList<INetworkAdapter> adapters = new ArrayList<INetworkAdapter>(maxNumAdapters);
     		for(int i=0; i<maxNumAdapters; i++) 
     			adapters.add(params[0].getNetworkAdapter(i));
@@ -49,8 +49,8 @@ public class NetworkFragment extends SherlockFragment {
     	}
     	
     	@Override
-    	protected void onResult(ArrayList<INetworkAdapter> result) {
-    		super.onResult(result);
+    	protected void onSuccess(ArrayList<INetworkAdapter> result) {
+    		super.onSuccess(result);
     		_adapters = result;
     		populate();
     	}

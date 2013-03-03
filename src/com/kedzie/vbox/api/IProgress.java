@@ -7,6 +7,7 @@ import java.util.Map;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -50,7 +51,7 @@ public interface IProgress extends IManagedObjectRef, Parcelable {
 	@KSOAP(cacheable=true) public Boolean getCancelable() ;
 	@KSOAP(cacheable=true) public Boolean getCompleted() ;
 	
-	public void cancel() throws IOException;
+	@Asyncronous public void cancel();
 	public void setTimeout(@KSOAP(type="unsignedInt", value="timeout") int timeout) throws IOException;
 	public void setCurrentOperationProgress(@KSOAP(type="unsignedInt", value="percent") int percent) throws IOException;
 	public void setNextOperation(@KSOAP("nextOperationDescription") String nextOperationDescription, @KSOAP(type="unsignedInt", value="nextOperationsWeight") int nextOperationsWeight) throws IOException;

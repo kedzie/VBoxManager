@@ -60,17 +60,19 @@ public class ServerListFragment extends SherlockFragment {
     class LoadServersTask extends ActionBarTask<Void, List<Server>> {
 
         public LoadServersTask() {
-            super("LoadServersTask", getSherlockActivity(),  null); 
+            super(getSherlockActivity(),  null); 
         }
         @Override 
         protected List<Server> work(Void... params) throws Exception { 
             return _db.query(); 
         }
         @Override 
-        protected void onResult(List<Server> result)    {
+        protected void onSuccess(List<Server> result)    {
             _listView.setAdapter(new ServerListAdapter(getSherlockActivity(), result));
             if(result.isEmpty())
             	showAddNewServerPrompt();
+            else 
+            	checkIfFirstRun(result.get(0));
         }
     }
 

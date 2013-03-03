@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingBottom="4dp"
-    android:background="@drawable/list_selector_color"
     android:paddingTop="4dp" >
 
     <ImageView

@@ -11,7 +11,6 @@ import android.util.Log;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.server.ServerSQlite;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -49,7 +48,7 @@ public class UpdateWidgetService extends IntentService {
 			    Provider.savePref(this, widgetId, Provider.KEY_IDREF, machine.getIdRef());
 			    Provider.savePref(this, widgetId, Provider.KEY_VBOX, vboxApi.getVBox().getIdRef());
 			}
-			MachineView.cacheProperties(machine);
+			Utils.cacheProperties(machine);
 			Provider.updateAppWidget(this, widgetId, machine);
 		}
 	}

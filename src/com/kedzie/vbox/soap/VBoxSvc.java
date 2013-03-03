@@ -36,6 +36,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.google.common.base.Objects;
+import com.kedzie.vbox.BuildConfig;
 import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IDisplay;
 import com.kedzie.vbox.api.IEvent;
@@ -92,10 +93,21 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		}
 	};
 	
+	/**
+	 * Asynchronous return value handler
+	 */
 	public static interface FutureValue {
+		
+		/**
+		 * Handle asynchronous method return value
+		 * @param obj		the return value
+		 */
 		public void handleValue(Object obj);
 	}
 	
+	/**
+	 * Thread for making SOAP invocations
+	 */
 	public class AsynchronousThread extends Thread {
 		private String name;
 		private SerializationEnvelope envelope;
@@ -146,8 +158,10 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		
 		/** managed object UIUD */
 		private String _uiud;
+		
 		/** type of {@link IManagedObjectRef} */
 		private Class<?> _type;
+		
 		/** cached property values */
 		private Map<String, Object> _cache;
 
@@ -202,16 +216,18 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					ksoap=method.getDeclaringClass().getAnnotation(KSOAP.class);
 				
 				String cacheKey = method.getName();
-				if(args!=null) {
-					for(Object arg : args)
-						cacheKey+="-"+arg.toString();
-				}
-				if(ksoap.cacheable() && _cache.containsKey(cacheKey)) {
-					if(isPopulateView) {
-						future.handleValue(_cache.get(cacheKey));
-						return null;
-					} else
-						return _cache.get(cacheKey);
+				if(ksoap.cacheable()) {
+					if(args!=null) {
+						for(Object arg : args)
+							cacheKey+="-"+arg.toString();
+					}
+					if(_cache.containsKey(cacheKey)) {
+						if(isPopulateView) {
+							future.handleValue(_cache.get(cacheKey));
+							return null;
+						} else
+							return _cache.get(cacheKey);
+					}
 				}
 				SoapObject request = new SoapObject(NAMESPACE, (Utils.isEmpty(ksoap.prefix()) ? _type.getSimpleName() : ksoap.prefix())+"_"+method.getName());
 				if (!Utils.isEmpty(ksoap.thisReference()))
@@ -224,7 +240,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				envelope.setOutputSoapObject(request);
 				envelope.setAddAdornments(false);
 				
-				Log.v(TAG, "Remote call: " + request.getName());
+				if(BuildConfig.DEBUG) Log.v(TAG, "Remote call: " + request.getName());
 				if(method.isAnnotationPresent(Asyncronous.class)) {
 					new AsynchronousThread(NAMESPACE+request.getName(), envelope).start();
 					return null;
@@ -234,7 +250,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				} else {
 					_transport.call(NAMESPACE+request.getName(), envelope);
 					Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
-					if(ksoap!=null && ksoap.cacheable()) 
+					if(ksoap.cacheable()) 
 						_cache.put(cacheKey, ret);
 					//update cache value of property if we are calling a setter
 					if(methodName.startsWith("set")) {
@@ -269,8 +285,15 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
 			else if(clazz.isEnum())
 				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
-			else
+			else {
+				for(Marshaller m : _marshallers) {
+					if(m.handleObject(clazz)) {
+						m.marshal(request, ksoap, clazz, gType, obj);
+						return;
+					}
+				}
 				request.addProperty(ksoap.value(), obj);
+			}
 		}
 	}
 
@@ -279,8 +302,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 */
 	class SerializationEnvelope extends SoapSerializationEnvelope {
 
-		/** Keep track of setter methods for each property of complex objects  */
-		private Map<Class<?>, Map<String, Method>> typeCache = new HashMap<Class<?>, Map<String, Method>>();
+		/** Reflection cache.  Maps from [classname].[property] to [setter-method] */
+		private Map<String, Method> typeCache = new HashMap<String, Method>();
 		
 		public SerializationEnvelope() {
 			super(SoapEnvelope.VER11);
@@ -367,7 +390,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 						return element;
 			} else if(returnType.isAnnotationPresent(KSoapObject.class)) {
 			    try {
-			        Log.v(TAG, "Unmarshalling Complex Object: " + returnType.getName());
+			        if(BuildConfig.DEBUG) Log.v(TAG, "Unmarshalling Complex Object: " + returnType.getName());
                     Object pojo = returnType.newInstance();
                     SoapObject soapObject = (SoapObject)ret;
                     PropertyInfo propertyInfo = new PropertyInfo();
@@ -377,13 +400,17 @@ public class VBoxSvc implements Parcelable, Externalizable {
                         if(setterMethod==null) continue;
                         Class<?> propertyType = setterMethod.getParameterTypes()[0];
                         Object value = unmarshal(propertyType, propertyType, propertyInfo.getValue());
-                       	Log.v(TAG, String.format("Setting property: %1$s.%2$s=%3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
+                       	if(BuildConfig.DEBUG) Log.v(TAG, String.format("Setting property: %1$s.%2$s = %3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
                        	setterMethod.invoke(pojo, value);
                     }
                     return pojo;
                 } catch (Exception e) {
-                    Log.e(TAG, "Exception instantiating Complex Object Type: " + returnType.getName(), e);
+                    Log.e(TAG, "Error unmarshalling complex object: " + returnType.getName(), e);
                 } 
+			}
+			for(Marshaller m : _marshallers) {
+				if(m.handleObject(returnType))
+					return m.unmarshal(returnType, genericType, ret);
 			}
 			return ret;
 		}
@@ -393,33 +420,26 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		 * @param clazz			object type
 		 * @param property	property name
 		 * @return	the setter method
-		 * @throws {@link NoSuchPropertyException}	if setter method is not found
 		 */
 		private Method findSetterMethod(Class<?> clazz, String property) {
-			if(!typeCache.containsKey(clazz))
-				typeCache.put(clazz, new HashMap<String, Method>());
-			Map<String, Method> typeDescription = typeCache.get(clazz);
-			if(typeDescription.containsKey("set_"+property)) 
-				return typeDescription.get("set_"+property);
+			String key = clazz.getSimpleName()+"."+property;
+			if(typeCache.containsKey(key)) 
+				return typeCache.get(key);
 			String setterMethodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
 			for(Method method : clazz.getMethods()) 
 				if(method.getName().equals(setterMethodName)) {
-					typeDescription.put("set_"+property, method);
+					typeCache.put(key, method);
 					return method;
 				}
 			Log.w(TAG, "No Setter Found: " + setterMethodName);
 			return null;
-//			throw new NoSuchPropertyException(setterMethodName);
 		}
 	}
 
 	protected Server _server;
 	protected IVirtualBox _vbox;
 	protected HttpTransportSE  _transport;
-	protected Map<String, CustomMethodHandler> _methodHandlers = new HashMap<String, CustomMethodHandler>();
-	protected List<RequestProcessor> _requestProcessors = new ArrayList<RequestProcessor>();
 	protected List<Marshaller> _marshallers = new ArrayList<Marshaller>();
-	
 	
 	/**
 	 * @param server	VirtualBox webservice server
@@ -442,7 +462,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	}
 	
 	private void init() {
-		
 	}
 	
 	public IVirtualBox getVBox() {
@@ -692,7 +711,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		SerializationEnvelope envelope = new SerializationEnvelope();
 		envelope.setOutputSoapObject(new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName").addProperty("_this", "0"));
 		envelope.setAddAdornments(false);
-		InteractiveTrustedHttpsTransport transport = new InteractiveTrustedHttpsTransport(_server, TIMEOUT, handler);
-		transport.call(NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
+		new InteractiveTrustedHttpsTransport(_server, TIMEOUT, handler).call(NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
 	}
 }

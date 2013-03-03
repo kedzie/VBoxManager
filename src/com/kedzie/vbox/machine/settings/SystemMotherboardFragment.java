@@ -30,7 +30,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemMotherboardFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IHost> {
-		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
+		public LoadInfoTask() { super(getSherlockActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {
@@ -45,8 +45,8 @@ public class SystemMotherboardFragment extends SherlockFragment {
 			return host;
 		}
 		@Override
-		protected void onResult(IHost result) {
-			super.onResult(result);
+		protected void onSuccess(IHost result) {
+			super.onSuccess(result);
 		    _host = result;
 		    populateViews(_machine, _host);
 		}
@@ -62,7 +62,7 @@ public class SystemMotherboardFragment extends SherlockFragment {
 	private CheckBox _utcCheckbox;
 	private Spinner _chipsetSpinner;
 	private ArrayAdapter<ChipsetType> _chipsetAdapter;
-	private ErrorCapability _errorHandler = new ErrorCapability();
+	private ErrorSupport _errorHandler = new ErrorSupport();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

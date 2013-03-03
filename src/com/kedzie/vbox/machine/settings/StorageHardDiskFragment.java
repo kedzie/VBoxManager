@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine.settings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,37 +31,32 @@ import com.kedzie.vbox.task.DialogTask;
 
 /**
  * Hard disk medium details
+ * 
  * @apiviz.stereotype fragment
  */
 public class StorageHardDiskFragment extends SherlockFragment {
 
-	class LoadInfoTask extends ActionBarTask<Void, IStorageController> {
+	/**
+	 * Load medium details
+	 */
+	class LoadInfoTask extends ActionBarTask<Void, Void> {
 
 		public LoadInfoTask() { 
-			super("LoadInfoTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
-		protected IStorageController work(Void...params) throws Exception {
-			_attachment.getMedium().getName();
-			_attachment.getMedium().getSize();
-			_attachment.getMedium().getType();
-			_attachment.getMedium().getLocation();
-			_attachment.getMedium().getLogicalSize();
-			_attachment.getMedium().getBase().getName();
-			_attachment.getMedium().getBase().getSize();
-			_attachment.getMedium().getBase().getType();
-			_attachment.getMedium().getBase().getLocation();
-			_attachment.getMedium().getBase().getLogicalSize();
-			IStorageController controller = _machine.getStorageControllerByName(_attachment.getController());
-			controller.getBus();
-			controller.getMaxPortCount();
-			controller.getMaxDevicesPerPortCount();
-			return controller;
+		protected Void work(Void...params) throws Exception {
+			Utils.cacheProperties(_attachment.getMedium());
+			_controller = _machine.getStorageControllerByName(_attachment.getController());
+			_controller.getBus();
+			_controller.getMaxPortCount();
+			_controller.getMaxDevicesPerPortCount();
+			_attachments = _machine.getMediumAttachmentsOfController(_controller.getName());
+			return null;
 		}
 		@Override
-		protected void onResult(IStorageController result) {
-			_controller=result;
+		protected void onSuccess(Void result) {
 			populate();
 		}
 	}
@@ -72,7 +67,7 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class MoveTask extends ActionBarTask<Slot, Void> {
 
 		public MoveTask() { 
-			super("MoveTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
@@ -91,7 +86,7 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
 		public ListMediumsTask() { 
-			super("ListMediumsTask", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 
 		@Override 
@@ -104,8 +99,8 @@ public class StorageHardDiskFragment extends SherlockFragment {
 		}
 		
 		@Override
-		protected void onResult(final List<IMedium> result) {
-			super.onResult(result);
+		protected void onSuccess(final List<IMedium> result) {
+			super.onSuccess(result);
 			final CharSequence []items = new CharSequence[result.size()];
 			for(int i=0; i<result.size(); i++)
 				items[i] = result.get(i).getName();
@@ -127,26 +122,22 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	class MountTask extends DialogTask<IMedium, Void> {
 
 		public MountTask() { 
-			super("MountTask", getSherlockActivity(), _machine.getAPI(), "Mounting medium"); 
+			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_mounting_medium); 
 		}
 
 		@Override 
 		protected Void work(IMedium...params) throws Exception {
 			if(_attachment.getMedium()!=null)
 				_machine.unmountMedium(_controller.getName(), _attachment.getPort(), _attachment.getDevice(),  false);
-			
 			_machine.mountMedium(_controller.getName(), _attachment.getPort(), _attachment.getDevice(), params[0], false);
 			_attachment.setMedium(params[0]);
-			params[0].getSize();
-			params[0].getType();
-			params[0].getLocation();
-			params[0].getLogicalSize();
+			Utils.cacheProperties(params[0]);
 			return null;
 		}
 		
 		@Override
-		protected void onResult(Void result) {
-			super.onResult(result);
+		protected void onSuccess(Void result) {
+			super.onSuccess(result);
 			populate();
 		}
 	}
@@ -154,14 +145,15 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	private IMachine _machine;
 	private IMediumAttachment _attachment;
 	private IStorageController _controller;
+	private ArrayList<IMediumAttachment> _attachments;
 
 	private View _view;
 	private Spinner _slotSpinner;
-	private Slot[] _slots;
+	private ArrayList<Slot> _slots;
 	private ArrayAdapter<Slot> _slotAdapter;
 
 	private ImageButton _mountButton;
-	private CheckBox _solidStateCheckbox;
+//	private CheckBox _solidStateCheckbox;
 	private TextView _storageTypeText;
 	private TextView _virtualSizeText;
 	private TextView _actualSizeText;
@@ -185,7 +177,7 @@ public class StorageHardDiskFragment extends SherlockFragment {
 				new ListMediumsTask().execute();
 			}
 		});
-		_solidStateCheckbox = (CheckBox)_view.findViewById(R.id.storage_solid_state);
+//		_solidStateCheckbox = (CheckBox)_view.findViewById(R.id.storage_solid_state);
 		_storageTypeText = (TextView)_view.findViewById(R.id.storage_type);
 		_virtualSizeText = (TextView)_view.findViewById(R.id.storage_virtual_size);
 		_actualSizeText = (TextView)_view.findViewById(R.id.storage_actual_size);
@@ -201,11 +193,20 @@ public class StorageHardDiskFragment extends SherlockFragment {
 
 	private void populate() {
 		int devicesPerPort = _controller.getMaxDevicesPerPortCount();
-		_slots = new Slot[devicesPerPort*_controller.getMaxPortCount()];
+		
+		_slots = new ArrayList<Slot>(devicesPerPort*_controller.getMaxPortCount());
 		for(int i=0; i<_controller.getMaxPortCount(); i++) {
 			for(int j=0; j<devicesPerPort; j++) {
 				Slot slot = new Slot(i, j);
-				_slots[ i*devicesPerPort+j] = slot;
+				boolean isUsed=false;
+				for(IMediumAttachment a : _attachments) {
+					if(a.getSlot().equals(slot) && !a.getMedium().equals(_attachment.getMedium())) {
+						isUsed=true;
+						break;
+					}
+				}
+				if(!isUsed)
+					_slots.add(slot);
 				if(devicesPerPort==1)
 					slot.name = new StringBuffer(_controller.getBus().toString()).append(" Port ").append(i).toString(); 
 				else if (_controller.getBus().equals(StorageBus.IDE)) {
@@ -215,13 +216,13 @@ public class StorageHardDiskFragment extends SherlockFragment {
 		}
 		_slotAdapter = new ArrayAdapter<Slot>(getActivity(), android.R.layout.simple_spinner_item, _slots);
 		_slotSpinner.setAdapter(_slotAdapter);
-		_slotSpinner.setSelection(Utils.indexOf(_slots, _attachment.getSlot()));
+		_slotSpinner.setSelection(_slots.indexOf(_attachment.getSlot()));
 		_slotSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override public void onNothingSelected(AdapterView<?> parent) {}
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				new MoveTask().execute(_slotAdapter.getItem(position));
 			}
-			@Override public void onNothingSelected(AdapterView<?> parent) {}
 		});
 		_storageTypeText.setText( _attachment.getMedium().getType().toString() );
 		_virtualSizeText.setText(_attachment.getMedium().getLogicalSize()/1024+" MB");

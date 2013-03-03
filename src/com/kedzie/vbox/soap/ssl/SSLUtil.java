@@ -14,9 +14,11 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import android.content.Context;
 import android.util.Log;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.kedzie.vbox.R;
+import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.task.DialogTask;
 
@@ -24,20 +26,21 @@ import com.kedzie.vbox.task.DialogTask;
  * Manipulate/load/save truststore to filesystem.  Create TrustManagers to use the keystore.
  */
 public class SSLUtil {
+	private static final String TAG = "SSLUtil";
+	
 	private static final char[] KEYSTORE_PASSWORD = "virtualbox".toCharArray();
 	private static final String KEYSTORE_PATH = "/sdcard/VirtualBox/";
 	private static final String KEYSTORE_NAME = "virtualbox.bks";
-	private static final String TAG = "SSLUtil";
 
 	/**
-	 * Add a root certificate to keystore and save to filesystem
+	 * Add certificate to the keystore and save
 	 */
 	public static class AddCertificateToKeystoreTask extends DialogTask<X509Certificate, Boolean> {
 
 		private Server server;
 
-		public AddCertificateToKeystoreTask(Context context, Server server) {
-			super("AddCertificateToKeystoreTask", context, null, "Updating Keystore");
+		public AddCertificateToKeystoreTask(SherlockFragmentActivity context, Server server) {
+			super(context, null, R.string.progress_updating_keystore);
 			this.server = server;
 		}
 
@@ -50,50 +53,52 @@ public class SSLUtil {
 			Log.d(TAG, "==================");
 			X509Certificate root = chain[chain.length-1];
 			String alias = server.toString() + "-" + String.format("Issuer: %1$s\tSubject: %2$s", root.getIssuerDN().getName(), root.getSubjectDN().getName());
-			Log.d(TAG, "Certificate Alias: " + alias);
-			KeyStore ks = SSLUtil.getKeystore();
-			ks.setEntry(alias, new KeyStore.TrustedCertificateEntry(root), null);
-			SSLUtil.storeKeystore(ks);
+			Log.d(TAG, "Created new certificate entry alias: " + alias);
+			SSLUtil.getKeystore().setEntry(alias, new KeyStore.TrustedCertificateEntry(root), null);
+			SSLUtil.storeKeystore();
 			return true;
 		}
 	}
 
-	private static TrustManager []_trust; 
-	private static KeyStore _keystore;
+	private static TrustManager[] mTrustManagers; 
+	private static KeyStore mKeystore;
 
 	public static TrustManager[] getKeyStoreTrustManager() {
-		if(_trust==null) {
+		if(mTrustManagers==null) {
 			Log.i(TAG, "Initializing TrustManagers");
 			try {
 				TrustManagerFactory	tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 				tmf.init(SSLUtil.getKeystore());
-				_trust = tmf.getTrustManagers();
+				mTrustManagers = tmf.getTrustManagers();
 			} catch (Exception e) {
-				Log.e(TAG, "Error loading KeyStore", e);
+				Log.e(TAG, "Error initializing TrustManagers", e);
 			}
 		}
-		return _trust;
+		return mTrustManagers;
 	}
 
 	public static KeyStore getKeystore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
-		if(_keystore==null) {
-			_keystore = KeyStore.getInstance("BKS");
-			if(!new File(KEYSTORE_PATH+KEYSTORE_NAME).exists()) {
+		if(mKeystore==null) {
+			mKeystore = KeyStore.getInstance("BKS");
+			if(!new File(getKeystorePath()).exists()) {
 				Log.i(TAG, "Creating new Bouncy Castle keystore");
-				new File(KEYSTORE_PATH).mkdirs();
-				_keystore.load(null, KEYSTORE_PASSWORD);
-				_keystore.store(new FileOutputStream(KEYSTORE_PATH+KEYSTORE_NAME), KEYSTORE_PASSWORD);
+				VBoxApplication.getInstance().getExternalFilesDir(null).mkdirs();
+				mKeystore.load(null, KEYSTORE_PASSWORD);
+				mKeystore.store(new FileOutputStream(getKeystorePath()), KEYSTORE_PASSWORD);
 			} else {
-				_keystore.load(new FileInputStream(KEYSTORE_PATH+KEYSTORE_NAME), KEYSTORE_PASSWORD);
+				mKeystore.load(new FileInputStream(getKeystorePath()), KEYSTORE_PASSWORD);
 			}
 		}
-		return _keystore;
+		return mKeystore;
 	}
 
-	public static void storeKeystore(KeyStore ks) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+	public static void storeKeystore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
 		Log.i(TAG, "Saving updated keystore");
-		ks.store(new FileOutputStream(KEYSTORE_PATH+KEYSTORE_NAME), KEYSTORE_PASSWORD);
-		_keystore = ks;
-		_trust = null;  //make sure TrustManagers are using the updated keystore
+		mKeystore.store(new FileOutputStream(getKeystorePath()), KEYSTORE_PASSWORD);
+		mTrustManagers = null;  //make sure TrustManagers are using the updated keystore
+	}
+	
+	private static String getKeystorePath() {
+		return KEYSTORE_PATH+KEYSTORE_NAME;
 	}
 }

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.task;
 
-import android.content.Context;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
@@ -11,21 +11,21 @@ import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Operation on {@link IMachine} with progress handling
- * 
- * @author Marek Kedzierski
+ *
+ * @apiviz.stereotype Task
  */
 public abstract class MachineTask<Input, Output> extends DialogTask<Input, Output> {
 
 		protected IMachine _machine;
 		
-		public MachineTask(Context context, VBoxSvc vmgr, int msg, boolean indeterminate, IMachine m) {
-			super(context.getResources().getString(msg), context, vmgr, msg);
+		public MachineTask(SherlockFragmentActivity context, VBoxSvc vmgr, int msg, boolean indeterminate, IMachine m) {
+			super(context, vmgr, msg);
 			_indeterminate=indeterminate;
 			_machine=m;
 		}
 		
-		public MachineTask(Context context, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
-			super(msg, context, vmgr, msg);
+		public MachineTask(SherlockFragmentActivity context, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
+			super(context, vmgr, msg);
 			_indeterminate=indeterminate;
 			_machine=m;
 		}

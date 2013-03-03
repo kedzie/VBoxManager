@@ -41,15 +41,21 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 	/** {@link ActionBar} tabs */
 	private TabSupport _tabSupport;
 
+	/**
+	 * Disconnect from VirtualBox webservice
+	 */
 	private class LogoffTask extends DialogTask<Void, Void>	{
+		
 		public LogoffTask(VBoxSvc vmgr) { 
-			super( "LogoffTask", MachineListActivity.this, vmgr, R.string.logging_off_progress);
+			super(MachineListActivity.this, vmgr, R.string.progress_logging_off);
 		}
+		
 		@Override
 		protected Void work(Void... params) throws Exception {
 			_vmgr.logoff();
 			return null;
 		}
+		
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);

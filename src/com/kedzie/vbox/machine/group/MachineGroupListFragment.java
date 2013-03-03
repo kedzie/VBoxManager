@@ -20,7 +20,6 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventNotificationReceiver;
 import com.kedzie.vbox.host.HostSettingsActivity;
-import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -50,18 +49,18 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 	private class HandleEventTask extends ActionBarTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
-			super( "HandleEventTask", getSherlockActivity(), vmgr);
+			super(getSherlockActivity(), vmgr);
 		}
 
 		@Override
 		protected IMachine work(Bundle... params) throws Exception {
 			IMachine m = BundleBuilder.getProxy(params[0], IMachine.BUNDLE, IMachine.class);
-			MachineView.cacheProperties(m);
+			Utils.cacheProperties(m);
 			return m;
 		}
 
 		@Override
-		protected void onResult(IMachine result)	{
+		protected void onSuccess(IMachine result)	{
 		    _listView.update(result);
 		}
 	}
@@ -135,7 +134,7 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode==REQUEST_CODE_PREFERENCES) {
-			new ConfigureMetricsTask(getActivity(), _vmgr).execute(
+			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
 					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_PERIOD),	
 					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_COUNT) );
 		}

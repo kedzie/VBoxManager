@@ -53,9 +53,9 @@ public class VBoxApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		_instance=this;
-		PreferenceManager.setDefaultValues(this, R.xml.general_preferences, false);
-		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, false);
-		Log.i(TAG, "Period: " + PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsActivity.PREF_PERIOD, "null"));
+		PreferenceManager.setDefaultValues(this, R.xml.general_preferences, true);
+		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, true);
+		Log.i(TAG, "Period: " + Utils.getIntPreference(this, SettingsActivity.PREF_PERIOD));
 		
 		putResource(MachineState.RUNNING.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
 		putResource(MachineState.STARTING.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
@@ -263,13 +263,13 @@ public class VBoxApplication extends Application {
         int bWidth=bitmap.getWidth(), bHeight=bitmap.getHeight();
         if(bWidth<=width && bHeight<=height) 
         	return bitmap;
-        Log.v(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
+        if(BuildConfig.DEBUG) Log.v(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
         float wScale = ((float)width)/bWidth;
         float hScale = ((float)height)/bHeight;
         float scale = Math.min(wScale, hScale);
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
-        Log.v(TAG, "Scale factor: " + scale);
+        if(BuildConfig.DEBUG) Log.v(TAG, "Scale factor: " + scale);
         return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
 	}
 }

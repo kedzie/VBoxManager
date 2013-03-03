@@ -7,58 +7,115 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kedzie.vbox.BuildConfig;
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IMedium;
+
 /**
  * Android Utilities
+ * 
  * @apiviz.stereotype utility
  */
+@ThreadSafe
 public class Utils {
+	
+	/**
+	 * Provides default implementations for {@link AnimationListener}
+	 */
+	public static class AnimationAdapter implements AnimationListener {
+		@Override public void onAnimationStart(Animation animation) {}
+		@Override public void onAnimationEnd(Animation animation) {}
+		@Override public void onAnimationRepeat(Animation animation) {}
+	}
+	
+	/**
+	 * Provides default implementations for {@link TextWatcher}
+	 */
+	public static abstract class TextAdapter implements TextWatcher {
+		@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+		@Override public void afterTextChanged(Editable editable) {}
+	}
+	
+	/**
+	 * Provides default implementations for {@link OnItemSelectedListener}
+	 */
+	public static abstract class OnItemSelectedAdapter implements OnItemSelectedListener {
+		@Override public void onNothingSelected(AdapterView<?> parent) {}
+	}
+	
+	public static boolean isIceCreamSandwhich() {
+		return isVersion(Build.VERSION_CODES.ICE_CREAM_SANDWICH);
+	}
+	
+	public static boolean isJellyBean() {
+		return isVersion(Build.VERSION_CODES.JELLY_BEAN);
+	}
+	
+	/**
+	 * <code>true</code> if matches minimum API level
+	 * 
+	 * @param versionCode		minimum API version code
+	 * @return	<code>true</code> if API level matches
+	 */
+	public static boolean isVersion(int versionCode) {
+		return Build.VERSION.SDK_INT>=versionCode;
+	}
 
-    public static int getIntPreference(Context ctx, String name) {
-		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, "0"));
+    public static int getIntPreference(Context context, String name) {
+		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString(name, "0"));
 	}
 	
-	public static boolean getBooleanPreference(Context ctx, String name) {
-		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(name, false);
+	public static boolean getBooleanPreference(Context context, String name) {
+		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(name, false);
 	}
 	
-	public static String getStringPreference(Context ctx, String name) {
-		return PreferenceManager.getDefaultSharedPreferences(ctx).getString(name, "");
+	public static String getStringPreference(Context context, String name) {
+		return PreferenceManager.getDefaultSharedPreferences(context).getString(name, "");
 	}
 	
 	/**
 	 * Show {@link Toast} long notification with {@link String#format}
-	 * @param ctx message {@link Context}
-	 * @param msg Message to show
+	 * @param context message {@link Context}
+	 * @param message Message to show
 	 * @param formatting params
 	 */
-	public static void toastLong(Context ctx, String msg, Object...params) {
-		Toast.makeText(ctx, isEmpty(params) ? msg : String.format(msg, params), Toast.LENGTH_LONG).show();
+	public static void toastLong(Context context, String message, Object...params) {
+		Toast.makeText(context, isEmpty(params) ? message : String.format(message, params), Toast.LENGTH_LONG).show();
 	}
 	
 	/**
 	 * Show {@link Toast} short notification
-	 * @param ctx message {@link Context}
-	 * @param msg Message to show
+	 * @param context message {@link Context}
+	 * @param message Message to show
 	 */
-	public static void toastShort(Context ctx, String msg, Object...params) {
-		Toast.makeText(ctx, isEmpty(params) ? msg : String.format(msg, params), Toast.LENGTH_SHORT).show();
+	public static void toastShort(Context context, String message, Object...params) {
+		Toast.makeText(context, isEmpty(params) ? message : String.format(message, params), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
@@ -102,10 +159,10 @@ public class Utils {
     }
 	
 	/**
-	 * Append an element to a comma seperated string
+	 * Append an element to a comma separated string
 	 * @param base			base string
 	 * @param append		appended element
-	 * @return	base string with appened element, with comma if needed
+	 * @return	base string with appended element, with comma if needed
 	 */
 	public static StringBuffer appendWithComma(StringBuffer base, String append) {
 		if(base.length()>0)
@@ -115,9 +172,9 @@ public class Utils {
 	
 	/**
      * Get type parameter of Generic Type
-     * @param genericType the generic {@link Type}
-     * @param index which parameter
-     * @return type parameter
+     * @param genericType 			the generic {@link Type}
+     * @param index 						which parameter
+     * @return type 						parameter
      */
     public static Class<?> getTypeParameter(Type genericType, int index) {
     	if(!(genericType instanceof ParameterizedType))
@@ -127,9 +184,9 @@ public class Utils {
     
     /**
      * Search an array for a specific type of annotation
-     * @param clazz	the class
-     * @param a		type of annotation
-     * @return	the annotation or <code>null</code> if not found
+     * @param clazz		the class
+     * @param a				type of annotation
+     * @return				the annotation or <code>null</code> if not found
      */
 	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation []annotations) {
 		for(Annotation a : annotations)
@@ -160,10 +217,22 @@ public class Utils {
     }
     
     /**
+     * Specify fragment transition animations depending on API level
+     * @param tx		the transaction
+     * @return			the transaction 
+     */
+    public static FragmentTransaction setCustomAnimations(FragmentTransaction tx) {
+    	//if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
+    	//	return tx.setCustomAnimations(R.animator.flip_left_in, R.animator.flip_right_out);
+    	//else
+    		return tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+    
+    /**
      * Show a DialogFragment with Back Stack
-     * @param manager    {@link FragmentManager}
-     * @param tag           tag for {@link Fragment}
-     * @param dialog        the {@link DialogFragment} implementation
+     * @param manager		{@link FragmentManager}
+     * @param tag					tag for {@link Fragment}
+     * @param dialog				the {@link DialogFragment} implementation
      */
     public static void showDialog(FragmentManager manager, String tag, DialogFragment dialog) {
     	FragmentTransaction tx = manager.beginTransaction().addToBackStack(null);
@@ -175,9 +244,9 @@ public class Utils {
     
     /**
      * Detach an existing fragment
-     * @param manager         fragment manager
-     * @param tx                    existing transaction
-     * @param tag                   tag of existing fragment
+     * @param manager		fragment manager
+     * @param tx					existing transaction
+     * @param tag					<code>tag</code> of existing fragment
      */
     public static void detachExistingFragment(FragmentManager manager, FragmentTransaction tx, String tag) {
         if(isEmpty(tag)) 
@@ -189,9 +258,9 @@ public class Utils {
     
     /**
      * Detach an existing fragment
-     * @param manager         fragment manager
-     * @param tx                    existing transaction
-     * @param id                   container id
+     * @param manager		fragment manager
+     * @param tx					existing transaction
+     * @param id					container id
      */
     public static void detachExistingFragment(FragmentManager manager, FragmentTransaction tx, int id) {
         Fragment existing = manager.findFragmentById(id);
@@ -224,10 +293,10 @@ public class Utils {
         if(element.fragment==null)
             element.fragment = manager.findFragmentByTag(element.name);
         if(element.fragment==null) {
-            Log.d("FragmentManager",  "Instantiated new Fragment: " + element.name);
+            if(BuildConfig.DEBUG) Log.v("FragmentManager",  "Instantiated new Fragment: " + element.name);
             tx.add(containerId, element.instantiate(context), element.name);
         } else {
-            Log.d("FragmentManager",  "Reattaching existing Fragment: " + element.name);
+        	if(BuildConfig.DEBUG) Log.v("FragmentManager",  "Reattaching existing Fragment: " + element.name);
             tx.attach(element.fragment);
         }
     }
@@ -368,4 +437,39 @@ public class Utils {
     	}
     	return ret;
     }
+    
+    /**
+	 * Cache commonly used Medium properties
+	 * @param m
+	 */
+    public static void cacheProperties(IMedium medium) {
+    	synchronized(medium) {
+    		medium.getName();
+    		medium.getSize();
+    		medium.getType();
+			medium.getLocation();
+			medium.getLogicalSize();
+			medium.getBase().getName();
+			medium.getBase().getSize();
+			medium.getBase().getType();
+			medium.getBase().getLocation();
+			medium.getBase().getLogicalSize();
+    	}
+    }
+    
+    /**
+	 * Cache commonly used Machine properties
+	 * @param m
+	 */
+	public static void cacheProperties(IMachine m) {
+		synchronized(m) {
+			m.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
+			m.getName();
+			m.getState();
+			m.getCurrentStateModified(); 
+			m.getOSTypeId();
+			if(m.getCurrentSnapshot()!=null) 
+				m.getCurrentSnapshot().getName();
+		}
+	}
 }

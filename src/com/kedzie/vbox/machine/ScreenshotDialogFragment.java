@@ -37,7 +37,7 @@ public class ScreenshotDialogFragment extends SherlockDialogFragment {
 	    private String filename;
 	    
 		public SaveScreenshotTask() {
-			super("SaveScreenshotTask", getSherlockActivity(), null);
+			super(getSherlockActivity(), null);
 			filename =  "screenshot_"+DateFormat.format("yyyyMMdd_hmmssaa", new Date())+".jpg";
 		}
 		

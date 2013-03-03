@@ -23,9 +23,7 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IVRDEServer;
 import com.kedzie.vbox.api.jaxb.AuthType;
-import com.kedzie.vbox.api.jaxb.IVRDEServerInfo;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 
@@ -38,26 +36,26 @@ public class DisplayRemoteFragment extends SherlockFragment {
 	/**
 	 * load Remote Desktop Server info
 	 */
-	class LoadDataTask extends ActionBarTask<IMachine, Tuple<IVRDEServer, IVRDEServerInfo>> {
+	class LoadDataTask extends ActionBarTask<IMachine, IVRDEServer> {
 		
 		public LoadDataTask() { 
-			super("DisplayRemoteFragment", getSherlockActivity(), _machine.getAPI()); 
+			super(getSherlockActivity(), _machine.getAPI()); 
 		}
 		
 		@Override 
-		protected Tuple<IVRDEServer, IVRDEServerInfo> work(IMachine... m) throws Exception {
-			IVRDEServerInfo info = _vmgr.getVBox().getSessionObject().getConsole().getVRDEServerInfo();
+		protected IVRDEServer work(IMachine... m) throws Exception {
 			IVRDEServer server = m[0].getVRDEServer();
 			Log.i(TAG, "VRDE Properties: " + Arrays.toString(server.getVRDEProperties()));
+			Log.i(TAG, "TCP/Ports: " + server.getVRDEProperty("TCP/Ports"));
+			server.getEnabled();
 			server.getAuthTimeout();
 			server.getAuthType();
 			server.getAllowMultiConnection();
-			return new Tuple<IVRDEServer, IVRDEServerInfo>(server, info);
+			return server;
 		}
 		@Override
-		protected void onResult(Tuple<IVRDEServer, IVRDEServerInfo> result) {
-		        _server = result.first;
-		        _info = result.second;
+		protected void onSuccess(IVRDEServer result) {
+		        _server = result;
 				populate();
 		}
 	}
@@ -73,7 +71,6 @@ public class DisplayRemoteFragment extends SherlockFragment {
 	
 	private IMachine _machine;
 	private IVRDEServer _server;
-	private IVRDEServerInfo _info;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +78,6 @@ public class DisplayRemoteFragment extends SherlockFragment {
 		_machine = (IMachine)getArguments().getParcelable(IMachine.BUNDLE);
 		if(savedInstanceState!=null) {
 			_server = (IVRDEServer)savedInstanceState.getParcelable(IVRDEServer.BUNDLE);
-			_info = (IVRDEServerInfo)savedInstanceState.getSerializable("info");
 		}
 	}
 	
@@ -111,7 +107,6 @@ public class DisplayRemoteFragment extends SherlockFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		BundleBuilder.putProxy(outState, IVRDEServer.BUNDLE, _server);
-		outState.putSerializable("info", _info);
 	}
 
 	private void populate() {
@@ -122,10 +117,11 @@ public class DisplayRemoteFragment extends SherlockFragment {
 				_server.setEnabled(isChecked);
 			}
 		});
-		_portText.setText(_info.getPort()+"");
+		_portText.setText(_server.getVRDEProperty("TCP/Ports"));
 		_portText.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {
+				_server.setVRDEProperty("TCP/Ports", s.toString());
 			}
 			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 			@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}

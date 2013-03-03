@@ -37,7 +37,10 @@ import com.kedzie.vbox.task.DialogTask;
 public class NetworkAdapterFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<INetworkAdapter, Tuple<INetworkAdapter, String[]>> {
-		public LoadInfoTask() { super("NetworkAdapterFragment", getSherlockActivity(), _adapter.getAPI(), "Loading Data"); }
+		
+		public LoadInfoTask() {
+			super(getSherlockActivity(), _adapter.getAPI(), R.string.progress_loading_data_generic);
+		}
 
 		@Override 
 		protected Tuple<INetworkAdapter, String[]> work(INetworkAdapter...params) throws Exception {
@@ -71,8 +74,8 @@ public class NetworkAdapterFragment extends SherlockFragment {
 			return new Tuple<INetworkAdapter, String[]>(adapter, interfaces);
 		}
 		@Override
-		protected void onResult(Tuple<INetworkAdapter, String[]> result) {
-			super.onResult(result);
+		protected void onSuccess(Tuple<INetworkAdapter, String[]> result) {
+			super.onSuccess(result);
 			_adapter = result.first;
 			Log.d(TAG, "Host Interfaces: " + Arrays.toString(result.second));
 		    _hostInterfaces = result.second;

@@ -1,5 +1,6 @@
 /**
  * Modifying Machine settings
+ * 
  * @author Marek Kędzierski
  */
 

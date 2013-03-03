@@ -28,7 +28,7 @@ public class GeneralBasicFragment extends SherlockFragment {
     class LoadInfoTask extends ActionBarTask<IMachine, Tuple<IMachine, IGuestOSType>> {
     	
         public LoadInfoTask() { 
-        	super("LoadInfoTask", getSherlockActivity(), _machine.getAPI()); 
+        	super(getSherlockActivity(), _machine.getAPI()); 
         }
         
         @Override 
@@ -38,7 +38,7 @@ public class GeneralBasicFragment extends SherlockFragment {
             return new Tuple<IMachine, IGuestOSType>(m[0],  _vmgr.getVBox().getGuestOSType(m[0].getOSTypeId()));
         }
         @Override
-        protected void onResult(Tuple<IMachine, IGuestOSType> result) {
+        protected void onSuccess(Tuple<IMachine, IGuestOSType> result) {
             _machine = result.first;
             _guestOSType = result.second;
             populate();

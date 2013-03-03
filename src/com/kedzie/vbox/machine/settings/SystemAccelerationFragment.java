@@ -24,7 +24,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemAccelerationFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IMachine> {
-		public LoadInfoTask() { super("SystemMotherboardFragment", getSherlockActivity(), _machine.getAPI(), "Loading Data"); }
+		public LoadInfoTask() { super(getSherlockActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); }
 
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {
@@ -36,8 +36,8 @@ public class SystemAccelerationFragment extends SherlockFragment {
 			return _machine;
 		}
 		@Override
-		protected void onResult(IMachine result) {
-			super.onResult(result);
+		protected void onSuccess(IMachine result) {
+			super.onSuccess(result);
 			_machine=result;
 		    populateViews(_machine);
 		}
@@ -49,7 +49,7 @@ public class SystemAccelerationFragment extends SherlockFragment {
 	private TextView _errorText;
 	private CheckBox _vtxCheckbox;
 	private CheckBox _nestedPagingCheckbox;
-	private ErrorCapability _errorHandler = new ErrorCapability();
+	private ErrorSupport _errorHandler = new ErrorSupport();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

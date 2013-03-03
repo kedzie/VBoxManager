@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -14,8 +13,10 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.machine.MachineListBaseFragment;
-import com.kedzie.vbox.machine.MachineListBaseFragment.OnSelectMachineListener;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.group.MachineGroupListBaseFragment;
+import com.kedzie.vbox.machine.group.TreeNode;
+import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.server.ServerListFragment.OnSelectServerListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -27,10 +28,51 @@ import com.kedzie.vbox.task.DialogTask;
  * @apiviz.stereotype activity
  * @apiviz.owns com.kedzie.vbox.server.ServerListFragment
  */
-public class ServerListPickActivity extends BaseActivity implements OnSelectServerListener, OnSelectMachineListener {
+public class ServerListPickActivity extends BaseActivity implements OnSelectServerListener, OnTreeNodeSelectListener {
+	
+	/**
+     * Log on to VirtualBox webservice, load machine list
+     */
+    class LogonTask extends DialogTask<Server, IVirtualBox> {
+    	
+        public LogonTask() {
+        	super(ServerListPickActivity.this, null, R.string.progress_connecting);
+        }
+        
+        @Override
+        protected IVirtualBox work(Server... params) throws Exception {
+            _vmgr = new VBoxSvc(params[0]);
+            return _vmgr.logon();
+        }
+        
+        @Override 
+        protected void onSuccess(IVirtualBox vbox) {
+            launchMachineList(_vmgr);
+        }
+    }
+    
+    /**
+     * Disconnect from VirtualBox webservice
+     */
+    private class LogoffTask extends DialogTask<Void, Void> {
+    	
+        public LogoffTask(VBoxSvc vmgr) { 
+        	super(ServerListPickActivity.this, vmgr, R.string.progress_logging_off);
+        }
+        
+        @Override
+        protected Void work(Void... params) throws Exception {
+            _vmgr.logoff();
+            return null;
+        }
+    }
 
+    /** Are we in a dual pane (tablet) layout */
     private boolean _dualPane;
+    
+    /** ID of AppWidget */
     private int mAppWidgetId;
+    
     /** Currently selected logged on api */
     private VBoxSvc _vmgr;
     
@@ -49,12 +91,9 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
     void launchMachineList(VBoxSvc vboxApi) {
         _vmgr=vboxApi;
         if(_dualPane) {
-            //replace machine list fragment
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.details, Fragment.instantiate(this, 
-                    MachineListBaseFragment.class.getName(), 
-                    new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vboxApi).create()));
-            tx.commit();
+            Utils.setCustomAnimations(getSupportFragmentManager().beginTransaction())
+            	.replace(R.id.details, Fragment.instantiate(this, MachineGroupListBaseFragment.class.getName(), new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vboxApi).create()))
+            	.commit();
         } else {
             startActivityForResult(new Intent(ServerListPickActivity.this, MachineListPickActivity.class)
                     .putExtra(VBoxSvc.BUNDLE, (Parcelable)vboxApi)
@@ -69,6 +108,11 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
     }
 
     @Override
+	public void onTreeNodeSelect(TreeNode node) {
+		if(node instanceof IMachine)
+			onMachineSelected((IMachine)node);
+	}
+    
     public void onMachineSelected(IMachine machine) {
         Provider.savePrefs(this, _vmgr, machine, mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
@@ -80,30 +124,5 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
         if(_vmgr!=null)
             new LogoffTask(_vmgr).execute();
         new LogonTask().execute(server);
-    }
-    
-    /**
-     * Log on to VirtualBox webservice, load machine list
-     */
-    class LogonTask extends DialogTask<Server, IVirtualBox> {
-        public LogonTask() { super( "LogonTask", ServerListPickActivity.this, null, "Connecting"); }
-        @Override
-        protected IVirtualBox work(Server... params) throws Exception {
-            _vmgr = new VBoxSvc(params[0]);
-            return _vmgr.logon();
-        }
-        @Override 
-        protected void onResult(IVirtualBox vbox) {
-            launchMachineList(_vmgr);
-        }
-    }
-    
-    private class LogoffTask extends DialogTask<Void, Void> {
-        public LogoffTask(VBoxSvc vmgr) { super( "LogoffTask", ServerListPickActivity.this, vmgr, "Logging Off"); }
-        @Override
-        protected Void work(Void... params) throws Exception {
-            _vmgr.logoff();
-            return null;
-        }
     }
 }
