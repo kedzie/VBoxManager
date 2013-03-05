@@ -30,6 +30,8 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
@@ -45,7 +47,9 @@ import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
 
 /**
+ * Expandable list of storage controllers and associated attachments
  * 
+ * @apiviz.stereotype Fragment
  */
 public class StorageListFragment extends SherlockFragment {
 
@@ -80,30 +84,35 @@ public class StorageListFragment extends SherlockFragment {
 
 	private IMachine _machine;
 	private ISystemProperties _systemProperties;
-	private Map<IStorageController, List<IMediumAttachment>> _controllers; 
+	private ArrayList<IStorageController> _controllers;
+	private ListMultimap<IStorageController, IMediumAttachment> _data;
+	private Map<IStorageController, List<IMediumAttachment>> _dataListMap; 
 
 	/**
 	 * Load Data
 	 */
-	private class LoadDataTask extends DialogTask<IMachine, Map<IStorageController, List<IMediumAttachment>>> {
+	private class LoadDataTask extends DialogTask<IMachine, Void> {
 
 		public LoadDataTask() {
 			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_load_storage_controllers);
 		}
 
 		@Override
-		protected Map<IStorageController, List<IMediumAttachment>> work(IMachine... params) throws Exception {
+		protected Void work(IMachine... params) throws Exception {
 			_systemProperties = _vmgr.getVBox().getSystemProperties();
 			ChipsetType chipset = _machine.getChipsetType();
 			for(StorageBus bus : StorageBus.values()) {
 				_systemProperties.getMaxInstancesOfStorageBus(chipset, bus);
 				_systemProperties.getDeviceTypesForStorageBus(bus);
 			}
-			Map<IStorageController, List<IMediumAttachment>> controllers = new HashMap<IStorageController, List<IMediumAttachment>>();
-			for(IStorageController c : params[0].getStorageControllers()) {
+			_controllers = params[0].getStorageControllers();
+			_data = ArrayListMultimap.create();
+			_dataListMap = new HashMap<IStorageController, List<IMediumAttachment>>();
+			for(IStorageController c : _controllers) {
 				params[0].clearCacheNamed("getMediumAttachmentsOrController-"+c.getName());
-				ArrayList<IMediumAttachment> attachments = params[0].getMediumAttachmentsOfController(c.getName());
 				c.getBus(); c.getControllerType();
+				ArrayList<IMediumAttachment> attachments = params[0].getMediumAttachmentsOfController(c.getName());
+				_data.putAll(c, attachments);
 				for(IMediumAttachment a : attachments) {
 					if(a.getMedium()!=null) {
 						a.getMedium().clearCache();
@@ -111,18 +120,17 @@ public class StorageListFragment extends SherlockFragment {
 						a.getMedium().getBase().getName();
 					}
 				}
-				controllers.put(c, attachments);
+				_dataListMap.put(c, attachments);
 			}
-			return controllers;
+			return null;
 		}
 
 		@Override
-		protected void onSuccess(Map<IStorageController, List<IMediumAttachment>> result) {
+		protected void onSuccess(Void result) {
 			super.onSuccess(result);
-			_controllers = result;
-			_listAdapter = new ItemAdapter(getSherlockActivity(), result);
+			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers, _data);
 			_listView.setAdapter(_listAdapter);
-			for(int i=0; i<result.keySet().size(); i++)
+			for(int i=0; i<_controllers.size(); i++)
 				_listView.expandGroup(i, true);
 		}
 	}
@@ -146,7 +154,8 @@ public class StorageListFragment extends SherlockFragment {
 		@Override
 		protected void onSuccess(IStorageController result) {
 			super.onSuccess(result);
-			_controllers.put(result, new ArrayList<IMediumAttachment>());
+			_controllers.add(result);
+			_dataListMap.put(result, new ArrayList<IMediumAttachment>());
 			_listAdapter.notifyDataSetChanged();
 		}
 	}
@@ -170,6 +179,7 @@ public class StorageListFragment extends SherlockFragment {
 		protected void onSuccess(IStorageController result) {
 			super.onSuccess(result);
 			_controllers.remove(result);
+			_dataListMap.remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
 	}
@@ -192,9 +202,12 @@ public class StorageListFragment extends SherlockFragment {
 		@Override
 		protected void onSuccess(IMediumAttachment result) {
 			super.onSuccess(result);
-			for(IStorageController c : _controllers.keySet())
+			IStorageController controller = null;
+			for(IStorageController c : _dataListMap.keySet())
 				if(c.getName().equals(result.getController()))
-					_controllers.get(c).remove(result);
+					controller=c;
+			_data.remove(controller, result);
+			_dataListMap.get(controller).remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
 	}
@@ -305,7 +318,7 @@ public class StorageListFragment extends SherlockFragment {
 			for(int i=0; i<controller.getMaxPortCount(); i++) {
 				for(int j=0; j<devicesPerPort; j++) {
 					boolean isUsed = false;
-					for(IMediumAttachment a : _controllers.get(controller)) {
+					for(IMediumAttachment a : _dataListMap.get(controller)) {
 						if(a.getPort()==i && a.getDevice()==j) {
 							isUsed=true;
 							break;
@@ -329,45 +342,46 @@ public class StorageListFragment extends SherlockFragment {
 		protected void onSuccess(IMediumAttachment result) {
 			super.onSuccess(result);
 			Utils.toastShort(getContext(), "Attached medium to slot " + result.getSlot());
-			_controllers.get(controller).add(result);
+			_data.put(controller, result);
+			_dataListMap.get(controller).add(result);
 			_listAdapter.notifyDataSetChanged();
 		}
 	}
 
 	private class ItemAdapter extends BaseExpandableListAdapter {
 
-		private final LayoutInflater _inflater;
-		private List<IStorageController> controllers;
-		private Map<IStorageController, List<IMediumAttachment>> data;
-
-		public ItemAdapter(Context context, Map<IStorageController, List<IMediumAttachment>> data) {
-			_inflater = LayoutInflater.from(context);
-			this.data = data;
-			update();
-		}
+		private final LayoutInflater mInflater;
+		private List<IStorageController> mControllers;
+		private ListMultimap<IStorageController, IMediumAttachment> mData;
+		private Map<IStorageController, List<IMediumAttachment>> mDataListMap;
 		
-		private void update() {
-			controllers = new ArrayList<IStorageController>(data.keySet().size());
-			for(IStorageController controller : data.keySet())
-				controllers.add(controller);
+		public ItemAdapter(Context context, List<IStorageController> controllers, ListMultimap<IStorageController, IMediumAttachment> data) {
+			mInflater = LayoutInflater.from(context);
+			mData = data;
+			mControllers = controllers;
 		}
+
+//		public ItemAdapter(Context context, List<IStorageController> controllers, Map<IStorageController, List<IMediumAttachment>> data) {
+//			mInflater = LayoutInflater.from(context);
+//			mDataListMap = data;
+//			mControllers = controllers;
+//		}
 		
 		@Override
 		public void notifyDataSetChanged() {
-			update();
 			super.notifyDataSetChanged();
-			for(int i=0; i<controllers.size(); i++)
-				_listView.expandGroup(i, true);
+			for(int i=0; i<mControllers.size(); i++)
+				_listView.expandGroup(i, false);
 		}
 
 		@Override
 		public int getGroupCount() {
-			return controllers.size();
+			return mControllers.size();
 		}
 
 		@Override
 		public Object getGroup(int groupPosition) {
-			return controllers.get(groupPosition);
+			return mControllers.get(groupPosition);
 		}
 
 		@Override
@@ -377,12 +391,18 @@ public class StorageListFragment extends SherlockFragment {
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			return data.get(controllers.get(groupPosition)).size();
+			if(mData!=null)
+				return mData.get(mControllers.get(groupPosition)).size();
+			else
+				return mDataListMap.get(mControllers.get(groupPosition)).size();
 		}
 
 		@Override
 		public Object getChild(int groupPosition, int childPosition) {
-			return data.get(controllers.get(groupPosition)).get(childPosition);
+			if(mData!=null)
+				return mData.get(mControllers.get(groupPosition)).get(childPosition);
+			else
+				return mDataListMap.get(mControllers.get(groupPosition)).get(childPosition);
 		}
 
 		@Override
@@ -398,10 +418,8 @@ public class StorageListFragment extends SherlockFragment {
 		@Override
 		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			final IStorageController controller = (IStorageController)getGroup(groupPosition);
-//			if(convertView==null) {
-				convertView = _inflater.inflate(R.layout.settings_storage_controller_list_item, parent, false);
-				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
-//			}
+			convertView = mInflater.inflate(R.layout.settings_storage_controller_list_item, parent, false);
+			convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
 			TextView text1 = (TextView)convertView.getTag();
 			text1.setText(controller.getName());
 			LinearLayout linear = (LinearLayout)convertView;
@@ -440,7 +458,7 @@ public class StorageListFragment extends SherlockFragment {
 		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 			final IMediumAttachment attachment = (IMediumAttachment)getChild(groupPosition, childPosition);
 			if(convertView==null) {
-				convertView = _inflater.inflate(R.layout.simple_selectable_list_item, parent, false);
+				convertView = mInflater.inflate(R.layout.simple_selectable_list_item, parent, false);
 				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
 			}
 			TextView text1 = (TextView)convertView.getTag();
@@ -504,12 +522,12 @@ public class StorageListFragment extends SherlockFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if(_controllers==null)
+		if(_dataListMap==null && _data==null)
 			new LoadDataTask().execute(_machine);
 		else {
-			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers);
+			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers, _data);
 			_listView.setAdapter(_listAdapter);
-			for(int i=0; i<_controllers.keySet().size(); i++)
+			for(int i=0; i<_dataListMap.keySet().size(); i++)
 				_listView.expandGroup(i, true);
 		}
 	}
@@ -549,7 +567,7 @@ public class StorageListFragment extends SherlockFragment {
 	
 	private int getNumStorageControllersOfType(StorageBus bus) {
 		int numControllers = 0;
-		for(IStorageController controller : _controllers.keySet()) {
+		for(IStorageController controller : _dataListMap.keySet()) {
 			if(controller.getBus().equals(bus))
 				numControllers++;
 		}

@@ -127,6 +127,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
+		
 		getSupportActionBar().setTitle(_machine.getName() + " Settings");
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
@@ -135,7 +136,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility()==View.VISIBLE;
 		
-		if(_mutable==null) 
+		if(savedInstanceState==null) 
 		    new LockMachineTask().execute(_machine);
 		else {
 		    currentCategory = savedInstanceState.getString("currentCategory");
@@ -154,8 +155,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 	@Override
     public void onSelectCategory(FragmentElement category) {
 	    if(_dualPane) {
-	        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-	        tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+	        FragmentTransaction tx = Utils.setCustomAnimations(getSupportFragmentManager().beginTransaction());
 	        Utils.detachExistingFragment(getSupportFragmentManager(), tx, currentCategory);
             Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
             tx.commit();

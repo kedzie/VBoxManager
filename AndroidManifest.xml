@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="317" android:versionName="3.1.7" package="com.kedzie.vbox">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="318" android:versionName="3.1.8" package="com.kedzie.vbox">
     
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
     
@@ -22,7 +22,11 @@
 <!--             	</intent-filter> -->
 <!--         </activity> -->
         
-        <activity android:configChanges="orientation" android:label="Edit VirtualBox Server" android:name=".server.EditServerActivity">
+        <activity android:configChanges="orientation" android:label="@string/edit_virtualbox_server" android:name=".server.EditServerActivity">
+		<meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
+	</activity>
+	
+        <activity android:configChanges="orientation" android:label="@string/help" android:name=".server.HelpActivity">
 		<meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
 	</activity>
 	

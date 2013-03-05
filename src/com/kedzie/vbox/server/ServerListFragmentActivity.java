@@ -80,7 +80,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
 	    				public void onClick(DialogInterface dialog, int which) {
 	    					new AddCertificateToKeystoreTask(ServerListFragmentActivity.this, server) {
 	    						@Override
-	    						protected void onSuccess(Boolean result) {
+	    						protected void onSuccess(Void result) {
 	    							super.onSuccess(result);
 	    							Utils.toastLong(getContext(), "Successfully updated keystore");
 	    							new LogonTask().execute(server);

@@ -66,6 +66,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, String msg, boolean cancelable) {
 		super(context, vmgr);
 		iDialog = new ProgressDialog(context);
+		iDialog.setMessage(msg);
 		iDialog.setCancelable(cancelable);
 		iDialog.setIndeterminate(true);
 	}

@@ -207,8 +207,11 @@ public class ServerListFragment extends SherlockFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.server_list_option_menu_add:
+            case R.id.menu_add:
                 addServer();
+                return true;
+            case R.id.menu_help:
+                VBoxApplication.launchActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
                 return true;
             }
         return false;
