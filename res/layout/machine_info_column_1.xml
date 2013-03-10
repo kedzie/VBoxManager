@@ -3,10 +3,9 @@
 	xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
 	android:orientation="vertical" 
 	android:layout_width="match_parent" 
-	android:layout_height="match_parent" 
-	android:layout_weight="1" >
+	android:layout_height="match_parent">
 	   
-	<com.kedzie.vbox.app.PanelView vbox:name="Display" vbox:headerIcon="@drawable/ic_settings_display" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Display" vbox:headerIcon="@drawable/ic_settings_display" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView   style="@style/SmallTextPrimary"   android:text="Video Memory"  android:layout_gravity="left" />
 			<TextView style="@style/SmallTextPrimary"  android:id="@+id/videoMemory"     android:layout_weight="1"/>
@@ -19,13 +18,13 @@
 			<TextView style="@style/SmallTextPrimary"     android:text="Remote Desktop Port" android:layout_gravity="left" />
 			<TextView  style="@style/SmallTextPrimary" android:id="@+id/rdpPort"    android:layout_weight="1"/>
 		</LinearLayout>
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="Storage" vbox:headerIcon="@drawable/ic_settings_storage" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Storage" vbox:headerIcon="@drawable/ic_settings_storage" android:layout_width="match_parent" android:layout_height="wrap_content" >
 	    <TextView android:id="@+id/storage" style="@style/SmallTextPrimary"  android:text="Storage"  android:layout_weight="1" />
-	</com.kedzie.vbox.app.PanelView>   
+	</com.kedzie.vbox.app.CollapsiblePanelView>   
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="Audio" vbox:headerIcon="@drawable/ic_settings_audio" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Audio" vbox:headerIcon="@drawable/ic_settings_audio" android:layout_width="match_parent" android:layout_height="wrap_content" >
 	    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView style="@style/SmallTextPrimary" android:text="Host Driver:" android:layout_gravity="left"  />
 			<TextView style="@style/SmallTextPrimary" android:id="@+id/audio_driver" android:layout_weight="1" />
@@ -34,17 +33,17 @@
 			<TextView style="@style/SmallTextPrimary" android:text="Controller: " android:layout_gravity="left"  />
 			<TextView style="@style/SmallTextPrimary" android:id="@+id/audio_controlller" android:layout_weight="1" />
 		</LinearLayout>
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 		
-	<com.kedzie.vbox.app.PanelView vbox:name="Network" vbox:headerIcon="@drawable/ic_settings_network" android:layout_width="match_parent" android:layout_height="wrap_content" >
-	    <TextView style="@style/SmallTextPrimary"  android:id="@+id/network" android:text="Not Implemented"  android:layout_weight="1" />
-	</com.kedzie.vbox.app.PanelView>
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Network" vbox:headerIcon="@drawable/ic_settings_network" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	    <TextView style="@style/SmallTextPrimary"  android:id="@+id/network" android:layout_weight="1" />
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 		
-	<com.kedzie.vbox.app.PanelView vbox:name="USB" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="USB" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
 	    <TextView style="@style/SmallTextPrimary"  android:text="Not Implemented"  android:layout_weight="1" />
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 		
-	<com.kedzie.vbox.app.PanelView vbox:name="Description" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Description" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<TextView style="@style/SmallTextPrimary" android:id="@+id/description" android:layout_weight="1" />
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 </LinearLayout>

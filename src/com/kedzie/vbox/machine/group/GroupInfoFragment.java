@@ -29,7 +29,7 @@ import com.kedzie.vbox.api.jaxb.DeviceType;
 import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
-import com.kedzie.vbox.app.PanelView;
+import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 
@@ -214,13 +214,14 @@ public class GroupInfoFragment extends SherlockFragment {
 				Utils.appendWithComma(bootOrder, b.toString());
 			}
 			Utils.setTextView(view, R.id.bootOrder, bootOrder.toString());
+			CollapsiblePanelView previewPanel = (CollapsiblePanelView)view.findViewById(R.id.previewPanel);
 	        if(node.screenshot!=null) {
 	        	ImageView preview = (ImageView)view.findViewById(R.id.preview);
 	        	preview.setAdjustViewBounds(true);
 				preview.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				preview.setImageBitmap(node.screenshot.getBitmap());
+				previewPanel.expand();
 	        } else {
-	        	PanelView previewPanel = (PanelView)view.findViewById(R.id.previewPanel);
 	        	previewPanel.collapse();
 	        }
 	        _view.addView(view);

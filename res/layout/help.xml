@@ -8,16 +8,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="8dp" >
-
+        
         <TextView
             android:id="@+id/main_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            style="@style/SmallTextPrimary"
+            android:text="@string/help_main" />
 
         <TextView
             android:id="@+id/ssl_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            style="@style/SmallTextPrimary"/>
     </LinearLayout>
 
 </ScrollView>

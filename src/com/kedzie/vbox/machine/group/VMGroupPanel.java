@@ -8,13 +8,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.app.PanelView;
+import com.kedzie.vbox.app.CollapsiblePanelView;
 
 /**
  * Group of Virtual Machines.  Collapsible component like one introduced in VirtualBox 4.2.x
  * @author Marek Kędzierski
  */
-public class VMGroupPanel extends PanelView {
+public class VMGroupPanel extends CollapsiblePanelView {
+    public static final int COLLAPSE_ROTATION = -90;
     
     /**
      * Listener for Drill-Down button
@@ -33,13 +34,14 @@ public class VMGroupPanel extends PanelView {
     private OnDrillDownListener _drillDownListener;
     private TextView _numGroupsText;
     private TextView _numMachinesText;
+    
     /** The group this panel represents */
     private VMGroup _group;
     
     public VMGroupPanel(Context context, VMGroup group) {
         super(context);
         setClickable(true);
-        setCollapseRotation(-90);
+        setCollapseRotation(COLLAPSE_ROTATION);
         _group = group;
         _titleLabel.setText(_group.getName());
         _numGroupsText.setText(_group.getNumGroups()+"");
@@ -48,8 +50,7 @@ public class VMGroupPanel extends PanelView {
     
     protected View getTitleLayout() {
         LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
-        _collapseButton = (ImageView)titleLayout.findViewById(R.id.group_collapse);
-        _collapseButton.setOnClickListener(this);
+        setCollapseButton(titleLayout.findViewById(R.id.group_collapse));
         _drillDownButton = (ImageView)titleLayout.findViewById(R.id.group_enter);
         _drillDownButton.setOnClickListener(new OnClickListener() {
             @Override

@@ -127,7 +127,6 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
-		
 		getSupportActionBar().setTitle(_machine.getName() + " Settings");
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
@@ -139,7 +138,6 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		if(savedInstanceState==null) 
 		    new LockMachineTask().execute(_machine);
 		else {
-		    currentCategory = savedInstanceState.getString("currentCategory");
 	        _mutable = savedInstanceState.getParcelable(MUTABLE_KEY);
 		}
 	}
@@ -147,7 +145,6 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 	    super.onSaveInstanceState(outState);
-	    outState.putString("currentCategory", currentCategory);
 	    if(_mutable!=null)
 	        BundleBuilder.putProxy(outState, MUTABLE_KEY, _mutable);
 	}

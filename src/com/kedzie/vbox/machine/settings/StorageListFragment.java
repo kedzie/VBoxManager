@@ -179,6 +179,7 @@ public class StorageListFragment extends SherlockFragment {
 		protected void onSuccess(IStorageController result) {
 			super.onSuccess(result);
 			_controllers.remove(result);
+			_data.removeAll(result);
 			_dataListMap.remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
@@ -203,7 +204,7 @@ public class StorageListFragment extends SherlockFragment {
 		protected void onSuccess(IMediumAttachment result) {
 			super.onSuccess(result);
 			IStorageController controller = null;
-			for(IStorageController c : _dataListMap.keySet())
+			for(IStorageController c : _controllers)
 				if(c.getName().equals(result.getController()))
 					controller=c;
 			_data.remove(controller, result);
@@ -289,8 +290,7 @@ public class StorageListFragment extends SherlockFragment {
 			.setTitle("Select Disk")
 			.setItems(items, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
-					CharSequence selected = items[item];
-					new MountTask(controller, DeviceType.DVD).execute(selected.equals("No Disc") ? null : result.get(item));
+					new MountTask(controller, DeviceType.DVD).execute(items[item].equals("No Disc") ? null : result.get(item));
 				}
 			}).show();
 		}
@@ -552,9 +552,7 @@ public class StorageListFragment extends SherlockFragment {
 					.setTitle("Controller Type")
 					.setItems(items, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
-							final StorageBus bus = StorageBus.fromValue(items[item].toString());
-							new AddControllerTask().execute(bus);
-							Utils.toastLong(getActivity(), bus.toString());
+							new AddControllerTask().execute(StorageBus.fromValue(items[item].toString()));
 						}
 					}).show();
 				return true;

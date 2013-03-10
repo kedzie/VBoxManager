@@ -4,7 +4,7 @@
 	android:layout_width="match_parent" 
 	android:layout_height="wrap_content" >
 	
-	<com.kedzie.vbox.app.PanelView 
+	<com.kedzie.vbox.app.CollapsiblePanelView 
 	    vbox:name="General" 
 	    vbox:headerIcon="@drawable/ic_settings_general" 
 	    android:id="@+id/general_panel"
@@ -23,9 +23,9 @@
 	    	    <TextView android:id="@+id/groups_label" style="@style/SmallTextPrimary" android:text="@string/groups" android:layout_below="@id/ostype_label"/>
 	    	    <TextView android:id="@+id/groups" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/groups_label" android:layout_toRightOf="@id/groups_label" />
 		</RelativeLayout>
-	</com.kedzie.vbox.app.PanelView>   
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 	
-	<com.kedzie.vbox.app.PanelView 
+	<com.kedzie.vbox.app.CollapsiblePanelView 
 	    vbox:name="System" 
 	    vbox:headerIcon="@drawable/ic_list_vbox" 
 	    android:id="@+id/system_panel"
@@ -48,10 +48,10 @@
 	    	    <TextView android:id="@+id/acceleration_label" style="@style/SmallTextPrimary" android:text="@string/acceleration" android:layout_below="@+id/bootOrder_label"/>
 	    	    <TextView android:id="@+id/acceleration" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/acceleration_label" android:layout_toRightOf="@+id/acceleration_label" />
 		</RelativeLayout>
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 		
 	
-    	<com.kedzie.vbox.app.PanelView 
+    	<com.kedzie.vbox.app.CollapsiblePanelView 
     	    android:id="@id/previewPanel" 
     	    vbox:name="Preview" 
     	    vbox:headerIcon="@drawable/ic_settings_general" 
@@ -59,6 +59,6 @@
     	    android:layout_height="wrap_content" 
     	    android:layout_alignParentRight="true">
 		<ImageView android:id="@+id/preview" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 	
 </RelativeLayout>

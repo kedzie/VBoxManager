@@ -96,11 +96,6 @@
  			<groupId>com.google.guava</groupId>
   			<artifactId>guava</artifactId>
   		</dependency>
-  		<dependency>
-        			<groupId>com.squareup</groupId>
-        			<artifactId>fest-android</artifactId>
-        			<version>1.0</version>
-      			</dependency>
 	</dependencies>
 
 	<build>

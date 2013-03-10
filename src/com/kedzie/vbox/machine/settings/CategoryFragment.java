@@ -77,4 +77,8 @@ public class CategoryFragment extends SherlockFragment {
         });
         return _listView;
     }
+    
+    public void setSelection(int selection) {
+        _listView.setSelection(selection);
+    }
 }

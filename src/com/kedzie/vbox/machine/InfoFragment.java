@@ -31,7 +31,7 @@ import com.kedzie.vbox.api.jaxb.NetworkAttachmentType;
 import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.PanelView;
+import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
@@ -122,7 +122,7 @@ public class InfoFragment extends SherlockFragment {
 	private TextView _networkText;
 	private TextView _audioDriver;
 	private TextView _audioController;
-	private PanelView _previewPanel;
+	private CollapsiblePanelView _previewPanel;
 	private ImageView _preview;
 	private LocalBroadcastManager lbm;
 	/** Event-handling local broadcasts */
@@ -166,7 +166,7 @@ public class InfoFragment extends SherlockFragment {
 		_audioController = (TextView)_view.findViewById(R.id.audio_controlller);
 		_rdpPortText = (TextView)_view.findViewById(R.id.rdpPort);
 		_preview = (ImageView)_view.findViewById(R.id.preview);
-		_previewPanel =(PanelView)_view.findViewById(R.id.previewPanel);
+		_previewPanel =(CollapsiblePanelView)_view.findViewById(R.id.previewPanel);
 		return _view;
 	}
 	

@@ -5,17 +5,18 @@
 	android:layout_width="match_parent" 
 	android:layout_height="wrap_content" >
 	
-    <com.kedzie.vbox.app.PanelView 
+    <com.kedzie.vbox.app.CollapsiblePanelView 
     	    android:id="@+id/previewPanel" 
     	    vbox:name="Preview" 
-    	    vbox:headerIcon="@drawable/ic_settings_general" 
+    	    vbox:headerIcon="@drawable/ic_settings_general"
+    	    vbox:expanded="false" 
     	    android:layout_width="match_parent" 
     	    android:layout_height="wrap_content"
     	    android:gravity="center_horizontal" >
-		<ImageView android:id="@+id/preview" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
-	</com.kedzie.vbox.app.PanelView>
+		<ImageView android:id="@+id/preview" android:layout_gravity="center_horizontal" android:contentDescription="@string/contentDescription_preview"  android:layout_width="@dimen/screenshot_size" android:layout_height="@dimen/screenshot_size" />
+	</com.kedzie.vbox.app.CollapsiblePanelView>
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="General" vbox:headerIcon="@drawable/ic_settings_general" android:layout_width="match_parent" android:layout_height="wrap_content" >
 	    	<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
 
 	    	    <TextView android:id="@+id/name_label" style="@style/SmallTextPrimary" android:text="@string/name" />
@@ -28,9 +29,9 @@
 	    	    <TextView android:id="@+id/groups" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/groups_label" android:layout_toRightOf="@id/groups_label" />
 	    	    
 		</RelativeLayout>
-	</com.kedzie.vbox.app.PanelView>   
+	</com.kedzie.vbox.app.CollapsiblePanelView>   
 	
-	<com.kedzie.vbox.app.PanelView vbox:name="System" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
+	<com.kedzie.vbox.app.CollapsiblePanelView vbox:name="System" vbox:headerIcon="@drawable/ic_settings_system" android:layout_width="match_parent" android:layout_height="wrap_content" >
 		<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
 	    	    <TextView android:id="@+id/baseMemory_label" style="@style/SmallTextPrimary" android:text="@string/base_memory" />
 	    	    <TextView android:id="@+id/baseMemory" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/baseMemory_label" android:layout_toRightOf="@+id/baseMemory_label" />
@@ -44,6 +45,6 @@
 	    	    <TextView android:id="@+id/acceleration_label" style="@style/SmallTextPrimary" android:text="@string/acceleration" android:layout_below="@+id/bootOrder_label"/>
 	    	    <TextView android:id="@+id/acceleration" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/acceleration_label" android:layout_toRightOf="@+id/acceleration_label" />
 		</RelativeLayout>
-	</com.kedzie.vbox.app.PanelView>
+	</com.kedzie.vbox.app.CollapsiblePanelView>
     	
 </LinearLayout>
