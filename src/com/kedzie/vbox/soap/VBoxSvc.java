@@ -16,8 +16,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import nf.fr.eraasoft.pool.ObjectPool;
+import nf.fr.eraasoft.pool.PoolException;
+import nf.fr.eraasoft.pool.PoolSettings;
+import nf.fr.eraasoft.pool.PoolableObjectBase;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
@@ -77,10 +85,13 @@ import com.kedzie.vbox.soap.ssl.KeystoreTrustedHttpsTransport;
  */
 public class VBoxSvc implements Parcelable, Externalizable {
 	private static final String TAG = "VBoxSvc";
-	protected static final int TIMEOUT = 20000;
-	public static final String BUNDLE = "vmgr", NAMESPACE = "http://www.virtualbox.org/";
+	private static final int TIMEOUT = 20000;
+	public static final String BUNDLE = "vmgr";
+	public static final String NAMESPACE = "http://www.virtualbox.org/";
+	private static final int THREAD_POOL_SIZE = 10;
+	private static final int TRANSPORT_POOL_SIZE = 10;
 	private static final ClassLoader LOADER = VBoxSvc.class.getClassLoader();
-	
+
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
 		public VBoxSvc createFromParcel(Parcel in) {
 			VBoxSvc svc = new VBoxSvc((Server)in.readParcelable(LOADER));
@@ -94,74 +105,50 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	};
 	
 	/**
-	 * Asynchronous return value handler
-	 */
-	public static interface FutureValue {
-		
-		/**
-		 * Handle asynchronous method return value
-		 * @param obj		the return value
-		 */
-		public void handleValue(Object obj);
-	}
-	
-	/**
 	 * Thread for making SOAP invocations
 	 */
-	public class AsynchronousThread extends Thread {
+	public class AsynchronousThread implements Runnable {
 		private String name;
 		private SerializationEnvelope envelope;
-		private FutureValue future;
-		private Class<?> returnType;
-		private Type genericType;
-		private String cacheKey;
-		private Map<String, Object> _cache;
-		private KSOAP methodKSOAP;
-		
+
 		public AsynchronousThread(String name, SerializationEnvelope envelope) {
 			this.name=name;
 			this.envelope = envelope;
 		}
-		
-		public AsynchronousThread(String name, SerializationEnvelope envelope, FutureValue future, Class<?> returnType, Type genericType, String cacheKey, Map<String, Object> cache, KSOAP ksoap) {
-			this.name=name;
-			this.envelope = envelope;
-			this.future=future;
-			this.returnType=returnType;
-			this.genericType=genericType;
-			this.cacheKey=cacheKey;
-			this._cache=cache;
-			this.methodKSOAP = ksoap;
-		}
-		
+
 		@Override
 		public void run() {
-			try {
-				_transport.call(name, envelope);
-				if(future!=null) {
-					Object ret = envelope.getResponse(returnType, genericType);
-					if(methodKSOAP!=null && methodKSOAP.cacheable()) 
-						_cache.put(cacheKey, ret);
-					future.handleValue(ret);
+//			synchronized(VBoxSvc.this) {
+//				try {
+//						_transport.call(name, envelope);
+//				} catch(Exception e) {
+//					Log.e(TAG, "Error executing Asynchronous method: " + name);
+//				}
+//			}
+				HttpTransportSE transport = null;
+				try {
+					transport = _transportPool.getObj();
+					transport.call(name, envelope);
+				} catch(Exception e) {
+					Log.e(TAG, "PoolException", e);
+				} finally {
+					_transportPool.returnObj(transport);
 				}
-			} catch (Exception e) {
-				Log.e(TAG, "Error invoking asynchronous method", e);
-			}
 		}
 	}
-	
+
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
 	 */
 	public class KSOAPInvocationHandler implements InvocationHandler, Serializable {
 		private static final long serialVersionUID = 1L;
-		
+
 		/** managed object UIUD */
 		private String _uiud;
-		
+
 		/** type of {@link IManagedObjectRef} */
 		private Class<?> _type;
-		
+
 		/** cached property values */
 		private Map<String, Object> _cache;
 
@@ -170,98 +157,95 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			_type=type;
 			_cache = cache!=null ? cache : new HashMap<String, Object>();
 		}
-
+		
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
-			synchronized(VBoxSvc.this) {
-				String methodName = method.getName();
-				boolean isPopulateView = methodName.equals("populateView");
-				FutureValue future = null;
-				if(method.getName().equals("hashCode")) return Objects.hashCode(_uiud);
-				if(method.getName().equals("toString")) {
-					return _type.getSimpleName() + " #" + _uiud + Utils.toString("Cache", _cache);
-				}
-				if(method.getName().equals("equals")) {
-					if(args[0]==null) return false;
-					if(!(args[0] instanceof IManagedObjectRef) || !_type.isAssignableFrom(args[0].getClass())) 
-						return false;
-					return Objects.equal(_uiud, ((IManagedObjectRef)args[0]).getIdRef());
-				}
-				if(method.getName().equals("clearCache")) { 
-						_cache.clear(); 
-						return null; 
-				}
-				if(method.getName().equals("clearCacheNamed")) { 
-					for(String name : (String[])args[0]) 
-						_cache.remove(name); 
-					return null;
-				}
-				if(method.getName().equals("getAPI")) return VBoxSvc.this;
-				if(method.getName().equals("describeContents")) return 0;
-				if(method.getName().equals("getCache")) return _cache;
-				if(method.getName().equals("getIdRef")) return _uiud;
-				if(method.getName().equals("writeToParcel")) {
-					Parcel out = (Parcel)args[0];
-					out.writeParcelable(VBoxSvc.this, 0);
-					out.writeString(_uiud);
-					out.writeMap(_cache);
-					return null;
-				}
-				if(isPopulateView) {
-					methodName = (String)args[0];
-					future = (FutureValue)args[1];
-				}
-				KSOAP ksoap = method.getAnnotation(KSOAP.class);
-				if(ksoap==null)
-					ksoap=method.getDeclaringClass().getAnnotation(KSOAP.class);
-				
-				String cacheKey = method.getName();
-				if(ksoap.cacheable()) {
-					if(args!=null) {
-						for(Object arg : args)
-							cacheKey+="-"+arg.toString();
-					}
-					if(_cache.containsKey(cacheKey)) {
-						if(isPopulateView) {
-							future.handleValue(_cache.get(cacheKey));
-							return null;
-						} else
-							return _cache.get(cacheKey);
-					}
-				}
-				SoapObject request = new SoapObject(NAMESPACE, (Utils.isEmpty(ksoap.prefix()) ? _type.getSimpleName() : ksoap.prefix())+"_"+method.getName());
-				if (!Utils.isEmpty(ksoap.thisReference()))
-					request.addProperty(ksoap.thisReference(), _uiud);
+			String name = method.getName();
+			if(name.equals("hashCode")) return Objects.hashCode(_uiud);
+			if(name.equals("toString")) {
+				return _type.getSimpleName() + " #" + _uiud + Utils.toString("Cache", _cache);
+			}
+			if(name.equals("equals")) {
+				if(args[0]==null) return false;
+				if(!(args[0] instanceof IManagedObjectRef) || !_type.isAssignableFrom(args[0].getClass())) 
+					return false;
+				return Objects.equal(_uiud, ((IManagedObjectRef)args[0]).getIdRef());
+			}
+			if(name.equals("clearCache")) { 
+				_cache.clear(); 
+				return null; 
+			}
+			if(name.equals("clearCacheNamed")) { 
+				for(String arg : (String[])args[0]) 
+					_cache.remove(arg); 
+				return null;
+			}
+			if(name.equals("getAPI")) return VBoxSvc.this;
+			if(name.equals("describeContents")) return 0;
+			if(name.equals("getCache")) return _cache;
+			if(name.equals("getIdRef")) return _uiud;
+			if(name.equals("writeToParcel")) {
+				Parcel out = (Parcel)args[0];
+				out.writeParcelable(VBoxSvc.this, 0);
+				out.writeString(_uiud);
+				out.writeMap(_cache);
+				return null;
+			}
+			
+			KSOAP ksoap = method.getAnnotation(KSOAP.class);
+			if(ksoap==null)
+				ksoap=method.getDeclaringClass().getAnnotation(KSOAP.class);
+
+			String cacheKey = name;
+			if(ksoap.cacheable()) {
 				if(args!=null) {
-					for(int i=0; i<args.length; i++)
-						marshal(request, Utils.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
+					for(Object arg : args)
+						cacheKey+="-"+arg.toString();
 				}
-				SerializationEnvelope envelope = new SerializationEnvelope();
-				envelope.setOutputSoapObject(request);
-				envelope.setAddAdornments(false);
-				
-				if(BuildConfig.DEBUG) Log.v(TAG, "Remote call: " + request.getName());
-				if(method.isAnnotationPresent(Asyncronous.class)) {
-					new AsynchronousThread(NAMESPACE+request.getName(), envelope).start();
-					return null;
-				} else if(isPopulateView) {
-					new AsynchronousThread(NAMESPACE+request.getName(), envelope, future, method.getReturnType(), method.getGenericReturnType(), cacheKey, _cache, ksoap).start();
-					return null;
-				} else {
-					_transport.call(NAMESPACE+request.getName(), envelope);
+				if(_cache.containsKey(cacheKey))
+					return _cache.get(cacheKey);
+			}
+			
+			SoapObject request = new SoapObject(NAMESPACE, (Utils.isEmpty(ksoap.prefix()) ? _type.getSimpleName() : ksoap.prefix())+"_"+method.getName());
+			
+			if (!Utils.isEmpty(ksoap.thisReference()))
+				request.addProperty(ksoap.thisReference(), _uiud);
+			
+			if(args!=null) {
+				for(int i=0; i<args.length; i++)
+					marshal(request, Utils.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
+			}
+			
+			SerializationEnvelope envelope = new SerializationEnvelope(request);
+
+			if(method.isAnnotationPresent(Asyncronous.class)) {
+				_threadPoolExecutor.execute(new AsynchronousThread(NAMESPACE+request.getName(), envelope));
+				return null;
+			} else {
+//				synchronized(VBoxSvc.this) {
+//					_transport.call(NAMESPACE+request.getName(), envelope);
+//				}
+				HttpTransportSE transport = null;
+				try {
+					transport = _transportPool.getObj();
+					transport.call(NAMESPACE+request.getName(), envelope);
 					Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
 					if(ksoap.cacheable()) 
 						_cache.put(cacheKey, ret);
-					//update cache value of property if we are calling a setter
-					if(methodName.startsWith("set")) {
-						String getterName = "get"+methodName.substring(3);
+					if(name.startsWith("set")) {		//update cache if we are calling a setter
+						String getterName = "get"+name.substring(3);
 						_cache.put(getterName, ret);
 					}
 					return ret;
+				} catch(PoolException e) {
+					Log.e(TAG, "PoolException", e);
+					throw new RuntimeException(e.getMessage(), e);
+				} finally {
+					_transportPool.returnObj(transport);
 				}
 			}
 		}
-		
+
 		/**
 		 * Add an argument to a SOAP request
 		 * @param request  SOAP request
@@ -285,28 +269,23 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
 			else if(clazz.isEnum())
 				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
-			else {
-				for(Marshaller m : _marshallers) {
-					if(m.handleObject(clazz)) {
-						m.marshal(request, ksoap, clazz, gType, obj);
-						return;
-					}
-				}
+			else
 				request.addProperty(ksoap.value(), obj);
-			}
 		}
 	}
 
 	/**
 	 * Handles unmarshalling of SOAP response based on {@link KSOAP} annotation metadata
 	 */
-	class SerializationEnvelope extends SoapSerializationEnvelope {
+	public class SerializationEnvelope extends SoapSerializationEnvelope {
 
 		/** Reflection cache.  Maps from [classname].[property] to [setter-method] */
 		private Map<String, Method> typeCache = new HashMap<String, Method>();
-		
-		public SerializationEnvelope() {
+
+		public SerializationEnvelope(SoapObject soapObject) {
 			super(SoapEnvelope.VER11);
+			setAddAdornments(false);
+			setOutputSoapObject(soapObject);
 		}
 
 		/**
@@ -327,31 +306,31 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				return null;
 			}
 			if(IS_MAP) {
-			    Type valueType = ((ParameterizedType)genericType).getActualTypeArguments()[1];
-			    if(!(valueType instanceof Class)) {  //Map<String, List<String>>
-			        Map<String, List<String>> map = new HashMap<String, List<String>>();
-	                PropertyInfo info = new PropertyInfo();
-	                for (int i = 0; i < ks.getPropertyCount(); i++) {
-	                    ks.getPropertyInfo(i, null, info);
-	                    if (!map.containsKey(info.getName()))
-	                        map.put(info.getName(), new ArrayList<String>());
-	                    map.get(info.getName()).add(   ks.getProperty(i).toString() );
-	                }
-	                return map;
-			    } else {		//Map<String,String>
-			        Map<String, String> map = new HashMap<String, String>();
-			        PropertyInfo info = new PropertyInfo();
-                    for (int i = 0; i < ks.getPropertyCount(); i++) {
-                        ks.getPropertyInfo(i, null, info);
-                        map.put(info.getName(), ks.getProperty(i).toString());
-                    }
-                    return map;
-			    }
+				Type valueType = ((ParameterizedType)genericType).getActualTypeArguments()[1];
+				if(!(valueType instanceof Class)) {  //Map<String, List<String>>
+					Map<String, List<String>> map = new HashMap<String, List<String>>();
+					PropertyInfo info = new PropertyInfo();
+					for (int i = 0; i < ks.getPropertyCount(); i++) {
+						ks.getPropertyInfo(i, null, info);
+						if (!map.containsKey(info.getName()))
+							map.put(info.getName(), new ArrayList<String>());
+						map.get(info.getName()).add(ks.getProperty(i).toString());
+					}
+					return map;
+				} else {		//Map<String,String>
+					Map<String, String> map = new HashMap<String, String>();
+					PropertyInfo info = new PropertyInfo();
+					for (int i = 0; i < ks.getPropertyCount(); i++) {
+						ks.getPropertyInfo(i, null, info);
+						map.put(info.getName(), ks.getProperty(i).toString());
+					}
+					return map;
+				}
 			} else if(IS_COLLECTION) {
 				Class<?> pClazz = Utils.getTypeParameter(genericType,0);
 				Collection<Object> list = new ArrayList<Object>(ks.getPropertyCount());
 				for (int i = 0; i < ks.getPropertyCount(); i++)
-					list.add( unmarshal(pClazz, genericType, ks.getProperty(i)) );
+					list.add(unmarshal(pClazz, genericType, ks.getProperty(i)));
 				return list;
 			} else if(IS_ARRAY) {
 				Class<?> pClazz = returnType.getComponentType();
@@ -370,16 +349,17 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		 * @param ret  marshalled value
 		 * @return unmarshalled return value
 		 */
-		private Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
-			if(ret==null || ret.toString().equals("anyType{}")) return null;
+		public Object unmarshal(Class<?> returnType, Type genericType, Object ret) {
+			if(ret==null || ret.toString().equals("anyType{}")) 
+				return null;
 			if(returnType.isArray() && returnType.getComponentType().equals(byte.class)) {
 				return android.util.Base64.decode(ret.toString().getBytes(), android.util.Base64.DEFAULT);
 			} else if(returnType.equals(Boolean.class) || returnType.equals(boolean.class)) {
 				return Boolean.valueOf(ret.toString());
 			} else if(returnType.equals(Integer.class) || returnType.equals(int.class)) {
-			        return Integer.valueOf(ret.toString());
+				return Integer.valueOf(ret.toString());
 			} else if(returnType.equals(Long.class) || returnType.equals(long.class)) {
-                    return Long.valueOf(ret.toString());
+				return Long.valueOf(ret.toString());
 			} else if(returnType.equals(String.class))
 				return ret.toString();
 			else if(IManagedObjectRef.class.isAssignableFrom(returnType))
@@ -389,32 +369,28 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					if( element.toString().equals( ret.toString() ) )
 						return element;
 			} else if(returnType.isAnnotationPresent(KSoapObject.class)) {
-			    try {
-			        if(BuildConfig.DEBUG) Log.v(TAG, "Unmarshalling Complex Object: " + returnType.getName());
-                    Object pojo = returnType.newInstance();
-                    SoapObject soapObject = (SoapObject)ret;
-                    PropertyInfo propertyInfo = new PropertyInfo();
-                    for(int i=0; i<soapObject.getPropertyCount(); i++) {
-                        soapObject.getPropertyInfo(i, propertyInfo);
-                        Method setterMethod = findSetterMethod(returnType, propertyInfo.getName());
-                        if(setterMethod==null) continue;
-                        Class<?> propertyType = setterMethod.getParameterTypes()[0];
-                        Object value = unmarshal(propertyType, propertyType, propertyInfo.getValue());
-                       	if(BuildConfig.DEBUG) Log.v(TAG, String.format("Setting property: %1$s.%2$s = %3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
-                       	setterMethod.invoke(pojo, value);
-                    }
-                    return pojo;
-                } catch (Exception e) {
-                    Log.e(TAG, "Error unmarshalling complex object: " + returnType.getName(), e);
-                } 
-			}
-			for(Marshaller m : _marshallers) {
-				if(m.handleObject(returnType))
-					return m.unmarshal(returnType, genericType, ret);
+				try {
+					if(BuildConfig.DEBUG) Log.v(TAG, "Unmarshalling Complex Object: " + returnType.getName());
+					Object pojo = returnType.newInstance();
+					SoapObject soapObject = (SoapObject)ret;
+					PropertyInfo propertyInfo = new PropertyInfo();
+					for(int i=0; i<soapObject.getPropertyCount(); i++) {
+						soapObject.getPropertyInfo(i, propertyInfo);
+						Method setterMethod = findSetterMethod(returnType, propertyInfo.getName());
+						if(setterMethod==null) continue;
+						Class<?> propertyType = setterMethod.getParameterTypes()[0];
+						Object value = unmarshal(propertyType, propertyType, propertyInfo.getValue());
+						if(BuildConfig.DEBUG) Log.v(TAG, String.format("Setting property: %1$s.%2$s = %3$s", returnType.getSimpleName(), propertyInfo.getName(), value));
+						setterMethod.invoke(pojo, value);
+					}
+					return pojo;
+				} catch (Exception e) {
+					Log.e(TAG, "Error unmarshalling complex object: " + returnType.getName(), e);
+				} 
 			}
 			return ret;
 		}
-		
+
 		/**
 		 * Find and cache the setter method for a particular property
 		 * @param clazz			object type
@@ -425,7 +401,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			String key = clazz.getSimpleName()+"."+property;
 			if(typeCache.containsKey(key)) 
 				return typeCache.get(key);
-			String setterMethodName = "set"+property.substring(0, 1).toUpperCase()+property.substring(1);
+			String setterMethodName = "set"+property.substring(0, 1).toUpperCase(Locale.ENGLISH)+property.substring(1);
 			for(Method method : clazz.getMethods()) 
 				if(method.getName().equals(setterMethodName)) {
 					typeCache.put(key, method);
@@ -436,18 +412,17 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		}
 	}
 
-	protected Server _server;
-	protected IVirtualBox _vbox;
-	protected HttpTransportSE  _transport;
-	protected List<Marshaller> _marshallers = new ArrayList<Marshaller>();
-	
+	private Server _server;
+	private IVirtualBox _vbox;
+//	private HttpTransportSE  _transport;
+	private ObjectPool<HttpTransportSE> _transportPool;
+	private Executor _threadPoolExecutor;
+
 	/**
 	 * @param server	VirtualBox webservice server
 	 */
 	public VBoxSvc(Server server) {
 		_server=server;
-		_transport = server.isSSL() ? new KeystoreTrustedHttpsTransport(server, TIMEOUT) : 
-					new HttpTransport("http://"+server.getHost() + ":" + server.getPort(), TIMEOUT);
 		init();
 	}
 
@@ -458,24 +433,39 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	public VBoxSvc(VBoxSvc copy) {
 		this(copy._server);
 		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
-		init();
 	}
 	
 	private void init() {
+//		_transport = _server.isSSL() ? 
+//				new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
+//				new HttpTransport(_server, TIMEOUT);
+		_threadPoolExecutor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+		PoolSettings<HttpTransportSE> poolSettings = new PoolSettings<HttpTransportSE>(
+		                new PoolableObjectBase<HttpTransportSE>() {
+		                	@Override public void activate(HttpTransportSE t) {}
+		                	@Override
+		                	public HttpTransportSE make() {
+		                		return _server.isSSL() ? 
+		                				new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
+		                				new HttpTransport(_server, TIMEOUT);
+		                	}
+		                });
+		poolSettings.min(0).max(TRANSPORT_POOL_SIZE);
+		_transportPool = poolSettings.pool();
 	}
-	
+
 	public IVirtualBox getVBox() {
 		return _vbox;
 	}
-	
+
 	public void setVBox(IVirtualBox box) {
-	    _vbox=box;
+		_vbox=box;
 	}
-	
+
 	public Server getServer() {
 		return _server;
 	}
-	
+
 	@Override
 	public int describeContents() {
 		return 0;
@@ -486,19 +476,18 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		dest.writeParcelable(_server, 0);
 		dest.writeString(_vbox.getIdRef());
 	}
-	
+
 	@Override
 	public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
+		Log.w(TAG, "===========VBoxSvc has been SERIALIZED===========");
 		_server=(Server)input.readObject();
-		_transport = _server.isSSL() ? new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
-					new HttpTransport("http://"+_server.getHost() + ":" + _server.getPort(), TIMEOUT);
-		_vbox = getProxy(IVirtualBox.class, input.readUTF());
 		init();
+		_vbox = getProxy(IVirtualBox.class, input.readUTF());
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput output) throws IOException {
-		Log.d(TAG, "Serializing");
+		Log.w(TAG, "===========VBoxSvc has been SERIALIZED===========");
 		output.writeObject(_server);
 		output.writeUTF(_vbox.getIdRef());
 	}
@@ -529,9 +518,9 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			else if(type.equals(VBoxEventType.ON_SESSION_STATE_CHANGED))
 				return clazz.cast(getProxy( ISessionStateChangedEvent.class, id, cache ));
 			else if(type.equals(VBoxEventType.ON_SNAPSHOT_DELETED))
-                return clazz.cast(getProxy( ISnapshotDeletedEvent.class, id, cache ));
+				return clazz.cast(getProxy( ISnapshotDeletedEvent.class, id, cache ));
 			else if(type.equals(VBoxEventType.ON_SNAPSHOT_TAKEN))
-                return clazz.cast(getProxy( ISnapshotTakenEvent.class, id, cache ));
+				return clazz.cast(getProxy( ISnapshotTakenEvent.class, id, cache ));
 		}
 		return proxy;
 	}
@@ -552,7 +541,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			throw new ConnectException("Authentication Error");
 		}
 	}
-	
+
 	/**
 	 * Logoff from VirtualBox API
 	 * @throws IOException 
@@ -562,7 +551,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			_vbox.logoff();
 		_vbox=null;
 	}
-	
+
 	/**
 	 * Query metric data for specified {@link IManagedObjectRef}
 	 * @param object object to get metrics for
@@ -572,7 +561,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 */
 	public Map<String, MetricQuery> queryMetrics(String object, String...metrics) throws IOException {
 		Map<String, List<String>> data= _vbox.getPerformanceCollector().queryMetricsData(metrics, new String[] { object });
-		
+
 		Map<String, MetricQuery> ret = new HashMap<String, MetricQuery>();
 		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
 			MetricQuery q = new MetricQuery();
@@ -582,7 +571,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			q.unit=(String)data.get("returnUnits").get(i);
 			int start = Integer.valueOf( data.get("returnDataIndices").get(i));
 			int length = Integer.valueOf( data.get("returnDataLengths").get(i));
-			
+
 			q.values= new int[length];
 			int j=0;
 			for(String s : data.get("returnval").subList(start, start+length)) 
@@ -591,50 +580,50 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		}
 		return ret;
 	}
-	
+
 	public Screenshot takeScreenshot(IMachine machine) throws IOException {
-	    if(machine.getState().equals(MachineState.RUNNING) || machine.getState().equals(MachineState.SAVED)) {
-	        ISession session = _vbox.getSessionObject();
-            machine.lockMachine(session, LockType.SHARED);
-            try {
-                IDisplay display = session.getConsole().getDisplay();
-                Map<String, String> res = display.getScreenResolution(0);
-                int width =  Integer.valueOf(res.get("width"));
-                int height = Integer.valueOf(res.get("height"));
-                return new Screenshot(width, height, display.takeScreenShotPNGToArray(0, width, height));
-            } finally {
-                session.unlockMachine();
-            }
-	    }
-	    return null;
+		if(machine.getState().equals(MachineState.RUNNING) || machine.getState().equals(MachineState.SAVED)) {
+			ISession session = _vbox.getSessionObject();
+			machine.lockMachine(session, LockType.SHARED);
+			try {
+				IDisplay display = session.getConsole().getDisplay();
+				Map<String, String> res = display.getScreenResolution(0);
+				int width =  Integer.valueOf(res.get("width"));
+				int height = Integer.valueOf(res.get("height"));
+				return new Screenshot(width, height, display.takeScreenShotPNGToArray(0, width, height));
+			} finally {
+				session.unlockMachine();
+			}
+		}
+		return null;
 	}
-	
+
 	public Screenshot takeScreenshot(IMachine machine, int width, int height) throws IOException {
-            ISession session = _vbox.getSessionObject();
-            machine.lockMachine(session, LockType.SHARED);
-            try {
-                IDisplay display = session.getConsole().getDisplay();
-                Map<String, String> res = display.getScreenResolution(0);
-                float screenW = Float.valueOf(res.get("width"));
-                float screenH = Float.valueOf(res.get("height"));
-                if(screenW > screenH) {
-                    float aspect = screenH/screenW;
-                    height =(int) (aspect*width);
-                } else if(screenH > screenW){
-                    float aspect = screenW/screenH;
-                    width =(int) (aspect*height);
-                }
-                return new Screenshot(width, height, session.getConsole().getDisplay().takeScreenShotPNGToArray(0, width, height));
-            } finally {
-                session.unlockMachine();
-            }
-    }
-	
+		ISession session = _vbox.getSessionObject();
+		machine.lockMachine(session, LockType.SHARED);
+		try {
+			IDisplay display = session.getConsole().getDisplay();
+			Map<String, String> res = display.getScreenResolution(0);
+			float screenW = Float.valueOf(res.get("width"));
+			float screenH = Float.valueOf(res.get("height"));
+			if(screenW > screenH) {
+				float aspect = screenH/screenW;
+				height =(int) (aspect*width);
+			} else if(screenH > screenW){
+				float aspect = screenW/screenH;
+				width =(int) (aspect*height);
+			}
+			return new Screenshot(width, height, session.getConsole().getDisplay().takeScreenShotPNGToArray(0, width, height));
+		} finally {
+			session.unlockMachine();
+		}
+	}
+
 	public Screenshot readSavedScreenshot(IMachine machine, int screenId) throws IOException {
 		Map<String, String> val = machine.readSavedScreenshotPNGToArray(screenId);
 		return new Screenshot(Integer.valueOf(val.get("width")), Integer.valueOf(val.get("height")), Base64.decode(val.get("returnval"), 0));
 	}
-	
+
 	public Screenshot readSavedThumbnail(IMachine machine, int screenId) throws IOException {
 		Map<String, String> val = machine.readSavedThumbnailPNGToArray(screenId);
 		return new Screenshot(Integer.valueOf(val.get("width")), Integer.valueOf(val.get("height")), Base64.decode(val.get("returnval"), 0));
@@ -667,7 +656,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			Utils.appendWithComma(nameString, name);
 		return getProperties(medium.getProperties(nameString.toString()) );
 	}
-	
+
 	private Properties getProperties(Map<String, List<String>> val, String...names) throws IOException {
 		List<String> returnNames = val.get("returnNames");
 		List<String> values = val.get("returnval");
@@ -676,14 +665,14 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			properties.put(returnNames.get(i), values.get(i));
 		return properties;
 	}
-	
+
 	public Tuple<IHostNetworkInterface, IProgress> createHostOnlyNetworkInterface(IHost host) throws IOException {
 		Map<String, String> val = host.createHostOnlyNetworkInterface();
 		IHostNetworkInterface networkInterface = getProxy(IHostNetworkInterface.class, val.get("hostInterface"));
 		IProgress progress = getProxy(IProgress.class, val.get("returnval"));
 		return new Tuple<IHostNetworkInterface, IProgress>(networkInterface, progress);
 	}
-	
+
 	/**
 	 * Searches a DHCP server settings to be used for the given internal network name. 
 	 * <p><dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
@@ -700,7 +689,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Ping a HTTPS server using SSL and prompt user to trust certificate
 	 * @param handler {@link Handler} to prompt user to trust server certificate
@@ -708,9 +697,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * @throws XmlPullParserException
 	 */
 	public void ping(Handler handler) throws IOException, XmlPullParserException {
-		SerializationEnvelope envelope = new SerializationEnvelope();
-		envelope.setOutputSoapObject(new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName").addProperty("_this", "0"));
-		envelope.setAddAdornments(false);
+		SerializationEnvelope envelope = new SerializationEnvelope(
+				new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName").addProperty("_this", "0"));
 		new InteractiveTrustedHttpsTransport(_server, TIMEOUT, handler).call(NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
 	}
 }

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.1.9</version>
+		<version>3.1.9-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vbox-app</artifactId>
@@ -96,6 +96,10 @@
  			<groupId>com.google.guava</groupId>
   			<artifactId>guava</artifactId>
   		</dependency>
+  		<dependency>
+			<groupId>nf.fr.eraasoft</groupId>
+			<artifactId>objectpool</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

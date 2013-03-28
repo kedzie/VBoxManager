@@ -6,13 +6,15 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.ksoap2.transport.ServiceConnection;
 import org.ksoap2.transport.ServiceConnectionSE;
 
+import com.kedzie.vbox.server.Server;
+
 /**
  * Don't reuse {@link ServiceConnection}s
  */
 public class HttpTransport extends HttpTransportSE {
 
-    public HttpTransport(String url, int timeout) {
-        super(url, timeout);
+    public HttpTransport(Server server, int timeout) {
+    	super(String.format("http://%s:%s", server.getHost(), server.getPort()), timeout);
     }
 
     public ServiceConnection getServiceConnection() throws IOException {
