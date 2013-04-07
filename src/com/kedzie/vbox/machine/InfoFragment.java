@@ -35,6 +35,7 @@ import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.MachineRunnable;
 
 /**
  * 
@@ -52,34 +53,56 @@ public class InfoFragment extends SherlockFragment {
 		protected MachineInfo work(IMachine... m) throws Exception {
 			//cache values
 			Utils.cacheProperties(m[0]);
-			m[0].getMemorySize(); m[0].getCPUCount(); m[0].getVRAMSize(); 
-			m[0].getAccelerate2DVideoEnabled(); m[0].getAccelerate3DEnabled(); 
-			m[0].getDescription(); m[0].getGroups();
-			m[0].getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING);
-			m[0].getHWVirtExProperty(HWVirtExPropertyType.ENABLED);
-			m[0].getCPUProperty(CPUPropertyType.PAE);
-			//audio
-			m[0].getAudioAdapter().getAudioController();
-			m[0].getAudioAdapter().getAudioDriver();
-			//boot order
-			for(int i=1 ;i<=99; i++)
-				if(m[0].getBootOrder(i).equals(DeviceType.NULL)) break;
-			//storage controllers
-			List<IStorageController> controllers = m[0].getStorageControllers();
-			for(IStorageController controller : controllers) {
-				controller.getBus();
-				for(IMediumAttachment a : m[0].getMediumAttachmentsOfController(controller.getName())) {
-					if(a.getMedium()!=null) {
-						a.getMedium().getName(); a.getMedium().getBase().getName();
-					}
-				}
-			}
-			//network adapters
-			for(int i=0; i<4; i++) {
-				INetworkAdapter adapter = m[0].getNetworkAdapter(i);
-				adapter.getEnabled(); adapter.getAdapterType(); adapter.getAttachmentType(); 
-				adapter.getBridgedInterface(); adapter.getHostOnlyInterface(); adapter.getGenericDriver(); adapter.getInternalNetwork();
-			}
+			
+			fork(new MachineRunnable(m[0]) {
+                    public void run() {
+                        m.getMemorySize(); m.getCPUCount(); m.getVRAMSize(); 
+                        m.getAccelerate2DVideoEnabled(); m.getAccelerate3DEnabled(); 
+                        m.getDescription(); m.getGroups();
+                        m.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING);
+                        m.getHWVirtExProperty(HWVirtExPropertyType.ENABLED);
+                        m.getCPUProperty(CPUPropertyType.PAE);
+                    }
+			});
+			
+			fork(new MachineRunnable(m[0]) {
+                public void run() {
+                  //audio
+                    m.getAudioAdapter().getAudioController();
+                    m.getAudioAdapter().getAudioDriver();
+                    
+                  //boot order
+                    for(int i=1 ;i<=99; i++)
+                        if(m.getBootOrder(i).equals(DeviceType.NULL)) break;
+                }
+			});
+			
+			fork(new MachineRunnable(m[0]) {
+                public void run() {
+                  //storage controllers
+                    List<IStorageController> controllers = m.getStorageControllers();
+                    for(IStorageController controller : controllers) {
+                        controller.getBus();
+                        for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName())) {
+                            if(a.getMedium()!=null) {
+                                a.getMedium().getName(); a.getMedium().getBase().getName();
+                            }
+                        }
+                    }
+                }
+			});
+			
+			fork(new MachineRunnable(m[0]) {
+                public void run() {
+                  //network adapters
+                    for(int i=0; i<4; i++) {
+                        INetworkAdapter adapter = m.getNetworkAdapter(i);
+                        adapter.getEnabled(); adapter.getAdapterType(); adapter.getAttachmentType(); 
+                        adapter.getBridgedInterface(); adapter.getHostOnlyInterface(); adapter.getGenericDriver(); adapter.getInternalNetwork();
+                    }
+                }
+			});
+			
 			//screenshots
 			int size = getResources().getDimensionPixelSize(R.dimen.screenshot_size);
 			MachineInfo info = new MachineInfo(m[0], null);
@@ -93,6 +116,7 @@ public class InfoFragment extends SherlockFragment {
 					Log.e(TAG, "Exception taking screenshot", e);
 				}
 			}
+			join();
 			return info;
 		}
 
@@ -140,11 +164,11 @@ public class InfoFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		_machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
 		if(savedInstanceState!=null) {
-			_machine = BundleBuilder.getProxy(savedInstanceState, IMachine.BUNDLE, IMachine.class);
 			_machineInfo = savedInstanceState.getParcelable("info");
-		}
+			_machine = _machineInfo.machine;
+		} else
+		    _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
 	}
 	
 	@Override

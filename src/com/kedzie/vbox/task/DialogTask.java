@@ -68,6 +68,13 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 		iDialog = new ProgressDialog(context);
 		iDialog.setMessage(msg);
 		iDialog.setCancelable(cancelable);
+		if(cancelable)
+		iDialog.setOnCancelListener(new OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                DialogTask.this.cancel(true);
+            }
+        });
 		iDialog.setIndeterminate(true);
 	}
 	

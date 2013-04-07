@@ -6,7 +6,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
+import com.kedzie.vbox.task.MachineRunnable;
 
 /**
  * New machine list based on groups
@@ -68,19 +68,15 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                get("/").addChild(get(tmp));
 	            }
 	            for(IMachine machine : _vmgr.getVBox().getMachines()) {
-	                Utils.cacheProperties(machine);
-	                List<String> groups = machine.getGroups();
-	                if(groups.isEmpty())
-	                	Log.w(TAG, "=======Groups list came back EMPTY=======");
-	                else if(Utils.isEmpty(groups.get(0)))
-	                	Log.w(TAG, "=======Group name came back EMPTY=======");
-	                else if(groups.get(0).equals("/"))
-	                	Log.w(TAG, "=======Group name came back as ROOT=======");
-//	                if(groups.isEmpty() || Utils.isEmpty(groups.get(0))  || groups.get(0).equals("/"))
-//	                    get("/").addChild(machine);
-//	                else
-	                get(groups.get(0)).addChild(machine);
+	                fork(new MachineRunnable(machine) {
+	                    public void run() {
+	                        Utils.cacheProperties(m);
+	                        List<String> groups = m.getGroups();
+	                        get(groups.get(0)).addChild(m);
+	                    }
+	                });
 	            }
+	            join();
 	            _vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_PERIOD), 
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_COUNT), 

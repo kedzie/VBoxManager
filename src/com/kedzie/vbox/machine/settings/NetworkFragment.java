@@ -4,7 +4,6 @@ package com.kedzie.vbox.machine.settings;
 import java.util.ArrayList;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +14,12 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.INetworkAdapter;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.FragmentElement;
+import com.kedzie.vbox.app.PagerTabHost;
 import com.kedzie.vbox.task.ActionBarTask;
 
 public class NetworkFragment extends SherlockFragment {
-    private FragmentTabHost mTabHost;
+    private PagerTabHost mTabHost;
     
     private IMachine _machine;
     private ArrayList<INetworkAdapter> _adapters;
@@ -72,11 +73,12 @@ public class NetworkFragment extends SherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tabs, container, false);
-        mTabHost = (FragmentTabHost)view.findViewById(android.R.id.tabhost);
+        mTabHost = new PagerTabHost(getActivity());
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
-        mTabHost.addTab(mTabHost.newTabSpec("dummy").setIndicator("Dummy"), DummyFragment.class, new Bundle());
-        return view;
+//        mTabHost.setCustomAnimations(R.animator.flip_left_in, R.animator.flip_left_out);
+        mTabHost.addTab(new FragmentElement("dummy", DummyFragment.class, new Bundle()));
+//        mTabHost.addTab(mTabHost.newTabSpec("dummy").setIndicator("Dummy"), DummyFragment.class, new Bundle());
+        return mTabHost;
     }
     
     @Override
@@ -91,8 +93,10 @@ public class NetworkFragment extends SherlockFragment {
     void populate() {
     	mTabHost.clearAllTabs();
     	for(int i=0; i<_adapters.size(); i++)
-			mTabHost.addTab(mTabHost.newTabSpec("adapter#"+i).setIndicator("Adapter " + i), NetworkAdapterFragment.class, 
-					new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create());
+    	    mTabHost.addTab(new FragmentElement("Adapter#"+i, NetworkAdapterFragment.class, 
+    	            new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create()));
+//			mTabHost.addTab(mTabHost.newTabSpec("adapter#"+i).setIndicator("Adapter " + i), NetworkAdapterFragment.class, 
+//					new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create());
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.kedzie.vbox.machine.group;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,6 +34,7 @@ import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.MachineCallable;
 
 /**
  * 
@@ -85,33 +88,42 @@ public class GroupInfoFragment extends SherlockFragment {
 
 		@Override 
 		protected ArrayList<MachineInfo> work(VMGroup... g) throws Exception {
-		    ArrayList<MachineInfo> info = new ArrayList<MachineInfo>();
+		    LinkedList<Future<MachineInfo>> futures = new LinkedList<Future<MachineInfo>>();
 		    for(TreeNode child : g[0].getChildren()) {
 		        if(child instanceof IMachine) {
-		            IMachine m = (IMachine)child;
-		            Utils.cacheProperties(m);
-		            m.getGroups(); m.getMemorySize(); m.getCPUCount();
-		            m.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING);
-					m.getHWVirtExProperty(HWVirtExPropertyType.ENABLED);
-					m.getCPUProperty(CPUPropertyType.PAE);
-					for(int i=1;i<=99; i++) {
-						if(m.getBootOrder(i).equals(DeviceType.NULL)) break;
-					}
-		            int size = getResources().getDimensionPixelSize(R.dimen.screenshot_size);
-		            MachineInfo mi = new MachineInfo(m, null);
-		            if(m.getState().equals(MachineState.SAVED)) {
-						mi.screenshot = _vmgr.readSavedScreenshot(m, 0);
-						mi.screenshot.scaleBitmap(size, size);
-		            }else if(m.getState().equals(MachineState.RUNNING)) {
-		            	try { 
-		            		mi.screenshot = m.getAPI().takeScreenshot(m, size, size);
-		            	} catch(IOException e) {
-		            		Log.e(TAG, "Exception taking screenshot", e);
-		            	}
-		            }
-		            info.add(mi);
+//		            IMachine m = (IMachine)child;
+		            futures.add(getExecutor().submit(new MachineCallable<MachineInfo>((IMachine)child) {
+		                @Override
+		                public MachineInfo call() throws Exception {
+		                    Utils.cacheProperties(m);
+		                    m.getGroups(); m.getMemorySize(); m.getCPUCount();
+		                    m.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING);
+		                    m.getHWVirtExProperty(HWVirtExPropertyType.ENABLED);
+		                    m.getCPUProperty(CPUPropertyType.PAE);
+		                    for(int i=1;i<=99; i++) {
+		                        if(m.getBootOrder(i).equals(DeviceType.NULL)) break;
+		                    }
+		                    int size = getResources().getDimensionPixelSize(R.dimen.screenshot_size);
+		                    MachineInfo mi = new MachineInfo(m, null);
+		                    if(m.getState().equals(MachineState.SAVED)) {
+		                        mi.screenshot = _vmgr.readSavedScreenshot(m, 0);
+		                        mi.screenshot.scaleBitmap(size, size);
+		                    }else if(m.getState().equals(MachineState.RUNNING)) {
+		                        try {
+		                            mi.screenshot = _vmgr.takeScreenshot(m, size, size);
+		                        } catch(IOException e) {
+		                            Log.e(TAG, "Exception taking screenshot", e);
+		                        }
+		                    }
+		                    return mi;
+		                }
+		            }));
+//		            info.add(mi);
 		        }
 		    }
+		    ArrayList<MachineInfo> info = new ArrayList<MachineInfo>(g[0].getChildren().size());
+		    for(Future<MachineInfo> future : futures)
+		        info.add(future.get());
 		    return info;
 		}
 

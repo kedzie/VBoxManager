@@ -41,7 +41,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
-			<artifactId>support-v4</artifactId>
+			<artifactId>support-v4-animator</artifactId>
+			<version>r12</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nineoldandroids</groupId>

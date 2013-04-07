@@ -223,9 +223,9 @@ public class Utils {
      */
     public static FragmentTransaction setCustomAnimations(FragmentTransaction tx) {
     	//if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
-    	//	return tx.setCustomAnimations(R.animator.flip_left_in, R.animator.flip_right_out);
+    		return tx.setCustomAnimations(com.kedzie.vbox.R.animator.flip_left_in, com.kedzie.vbox.R.animator.flip_right_out);
     	//else
-    		return tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+    	//	return tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
     }
     
     /**

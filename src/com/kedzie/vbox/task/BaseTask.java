@@ -2,6 +2,11 @@ package com.kedzie.vbox.task;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.ksoap2.SoapFault;
 import org.kxml2.kdom.Node;
@@ -40,6 +45,8 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 /** <code>true</code> if user pressed back button while task is executing */
 	protected boolean _cancelled=false;
 	protected boolean _failed;
+	private LinkedList<Future<?>> _futures = new LinkedList<Future<?>>();
+	private ExecutorService _executor;
 		
 	/** 
 	 * Show an Alert Dialog 
@@ -64,6 +71,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		TAG = getClass().getSimpleName();
 		_vmgr=vmgr;
 		_context = new WeakReference<SherlockFragmentActivity>(context);
+		init();
 	}
 	
 	/**
@@ -74,6 +82,33 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		this.TAG = TAG;
 		_vmgr=vmgr;
 		_context=new WeakReference<SherlockFragmentActivity>(context);
+		init();
+	}
+	
+	private void init() {
+	    _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
+	}
+
+	protected ExecutorService getExecutor() {
+	    return _executor;
+	}
+	
+	/**
+	 * Fork off parallel execution
+	 * @param task     the {@link Runnable} containing the task
+	 */
+	protected void fork(Runnable task) {
+	    _futures.add(_executor.submit(task));
+	}
+	
+	/**
+	 * Wait for completion of all parallel executions
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
+	 */
+	protected void join() throws InterruptedException, ExecutionException {
+	    for(Future<?> future : _futures)
+	        future.get();
 	}
 	
 	protected SherlockFragmentActivity getContext() {

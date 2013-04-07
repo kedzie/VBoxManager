@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import nf.fr.eraasoft.pool.ObjectPool;
@@ -88,8 +88,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	private static final int TIMEOUT = 20000;
 	public static final String BUNDLE = "vmgr";
 	public static final String NAMESPACE = "http://www.virtualbox.org/";
-	private static final int THREAD_POOL_SIZE = 10;
-	private static final int TRANSPORT_POOL_SIZE = 10;
+	private static final int THREAD_POOL_SIZE = 15;
+	private static final int TRANSPORT_POOL_SIZE = 15;
 	private static final ClassLoader LOADER = VBoxSvc.class.getClassLoader();
 
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
@@ -118,13 +118,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 
 		@Override
 		public void run() {
-//			synchronized(VBoxSvc.this) {
-//				try {
-//						_transport.call(name, envelope);
-//				} catch(Exception e) {
-//					Log.e(TAG, "Error executing Asynchronous method: " + name);
-//				}
-//			}
 				HttpTransportSE transport = null;
 				try {
 					transport = _transportPool.getObj();
@@ -222,9 +215,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				_threadPoolExecutor.execute(new AsynchronousThread(NAMESPACE+request.getName(), envelope));
 				return null;
 			} else {
-//				synchronized(VBoxSvc.this) {
-//					_transport.call(NAMESPACE+request.getName(), envelope);
-//				}
 				HttpTransportSE transport = null;
 				try {
 					transport = _transportPool.getObj();
@@ -232,10 +222,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 					Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
 					if(ksoap.cacheable()) 
 						_cache.put(cacheKey, ret);
-					if(name.startsWith("set")) {		//update cache if we are calling a setter
-						String getterName = "get"+name.substring(3);
-						_cache.put(getterName, ret);
-					}
+					if(name.startsWith("set"))		//update cache if we are calling a setter
+						_cache.put("get"+name.substring(3), ret);
 					return ret;
 				} catch(PoolException e) {
 					Log.e(TAG, "PoolException", e);
@@ -414,9 +402,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 
 	private Server _server;
 	private IVirtualBox _vbox;
-//	private HttpTransportSE  _transport;
 	private ObjectPool<HttpTransportSE> _transportPool;
-	private Executor _threadPoolExecutor;
+	private ExecutorService _threadPoolExecutor;
 
 	/**
 	 * @param server	VirtualBox webservice server
@@ -464,6 +451,10 @@ public class VBoxSvc implements Parcelable, Externalizable {
 
 	public Server getServer() {
 		return _server;
+	}
+	
+	public ExecutorService getExecutor() {
+	    return _threadPoolExecutor;
 	}
 
 	@Override

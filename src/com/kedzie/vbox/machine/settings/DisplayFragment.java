@@ -15,12 +15,12 @@ public class DisplayFragment extends SherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tabs, container, false);
-        mTabHost = (FragmentTabHost)view.findViewById(android.R.id.tabhost);
+        mTabHost = new FragmentTabHost(getActivity());
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
+        mTabHost.setCustomAnimations(R.animator.flip_left_in, R.animator.flip_left_out);
         mTabHost.addTab(mTabHost.newTabSpec("video").setIndicator("Video"), DisplayVideoFragment.class, getArguments());
         mTabHost.addTab(mTabHost.newTabSpec("remote").setIndicator("Remote"), DisplayRemoteFragment.class, getArguments());
-        return view;
+        return mTabHost;
     }
 
     @Override
