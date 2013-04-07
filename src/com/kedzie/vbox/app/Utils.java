@@ -9,10 +9,14 @@ import java.util.Map;
 
 import javax.annotation.concurrent.ThreadSafe;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -34,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kedzie.vbox.BuildConfig;
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMedium;
 
@@ -44,15 +49,16 @@ import com.kedzie.vbox.api.IMedium;
  */
 @ThreadSafe
 public class Utils {
-	
-	/**
-	 * Provides default implementations for {@link AnimationListener}
-	 */
-	public static class AnimationAdapter implements AnimationListener {
-		@Override public void onAnimationStart(Animation animation) {}
-		@Override public void onAnimationEnd(Animation animation) {}
-		@Override public void onAnimationRepeat(Animation animation) {}
-	}
+    private static final String TAG = "Utils";
+    
+    /**
+     * Provides default implementations for {@link AnimationListener}
+     */
+    public static class AnimationAdapter implements AnimationListener {
+        @Override public void onAnimationStart(Animation animation) {}
+        @Override public void onAnimationEnd(Animation animation) {}
+        @Override public void onAnimationRepeat(Animation animation) {}
+    }
 	
 	/**
 	 * Provides default implementations for {@link TextWatcher}
@@ -472,4 +478,58 @@ public class Utils {
 				m.getCurrentSnapshot().getName();
 		}
 	}
+	
+	/**
+     * Launch activity using custom animations. Uses ActivityOptions if on JellyBean, otherwise overrides transition
+     * @param parent        parent activity
+     * @param intent            intent to launch
+     */
+    public static void launchActivity(Activity parent, Intent intent) {
+        launchActivity(parent, intent, R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+    
+    /**
+     * Override transition for activity closing.
+     * @param activity      the activity
+     */
+    public static void overrideBackTransition(Activity activity) {
+        activity.overridePendingTransition(R.animator.flip_left_in, R.animator.flip_right_out);
+    }
+    
+    /**
+     * Launch activity using custom animations. Uses ActivityOptions if on JellyBean, otherwise overrides transition
+     * @param parent        parent activity
+     * @param intent            intent to launch
+     * @param animIn       In animation
+     * @param animOut      Out animation
+     */
+    public static void launchActivity(Activity parent, Intent intent, int animIn, int animOut) {
+        if(isJellyBean())
+            parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
+        else {
+            parent.startActivity(intent);
+            parent.overridePendingTransition(animIn, animOut);
+        }
+    }
+    
+    /**
+     * Scale a bitmap to fit within the desired size
+     * @param bitmap    input bitmap
+     * @param width     desired width
+     * @param height    desired height
+     * @return  scaled bitmap which will fit in desired size
+     */
+    public static Bitmap scale(Bitmap bitmap, int width, int height) {
+        int bWidth=bitmap.getWidth(), bHeight=bitmap.getHeight();
+        if(bWidth<=width && bHeight<=height) 
+            return bitmap;
+        if(BuildConfig.DEBUG) Log.v(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
+        float wScale = ((float)width)/bWidth;
+        float hScale = ((float)height)/bHeight;
+        float scale = Math.min(wScale, hScale);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        if(BuildConfig.DEBUG) Log.v(TAG, "Scale factor: " + scale);
+        return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
+    }
 }

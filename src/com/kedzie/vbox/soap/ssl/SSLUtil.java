@@ -46,7 +46,7 @@ public class SSLUtil {
 		@Override
 		protected Void work(X509Certificate... chain) throws Exception {
 			X509Certificate root = chain[chain.length-1];
-			String alias = server.toString() + "-" + String.format("Issuer: %1$s\tSubject: %2$s", root.getIssuerDN().getName(), root.getSubjectDN().getName());
+			String alias = String.format("%1$s-$2$d", server.toString(), root.getSubjectDN().hashCode());
 			Log.d(TAG, "Created new certificate entry alias: " + alias);
 			SSLUtil.getKeystore().setEntry(alias, new KeyStore.TrustedCertificateEntry(root), null);
 			SSLUtil.storeKeystore();

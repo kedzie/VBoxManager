@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.Utils;
 
 /**
  * Detailed help information for launching <em>vboxwebsrv</em>
@@ -26,5 +27,10 @@ public class HelpActivity extends SherlockActivity {
         sslText.setText(Html.fromHtml(getResources().getString(R.string.help_ssl)));
         sslText.setMovementMethod(LinkMovementMethod.getInstance());
     }
-
+    
+    @Override
+    public void finish() {
+        super.finish();
+        Utils.overrideBackTransition(this);
+    }
 }

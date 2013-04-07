@@ -85,4 +85,10 @@ public class MachineActivity extends BaseActivity {
 					Utils.getIntPreference(this, SettingsActivity.PREF_COUNT) );
 		}
 	}
+	
+	@Override
+    public void finish() {
+        super.finish();
+        Utils.overrideBackTransition(this);
+    }
 }

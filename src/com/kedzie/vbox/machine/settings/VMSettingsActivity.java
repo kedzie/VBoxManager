@@ -214,4 +214,10 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		if(_mutable!=null)
 			new DiscardSettingsTask().execute(_mutable);
 	}
+	
+	@Override
+    public void finish() {
+        super.finish();
+        Utils.overrideBackTransition(this);
+    }
 }

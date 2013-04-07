@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
@@ -18,6 +17,7 @@ import com.kedzie.vbox.app.FragmentActivity;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportActionBarViewPager;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.machine.group.GroupInfoFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
@@ -107,7 +107,7 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 		} else {
 			Intent intent = new Intent(this, MachineActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr);
 			BundleBuilder.addProxy(intent, IMachine.BUNDLE, machine );
-			VBoxApplication.launchActivity(this, intent);
+			Utils.launchActivity(this, intent);
 		}
 	}
 
@@ -135,6 +135,12 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 	public void onBackPressed() {
 		logoff();
 	}
+	
+	@Override
+    public void finish() {
+        super.finish();
+        Utils.overrideBackTransition(this);
+    }
 
 	public void logoff() {
 		stopService(new Intent(this, EventIntentService.class));

@@ -13,7 +13,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
@@ -52,7 +51,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
         protected void onSuccess(IVirtualBox vbox) {
         	super.onSuccess(vbox);
             Utils.toastLong(ServerListFragmentActivity.this, getContext().getString(R.string.toast_connected_to_vbox) + vbox.getVersion());
-            VBoxApplication.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
+            Utils.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
         }
     }
     

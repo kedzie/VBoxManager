@@ -282,7 +282,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 						.setMessage("Session state is " + _machine.getSessionState())
 						.show();
 				} else
-					startActivity(new Intent(getActivity(), VMSettingsActivity.class).putExtras(getArguments()));
+					Utils.launchActivity(getActivity(), new Intent(getActivity(), VMSettingsActivity.class).putExtras(getArguments()));
 			} else
 				getApp().showPremiumOffer(getActivity());
 		}

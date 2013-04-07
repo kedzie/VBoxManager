@@ -29,7 +29,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -211,7 +211,7 @@ public class ServerListFragment extends SherlockFragment {
                 addServer();
                 return true;
             case R.id.menu_help:
-                VBoxApplication.launchActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
+                Utils.launchActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
                 return true;
             }
         return false;
@@ -233,7 +233,7 @@ public class ServerListFragment extends SherlockFragment {
     			_listener.onSelectServer(getAdapter().getItem(position));
     			return true;
     		case R.id.server_list_context_menu_edit:
-    			VBoxApplication.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)s));
+    			Utils.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)s));
     			return true;
     		case R.id.server_list_context_menu_delete:
     			_db.delete(s.getId());
@@ -248,6 +248,6 @@ public class ServerListFragment extends SherlockFragment {
      * Launch activity to create a new Server
      */
     private void addServer() {
-    		VBoxApplication.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)new Server()));
+    		Utils.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)new Server()));
     }
 }

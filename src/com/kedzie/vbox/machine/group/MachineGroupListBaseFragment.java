@@ -136,5 +136,6 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		outState.putParcelable(VBoxSvc.BUNDLE, _vmgr);
 		outState.putString("version", _vmgr.getVBox().getVersion());
 		outState.putParcelable(VMGroup.BUNDLE, _root);
+		//save current machine
 	}
 }

@@ -4,8 +4,6 @@ package com.kedzie.vbox;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.ActivityNotFoundException;
@@ -14,11 +12,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
@@ -238,38 +233,5 @@ public class VBoxApplication extends Application {
 				}
 			})
 			.show();
-	}
-	
-	/**
-	 * Launch activity using custom animations if API > 16
-	 * @param parent		parent activity
-	 * @param intent			intent to launch
-	 */
-	public static void launchActivity(Activity parent, Intent intent) {
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN)
-    		parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, android.R.anim.fade_in, android.R.anim.fade_out).toBundle());
-    	else
-    		parent.startActivity(intent);
-	}
-	
-	/**
-	 * Scale a bitmap to fit within the desired size
-	 * @param bitmap	input bitmap
-	 * @param width		desired width
-	 * @param height	desired height
-	 * @return	scaled bitmap which will fit in desired size
-	 */
-	public static Bitmap scale(Bitmap bitmap, int width, int height) {
-        int bWidth=bitmap.getWidth(), bHeight=bitmap.getHeight();
-        if(bWidth<=width && bHeight<=height) 
-        	return bitmap;
-        if(BuildConfig.DEBUG) Log.v(TAG, String.format("Scaling bitmap (%1$dx%2$d) --> (%3$dx%4$d)", bWidth, bHeight, width, height));
-        float wScale = ((float)width)/bWidth;
-        float hScale = ((float)height)/bHeight;
-        float scale = Math.min(wScale, hScale);
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        if(BuildConfig.DEBUG) Log.v(TAG, "Scale factor: " + scale);
-        return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
 	}
 }

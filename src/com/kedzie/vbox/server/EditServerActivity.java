@@ -157,10 +157,10 @@ public class EditServerActivity extends SherlockActivity {
 		super.onDestroy();
 		_db.close();
 	}
-	
+
 	@Override
-	protected void finalize() throws Throwable {
-		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-		super.finalize();
+	public void finish() {
+	    super.finish();
+	    Utils.overrideBackTransition(this);
 	}
 }

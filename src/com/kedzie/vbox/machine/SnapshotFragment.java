@@ -59,8 +59,11 @@ public class SnapshotFragment extends SherlockFragment {
 
         @Override
         protected ISnapshot work(IMachine... params) throws Exception {
-            params[0].clearCacheNamed("getCurrentSnapshot");
-            ISnapshot root = params[0].getCurrentSnapshot();
+            ISnapshot root = null;
+            synchronized(params[0]) {
+                params[0].clearCacheNamed("getCurrentSnapshot");
+                root = params[0].getCurrentSnapshot();
+            }
             if(root==null) return null;
             while(root.getParent()!=null)
                 root = root.getParent();
@@ -90,19 +93,20 @@ public class SnapshotFragment extends SherlockFragment {
         }
     }
 
-    class HandleDeletedEventTask extends ActionBarTask<ISnapshot, ISnapshot> {
+    class HandleDeletedEventTask extends ActionBarTask<ISnapshotDeletedEvent, ISnapshot> {
 
         public HandleDeletedEventTask(VBoxSvc vmgr) { 
             super(getSherlockActivity(), vmgr);     
         }
 
         @Override
-        protected ISnapshot work(ISnapshot... params) throws Exception {
-            params[0].getName();
-            params[0].getDescription();
-            if(params[0].getParent()!=null) 
-                params[0].getParent().getName();
-            return params[0];
+        protected ISnapshot work(ISnapshotDeletedEvent... params) throws Exception {
+            ISnapshot snapshot = findSnapshot(_root, params[0].getSnapshotId());
+            snapshot.getName();
+            snapshot.getDescription();
+            if(snapshot.getParent()!=null) 
+                snapshot.getParent().getName();
+            return snapshot;
         }
 
         @Override
@@ -114,19 +118,21 @@ public class SnapshotFragment extends SherlockFragment {
         }
     }
 
-    class HandleAddedEventTask extends ActionBarTask<ISnapshot, ISnapshot> {
+    class HandleAddedEventTask extends ActionBarTask<ISnapshotTakenEvent, ISnapshot> {
 
         public HandleAddedEventTask(VBoxSvc vmgr) { 
             super(getSherlockActivity(), vmgr);     
         }
 
         @Override
-        protected ISnapshot work(ISnapshot... params) throws Exception {
-            params[0].getName();
-            params[0].getDescription();
-            if(params[0].getParent()!=null) 
-                params[0].getParent().getName();
-            return params[0];
+        protected ISnapshot work(ISnapshotTakenEvent... params) throws Exception {
+            _machine.clearCacheNamed("getCurrentSnapshot");
+            ISnapshot snapshot = _machine.getCurrentSnapshot();
+            snapshot.getName();
+            snapshot.getDescription();
+            if(snapshot.getParent()!=null) 
+                snapshot.getParent().getName();
+            return snapshot;
         }
 
         @Override
@@ -136,7 +142,6 @@ public class SnapshotFragment extends SherlockFragment {
                 _treeBuilder.sequentiallyAddNextNode(result, 0);
             } else {
                 ISnapshot parent = _stateManager.getNodeInfo(result.getParent()).getId();
-//                ISnapshot parent = findSnapshot(_root, result.getParent());
                 _treeBuilder.addRelation(parent, result);
             }
         }
@@ -186,25 +191,23 @@ public class SnapshotFragment extends SherlockFragment {
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_TAKEN.name())){
                 ISnapshotTakenEvent event = intent.getParcelableExtra(EventIntentService.BUNDLE_EVENT);
-                ISnapshot snapshot = _vmgr.getProxy(ISnapshot.class, event.getSnapshotId());
                 Utils.toastShort(getActivity(), "Snapshot event: %1$s", intent.getAction());
-                new HandleAddedEventTask(_vmgr).execute(snapshot);
+                new HandleAddedEventTask(_vmgr).execute(event);
 //                refresh();
             } else if(intent.getAction().equals(VBoxEventType.ON_SNAPSHOT_DELETED.name())){
                 ISnapshotDeletedEvent event = intent.getParcelableExtra(EventIntentService.BUNDLE_EVENT);
-                ISnapshot snapshot = _vmgr.getProxy(ISnapshot.class, event.getSnapshotId());
                 Utils.toastShort(getActivity(), "Snapshot event: %1$s", intent.getAction());
-                new HandleDeletedEventTask(_vmgr).execute(snapshot);
+                new HandleDeletedEventTask(_vmgr).execute(event);
 //                refresh();
             }
         }
     };
     
-    private ISnapshot findSnapshot(ISnapshot current, ISnapshot snapshot) {
-        if(current.equals(snapshot))
+    private ISnapshot findSnapshot(ISnapshot current, String id) {
+        if(current.getId().equals(id))
             return current;
         for(ISnapshot child : current.getChildren()) {
-            ISnapshot found = findSnapshot(child, snapshot);
+            ISnapshot found = findSnapshot(child, id);
             if(found!=null)
                 return found;
         }
