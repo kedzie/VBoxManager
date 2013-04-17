@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum CloneOptions {
+public enum CloneOptions implements java.io.Serializable{
     LINK("Link"),
     KEEP_ALL_MA_CS("KeepAllMACs"),
     KEEP_NATMA_CS("KeepNATMACs"),

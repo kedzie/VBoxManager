@@ -15,11 +15,11 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineView;
+import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
-import com.kedzie.vbox.metrics.MetricPreferencesActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
+import com.kedzie.vbox.task.MachineRunnable;
 
 /**
  * New machine list based on groups
@@ -33,11 +33,15 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	protected VMGroupListView _listView;
 	protected OnTreeNodeSelectListener _selectListener;
 	
-	 class LoadGroupsTask extends  DialogTask<Void, VMGroup> {
+	 /**
+	 * Load Groups and VMs
+	 */
+	class LoadGroupsTask extends  DialogTask<Void, VMGroup> {
+		
 	        private Map<String, VMGroup> groupCache = new HashMap<String, VMGroup>();
 
 	        public LoadGroupsTask(VBoxSvc vboxApi) { 
-	            super("LoadGroupsTask", getSherlockActivity(), vboxApi, "Loading Machines"); 
+	            super(getSherlockActivity(), vboxApi, R.string.progress_loading_machines); 
 	        }
 
 	        private VMGroup get(String name) {
@@ -64,22 +68,24 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                get("/").addChild(get(tmp));
 	            }
 	            for(IMachine machine : _vmgr.getVBox().getMachines()) {
-	                MachineView.cacheProperties(machine);
-	                List<String> groups = machine.getGroups();
-	                if(groups.isEmpty() || groups.get(0).equals("") || groups.get(0).equals("/"))
-	                    get("/").addChild(machine);
-	                else
-	                    get(groups.get(0)).addChild(machine);
+	                fork(new MachineRunnable(machine) {
+	                    public void run() {
+	                        Utils.cacheProperties(m);
+	                        List<String> groups = m.getGroups();
+	                        get(groups.get(0)).addChild(m);
+	                    }
+	                });
 	            }
-	            VMGroup root = get("/");
+	            join();
 	            _vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, 
-	                    Utils.getIntPreference(getActivity(), MetricPreferencesActivity.PERIOD), 
-	                    Utils.getIntPreference(getActivity(), MetricPreferencesActivity.COUNT), 
+	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_PERIOD), 
+	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_COUNT), 
 	                    (IManagedObjectRef)null);
-	            return root;
+	            return get("/");
 	        }
+	        
 	        @Override
-	        protected void onResult(VMGroup root) {
+	        protected void onSuccess(VMGroup root) {
 	            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
 	            _listView.setRoot(root);
 	            _root = root;
@@ -89,7 +95,11 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		_selectListener = (OnTreeNodeSelectListener)activity;
+		try {
+			_selectListener = (OnTreeNodeSelectListener)activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " does not implement OnTreeNodeSelectListener");
+		}
 	}
 
 	@Override
@@ -126,5 +136,6 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		outState.putParcelable(VBoxSvc.BUNDLE, _vmgr);
 		outState.putString("version", _vmgr.getVBox().getVersion());
 		outState.putParcelable(VMGroup.BUNDLE, _root);
+		//save current machine
 	}
 }

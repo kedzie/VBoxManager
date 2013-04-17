@@ -12,9 +12,10 @@ import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IStorageController extends IManagedObjectRef, Parcelable {
-	
-static final ClassLoader LOADER = IMachine.class.getClassLoader();
+	public static final String BUNDLE = "controller";
+	static final ClassLoader LOADER = IMachine.class.getClassLoader();
 	
 	public static final Parcelable.Creator<IStorageController> CREATOR = new Parcelable.Creator<IStorageController>() {
 		public IStorageController createFromParcel(Parcel in) {
@@ -30,7 +31,7 @@ static final ClassLoader LOADER = IMachine.class.getClassLoader();
 	};
 
 	@KSOAP(cacheable=true) public String getName();
-	@KSOAP(cacheable=true) public Integer getDevicesPerPortCount();
+	@KSOAP(cacheable=true) public Integer getMaxDevicesPerPortCount();
 	@KSOAP(cacheable=true) public Integer getMinPortCount();
 	@KSOAP(cacheable=true) public Integer getMaxPortCount();
 	@KSOAP(cacheable=true) public StorageBus getBus();

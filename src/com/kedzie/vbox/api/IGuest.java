@@ -14,6 +14,7 @@ import com.kedzie.vbox.soap.KSOAP;
  * <dl class="user" compact><dt><b>Interface ID:</b></dt><dd><code>{ED109B6E-0578-4B17-8ACE-52646789F1A0}</code> </dd></dl>
  */
 @KSOAP
+
 public interface IGuest extends IManagedObjectRef {
 	
     @KSOAP(cacheable=true) public Integer getMemoryBalloonSize();

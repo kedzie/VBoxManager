@@ -12,8 +12,9 @@ import com.kedzie.vbox.soap.VBoxSvc;
 
 @KSOAP(cacheable=true)
 public interface ISnapshot extends IManagedObjectRef, Parcelable {
+	public static final String BUNDLE = "snapshot";
 
-static ClassLoader loader = ISession.class.getClassLoader();
+	static ClassLoader loader = ISession.class.getClassLoader();
 	
 	public static final Parcelable.Creator<ISnapshot> CREATOR = new Parcelable.Creator<ISnapshot>() {
 		public ISnapshot createFromParcel(Parcel in) {

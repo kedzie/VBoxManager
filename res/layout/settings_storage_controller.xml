@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/storage_attributes"
+        style="@style/MediumText"
+        android:text="@string/storage_attributes" />
+    
+    <TextView
+        android:id="@+id/controller_name_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/storage_attributes"
+        android:text="Name:" />
+    
+    <EditText
+        android:id="@+id/controller_name"
+        style="@style/SmallTextPrimary"
+        android:text="BLABLA"
+        android:layout_alignBaseline="@id/controller_name_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/controller_name_label"/>
+
+    <TextView
+        android:id="@+id/controller_type_label"
+        style="@style/SmallTextPrimary"
+        android:layout_marginTop="8dp"
+        android:layout_alignRight="@id/controller_name_label"
+        android:layout_below="@id/controller_name_label"
+        android:text="Type:" />
+    
+    <Spinner 
+        android:id="@+id/controller_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/controller_type_label"
+        android:layout_alignTop="@id/controller_type_label"/>
+    
+    <CheckBox android:id="@+id/controller_host_io_cache"
+        android:text="Use host I/O cache"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+	android:layout_marginTop="8dp"
+        android:layout_below="@id/controller_type"
+        android:layout_alignLeft="@id/controller_type"/>
+    
+</RelativeLayout>

@@ -39,28 +39,29 @@
         android:id="@+id/extended_features"
         style="@style/SmallTextPrimary"
         android:layout_below="@id/numMonitors"
-        android:text="Extended Features:" />
+        android:text="@string/extended_features" />
 
     <CheckBox
         android:id="@+id/acceleration3D"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/extended_features"
         android:layout_centerHorizontal="true"
         android:text="@string/settings_3d_acceleration" />
 
     <CheckBox
         android:id="@+id/acceleration2D"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/acceleration3D"
         android:layout_centerHorizontal="true"
         android:text="@string/settings_2d_acceleration" />
 
     <TextView
         android:id="@+id/error_message"
-        style="@style/SmallText"
+        style="@style/ErrorMessage"
         android:layout_below="@id/acceleration2D"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:textColor="#FFFF0000" />
+        android:layout_marginTop="18dp"/>
 
 </RelativeLayout>

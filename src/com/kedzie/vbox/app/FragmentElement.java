@@ -25,7 +25,7 @@ public class FragmentElement implements Parcelable {
 
     public final String name;
     public final int icon;
-    public final Class<?>  clazz;
+    public Class<?>  clazz;
     public final Bundle args;
     public Fragment fragment;
 

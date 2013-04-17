@@ -7,17 +7,17 @@ import com.kedzie.vbox.api.jaxb.MachineState;
  * @author Marek Kedzierski
  */
 public enum VMAction {
-	START(VBoxApplication.getInstance().getResources().getString(R.string.vm_start)),
+	START(VBoxApplication.getInstance().getResources().getString(R.string.action_start)),
 	RESET("Reset"),
-	PAUSE("Pause"),
-	RESUME("Resume"),
+	PAUSE(VBoxApplication.getInstance().getResources().getString(R.string.action_pause)),
+	RESUME(VBoxApplication.getInstance().getResources().getString(R.string.action_resume)),
 	TAKE_SNAPSHOT("Take Snapshot"),
-	RESTORE_SNAPSHOT("Restore Snapshot"),
-	DELETE_SNAPSHOT("Delete Snapshot"),
-	SAVE_STATE("Save State"),
-	DISCARD_STATE("Discard State"),
-	POWER_BUTTON("Power Button"),
-	POWER_OFF("Power Off"),
+	RESTORE_SNAPSHOT(VBoxApplication.getInstance().getResources().getString(R.string.action_restore_snapshot)),
+	DELETE_SNAPSHOT(VBoxApplication.getInstance().getResources().getString(R.string.action_delete_snapshot)),
+	SAVE_STATE(VBoxApplication.getInstance().getResources().getString(R.string.action_save_state)),
+	DISCARD_STATE(VBoxApplication.getInstance().getResources().getString(R.string.action_discard_state)),
+	POWER_BUTTON(VBoxApplication.getInstance().getResources().getString(R.string.action_acpi)),
+	POWER_OFF(VBoxApplication.getInstance().getResources().getString(R.string.action_poweroff)),
 	VIEW_METRICS("View Metrics"),
 	TAKE_SCREENSHOT("Take Screenshot"),
 	EDIT_SETTINGS("Settings");
@@ -39,7 +39,7 @@ public enum VMAction {
 	 */
 	public static VMAction[] getVMActions(MachineState state) {
 		if(state.equals(MachineState.RUNNING)) return new VMAction[] { PAUSE, RESET, POWER_OFF , POWER_BUTTON, SAVE_STATE, TAKE_SNAPSHOT, VIEW_METRICS, TAKE_SCREENSHOT };
-		else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return VBoxApplication.getInstance().isSettingsEnabled() ? new VMAction[] { START,  TAKE_SNAPSHOT, EDIT_SETTINGS } : new VMAction[] { START,  TAKE_SNAPSHOT };
+		else if (state.equals(MachineState.POWERED_OFF) || state.equals(MachineState.ABORTED))	return new VMAction[] { START,  TAKE_SNAPSHOT, EDIT_SETTINGS };
 		else if (state.equals(MachineState.PAUSED))	return new VMAction[] { RESUME, RESET, POWER_OFF, TAKE_SNAPSHOT, TAKE_SCREENSHOT };
 		else if (state.equals(MachineState.SAVED))	return new VMAction[] { START, DISCARD_STATE };
 		return new VMAction[] {};

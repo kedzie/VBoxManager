@@ -6,21 +6,21 @@ import com.kedzie.vbox.soap.KSOAP;
 @KSOAP(prefix="IFile")
 public interface IFile extends IManagedObjectRef {
 
-	public Integer getCreationMode();
+	@KSOAP(cacheable=true) public Integer getCreationMode();
 
-	public Integer getDisposition();
+	@KSOAP(cacheable=true) public Integer getDisposition();
 
-	public String getFileName();
+	@KSOAP(cacheable=true) public String getFileName();
 
-	public Long getInitialSize();
+	@KSOAP(cacheable=true) public Long getInitialSize();
     
-	public Integer getOpenMode();
+	@KSOAP(cacheable=true) public Integer getOpenMode();
 
-	public Long getOffset();
+	@KSOAP(cacheable=true) public Long getOffset();
 
 	public void close();
 
-	public String getQueryInfo();
+	@KSOAP(cacheable=true) public IFsObjInfo getQueryInfo();
 
 	public String read(@KSOAP(type="unsignedInt", value="toRead") int toRead, @KSOAP(type="unsignedInt", value="timeoutMS") int timeoutMS);
 

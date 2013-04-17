@@ -1,7 +1,5 @@
 package com.kedzie.vbox.app;
 
-import android.support.v4.app.Fragment;
-
 import com.actionbarsherlock.app.ActionBar;
 
 /**
@@ -31,6 +29,4 @@ public interface TabSupport {
 	public abstract void removeAllTabs();
 	
 	public void setCurrentTab(int position);
-	
-	public Fragment getCurrentFragment();
 }

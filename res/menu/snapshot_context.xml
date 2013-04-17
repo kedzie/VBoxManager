@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/context_menu_restore_snapshot" 
-        android:title="@string/menu_context_snapshot_restore"  
+        android:title="@string/action_restore_snapshot"  
         android:icon="@drawable/ic_list_start"/>
     
     <item android:id="@+id/context_menu_delete_snapshot" 
-        android:title="@string/menu_context_snapshot_delete"
+        android:title="@string/action_delete_snapshot"
         android:icon="@drawable/ic_list_snapshot_del"  />
     
     <item android:id="@+id/context_menu_details_snapshot" 

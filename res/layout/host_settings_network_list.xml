@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp" >
+    
+    <ListView android:id="@+id/host_interface_list"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"/>
+
+<RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+    
+    <TextView
+        android:id="@+id/host_interface_adapter_label"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/host_interface_list"
+        android:layout_alignRight="@+id/host_interface_dhcp_enabled_label"
+        android:text="@string/host_interface_adapter" />
+    
+    <TextView
+        android:id="@+id/host_interface_adapter"
+        style="@style/SmallTextPrimary"
+        android:layout_alignBaseline="@id/host_interface_adapter_label"
+        android:layout_toRightOf="@id/host_interface_adapter_label"/>
+
+    <TextView
+        android:id="@id/host_interface_dhcp_enabled_label"
+        style="@style/SmallTextPrimary"
+        android:layout_below="@id/host_interface_adapter_label"
+        android:text="@string/host_interface_dhcp_enabled" />
+    
+    <TextView
+        android:id="@+id/host_interface_dhcp_enabled"
+        style="@style/SmallTextPrimary"
+        android:layout_alignBaseline="@id/host_interface_dhcp_enabled_label"
+        android:layout_toRightOf="@id/host_interface_dhcp_enabled_label"/>
+    
+    </RelativeLayout>
+
+</LinearLayout>

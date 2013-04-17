@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <CheckBox
+        android:id="@+id/enabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enable Audio" />
+    
+    <TextView android:id="@+id/audio_driver_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/enabled" 
+        android:text="Host Audio Driver:" />
+    
+    <Spinner android:id="@+id/audio_driver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/audio_driver_label"
+        android:layout_alignTop="@id/audio_driver_label"/>
+    
+    <TextView android:id="@+id/audio_controller_label"
+        style="@style/SmallTextPrimary" 
+        android:layout_below="@id/audio_driver" 
+        android:layout_alignRight="@id/audio_driver_label"
+        android:text="Audio Controller:" />
+    
+    <Spinner android:id="@+id/audio_controller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/audio_controller_label"
+        android:layout_alignTop="@id/audio_controller_label"/>
+    
+</RelativeLayout>

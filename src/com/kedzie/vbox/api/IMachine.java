@@ -1,6 +1,7 @@
 package com.kedzie.vbox.api;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import com.kedzie.vbox.api.jaxb.CloneOptions;
 import com.kedzie.vbox.api.jaxb.DeviceType;
 import com.kedzie.vbox.api.jaxb.FirmwareType;
 import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
+import com.kedzie.vbox.api.jaxb.IMediumAttachment;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.SessionState;
@@ -41,6 +43,7 @@ in a separate interface called {@link IConsole}.<p>
 <dl><dt><b>See also:</b></dt><dd>{@link ISession}, {@link IConsole}</dd></dl>
 <dl><dt><b>Interface ID:</b></dt><dd><code>{5EAA9319-62FC-4B0A-843C-0CB1940F8A91}</code> </dd></dl>
  */
+@KSOAP
 public interface IMachine extends IManagedObjectRef, TreeNode {
 	public static String BUNDLE = "machine";
 	static final ClassLoader LOADER = IMachine.class.getClassLoader();
@@ -139,7 +142,8 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	/**
 	 * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM. 
 	 */
-	@KSOAP(cacheable=true) public Boolean getHpetEnabled();
+	@KSOAP(cacheable=true) public boolean getHPETEnabled();
+	@Asyncronous public void setHPETEnabled(@KSOAP("HPETEnabled") boolean hpetEnabled);
  	
 	/**
 	 * @return  Chipset type used in this VM. 
@@ -159,7 +163,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
 	 */
 	@KSOAP(cacheable=true) public List<String> getGroups();
-	public void setGroups(@KSOAP("groups")String...group);
+	@Asyncronous public void setGroups(@KSOAP("groups")String...group);
 	
 	@KSOAP(cacheable=true) public IBIOSSettings getBIOSSettings();
 	
@@ -174,23 +178,40 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	
 	@KSOAP(cacheable=true) public IAudioAdapter getAudioAdapter();
 	
-	@KSOAP(cacheable=true) public List<MediumAttachment>getMediumAttachments();
-	@KSOAP(cacheable=true) public IMedium getMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device);
-	@KSOAP(cacheable=true) public MediumAttachment getMediumAttachment(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device);
-	@KSOAP(cacheable=true) public List<MediumAttachment> getMediumAttachmentsOfController(@KSOAP("name") String name);
+	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment>getMediumAttachments() throws IOException;
+	@KSOAP(cacheable=true) public IMedium getMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
+	@KSOAP(cacheable=true) public IMediumAttachment getMediumAttachment(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
+	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment> getMediumAttachmentsOfController(@KSOAP("name") String name);
 	
-	@KSOAP(cacheable=true) public List<IStorageController>getStorageControllers();
+	@KSOAP(cacheable=true) public ArrayList<IStorageController>getStorageControllers();
 	@KSOAP(cacheable=true) public IStorageController getStorageControllerByName(@KSOAP("name") String name);
 	@KSOAP(cacheable=true) public IStorageController getStorageControllerByInstance(@KSOAP(type="unsignedInt", value="instance") int instance);
 	@Asyncronous public void removeStorageController(@KSOAP("name") String name);
-	public IStorageController addStorageController(@KSOAP("name") String name, @KSOAP("connectionType") StorageBus connectionType);
-	@Asyncronous public void setStorageControllerBootable(@KSOAP("name") String name, @KSOAP("bootable") boolean bootable);
+	public IStorageController addStorageController(@KSOAP("name") String name, @KSOAP("connectionType") StorageBus connectionType) throws IOException;
+	@Asyncronous public void setStorageControllerBootable(@KSOAP("name") String name, @KSOAP("bootable") boolean bootable) throws IOException;
 	
-	public void attachDevice(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("type") DeviceType type, @KSOAP("medium") IMedium medium);
-	public void attachDeviceWithoutMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("type") DeviceType type);
+	public void attachDevice(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("type") DeviceType type, @KSOAP("medium") IMedium medium) throws IOException;
+	public void attachDeviceWithoutMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("type") DeviceType type) throws IOException;
 	
-	public void mountMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("medium") IMedium medium, @KSOAP("force") boolean force);
-	public void unmountMedium(@KSOAP("name") String name, @KSOAP(type="unsignedInt", value="controllerPort") int controllerPort, @KSOAP(type="unsignedInt", value="device") int device, @KSOAP("force") boolean force);
+	/**
+	 * <p>Detaches the device attached to a device slot of the specified bus. </p>
+	 * <p>Detaching the device from the virtual machine is deferred. This means that the medium remains associated with the machine when this method returns and gets actually de-associated only after a successful <a class="el" href="interface_i_machine.html#a2eb47e1d878566569b26893cc12bd8e1">saveSettings</a><b></b> call. See <a class="el" href="interface_i_medium.html">IMedium</a><b></b> for more detailed information about attaching media.</p>
+	 * <dl><dt><b>Expected result codes:</b></dt><dd><table>
+	 * <tbody><tr><td>{@link IVirtualBox#VBOX_E_INVALID_VM_STATE}</td><td>Attempt to detach medium from a running virtual machine.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_OBJECT_NOT_FOUND}</td><td>No medium attached to given slot/bus.   </td></tr>
+	 * <tr><td>{@link IVirtualBox#VBOX_E_NOT_SUPPORTED}</td><td>Medium format does not support storage deletion (only for implicitly created differencing media, should not happen).   </td></tr>
+	 * </tbody></table></dd></dl>
+	 * <dl><dt><b>Note:</b></dt><dd>You cannot detach a device from a running machine.</dd><dd>
+Detaching differencing media implicitly created by {@link attachDevice} for the indirect attachment using this method will <b>not</b> implicitly delete them. The {@link IMedium#deleteStorage} 
+operation should be explicitly performed by the caller after the medium is successfully detached and the settings are saved with {@link saveSettings}, if it is the desired action. </dd></dl>
+	 * @param name			Name of the storage controller to detach the medium from.
+	 * @param controllerPort		Port number to detach the medium from.
+	 * @param device		Device slot number to detach the medium from.
+	 */
+	public void detachDevice(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
+	
+	public void mountMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("medium") IMedium medium, @KSOAP("force") boolean force) throws IOException;
+	public void unmountMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device, @KSOAP("force") boolean force) throws IOException;
 		
  	/**
 	 * @return  Full path to the directory used to store snapshot data (differencing media and saved state files) of this machine. 
@@ -199,10 +220,10 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	
 	@KSOAP(cacheable=true) public INetworkAdapter getNetworkAdapter(@KSOAP(type="unsignedInt", value="slot") int slot);
  	
-// 	/**
-//	 * @return  VirtualBox Remote Desktop Extension (VRDE) server object. 
-//	 */
-//	@KSOAP(cacheable=true) public  IVRDEServer 	getVRDEServer();
+ 	/**
+	 * @return  VirtualBox Remote Desktop Extension (VRDE) server object. 
+	 */
+	@KSOAP(cacheable=true) public  IVRDEServer getVRDEServer();
 	
  	/**
  	 * @return Current session state for this machine. 
@@ -213,6 +234,8 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * @return  Type of the session. 
 	 */
 	@KSOAP(cacheable=true) public SessionType getSessionType();
+	
+	@KSOAP(cacheable=true) public Boolean getSettingsModified();
 	
 	/**
 	 * @return Identifier of the session process. 
@@ -227,7 +250,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	/**
 	 * @return Number of snapshots taken on this machine. 
 	 */
-	@KSOAP(cacheable=true) public  Long getSnapshotCount();
+	@KSOAP(cacheable=true) public  Integer getSnapshotCount();
 	
 	/**
 	 * @return	Current snapshot of this machine. 
@@ -238,7 +261,12 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * @return Returns true if the current state of the machine is not identical to the state stored in the current snapshot. 
 	 */
 	@KSOAP(cacheable=true) public Boolean getCurrentStateModified();
+	
+	@KSOAP(cacheable=true) public Boolean getIOCacheEnabled();
+	@Asyncronous public void setIOCacheEnabled(@KSOAP("IOCacheEnabled") boolean ioEnabled);
 
+	@KSOAP(cacheable=true) public Integer getIOCacheSize();
+	@Asyncronous public void setIOCacheSize(@KSOAP(type="unsignedInt", value="IOCacheSize") int ioCacheSize);
 	
 	/**
 	 * <p>Locks the machine for the given session to enable the caller to make changes to the machine or start the VM or control VM execution.</p> 
@@ -361,4 +389,10 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	public void saveSettings();
 	
 	public void discardSettings();
+	
+	@KSOAP(cacheable=true) String getExtraData(@KSOAP("key") String key) throws IOException;
+	
+	@Asyncronous public void setExtraData(@KSOAP("key") String key, @KSOAP("value") String value) throws IOException;
+	
+	@KSOAP(cacheable=true) List<String> getExtraDataKeys() throws IOException;
 }

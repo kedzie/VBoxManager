@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessCreateFlag {
+import java.io.Serializable;
+
+public enum ProcessCreateFlag implements Serializable{
     NONE("None"),
     WAIT_FOR_PROCESS_START_ONLY("WaitForProcessStartOnly"),
     IGNORE_ORPHANED_PROCESSES("IgnoreOrphanedProcesses"),

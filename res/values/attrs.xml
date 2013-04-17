@@ -11,7 +11,8 @@
     <declare-styleable name="Panel">
        <attr name="name" format="string" />
        <attr name="headerIcon" format="reference" />
-       <attr name="collapseDrawable" format="reference" />
+       <attr name="collapseRotation" format="integer" />
+       <attr name="expanded" format="boolean"/>
    </declare-styleable>
    
     <declare-styleable name="SliderView">
@@ -21,5 +22,9 @@
        <attr name="maxValidValue" format="integer" />
        <attr name="minValue" format="integer" />
        <attr name="maxValue" format="integer" />
+   </declare-styleable>
+   
+    <declare-styleable name="RegexEditText">
+       <attr name="regex" format="string" />
    </declare-styleable>
 </resources>

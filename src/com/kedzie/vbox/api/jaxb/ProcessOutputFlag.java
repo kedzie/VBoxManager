@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessOutputFlag {
+import java.io.Serializable;
+
+public enum ProcessOutputFlag implements Serializable{
     NONE("None"),
     STD_ERR("StdErr");
     private final String value;

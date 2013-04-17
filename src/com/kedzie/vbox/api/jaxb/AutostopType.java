@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AutostopType {
+public enum AutostopType implements java.io.Serializable{
     DISABLED("Disabled"),
     SAVE_STATE("SaveState"),
     POWER_OFF("PowerOff"),

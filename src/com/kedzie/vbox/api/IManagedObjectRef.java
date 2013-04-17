@@ -13,9 +13,8 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @apiviz.stereotype Proxy
  * @apiviz.category Proxy
  */
+@KSOAP
 public interface IManagedObjectRef  {
-	
-	public Class<? extends IManagedObjectRef> getInterface();
 	
 	/**
 	 * @return Managed object identifier
@@ -41,7 +40,7 @@ public interface IManagedObjectRef  {
 	/**
 	 * @return VirtualBox JAXWS API
 	 */
-	public VBoxSvc getVBoxAPI();
+	public VBoxSvc getAPI();
 	
 	/**
 	 * Returns the name of the interface that this managed object represents, for example, "IMachine", as a string. 

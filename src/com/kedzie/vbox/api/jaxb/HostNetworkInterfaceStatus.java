@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum HostNetworkInterfaceStatus {
+import java.io.Serializable;
+
+public enum HostNetworkInterfaceStatus implements Serializable{
     UNKNOWN("Unknown"),
     UP("Up"),
     DOWN("Down");

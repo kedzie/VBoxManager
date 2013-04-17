@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum USBDeviceFilterAction {
+import java.io.Serializable;
+
+public enum USBDeviceFilterAction implements Serializable{
     NULL("Null"),
     IGNORE("Ignore"),
     HOLD("Hold");

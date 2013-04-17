@@ -2,99 +2,6 @@
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" name="VirtualBox"  targetNamespace="http://www.virtualbox.org/">
 
-   <!--Interface IHost-->
-      <!-- readonly attribute IHost::DVDDrives-->
-      <xsd:element name="IHost_getDVDDrives">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getDVDDrivesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IHost::floppyDrives-->
-      <xsd:element name="IHost_getFloppyDrives">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getFloppyDrivesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IHost::USBDevices-->
-      <xsd:element name="IHost_getUSBDevices">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getUSBDevicesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IHost::USBDeviceFilters-->
-      <xsd:element name="IHost_getUSBDeviceFilters">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getUSBDeviceFiltersResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IHost::networkInterfaces-->
-      <xsd:element name="IHost_getNetworkInterfaces">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getNetworkInterfacesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-     
-      <!-- method IHost::getProcessorFeature-->
-      <xsd:element name="IHost_getProcessorFeature">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="feature" type="vbox:ProcessorFeature"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getProcessorFeatureResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       
       <!-- method IHost::getProcessorDescription-->
       <xsd:element name="IHost_getProcessorDescription">
@@ -112,6 +19,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IHost::getProcessorCPUIDLeaf-->
       <xsd:element name="IHost_getProcessorCPUIDLeaf">
         <xsd:complexType>
@@ -133,38 +41,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- method IHost::createHostOnlyNetworkInterface-->
-      <xsd:element name="IHost_createHostOnlyNetworkInterface">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_createHostOnlyNetworkInterfaceResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="hostInterface" type="xsd:string"/>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IHost::removeHostOnlyNetworkInterface-->
-      <xsd:element name="IHost_removeHostOnlyNetworkInterface">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="id" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_removeHostOnlyNetworkInterfaceResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
+      
       <!-- method IHost::createUSBDeviceFilter-->
       <xsd:element name="IHost_createUSBDeviceFilter">
         <xsd:complexType>
@@ -181,6 +58,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IHost::insertUSBDeviceFilter-->
       <xsd:element name="IHost_insertUSBDeviceFilter">
         <xsd:complexType>
@@ -196,6 +74,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IHost::removeUSBDeviceFilter-->
       <xsd:element name="IHost_removeUSBDeviceFilter">
         <xsd:complexType>
@@ -210,86 +89,7 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
-      <!-- method IHost::findHostDVDDrive-->
-      <xsd:element name="IHost_findHostDVDDrive">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="name" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_findHostDVDDriveResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IHost::findHostFloppyDrive-->
-      <xsd:element name="IHost_findHostFloppyDrive">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="name" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_findHostFloppyDriveResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IHost::findHostNetworkInterfaceByName-->
-      <xsd:element name="IHost_findHostNetworkInterfaceByName">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="name" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_findHostNetworkInterfaceByNameResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IHost::findHostNetworkInterfaceById-->
-      <xsd:element name="IHost_findHostNetworkInterfaceById">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="id" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_findHostNetworkInterfaceByIdResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IHost::findHostNetworkInterfacesOfType-->
-      <xsd:element name="IHost_findHostNetworkInterfacesOfType">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="type" type="vbox:HostNetworkInterfaceType"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_findHostNetworkInterfacesOfTypeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
+      
       <!-- method IHost::findUSBDeviceById-->
       <xsd:element name="IHost_findUSBDeviceById">
         <xsd:complexType>
@@ -306,6 +106,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      
       <!-- method IHost::findUSBDeviceByAddress-->
       <xsd:element name="IHost_findUSBDeviceByAddress">
         <xsd:complexType>
@@ -316,21 +117,6 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IHost_findUSBDeviceByAddressResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IHost::generateMACAddress-->
-      <xsd:element name="IHost_generateMACAddress">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_generateMACAddressResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>

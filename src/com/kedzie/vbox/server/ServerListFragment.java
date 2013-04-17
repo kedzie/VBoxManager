@@ -23,12 +23,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 
@@ -43,7 +43,14 @@ public class ServerListFragment extends SherlockFragment {
     static final int RESULT_CODE_DELETE = 0x000F;
     private static final String FIRST_RUN_PREFERENCE = "first_run";
     
+    /**
+     * Handle Server selection
+     */
     public static interface OnSelectServerListener {
+    	
+        /**
+         * @param server	the selected {@link Server}
+         */
         public void onSelectServer(Server server);
     }
     
@@ -53,17 +60,19 @@ public class ServerListFragment extends SherlockFragment {
     class LoadServersTask extends ActionBarTask<Void, List<Server>> {
 
         public LoadServersTask() {
-            super("LoadServersTask", getSherlockActivity(),  null); 
+            super(getSherlockActivity(),  null); 
         }
         @Override 
         protected List<Server> work(Void... params) throws Exception { 
             return _db.query(); 
         }
         @Override 
-        protected void onResult(List<Server> result)    {
+        protected void onSuccess(List<Server> result)    {
             _listView.setAdapter(new ServerListAdapter(getSherlockActivity(), result));
             if(result.isEmpty())
             	showAddNewServerPrompt();
+            else 
+            	checkIfFirstRun(result.get(0));
         }
     }
 
@@ -92,10 +101,13 @@ public class ServerListFragment extends SherlockFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
         	if(convertView==null) {
-        		convertView = _inflater.inflate(R.layout.simple_list_item, parent, false);
-        	}
-        	Utils.setTextView(convertView, R.id.list_item_text, getItem(position).toString());
-        	return convertView;
+            	convertView = _inflater.inflate(R.layout.simple_selectable_list_item, parent, false);
+            	convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
+            }
+            TextView text1 = (TextView)convertView.getTag();
+            text1.setText(getItem(position).toString());
+            text1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_list_vbox, 0, 0, 0);
+            return convertView;
         }
     }
     
@@ -113,13 +125,14 @@ public class ServerListFragment extends SherlockFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        _listView = new ListView(getActivity());
+        _listView = (ListView)inflater.inflate(R.layout.list, container, false);
+        _dualPane = getActivity().findViewById(R.id.details)!=null;
         _listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
         _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             	if(_dualPane)
-            		view.setSelected(true);
+            		_listView.setSelection(position);
                 _listener.onSelectServer(getAdapter().getItem(position));
             }
         });
@@ -130,9 +143,8 @@ public class ServerListFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(getActivity() instanceof ServerListFragmentActivity); //this is a hack
+        setHasOptionsMenu(true);
         _db = new ServerSQlite(getActivity());
-        _dualPane = getActivity().findViewById(R.id.details)!=null;
     }
     
     @Override
@@ -170,13 +182,12 @@ public class ServerListFragment extends SherlockFragment {
     protected void showAddNewServerPrompt() {
     	new AlertDialog.Builder(getActivity())
         .setTitle(R.string.add_server_title)
-        .setMessage(_dualPane ? R.string.add_server_cannot : R.string.add_server_question)
+        .setMessage(R.string.add_server_question)
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setPositiveButton("OK", new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	dialog.dismiss();
-            	if(!_dualPane)
             		addServer();
             }
         })
@@ -196,8 +207,11 @@ public class ServerListFragment extends SherlockFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.server_list_option_menu_add:
+            case R.id.menu_add:
                 addServer();
+                return true;
+            case R.id.menu_help:
+                Utils.launchActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
                 return true;
             }
         return false;
@@ -206,8 +220,8 @@ public class ServerListFragment extends SherlockFragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         menu.add(Menu.NONE, R.id.server_list_context_menu_select, Menu.NONE, R.string.server_connect);
-        menu.add(Menu.NONE, R.id.server_list_context_menu_edit, Menu.NONE, R.string.server_edit);
-        menu.add(Menu.NONE, R.id.server_list_context_menu_delete, Menu.NONE, "Delete");
+        menu.add(Menu.NONE, R.id.server_list_context_menu_edit, Menu.NONE, R.string.edit);
+        menu.add(Menu.NONE, R.id.server_list_context_menu_delete, Menu.NONE, R.string.delete);
     }
 
     @Override
@@ -219,7 +233,7 @@ public class ServerListFragment extends SherlockFragment {
     			_listener.onSelectServer(getAdapter().getItem(position));
     			return true;
     		case R.id.server_list_context_menu_edit:
-    			VBoxApplication.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)s));
+    			Utils.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)s));
     			return true;
     		case R.id.server_list_context_menu_delete:
     			_db.delete(s.getId());
@@ -234,6 +248,6 @@ public class ServerListFragment extends SherlockFragment {
      * Launch activity to create a new Server
      */
     private void addServer() {
-    		VBoxApplication.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)new Server()));
+    		Utils.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)new Server()));
     }
 }

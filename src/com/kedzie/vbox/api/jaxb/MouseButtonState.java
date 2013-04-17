@@ -1,7 +1,9 @@
 
 package com.kedzie.vbox.api.jaxb;
 
-public enum MouseButtonState {
+import java.io.Serializable;
+
+public enum MouseButtonState implements Serializable{
     LEFT_BUTTON("LeftButton"),
     RIGHT_BUTTON("RightButton"),
     MIDDLE_BUTTON("MiddleButton"),

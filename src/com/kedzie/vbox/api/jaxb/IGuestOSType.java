@@ -4,37 +4,91 @@ import java.io.Serializable;
 
 import com.kedzie.vbox.soap.KSoapObject;
 
-@KSoapObject(namespace="http://www.virtualbox.org", value="IGuestOSType")
+@KSoapObject("IGuestOSType")
 public class IGuestOSType implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	/** Guest OS family identifier string. */
 	protected String familyId;
+	
+    /** Human readable description of the guest OS family. */
     protected String familyDescription;
+    
+    /** Guest OS identifier string. */
     protected String id;
+    
+    /** Human readable description of the guest OS. */
     protected String description;
+    
+    /** Returns true if the given OS is 64-bit. */
     protected Boolean is64Bit;
+    
+    /** Returns true if IO APIC recommended for this OS type. */
     protected Boolean recommendedIOAPIC;
+    
+    /** Returns true if VT-x or AMD-V recommended for this OS type. */
     protected Boolean recommendedVirtEx;
+    
+    /** Recommended RAM size in Megabytes. */
     protected Long recommendedRAM;
+    
+    /**Recommended video RAM size in Megabytes.  */
     protected Long recommendedVRAM;
+    
+    /** Returns true if 2D video acceleration is recommended for this OS type. */
     protected Boolean recommended2DVideoAcceleration;
+    
+    /** Returns true if 3D acceleration is recommended for this OS type. */
     protected Boolean recommended3DAcceleration;
+    
+    /**Recommended hard disk size in bytes.  */
     protected Long recommendedHDD;
+    
+    /**Returns recommended network adapter for this OS type.  */
     protected NetworkAdapterType adapterType;
+    
+    /** Returns true if using PAE is recommended for this OS type. */
     protected Boolean recommendedPAE;
+    
+    /** Recommended storage controller type for DVD/CD drives. */
     protected StorageControllerType recommendedDVDStorageController;
+    
+    /**Recommended storage bus type for DVD/CD drives.  */
     protected StorageBus recommendedDVDStorageBus;
+    
+    /** Recommended storage controller type for HD drives. */
     protected StorageControllerType recommendedHDStorageController;
+    
+    /**Recommended storage bus type for HD drives.  */
     protected StorageBus recommendedHDStorageBus;
+    
+    /** Recommended firmware type. */
     protected FirmwareType recommendedFirmware;
+    
+    /** Returns true if using USB Human Interface Devices, such as keyboard and mouse recommended. */
     protected Boolean recommendedUSBHID;
+    
+    /**Returns true if using HPET is recommended for this OS type.  */
     protected Boolean recommendedHPET;
+    
+    /** Returns true if using a USB Tablet is recommended. */
     protected Boolean recommendedUSBTablet;
+    
+    /**Returns true if the RTC of this VM should be set to UTC.  */
     protected Boolean recommendedRTCUseUTC;
+    
+    /** Recommended chipset type. */
     protected ChipsetType recommendedChipset;
+    
+    /**Recommended audio type.  */
     protected AudioControllerType recommendedAudioController;
+    
+    /** Returns true a floppy drive is recommended for this OS type. */
     protected Boolean recommendedFloppy;
+    
+    /** Returns true a USB controller is recommended for this OS type. */
     protected Boolean recommendedUSB;
+    
     /**
      * Gets the value of the familyId property.
      * 

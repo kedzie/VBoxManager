@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DirectoryCreateFlag {
+public enum DirectoryCreateFlag implements java.io.Serializable{
     NONE("None"),
     PARENTS("Parents");
     private final String value;

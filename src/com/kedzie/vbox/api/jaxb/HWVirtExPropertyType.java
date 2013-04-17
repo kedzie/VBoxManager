@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum HWVirtExPropertyType {
+import java.io.Serializable;
+
+public enum HWVirtExPropertyType implements Serializable{
     NULL("Null"),
     ENABLED("Enabled"),
     EXCLUSIVE("Exclusive"),

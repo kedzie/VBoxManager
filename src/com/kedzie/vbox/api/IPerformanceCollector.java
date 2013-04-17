@@ -46,6 +46,7 @@ import com.kedzie.vbox.soap.KSOAP;
 * </ul>
  * @see {@link ISession}
  */
+@KSOAP
 public interface IPerformanceCollector extends IManagedObjectRef {
 	public static final String CPU_LOAD_USER = "CPU/Load/User";
 	public static final String CPU_LOAD_KERNEL = "CPU/Load/Kernel";

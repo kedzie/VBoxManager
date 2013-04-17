@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum PointingHIDType {
+import java.io.Serializable;
+
+public enum PointingHIDType implements Serializable{
     NONE("None"),
     PS_2_MOUSE("PS2Mouse"),
     USB_MOUSE("USBMouse"),

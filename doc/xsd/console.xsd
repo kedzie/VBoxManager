@@ -79,21 +79,6 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IConsole::VRDEServerInfo-->
-      <xsd:element name="IConsole_getVRDEServerInfo">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IConsole_getVRDEServerInfoResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="vbox:IVRDEServerInfo"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
 
       <!-- readonly attribute IConsole::attachedPCIDevices-->
       <xsd:element name="IConsole_getAttachedPCIDevices">

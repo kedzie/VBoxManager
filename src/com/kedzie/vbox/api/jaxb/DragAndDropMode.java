@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DragAndDropMode {
+public enum DragAndDropMode implements java.io.Serializable{
     DISABLED("Disabled"),
     HOST_TO_GUEST("HostToGuest"),
     GUEST_TO_HOST("GuestToHost"),

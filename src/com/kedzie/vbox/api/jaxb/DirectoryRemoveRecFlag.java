@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DirectoryRemoveRecFlag {
+public enum DirectoryRemoveRecFlag implements java.io.Serializable{
     NONE("None"),
     CONTENT_AND_DIR("ContentAndDir"),
     CONTENT_ONLY("ContentOnly");

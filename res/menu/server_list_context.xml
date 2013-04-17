@@ -10,7 +10,4 @@
 <item android:id="@+id/server_list_context_menu_delete"  
     android:title="Delete"   />
 
-<item android:id="@+id/server_list_context_menu_ping"  
-    android:title="Ping"  />
-
 </menu>

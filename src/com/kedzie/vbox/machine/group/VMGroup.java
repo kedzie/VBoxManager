@@ -6,19 +6,39 @@ import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.common.base.Objects;
 import com.kedzie.vbox.api.IMachine;
 
 /**
  * Group of Virtual Machines
- * @author Marek Kędzierski
  */
 public class VMGroup implements TreeNode {
     public static String BUNDLE = "group";
     
-    private List<TreeNode> _children;
+    private static final ClassLoader LOADER = VMGroup.class.getClassLoader();
+    
+    public static final Parcelable.Creator<VMGroup> CREATOR  = new Parcelable.Creator<VMGroup>() {
+        @Override
+        public VMGroup createFromParcel(Parcel source) {
+            VMGroup group = new VMGroup(source.readString());
+            for(Parcelable p : source.readParcelableArray(LOADER))
+                group.addChild((TreeNode)p);
+            return group;
+        }
+        @Override
+        public VMGroup[] newArray(int size) {
+            return new VMGroup[size];
+        }
+    };
+    
+    /** Group name */
     private String _name;
-    private int numGroups;
-    private int numMachines;
+    /** # of sub-groups */
+    private int _numGroups;
+    /** # of sub-machines */
+    private int _numMachines;
+    /** Children elements, other {@link VMGroup}s or {@link IMachine}s */
+    private List<TreeNode> _children;
     
     public VMGroup(String name) {
         _name = name;
@@ -29,7 +49,6 @@ public class VMGroup implements TreeNode {
             _children  = new ArrayList<TreeNode>();
         return _children;
     }
-    
     public void setChildren(List<TreeNode> children) {
         _children = children;
     }
@@ -38,18 +57,37 @@ public class VMGroup implements TreeNode {
         if(!getChildren().contains(child)) {
             getChildren().add(child);
             if(child instanceof VMGroup)
-                numGroups++;
+                _numGroups++;
             else if(child instanceof IMachine)
-                numMachines++;
+                _numMachines++;
         }
+    }
+    
+    public void removeChild(TreeNode child) {
+    	getChildren().remove(child);
+    	if(child instanceof VMGroup)
+            _numGroups--;
+        else if(child instanceof IMachine)
+            _numMachines--;
     }
     
     public String getName() {
         return _name;
     }
-    
     public void setName(String name) {
         _name=name;
+    }
+    public int getNumGroups() {
+        return _numGroups;
+    }
+    public void setNumGroups(int numGroups) {
+        _numGroups = numGroups;
+    }
+    public int getNumMachines() {
+        return _numMachines;
+    }
+    public void setNumMachines(int numMachines) {
+        _numMachines = numMachines;
     }
     
     public static String getTreeString(int level, TreeNode node) {
@@ -67,19 +105,23 @@ public class VMGroup implements TreeNode {
         return str.toString();
     }
     
+    @Override
     public String toString() {
         return _name;
     }
     
+    @Override
     public boolean equals(Object other) {
-        if(!(other instanceof VMGroup)) 
+    	if(this==other) return true;
+        if(other==null || !(other instanceof VMGroup)) 
             return false;
         VMGroup that = (VMGroup)other;
-        return this._name.equals(that._name);
+        return Objects.equal(_name, that._name);
     }
     
+    @Override
     public int hashCode() {
-        return _name.hashCode();
+        return Objects.hashCode(_name);
     }
 
     @Override
@@ -92,34 +134,4 @@ public class VMGroup implements TreeNode {
         dest.writeString(_name);
         dest.writeParcelableArray(  getChildren().toArray(new TreeNode [getChildren().size()]), 0);
     }
-    
-    public int getNumGroups() {
-        return numGroups;
-    }
-
-    public void setNumGroups(int numGroups) {
-        this.numGroups = numGroups;
-    }
-
-    public int getNumMachines() {
-        return numMachines;
-    }
-
-    public void setNumMachines(int numMachines) {
-        this.numMachines = numMachines;
-    }
-
-    public static final Parcelable.Creator<VMGroup> CREATOR  = new Parcelable.Creator<VMGroup>() {
-        @Override
-        public VMGroup createFromParcel(Parcel source) {
-            VMGroup group = new VMGroup(source.readString());
-            for(Parcelable p : source.readParcelableArray(VMGroup.class.getClassLoader()))
-                group.addChild((TreeNode)p);
-            return group;
-        }
-        @Override
-        public VMGroup[] newArray(int size) {
-            return new VMGroup[size];
-        }
-    };
 }

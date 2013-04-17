@@ -1,7 +1,7 @@
 package com.kedzie.vbox.api.jaxb;
 
 import java.io.Serializable;
-public enum SessionState  implements Serializable  {
+public enum SessionState implements Serializable {
     NULL("Null"),
     UNLOCKED("Unlocked"),
     LOCKED("Locked"),

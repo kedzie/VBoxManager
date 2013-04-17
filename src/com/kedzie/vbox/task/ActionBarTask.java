@@ -11,28 +11,30 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @author Marek Kędzierski
  */
 public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Output> {
-
-	protected SherlockFragmentActivity _sherlockActivity;
+	
+	/** # of active tasks, use to enable/disable indeterminate progress  */
+	private static int _numActiveTasks;
 	
 	/**
 	 * @param TAG LogCat tag
 	 * @param ctx calling Activity
 	 * @param vmgr VirtualBox API service
 	 */
-	public ActionBarTask(String TAG, SherlockFragmentActivity ctx, VBoxSvc vmgr) {
-		super(TAG, ctx, vmgr);
-		_sherlockActivity = ctx;
+	public ActionBarTask(SherlockFragmentActivity context, VBoxSvc vmgr) {
+		super(context, vmgr);
 	}
 	
 	@Override
 	protected void onPreExecute()		{
-		_sherlockActivity.setSupportProgressBarIndeterminateVisibility(true);
+		_numActiveTasks++;
+		getContext().setSupportProgressBarIndeterminateVisibility(true);
 	}
 	
 	@Override
 	protected final void onPostExecute(Output result)	{
-		_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
-		_sherlockActivity.setSupportProgressBarVisibility(false);
+		if(--_numActiveTasks==0)
+			getContext().setSupportProgressBarIndeterminateVisibility(false);
+		getContext().setSupportProgressBarVisibility(false);
 		super.onPostExecute(result);
 	}
 
@@ -40,11 +42,11 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 	protected void onProgressUpdate(IProgress... p) {
 		if(_indeterminate) {
 			_indeterminate=false;
-			_sherlockActivity.setSupportProgressBarIndeterminateVisibility(false);
-			_sherlockActivity.setSupportProgressBarIndeterminate(false);
-			_sherlockActivity.setSupportProgressBarVisibility(true);
+			getContext().setSupportProgressBarIndeterminateVisibility(false);
+			getContext().setSupportProgressBarIndeterminate(false);
+			getContext().setSupportProgressBarVisibility(true);
 		}
-		_sherlockActivity.setSupportProgress(p[0].getPercent());
-		_sherlockActivity.setSupportSecondaryProgress(p[0].getOperationPercent());
+		getContext().setSupportProgress(p[0].getPercent());
+		getContext().setSupportSecondaryProgress(p[0].getOperationPercent());
 	}
 }

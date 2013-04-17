@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-     <dimen name="screenshot_size">256dp</dimen>
+     <dimen name="screenshot_size">350dp</dimen>
 </resources>

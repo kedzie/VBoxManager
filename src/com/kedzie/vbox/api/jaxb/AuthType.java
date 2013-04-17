@@ -1,6 +1,7 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum AuthType {
+
+public enum AuthType implements java.io.Serializable {
     NULL("Null"),
     EXTERNAL("External"),
     GUEST("Guest");

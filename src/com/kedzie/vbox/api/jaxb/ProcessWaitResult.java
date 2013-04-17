@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum ProcessWaitResult {
+import java.io.Serializable;
+
+public enum ProcessWaitResult implements Serializable{
     NONE("None"),
     START("Start"),
     TERMINATE("Terminate"),

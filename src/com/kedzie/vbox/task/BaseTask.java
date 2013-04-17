@@ -1,11 +1,17 @@
 package com.kedzie.vbox.task;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.ksoap2.SoapFault;
+import org.kxml2.kdom.Node;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
@@ -13,6 +19,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
@@ -30,13 +37,16 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
-	protected Context _context;
+	private WeakReference<SherlockFragmentActivity> _context;
 	protected final String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
 	 protected boolean _indeterminate=true;
 	 /** <code>true</code> if user pressed back button while task is executing */
 	protected boolean _cancelled=false;
+	protected boolean _failed;
+	private LinkedList<Future<?>> _futures = new LinkedList<Future<?>>();
+	private ExecutorService _executor;
 		
 	/** 
 	 * Show an Alert Dialog 
@@ -44,7 +54,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	protected Handler _alertHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-				new AlertDialog.Builder(_context)
+				new AlertDialog.Builder(_context.get())
 					.setIcon(android.R.drawable.ic_dialog_alert)
 					.setTitle(msg.getData().getString("title"))
 					.setMessage(msg.getData().getString("msg"))
@@ -53,32 +63,56 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		}
 	};
 	
-	/** 
-     * Cancel the current operation
-     */
-	protected Handler _cancelHandler = new Handler() {
-	    @Override
-	    public void handleMessage(Message msg) {
-	        Log.i(TAG, "Cancel Handler received Cancel Message");
-	        Utils.toastLong(_context, _context.getString(R.string.cancelling_operation_toast));
-	        IProgress progress = BundleBuilder.getProxy(msg.getData(), IProgress.BUNDLE, IProgress.class);
-	        try {
-	            progress.cancel();
-	            BaseTask.this.cancel(true);
-	        } catch (IOException e) {
-	            Log.e(TAG, "Error cancelling operation", e);
-	        }
-	    }
-	};
-
 	/**
 	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
 	 */
-	protected BaseTask(String TAG, Context ctx, VBoxSvc vmgr) {
+	protected BaseTask(SherlockFragmentActivity context, VBoxSvc vmgr) {
+		TAG = getClass().getSimpleName();
+		_vmgr=vmgr;
+		_context = new WeakReference<SherlockFragmentActivity>(context);
+		init();
+	}
+	
+	/**
+	 * @param TAG LogCat tag
+	 * @param vmgr VirtualBox API service
+	 */
+	protected BaseTask(String TAG, SherlockFragmentActivity context, VBoxSvc vmgr) {
 		this.TAG = TAG;
 		_vmgr=vmgr;
-		_context=ctx;
+		_context=new WeakReference<SherlockFragmentActivity>(context);
+		init();
+	}
+	
+	private void init() {
+	    _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
+	}
+
+	protected ExecutorService getExecutor() {
+	    return _executor;
+	}
+	
+	/**
+	 * Fork off parallel execution
+	 * @param task     the {@link Runnable} containing the task
+	 */
+	protected void fork(Runnable task) {
+	    _futures.add(_executor.submit(task));
+	}
+	
+	/**
+	 * Wait for completion of all parallel executions
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
+	 */
+	protected void join() throws InterruptedException, ExecutionException {
+	    for(Future<?> future : _futures)
+	        future.get();
+	}
+	
+	protected SherlockFragmentActivity getContext() {
+		return _context.get();
 	}
 
 	@Override
@@ -86,10 +120,14 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		try	{
 			Log.d(TAG, "Performing work...");
 			return work(params);
+		} catch(SoapFault e) {
+			if(!_cancelled)
+				showAlert(e);
 		} catch(Exception e) {
-		    if(!_cancelled)
+		    if(!_cancelled) 
 		        showAlert(e);
 		}
+		_failed=true;
 		return null;
 	}
 	
@@ -104,19 +142,26 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected void onPostExecute(Output result) {
 		super.onPostExecute(result);
-		if(result!=null && _context!=null)
-			onResult(result);
+		if(!_failed && getContext()!=null && !_cancelled)
+			onSuccess(result);
+		else if(_failed)
+			onFailure();
 	}
 	
 	/**
-	 * Handle not-null result
+	 * Handle not-<code>null</code> result
 	 * @param result the result
 	 */
-	protected void onResult(Output result) {}
+	protected void onSuccess(Output result) {}
+	
+	/**
+	 * If work function threw exception
+	 */
+	protected void onFailure() {}
 	
 	@Override
     protected void onCancelled() {
-	    Log.i(TAG, "Task Cancelled");
+	    Log.w(TAG, "Task Cancelled");
         _cancelled=true;
         super.onCancelled();
     }
@@ -137,7 +182,12 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param e <code>Throwable</code> which caused the error
 	 */
 	protected void showAlert(SoapFault e) {
-		Log.e(TAG, "caught SoapFault", e);
+		Log.e(TAG, "SoapFault", e);
+		Node detail = e.detail;
+		while(detail.getChildCount()>0) {
+			detail = (Node) detail.getChild(0);
+			Log.i(TAG, "isText(0)? : " + detail.isText(0));
+		}
 		new BundleBuilder().putString("title", "Soap Fault")
 				.putString("msg", String.format("Code: %1$s\nActor: %2$s\nString: %3$s", e.faultcode, e.faultactor, e.faultstring))
 				.sendMessage(_alertHandler, 0);
@@ -151,7 +201,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	protected void showAlert(int code, String msg) {
 		Log.e(TAG, "Alert error: " + msg);
 		new BundleBuilder()
-				.putString("title", "VirtualBox error")
+				.putString("title", getContext().getString(R.string.virtualbox_error_dialog_title))
 				.putString("msg", "Result Code: " + code + " - " + msg)
 				.sendMessage(_alertHandler, 0);
 	}
@@ -167,7 +217,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
-			try { Thread.sleep(PROGRESS_INTERVAL);	} catch (InterruptedException e) { Log.e(TAG, "Interrupted", e); 	}
+			Utils.sleep(PROGRESS_INTERVAL);
 		}
 		Log.d(TAG, "Operation Completed. result code: " + p.getResultCode());
 		if(p.getResultCode()!=0) {

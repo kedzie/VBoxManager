@@ -12,9 +12,10 @@ import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+@KSOAP
 public interface IAudioAdapter extends IManagedObjectRef, Parcelable {
-	
-static final ClassLoader LOADER = IAudioAdapter.class.getClassLoader();
+	public final static String BUNDLE = "audio";
+	static final ClassLoader LOADER = IAudioAdapter.class.getClassLoader();
 	
 	public static final Parcelable.Creator<IAudioAdapter> CREATOR = new Parcelable.Creator<IAudioAdapter>() {
 		public IAudioAdapter createFromParcel(Parcel in) {
@@ -36,6 +37,6 @@ static final ClassLoader LOADER = IAudioAdapter.class.getClassLoader();
 	@Asyncronous public void setAudioController(@KSOAP("audioController") AudioControllerType audioController);
      
 	@KSOAP(cacheable=true) public AudioDriverType getAudioDriver();
-	@Asyncronous public void setAudioDriver(@KSOAP("audioController") AudioDriverType audioDriver);
+	@Asyncronous public void setAudioDriver(@KSOAP("audioDriver") AudioDriverType audioDriver);
      
 }

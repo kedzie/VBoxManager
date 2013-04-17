@@ -1,12 +1,12 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.VBoxApplication;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
+import com.kedzie.vbox.app.Utils;
 
 /**
  * Holds a saved virtual machine screenshot
@@ -46,7 +46,7 @@ public class Screenshot implements Parcelable {
 	}
 	
 	public void scaleBitmap(int width, int height) {
-		bitmap = VBoxApplication.scale(getBitmap(), width, height);
+		bitmap = Utils.scale(getBitmap(), width, height);
 	}
 
 	@Override

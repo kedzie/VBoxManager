@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum VFSFileType {
+import java.io.Serializable;
+
+public enum VFSFileType implements Serializable{
     UNKNOWN("Unknown"),
     FIFO("Fifo"),
     DEV_CHAR("DevChar"),

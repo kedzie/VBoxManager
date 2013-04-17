@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DeviceActivity {
+public enum DeviceActivity implements java.io.Serializable{
     NULL("Null"),
     IDLE("Idle"),
     READING("Reading"),

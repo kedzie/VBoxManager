@@ -10,8 +10,8 @@ public class IVRDEServerInfo implements Serializable {
 	
 	protected Boolean active;
     protected Integer port;
-    protected Long numberOfClients;
-    protected Long begIntegerime;
+    protected Integer numberOfClients;
+    protected Long beginTime;
     protected Long endTime;
     protected Long bytesSent;
     protected Long bytesSentTotal;
@@ -21,8 +21,8 @@ public class IVRDEServerInfo implements Serializable {
     protected String domain;
     protected String clientName;
     protected String clientIP;
-    protected Long clientVersion;
-    protected Long encryptionStyle;
+    protected Integer clientVersion;
+    protected Integer encryptionStyle;
     /**
      * Gets the value of the active property.
      * 
@@ -55,29 +55,29 @@ public class IVRDEServerInfo implements Serializable {
      * Gets the value of the numberOfClients property.
      * 
      */
-    public Long getNumberOfClients() {
+    public Integer getNumberOfClients() {
         return numberOfClients;
     }
     /**
      * Sets the value of the numberOfClients property.
      * 
      */
-    public void setNumberOfClients(Long value) {
+    public void setNumberOfClients(Integer value) {
         this.numberOfClients = value;
     }
     /**
      * Gets the value of the begIntegerime property.
      * 
      */
-    public Long getBegIntegerime() {
-        return begIntegerime;
+    public Long getBeginTime() {
+        return beginTime;
     }
     /**
      * Sets the value of the begIntegerime property.
      * 
      */
-    public void setBegIntegerime(Long value) {
-        this.begIntegerime = value;
+    public void setBeginTime(Long value) {
+        this.beginTime = value;
     }
     /**
      * Gets the value of the endTime property.
@@ -241,28 +241,28 @@ public class IVRDEServerInfo implements Serializable {
      * Gets the value of the clientVersion property.
      * 
      */
-    public Long getClientVersion() {
+    public Integer getClientVersion() {
         return clientVersion;
     }
     /**
      * Sets the value of the clientVersion property.
      * 
      */
-    public void setClientVersion(Long value) {
+    public void setClientVersion(Integer value) {
         this.clientVersion = value;
     }
     /**
      * Gets the value of the encryptionStyle property.
      * 
      */
-    public Long getEncryptionStyle() {
+    public Integer getEncryptionStyle() {
         return encryptionStyle;
     }
     /**
      * Sets the value of the encryptionStyle property.
      * 
      */
-    public void setEncryptionStyle(Long value) {
+    public void setEncryptionStyle(Integer value) {
         this.encryptionStyle = value;
     }
 }

@@ -1,6 +1,8 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum Scope {
+import java.io.Serializable;
+
+public enum Scope implements Serializable{
     GLOBAL("Global"),
     MACHINE("Machine"),
     SESSION("Session");

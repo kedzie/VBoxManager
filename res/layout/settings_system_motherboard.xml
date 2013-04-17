@@ -40,7 +40,8 @@
     
     <CheckBox
         android:id="@+id/io_apic"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/extended_features"
         android:layout_alignLeft="@+id/utc"
         android:layout_centerHorizontal="true"
@@ -48,7 +49,8 @@
     
     <CheckBox
         android:id="@+id/efi"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/io_apic"
         android:layout_alignLeft="@id/utc"
         android:layout_centerHorizontal="true"
@@ -56,17 +58,17 @@
     
     <CheckBox
         android:id="@id/utc"
-        style="@style/SmallTextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/efi"
         android:layout_centerHorizontal="true"
         android:text="Hardware clock in UTC time" />
 
     <TextView
         android:id="@+id/error_message"
-        style="@style/SmallTextPrimary"
-        android:layout_below="@id/extended_features"
+        style="@style/ErrorMessage"
+        android:layout_below="@id/utc"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:textColor="#FFFF0000" />
+        android:layout_marginTop="18dp"/>
 
 </RelativeLayout>

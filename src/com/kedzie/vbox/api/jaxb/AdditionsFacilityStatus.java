@@ -1,7 +1,7 @@
 package com.kedzie.vbox.api.jaxb;
 
 
-public enum AdditionsFacilityStatus {
+public enum AdditionsFacilityStatus implements java.io.Serializable{
     INACTIVE("Inactive"),
     PAUSED("Paused"),
     PRE_INIT("PreInit"),

@@ -10,14 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
-import com.kedzie.vbox.VBoxApplication;
+import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineListFragmentActivity;
+import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.server.ServerListFragment.OnSelectServerListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.soap.ssl.SSLUtil.AddCertificateToKeystoreTask;
@@ -35,8 +34,9 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
      * Log on to VirtualBox webservice
      */
     class LogonTask extends DialogTask<Server, IVirtualBox> {
+    	
         public LogonTask() { 
-            super( "LogonTask", ServerListFragmentActivity.this, null, "Connecting");
+            super(ServerListFragmentActivity.this, null, R.string.progress_connecting, true);
         }
 
         @Override
@@ -48,9 +48,10 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
         }
 
         @Override 
-        protected void onResult(IVirtualBox vbox) {
-            Utils.toastLong(ServerListFragmentActivity.this, "Connected to VirtualBox v." + vbox.getVersion());
-            VBoxApplication.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListFragmentActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
+        protected void onSuccess(IVirtualBox vbox) {
+        	super.onSuccess(vbox);
+            Utils.toastLong(ServerListFragmentActivity.this, getContext().getString(R.string.toast_connected_to_vbox) + vbox.getVersion());
+            Utils.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
         }
     }
     
@@ -78,9 +79,9 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
 	    				public void onClick(DialogInterface dialog, int which) {
 	    					new AddCertificateToKeystoreTask(ServerListFragmentActivity.this, server) {
 	    						@Override
-	    						protected void onResult(Boolean result) {
-	    							super.onResult(result);
-	    							Utils.toastLong(_context, "Successfully updated keystore");
+	    						protected void onSuccess(Void result) {
+	    							super.onSuccess(result);
+	    							Utils.toastLong(getContext(), "Successfully updated keystore");
 	    							new LogonTask().execute(server);
 	    						};
 	    					}.execute(chain);
@@ -101,25 +102,24 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         if(savedInstanceState==null) {
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.add(android.R.id.content, new ServerListFragment(), "server_list");
-            tx.commit();
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content, new ServerListFragment(), "server_list").commit();
         }
     }
-    
+
     @Override
     public void onSelectServer(final Server server) {
     	if(server.isSSL())
-    	new Thread() {
-        	public void run() {
-        		try {
-        				new VBoxSvc(server).ping(_sslHandler);
-				} catch (Exception e) {
-					Log.e("ServerListFragment", "error ping", e);
-				} 
-        	}
-        }.start();
-        else 
-			new LogonTask().execute(server);
+    		new Thread() {
+    		public void run() {
+    			try {
+    				new VBoxSvc(server).ping(_sslHandler);
+    			} catch (Exception e) {
+    				Log.e("ServerListFragment", "error ping", e);
+    			} 
+    		}
+    	}.start();
+    	else {
+    		new LogonTask().execute(server);
+    	}
     }
 }

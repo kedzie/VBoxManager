@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum CleanupMode {
+public enum CleanupMode implements java.io.Serializable{
     UNREGISTER_ONLY("UnregisterOnly"),
     DETACH_ALL_RETURN_NONE("DetachAllReturnNone"),
     DETACH_ALL_RETURN_HARD_DISKS_ONLY("DetachAllReturnHardDisksOnly"),

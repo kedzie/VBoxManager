@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum CPUPropertyType {
+public enum CPUPropertyType implements java.io.Serializable{
     NULL("Null"),
     PAE("PAE"),
     SYNTHETIC("Synthetic");

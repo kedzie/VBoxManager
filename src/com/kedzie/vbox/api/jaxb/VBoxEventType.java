@@ -1,7 +1,9 @@
 
 package com.kedzie.vbox.api.jaxb;
 
-public enum VBoxEventType {
+import java.io.Serializable;
+
+public enum VBoxEventType implements Serializable{
     INVALID("Invalid"),
     ANY("Any"),
     VETOABLE("Vetoable"),

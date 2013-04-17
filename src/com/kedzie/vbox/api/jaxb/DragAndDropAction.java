@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DragAndDropAction {
+public enum DragAndDropAction implements java.io.Serializable{
     IGNORE("Ignore"),
     COPY("Copy"),
     MOVE("Move"),

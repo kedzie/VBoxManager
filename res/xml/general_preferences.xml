@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
+    
+        <PreferenceCategory android:title="@string/pref_category_general">
+            
+            <CheckBoxPreference 
+                	android:key="colored_icons"
+                	android:title="@string/pref_colored_icons"
+                	android:summary="@string/pref_colored_icons_summary"
+                	android:defaultValue="true" />
+            
+            <CheckBoxPreference 
+                	android:key="notifications"
+                	android:title="@string/pref_notifications"
+                	android:summary="@string/pref_notifications_summary"
+                	android:defaultValue="false" />    	
+                	
+            <ListPreference 
+                	android:key="widget_interval"
+                	android:title="@string/pref_widget_interval_title"
+                	android:summary="@string/pref_widget_interval_summary"
+                	android:defaultValue="30000"
+                	android:entries="@array/widget_interval_entries"
+                	android:entryValues="@array/widget_interval_entryValues"    
+                	android:dialogTitle="@string/pref_widget_interval_title" />
+            
+        </PreferenceCategory>
+        
+</PreferenceScreen>  

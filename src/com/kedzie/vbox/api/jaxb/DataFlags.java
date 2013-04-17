@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum DataFlags {
+public enum DataFlags implements java.io.Serializable{
     NONE("None"),
     MANDATORY("Mandatory"),
     EXPERT("Expert"),

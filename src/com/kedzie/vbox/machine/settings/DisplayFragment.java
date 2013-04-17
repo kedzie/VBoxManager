@@ -2,25 +2,25 @@ package com.kedzie.vbox.machine.settings;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.FragmentElement;
+import com.kedzie.vbox.app.PagerTabHost;
 
-public class DisplayFragment extends Fragment {
-    private FragmentTabHost mTabHost;
+public class DisplayFragment extends SherlockFragment {
+    private PagerTabHost mTabHost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tabs, container, false);
-        mTabHost = (FragmentTabHost)view.findViewById(android.R.id.tabhost);
+        mTabHost = new PagerTabHost(getActivity());
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
-        mTabHost.addTab(mTabHost.newTabSpec("video").setIndicator("Video"), DisplayVideoFragment.class, getArguments());
-        mTabHost.addTab(mTabHost.newTabSpec("remote").setIndicator("Remote"), DisplayRemoteFragment.class, getArguments());
-        return view;
+        mTabHost.addTab(new FragmentElement("Video", DisplayVideoFragment.class, getArguments()));
+        mTabHost.addTab(new FragmentElement("Remote", DisplayRemoteFragment.class, getArguments()));
+        return mTabHost;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.kedzie.vbox.api;
 
+import com.kedzie.vbox.soap.KSOAP;
+
+@KSOAP
 public interface IProcess extends IManagedObjectRef {
 
 //  <xsd:element name="IProcess_getPID">

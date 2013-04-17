@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum GuestMonitorChangedEventType {
+public enum GuestMonitorChangedEventType implements java.io.Serializable{
     ENABLED("Enabled"),
     DISABLED("Disabled"),
     NEW_ORIGIN("NewOrigin");

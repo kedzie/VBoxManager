@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum CloneMode {
+public enum CloneMode implements java.io.Serializable{
     MACHINE_STATE("MachineState"),
     MACHINE_AND_CHILD_STATES("MachineAndChildStates"),
     ALL_STATES("AllStates");

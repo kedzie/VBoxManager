@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
-import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 
 /**
@@ -19,13 +18,14 @@ public class BaseActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_PROGRESS);
+		setProgressBarIndeterminateVisibility(false);
+		setProgressBarVisibility(false);
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
 		setProgressBarIndeterminateVisibility(false);
-		setProgressBarVisibility(false);
 	}
 	
 	public VBoxApplication getApp() {
@@ -35,7 +35,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 	@Override
 	public void finish() {
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN)
-			overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 		super.finish();
 	}
 }

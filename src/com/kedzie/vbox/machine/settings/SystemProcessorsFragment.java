@@ -14,6 +14,7 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.CPUPropertyType;
+import com.kedzie.vbox.api.jaxb.ProcessorFeature;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
@@ -25,19 +26,20 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemProcessorsFragment extends SherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IHost> {
-		public LoadInfoTask() { super("LoadInfoTask", getSherlockActivity(), _machine.getVBoxAPI(), "Loading Data"); }
+		public LoadInfoTask() { super(getSherlockActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {
 			m[0].getCPUCount(); 
 			m[0].getCPUProperty(CPUPropertyType.PAE);
 			IHost host = _vmgr.getVBox().getHost();
+			host.getProcessorFeature(ProcessorFeature.PAE);
 			host.getProcessorCount();
 			host.getProcessorOnlineCount();
 			return host;
 		}
 		@Override
-		protected void onResult(IHost result) {
+		protected void onSuccess(IHost result) {
 		    _host = result;
 		    populateViews(_machine, _host);
 		}
@@ -50,7 +52,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	private SliderView _processorsBar;
 	private SliderView _executionCapBar;
 	private CheckBox _paeCheckBox;
-	private ErrorCapability _errorHandler = new ErrorCapability();
+	private ErrorSupport _errorHandler = new ErrorSupport();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
         outState.putParcelable(IMachine.BUNDLE, _machine);
         outState.putParcelable("host", _host);
         outState.putParcelable("errors", _errorHandler);
@@ -75,12 +78,6 @@ public class SystemProcessorsFragment extends SherlockFragment {
 		_processorsBar = (SliderView)_view.findViewById(R.id.processors);
 		_executionCapBar = (SliderView)_view.findViewById(R.id.execution_cap);
 		_paeCheckBox = (CheckBox) _view.findViewById(R.id.pae_nx);
-		_paeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_machine.setCPUProperty(CPUPropertyType.PAE, isChecked);
-			}
-		});
 		_errorText = (TextView)_view.findViewById(R.id.error_message);
 		_errorHandler.setTextView(_errorText);
 		_errorHandler.showErrors();
@@ -97,7 +94,14 @@ public class SystemProcessorsFragment extends SherlockFragment {
 	}
 
 	private void populateViews(IMachine m, IHost host) {
+		_paeCheckBox.setEnabled(_host.getProcessorFeature(ProcessorFeature.PAE));
 		_paeCheckBox.setChecked(m.getCPUProperty(CPUPropertyType.PAE));
+		_paeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_machine.setCPUProperty(CPUPropertyType.PAE, isChecked);
+			}
+		});
 	    _processorsBar.setMinValue(1);
 	    _processorsBar.setMinValidValue(1);
 	    _processorsBar.setMaxValidValue(host.getProcessorOnlineCount());

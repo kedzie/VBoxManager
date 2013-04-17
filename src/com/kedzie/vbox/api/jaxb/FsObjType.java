@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum FsObjType {
+public enum FsObjType implements java.io.Serializable{
     UNDEFINED("Undefined"),
     FIFO("FIFO"),
     DEV_CHAR("DevChar"),

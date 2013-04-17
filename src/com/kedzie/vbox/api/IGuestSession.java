@@ -76,7 +76,6 @@ public interface IGuestSession extends IManagedObjectRef {
     
     /**
      * Copies a file from guest to the host.
-     * 
      * @param source	Source file on the guest to copy to the host.
      * @param dest	Destination file name on the host.
      * @param flags		Copy flags; see <a class="el" href="_virtual_box_8idl.html#af4001a07f3e4bc28ecc98faf1d6c7635">CopyFileFlag</a><b></b> for more information.
@@ -89,7 +88,6 @@ public interface IGuestSession extends IManagedObjectRef {
     
     /**
      * Copies a file from host to the guest.
-     * 
      * @param source	Source file on the host to copy to the guest.
      * @param dest	Destination file name on the guest.
      * @param flags	Copy flags; see {@link CopyFileFlag} for more information.
@@ -102,7 +100,6 @@ public interface IGuestSession extends IManagedObjectRef {
     
     /**
      * Create a directory on the guest.
-     * 
      * @param path		Full path of directory to create.
      * @param mode		File creation mode.
      * @param flags		Creation flags; see {@link DirectoryCreateFlag} for more information.
@@ -114,7 +111,6 @@ public interface IGuestSession extends IManagedObjectRef {
     
     /**
      * Create a temporary directory on the guest.
-     * 
      * @param templateName		Template for the name of the directory to create. This must contain at least one 'X' character. The first group of consecutive 'X' characters in the template will be replaced by a random alphanumeric string to produce a unique name.
      * @param mode		The mode of the directory to create. Use 0700 unless there are reasons not to. This parameter is ignored if "secure" is specified.
      * @param path		The absolute path to create the temporary directory in.
@@ -131,51 +127,34 @@ public interface IGuestSession extends IManagedObjectRef {
 
     /**
      * Checks whether a directory exists on the guest or not.
-     * 
      * @param path		Directory to check existence for.
      * @return				Returns <code>true</code> if the directory exists, <code>false</code> if not.
     * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
     * <td>{@link IVirtualBox#VBOX_E_IPRT_ERROR}</td><td>Error while checking existence of the directory specified. </td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
     * </tbody></table></dd></dl>
      */
     public boolean directoryExists(@KSOAP("path") String path);
     
     /**
      * Opens a directory and creates a {@link IGuestDirectory} object that can be used for further operations.
-     * 
      * @param path		Full path to file to open.
      * @param filter		Open filter to apply. This can include wildcards like ? and *.
      * @param flags		Open flags; see {@link DirectoryOpenFlag} for more information.
      * @return			{@link IGuestDirectory} object containing the opened directory.
-    * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * </tbody></table></dd></dl>
      */
     public IGuestDirectory directoryOpen(@KSOAP("path") String path, @KSOAP("filter") String filter, @KSOAP("flags") DirectoryOpenFlag...flags);
     
     /**
      * Queries information of a directory on the guest.
-     * 
-     * @param path		Directory to query information for.
-     * @return		information
-    * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
+     * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
     * <td>{@link IVirtualBox#VBOX_E_OBJECT_NOT_FOUND}</td><td>Directory to query information for was not found.</td></tr>
     * <td>{@link IVirtualBox#VBOX_E_IPRT_ERROR}</td><td>Error querying information.</td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
-    * <td>{@link IVirtualBox#}</td><td></td></tr>
     * </tbody></table></dd></dl>
+     * @param path		Directory to query information for.
+     * @return		information
      */
     public IGuestFsObjInfo directoryQueryInfo(@KSOAP("path") String path);
     
-    /**
-     * @param path
-     */
     public void directoryRemove(@KSOAP("path") String path);
     
     public IProgress directoryRemoveRecursive(@KSOAP("path") String path, @KSOAP("flags") DirectoryRemoveRecFlag...flags);
@@ -192,8 +171,7 @@ public interface IGuestSession extends IManagedObjectRef {
     
     public void environmentUnSet(@KSOAP("name") String name);
     
-    public IGuestFile fileCreateTemp(@KSOAP("templateName") String templateName, @KSOAP(type="unsignedint", value="mode") int mode, 
-            @KSOAP("path") String path, @KSOAP(type="boolean", value="secure") boolean secure);
+    public IGuestFile fileCreateTemp(@KSOAP("templateName") String templateName, @KSOAP(type="unsignedint", value="mode") int mode, @KSOAP("path") String path, @KSOAP(type="boolean", value="secure") boolean secure);
     
     public boolean fileExists(@KSOAP("path") String path);
     
@@ -340,10 +318,10 @@ public interface IGuestSession extends IManagedObjectRef {
 
     /**
      * Removes a symbolic link on the guest if it's a file.
-     * @param file		Symbolic link to remove.
      * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
      * <td>{@link IVirtualBox#E_NOTIMPL}</td><td>The method is not implemented yet.  </td></tr>
      * </tbody></table></dd></dl>
+     * @param file		Symbolic link to remove.
      */
     public void symlinkRemoveFile(String file);
 }

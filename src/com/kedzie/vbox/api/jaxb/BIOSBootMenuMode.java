@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api.jaxb;
 
-public enum BIOSBootMenuMode {
+public enum BIOSBootMenuMode implements java.io.Serializable{
     DISABLED("Disabled"),
     MENU_ONLY("MenuOnly"),
     MESSAGE_AND_MENU("MessageAndMenu");
