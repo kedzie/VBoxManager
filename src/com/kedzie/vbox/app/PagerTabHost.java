@@ -126,6 +126,7 @@ public class PagerTabHost extends TabHost implements TabHost.OnTabChangeListener
             mRealTabContent = new ViewPager(context);
             mRealTabContent.setId(mContainerId);
             mRealTabContent.setOffscreenPageLimit(4);
+            mRealTabContent.setPageTransformer(false, new ZoomOutPageTransformer());
             ll.addView(mRealTabContent, new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
         }
@@ -226,7 +227,7 @@ public class PagerTabHost extends TabHost implements TabHost.OnTabChangeListener
     @Override
     public void removeAllTabs() {
         mAdapter.clear();
-        removeAllTabs();
+        clearAllTabs();
     }
     
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}

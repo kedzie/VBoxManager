@@ -29,6 +29,7 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
         mViewPager=new ViewPager(mActivity);
         mViewPager.setId(99);
         mViewPager.setOffscreenPageLimit(4);
+        mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
         if(container==android.R.id.content)
             mActivity.setContentView(mViewPager);
         else

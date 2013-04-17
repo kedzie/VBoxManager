@@ -29,7 +29,7 @@ public class FragPagerAdapter extends PagerAdapter {
     
     @Override
     public void startUpdate(ViewGroup container) {
-        mCurTransaction = mFragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        mCurTransaction = mFragmentManager.beginTransaction();
     }
 
     @Override

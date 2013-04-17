@@ -75,9 +75,7 @@ public class NetworkFragment extends SherlockFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mTabHost = new PagerTabHost(getActivity());
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
-//        mTabHost.setCustomAnimations(R.animator.flip_left_in, R.animator.flip_left_out);
         mTabHost.addTab(new FragmentElement("dummy", DummyFragment.class, new Bundle()));
-//        mTabHost.addTab(mTabHost.newTabSpec("dummy").setIndicator("Dummy"), DummyFragment.class, new Bundle());
         return mTabHost;
     }
     
@@ -91,12 +89,10 @@ public class NetworkFragment extends SherlockFragment {
     }
     
     void populate() {
-    	mTabHost.clearAllTabs();
+    	mTabHost.removeAllTabs();
     	for(int i=0; i<_adapters.size(); i++)
     	    mTabHost.addTab(new FragmentElement("Adapter#"+i, NetworkAdapterFragment.class, 
     	            new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create()));
-//			mTabHost.addTab(mTabHost.newTabSpec("adapter#"+i).setIndicator("Adapter " + i), NetworkAdapterFragment.class, 
-//					new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create());
     }
 
     @Override

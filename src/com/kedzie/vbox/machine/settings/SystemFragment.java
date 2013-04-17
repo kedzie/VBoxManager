@@ -21,10 +21,6 @@ public class SystemFragment extends SherlockFragment {
         mTabHost.addTab(new FragmentElement("Motherboard", SystemMotherboardFragment.class, getArguments()));
         mTabHost.addTab(new FragmentElement("Processors", SystemProcessorsFragment.class, getArguments()));
         mTabHost.addTab(new FragmentElement("Accleration", SystemAccelerationFragment.class, getArguments()));
-        
-//        mTabHost.addTab(mTabHost.newTabSpec("motherboard").setIndicator("Motherboard"), SystemMotherboardFragment.class, getArguments());
-//        mTabHost.addTab(mTabHost.newTabSpec("processors").setIndicator("Processors"), SystemProcessorsFragment.class, getArguments());
-//        mTabHost.addTab(mTabHost.newTabSpec("acceleration").setIndicator("Acceleration"), SystemAccelerationFragment.class, getArguments());
         return mTabHost;
     }
 

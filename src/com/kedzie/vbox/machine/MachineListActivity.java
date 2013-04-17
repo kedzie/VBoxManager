@@ -3,7 +3,6 @@ package com.kedzie.vbox.machine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.NavUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -59,7 +58,7 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			NavUtils.navigateUpFromSameTask(MachineListActivity.this);
+			finish();
 		}
 	}
 

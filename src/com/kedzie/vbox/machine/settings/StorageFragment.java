@@ -20,6 +20,7 @@ import com.kedzie.vbox.api.jaxb.IMediumAttachment;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentActivity;
 import com.kedzie.vbox.app.FragmentElement;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnMediumAttachmentClickedListener;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnStorageControllerClickedListener;
 
@@ -71,7 +72,7 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     
     private void show(FragmentElement details) {
     	if(_dualPane) {
-    		getChildFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.details, details.instantiate(getActivity())).commit();
+    		Utils.setCustomAnimations(getChildFragmentManager().beginTransaction()).replace(R.id.details, details.instantiate(getActivity())).commit();
         } else {
         	startActivity(new Intent(getActivity(), FragmentActivity.class).putExtra(FragmentElement.BUNDLE, details));
         }

@@ -228,10 +228,8 @@ public class Utils {
      * @return			the transaction 
      */
     public static FragmentTransaction setCustomAnimations(FragmentTransaction tx) {
-    	//if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
-    		return tx.setCustomAnimations(com.kedzie.vbox.R.animator.flip_left_in, com.kedzie.vbox.R.animator.flip_right_out);
-    	//else
-    	//	return tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+    		return tx.setCustomAnimations(com.kedzie.vbox.R.animator.flip_left_in, com.kedzie.vbox.R.animator.flip_left_out, 
+    		        com.kedzie.vbox.R.animator.flip_right_in, com.kedzie.vbox.R.animator.flip_right_out);
     }
     
     /**
@@ -299,10 +297,10 @@ public class Utils {
         if(element.fragment==null)
             element.fragment = manager.findFragmentByTag(element.name);
         if(element.fragment==null) {
-            if(BuildConfig.DEBUG) Log.v("FragmentManager",  "Instantiated new Fragment: " + element.name);
+            Log.v("FragmentManager",  "Instantiated new Fragment: " + element.name);
             tx.add(containerId, element.instantiate(context), element.name);
         } else {
-        	if(BuildConfig.DEBUG) Log.v("FragmentManager",  "Reattaching existing Fragment: " + element.name);
+        	Log.v("FragmentManager",  "Reattaching existing Fragment: " + element.name);
             tx.attach(element.fragment);
         }
     }
@@ -493,7 +491,7 @@ public class Utils {
      * @param activity      the activity
      */
     public static void overrideBackTransition(Activity activity) {
-        activity.overridePendingTransition(R.animator.flip_left_in, R.animator.flip_right_out);
+        activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
     
     /**
