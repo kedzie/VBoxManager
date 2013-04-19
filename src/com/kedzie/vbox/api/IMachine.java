@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.service.textservice.SpellCheckerService.Session;
 
 import com.kedzie.vbox.api.jaxb.CPUPropertyType;
 import com.kedzie.vbox.api.jaxb.ChipsetType;
@@ -163,7 +162,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 	 * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
 	 */
 	@KSOAP(cacheable=true) public List<String> getGroups();
-	@Asyncronous public void setGroups(@KSOAP("groups")String...group);
+ public void setGroups(@KSOAP("groups")String...group);
 	
 	@KSOAP(cacheable=true) public IBIOSSettings getBIOSSettings();
 	

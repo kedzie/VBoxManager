@@ -1,6 +1,5 @@
 package com.kedzie.vbox.app;
 
-import android.os.Build;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -30,12 +29,5 @@ public class BaseActivity extends SherlockFragmentActivity {
 	
 	public VBoxApplication getApp() {
 	    return (VBoxApplication)getApplication();
-	}
-	
-	@Override
-	public void finish() {
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN)
-			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-		super.finish();
 	}
 }

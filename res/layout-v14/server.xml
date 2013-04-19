@@ -2,8 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutAnimation="@anim/layout_random_fade"
     android:padding="12dp">
-<!--     android:layoutAnimation="@anim/layout_random_fade"> -->
+<!--     > -->
 
     <TextView
         android:id="@+id/name_label"

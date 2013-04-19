@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="319" android:versionName="3.1.9" package="com.kedzie.vbox">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="320" android:versionName="3.2.0-SNAPSHOT" package="com.kedzie.vbox">
     
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
     

@@ -131,7 +131,7 @@ public class StorageListFragment extends SherlockFragment {
 			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers, _data);
 			_listView.setAdapter(_listAdapter);
 			for(int i=0; i<_controllers.size(); i++)
-				_listView.expandGroup(i, true);
+			    _listView.expandGroup(i);
 		}
 	}
 
@@ -371,7 +371,7 @@ public class StorageListFragment extends SherlockFragment {
 		public void notifyDataSetChanged() {
 			super.notifyDataSetChanged();
 			for(int i=0; i<mControllers.size(); i++)
-				_listView.expandGroup(i, false);
+				_listView.expandGroup(i);
 		}
 
 		@Override
@@ -490,7 +490,7 @@ public class StorageListFragment extends SherlockFragment {
 		_listView.setOnGroupClickListener(new OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-				parent.expandGroup(groupPosition,true);
+				parent.expandGroup(groupPosition);
 				parent.setSelectedGroup(groupPosition);
 				if(_controllerListener!=null)
 					_controllerListener.onStorageControllerClicked((IStorageController)_listAdapter.getGroup(groupPosition));
@@ -528,7 +528,7 @@ public class StorageListFragment extends SherlockFragment {
 			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers, _data);
 			_listView.setAdapter(_listAdapter);
 			for(int i=0; i<_dataListMap.keySet().size(); i++)
-				_listView.expandGroup(i, true);
+				_listView.expandGroup(i);
 		}
 	}
 
