@@ -65,7 +65,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                    current.addChild(previous);
 	                    previous=current;
 	                }
-	                get("/").addChild(get(tmp));
+	                get("").addChild(get(tmp));
 	            }
 	            for(IMachine machine : _vmgr.getVBox().getMachines()) {
 	                fork(new MachineRunnable(machine) {
@@ -81,7 +81,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_PERIOD), 
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_COUNT), 
 	                    (IManagedObjectRef)null);
-	            return get("/");
+	            return get("");
 	        }
 	        
 	        @Override
@@ -104,7 +104,12 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_listView = new VMGroupListView(getActivity());
+	    if(_vmgr==null) {
+    	    _vmgr = (VBoxSvc)((getArguments() != null && getArguments().containsKey(VBoxSvc.BUNDLE)) ? 
+                    getArguments().getParcelable(VBoxSvc.BUNDLE)
+                    : getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE) );
+	    }
+		_listView = new VMGroupListView(getActivity(), _vmgr);
 		_listView.setOnTreeNodeSelectListener(_selectListener);
 		return _listView;
 	}
@@ -112,10 +117,6 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		_vmgr = (VBoxSvc)((getArguments() != null && getArguments().containsKey(VBoxSvc.BUNDLE)) ? 
-		            getArguments().getParcelable(VBoxSvc.BUNDLE)
-		            : getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE) );
-		
         _listView.setSelectionEnabled(getActivity().findViewById(R.id.details)!=null);
 		
 		if(savedInstanceState!=null)  { 

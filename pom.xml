@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.2.0</version>
+		<version>3.2.1</version>
 	</parent>
 
 	<artifactId>vbox-app</artifactId>
@@ -27,6 +27,10 @@
 		<url>https://github.com/kedzie/VBoxManager/issues</url>
 	</issueManagement>
 
+	<properties>
+		<android.debuggable>true</android.debuggable>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -34,15 +38,14 @@
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
-				          <groupId>commons-logging</groupId>
-				          <artifactId>commons-logging</artifactId>
-	        		</exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+	        	</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>support-v4-animator</artifactId>
-			<version>r12</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nineoldandroids</groupId>
@@ -76,21 +79,21 @@
 			<artifactId>commons-validator</artifactId>
 			<exclusions>
 				<exclusion>
-				          <groupId>commons-logging</groupId>
-				          <artifactId>commons-logging</artifactId>
-	        		</exclusion>
-	        		<exclusion>
-				          <groupId>commons-digester</groupId>
-				          <artifactId>commons-digester</artifactId>
-	        		</exclusion>
-	        		<exclusion>
-				          <groupId>commons-collections</groupId>
-				          <artifactId>commons-collections</artifactId>
-	        		</exclusion>
-	        		<exclusion>
-				          <groupId>commons-beanutils</groupId>
-				          <artifactId>commons-beanutils</artifactId>
-	        		</exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+	        	</exclusion>
+	        	<exclusion>
+					<groupId>commons-digester</groupId>
+					<artifactId>commons-digester</artifactId>
+	        	</exclusion>
+	        	<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+	        	</exclusion>
+	        	<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils</artifactId>
+	        	</exclusion>
 			</exclusions>
 		</dependency>
  		<dependency>
@@ -118,9 +121,7 @@
 						<phase>generate-sources</phase>
 						<goals><goal>add-source</goal></goals>
 						<configuration>
-							<sources>
-								<source>ksoap3-src</source>
-							</sources>
+							<sources><source>ksoap3-src</source></sources>
 						</configuration>
 					</execution>
 				</executions>
@@ -130,8 +131,8 @@
 				<artifactId>android-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<manifestDebuggable>true</manifestDebuggable>
-					<manifestVersionName></manifestVersionName>
+					<manifestDebuggable>${android.debuggable}</manifestDebuggable>
+					<manifestVersionName/>
 					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 					<attachSources>true</attachSources>
 				</configuration>
@@ -139,20 +140,8 @@
 					<execution>
 						<id>manifest</id>
 						<phase>process-resources</phase>
-						<goals>
-							<goal>manifest-update</goal>
-						</goals>
+						<goals><goal>manifest-update</goal></goals>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>downloads-maven-plugin</artifactId>
-				<configuration>
-					<description>${project.name} APK</description>
-					<override>true</override>
-				</configuration>
-				<executions>
 				</executions>
 			</plugin>
 			<plugin>
@@ -166,10 +155,9 @@
 				</configuration>
  				<executions>
 					<execution>
+						<id>ghsite</id>
 						<phase>site</phase>
-						<goals>
-							<goal>site</goal>
-						</goals>
+						<goals><goal>site</goal></goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -185,6 +173,9 @@
 					<value>production</value>
 				</property>
 			</activation>
+			<properties>
+				<android.debuggable>false</android.debuggable>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -201,9 +192,7 @@
 						<executions>
 							<execution>
 								<phase>package</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
+								<goals><goal>sign</goal></goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -233,9 +222,7 @@
 							<execution>
 								<id>zip</id>
 								<phase>package</phase>
-								<goals>
-									<goal>zipalign</goal>
-								</goals>
+								<goals><goal>zipalign</goal></goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -256,11 +243,6 @@
 				<artifactId>maven-changelog-plugin</artifactId>
 				<version>2.2</version>
 			</plugin>
-			<!--plugin>
-        			<groupId>org.apache.maven.plugins</groupId>
-       				<artifactId>maven-surefire-report-plugin</artifactId>
-       				<version>2.12.2</version>
-      			</plugin-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -285,12 +267,12 @@
 					<keywords>true</keywords>
 				</configuration>
 				<reportSets>
-          				<reportSet>
-            					<id>default</id>
-            					<reports>
-              						<report>javadoc</report>
-            					</reports>
-          				</reportSet>
+          			<reportSet>
+            			<id>default</id>
+            			<reports>
+              				<report>javadoc</report>
+            			</reports>
+          			</reportSet>
 				</reportSets>
 			</plugin>
 		</plugins>

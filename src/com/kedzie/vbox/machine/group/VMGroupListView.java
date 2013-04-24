@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.ClipData;
+import android.content.ClipData.Item;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -35,6 +35,7 @@ import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.group.VMGroupPanel.OnDrillDownListener;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Scrollable list of {@link VMGroup} objects with drill-down support to focus on a particular group.
@@ -55,18 +56,21 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         public void onTreeNodeSelect(TreeNode node);
     }
 
-    /** View associated with the currently selected element */
+    /** Currently selected view */
     private View _selected;
 
     /** Is element selection enabled */
-    private boolean _selectionEnabled;
+    private boolean mSelectionEnabled;
 
     private OnTreeNodeSelectListener _listener;
 
-    /** Maintains reference from a particular Machine to all views which reference it.  Used for updating views when events are received. */
-    private Map<String, List<MachineView>> _machineViewMap = new HashMap<String, List<MachineView>>();
-    /** Maintains reference from a particular <code>VMGroup</code> to all views which reference it.  Used for updating views when groups chnage. */
-    private Map<String, List<VMGroupPanel>> _groupViewMap = new HashMap<String, List<VMGroupPanel>>();
+    /** Maps Machine ID to all views which reference it.  Used for updating views when events are received. */
+    private Map<String, List<MachineView>> mMachineViewMap = new HashMap<String, List<MachineView>>();
+    /** Maps {@link VMGroup} to all views which reference it.  Used for updating views when groups change. */
+    private Map<String, List<VMGroupPanel>> mGroupViewMap = new HashMap<String, List<VMGroupPanel>>();
+    /** Cache of {@link VMGroup}s */
+    private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
+    
 
     private Animation _slideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
     private Animation _slideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
@@ -74,30 +78,26 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private Animation _slideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
 
     private Dragger mDragger;
-    private IMachine mDraggedMutable;
+    private VMGroup mDraggedGroup;
+    private IMachine mDraggedMachine;
 
-    public VMGroupListView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
+    private VBoxSvc _vmgr;
 
-    public VMGroupListView(Context context) {
+    public VMGroupListView(Context context, VBoxSvc vmgr) {
         super(context);
-        init();
-    }
-
-    private void init() {
+        _vmgr=vmgr;
         if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
             mDragger = new Dragger();
     }
 
     public void setRoot(VMGroup group) {
-        addView(createGroupListView(group));
+        mGroupCache.put(group.getName(), group);
+        addView(new GroupSection(getContext(), group));
     }
 
     @Override
     public void onDrillDown(VMGroup group) {
-        addView(createGroupListView(group));
+        addView(new GroupSection(getContext(), group));
         setInAnimation(_slideInRight);
         setOutAnimation(_slideOutLeft);
         showNext();
@@ -115,78 +115,107 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     }
 
     public boolean isSelectionEnabled() {
-        return _selectionEnabled;
+        return mSelectionEnabled;
     }
 
     public void setSelectionEnabled(boolean selectionEnabled) {
-        _selectionEnabled = selectionEnabled;
+        mSelectionEnabled = selectionEnabled;
     }
 
     /**
      * Build a scrollable list of everything below a group
-     * @param group		the root
-     * @return	scrollable list of things below the group
+     * @param group     the root
+     * @return  scrollable list of things below the group
      */
-    private View createGroupListView(VMGroup group) {
-        ScrollView scrollView = new ScrollView(getContext());
-        LinearLayout _contents = new LinearLayout(getContext());
-        _contents.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(_contents);
-        if(!group.getName().equals("/")) {
-            LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
-            ((ImageView)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drillOut();
-                }
-            });
-            Utils.setTextView(header, R.id.group_title, group.getName());
-            Utils.setTextView(header, R.id.group_num_groups, group.getNumGroups());
-            Utils.setTextView(header, R.id.group_num_machine, group.getNumMachines());
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            lp.bottomMargin = Utils.dpiToPixels(getContext(), 4);
-            _contents.addView(header, lp);
-        }
-        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        for(TreeNode child : group.getChildren()) 
-            _contents.addView(createView(child), lp);
-        return scrollView;
-    }
+    private class GroupSection extends LinearLayout {
 
-    /**
-     * Create a view for a single node in the tree
-     * @param context  the {@link Context}
-     * @param node      tree node
-     * @return  Fully populated view representing the node
-     */
-    public View createView(TreeNode node) {
-        if(node instanceof IMachine) {
-            MachineView view = new MachineView(getContext());
-            IMachine m = (IMachine)node;
-            view.update(m);
-            view.setBackgroundResource(R.drawable.list_selector_color);
-            view.setClickable(true);
-            view.setOnClickListener(this);
-            view.setOnLongClickListener(this);
-            if(!_machineViewMap.containsKey(m.getIdRef()))
-                _machineViewMap.put(m.getIdRef(), new ArrayList<MachineView>());
-            _machineViewMap.get(m.getIdRef()).add(view);
-            return view;
-        } else if (node instanceof VMGroup) {
-            VMGroup group = (VMGroup)node;
-            VMGroupPanel groupView = new VMGroupPanel(getContext(), group);
-            groupView.setOnClickListener(this);
-            groupView.setOnDrillDownListener(this);
+        private VMGroup mGroup;
+        private LinearLayout mContents;
+
+        public GroupSection(Context context, VMGroup group) {
+            super(context);
+            mGroup = group;
+            setOrientation(LinearLayout.VERTICAL);
+            if(!mGroup.getName().equals("")) {
+                LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
+                ((ImageView)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drillOut();
+                    }
+                });
+                Utils.setTextView(header, R.id.group_title, group.getName());
+                Utils.setTextView(header, R.id.group_num_groups, group.getNumGroups());
+                Utils.setTextView(header, R.id.group_num_machine, group.getNumMachines());
+                LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                lp.bottomMargin = Utils.dpiToPixels(getContext(), 4);
+                super.addView(header, lp);
+            }
+            mContents = new LinearLayout(getContext());
+            mContents.setOrientation(LinearLayout.VERTICAL);
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            for(TreeNode child : group.getChildren()) 
+                mContents.addView(createView(child), lp);
+            ScrollView scrollView = new ScrollView(getContext());
+            scrollView.addView(mContents);
+            super.addView(scrollView);
             if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
-                groupView.setOnDragListener(mDragger);
-            for(TreeNode child : group.getChildren())
-                groupView.addChild(createView(child));
-            if(!_groupViewMap.containsKey(group.getName()))
-                _groupViewMap.put(group.getName(), new ArrayList<VMGroupPanel>());
-            _groupViewMap.get(group.getName()).add(groupView);
-            return groupView;
+                mContents.setOnDragListener(mDragger);
         }
-        throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");
+
+        @Override
+        public void addView(View child, android.view.ViewGroup.LayoutParams params) {
+            mContents.addView(child, params);
+        }
+
+        /**
+         * Create a view for a single node in the tree
+         * @param context  the {@link Context}
+         * @param node      tree node
+         * @return  Fully populated view representing the node
+         */
+        public View createView(TreeNode node) {
+            if(node instanceof IMachine) {
+                MachineView view = new MachineView(getContext());
+                IMachine m = (IMachine)node;
+                view.update(m);
+                view.setBackgroundResource(R.drawable.list_selector_color);
+                view.setClickable(true);
+                view.setOnClickListener(VMGroupListView.this);
+                view.setOnLongClickListener(VMGroupListView.this);
+                if(!mMachineViewMap.containsKey(m.getIdRef()))
+                    mMachineViewMap.put(m.getIdRef(), new ArrayList<MachineView>());
+                mMachineViewMap.get(m.getIdRef()).add(view);
+                return view;
+            } else if (node instanceof VMGroup) {
+                VMGroup group = (VMGroup)node;
+                mGroupCache.put(group.getName(), group);
+                VMGroupPanel groupView = new VMGroupPanel(getContext(), group);
+                groupView.setOnClickListener(VMGroupListView.this);
+                groupView.setOnDrillDownListener(VMGroupListView.this);
+                groupView.setOnLongClickListener(VMGroupListView.this);
+                for(TreeNode child : group.getChildren())
+                    groupView.addChild(createView(child));
+                if(!mGroupViewMap.containsKey(group.getName()))
+                    mGroupViewMap.put(group.getName(), new ArrayList<VMGroupPanel>());
+                mGroupViewMap.get(group.getName()).add(groupView);
+                groupView.setBackgroundColor(Color.BLACK);
+                return groupView;
+            }
+            throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");
+        }
+
+        public VMGroup getGroup() {
+            return mGroup;
+        }
+        
+        public List<VMGroupPanel> getNodeViews() {
+            List<VMGroupPanel> children = new ArrayList<VMGroupPanel>(mContents.getChildCount());
+            for(int i=0; i<mContents.getChildCount(); i++)
+                if(mContents.getChildAt(i) instanceof VMGroupPanel)
+                children.add((VMGroupPanel)mContents.getChildAt(i));
+            return children;
+        }
     }
 
     /**
@@ -194,7 +223,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
      * @param machine       the machine to update (properties must be cached)
      */
     public void update(IMachine machine) {
-        for(MachineView view : _machineViewMap.get(machine.getIdRef()))
+        for(MachineView view : mMachineViewMap.get(machine.getIdRef()))
             view.update(machine);
     }
 
@@ -202,7 +231,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     public void onClick(View v) {
         if(_listener==null)
             return;
-        if(!_selectionEnabled) {
+        if(!mSelectionEnabled) {
             notifyListener(v);
             return;
         }
@@ -227,13 +256,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     }
 
     @Override
-    public boolean onLongClick(View v) {
+    public boolean onLongClick(View view) {
         if(!Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
             return true;
-        if(v instanceof MachineView) {
-            MachineView view = (MachineView)v;
-            new DragMachineTask().execute(view);
-        }
+        if(view instanceof MachineView)
+            new DragMachineTask().execute((MachineView)view);
+        else if(view instanceof VMGroupPanel)
+            new DragGroupTask().execute((VMGroupPanel)view);
         return true;
     }
 
@@ -245,14 +274,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         protected IMachine doInBackground(MachineView... params) {
             mView = params[0];
             IMachine machine = mView.getMachine();
-            try {
-                if(machine.getSessionState().equals(SessionState.UNLOCKED)) {
-                    ISession session = machine.getAPI().getVBox().getSessionObject();
-                    machine.lockMachine(session, LockType.WRITE);
-                    return session.getMachine();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "Error", e);
+            if(machine.getSessionState().equals(SessionState.UNLOCKED)) {
+                return machine;
             }
             return null;
         }
@@ -261,37 +284,106 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         protected void onPostExecute(IMachine result) {
             super.onPostExecute(result);
             if(result!=null) {
-                mDraggedMutable = result;
-                ClipData data = ClipData.newPlainText("Machine Drag", mView.getMachine().getIdRef());
+                mDraggedMachine=result;
+                ClipData data = new ClipData("VM", new String[] {"vbox/machine"}, new Item(result.getIdRef()));
                 mView.startDrag(data, new DragShadowBuilder(mView), null, 0);
             }
         }
     }
 
-    private class Dragger implements OnDragListener {
+    private class DragGroupTask extends AsyncTask<VMGroupPanel, Void, VMGroup> {
+
+        private VMGroupPanel mView;
+
         @Override
-        public boolean onDrag(View v, DragEvent event) {
-            if(!(v instanceof VMGroupPanel))
-                return false;
-            final VMGroupPanel view = (VMGroupPanel)v;
+        protected VMGroup doInBackground(VMGroupPanel... params) {
+            mView = params[0];
+            VMGroup group = mView.getGroup();
+            if(!hasLockedMachines(group))
+                return group;
+            return null;
+        }
+
+        private boolean hasLockedMachines(VMGroup group) {
+            boolean locked = false;
+            for(TreeNode child : group.getChildren()) {
+                if(child instanceof IMachine) {
+                    IMachine machine = (IMachine)child;
+                    locked |= !machine.getSessionState().equals(SessionState.UNLOCKED);
+                } else {
+                    VMGroup g = (VMGroup)child;
+                    locked |= hasLockedMachines(g);
+                }
+            }
+            return locked;
+        }
+
+        @Override
+        protected void onPostExecute(VMGroup result) {
+            super.onPostExecute(result);
+            if(result!=null) {
+                mDraggedGroup = result;
+                ClipData data = new ClipData(result.getName(), new String[] {"vbox/group"}, new Item(result.getName()));
+                mView.startDrag(data, new DragShadowBuilder(mView.getTitleView()), null, 0);
+            }
+        }
+    }
+
+    private class Dragger implements OnDragListener {
+
+        private VMGroupPanel mGroupView;
+        private GroupSection mSectionView;
+        private VMGroup mParentGroup;
+        private List<VMGroupPanel> mNewParentViews;
+
+        @Override
+        public boolean onDrag(View view, DragEvent event) {
+            mSectionView = (GroupSection)view;
+
+            //            final VMGroup mParentGroup = groupView!=null ? mGroupView.getGroup() : mSectionView.getGroup();
+            //            List<VMGroupPanel> mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
 
             final int action = event.getAction();
             switch(action) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     return true;
                 case DragEvent.ACTION_DRAG_ENTERED: 
+                    //                    if(mDraggedMachine!=null) {
+                    //                        if(mDraggedMachine.getGroups().get(0).equals(mParentGroup))
+                    //                            return false;
+                    //                    } else if(mDraggedGroup!=null) {
+                    //                        if(mDraggedGroup.equals(mParentGroup))
+                    //                            return false;
+                    //                        String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+                    //                        if(oldParentName.equals(mParentGroup.getName()))
+                    //                            return false;
+                    //                    }
                     view.setBackgroundColor(Color.RED);
                     view.invalidate();
                     return true;
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    for(int i=0; i<view.getChildCount(); i++) {
-                        View child = view.getChildAt(i);
+                    VMGroupPanel current = null;
+                    for(VMGroupPanel child : mSectionView.getNodeViews()) {
                         Rect frame = new Rect();
                         child.getHitRect(frame);
                         if(frame.contains((int)event.getX(), (int)event.getY())) {
-                            Log.d(TAG, "Drag inside " + child);
+                            Log.v(TAG, "Drag inside " + child);
+                            current = child;
+                            break;
                         }
                     }
+                    if(mGroupView==null && current!=null) {
+                        //entered
+                        Log.d(TAG, "Entered " + current.getGroup());
+                        current.setBackgroundColor(Color.RED);
+                        current.invalidate();
+                    } else if(mGroupView!=null && current==null) {
+                        //exited
+                        Log.d(TAG, "Exited " + mGroupView.getGroup());
+                        mGroupView.setBackgroundColor(Color.BLACK);
+                        mGroupView.invalidate();
+                    }
+                    mGroupView = current;
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED:
                     view.setBackgroundColor(Color.TRANSPARENT);
@@ -300,42 +392,121 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 case DragEvent.ACTION_DROP:
                     view.setBackgroundColor(Color.TRANSPARENT);
                     view.invalidate();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                mDraggedMutable.setGroups(view.getGroup().getName());
-                                mDraggedMutable.saveSettings();
-                                mDraggedMutable.getAPI().getVBox().getSessionObject().unlockMachine();
-                                mDraggedMutable=null;
-                            } catch (IOException e) {
-                                Log.e(TAG, "Error", e);
-                            }
-                        }
-                    }).start();
-                    String machineIdRef = event.getClipData().getItemAt(0).getText().toString();
-                    List<MachineView> machineViews = _machineViewMap.get(machineIdRef);
-                    List<VMGroupPanel> groupViews = _groupViewMap.get(view.getGroup().getName());
-                    groupViews.get(0).getGroup().addChild(machineViews.get(0).getMachine());
-                    for(MachineView mv : machineViews) {
-                        ((ViewGroup)mv.getParent()).removeView(mv);
-                    }
-                    for(int i=0; i<machineViews.size(); i++) {
-                        MachineView mv = machineViews.get(i);
-                        VMGroupPanel gv = groupViews.get(i);
-                        gv.addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-                    }
+
+//                    String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+//
+//                    //machine dragged over current group
+//                    if(mDraggedMachine!=null && mDraggedMachine.getGroups().get(0).equals(mParentGroup))
+//                        return false;
+//                    //group dragged over itself or it's parent
+//                    if( mDraggedGroup!=null && (mDraggedGroup.equals(mParentGroup) || oldParentName.equals(mParentGroup.getName())) )
+//                        return false;
+//
+//                    if(mDraggedMachine!=null)
+//                        dropMachine(mParentGroup, mDraggedMachine);
+//                    else if(mDraggedGroup!=null)
+//                        dropGroup(mParentGroup, mDraggedGroup);
+                    
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
                     view.setBackgroundColor(Color.TRANSPARENT);
                     view.invalidate();
-                    if (event.getResult())
-                        Utils.toastShort(getContext(), "The drop was handled.");
-                    else
-                        Utils.toastShort(getContext(), "The drop didn't work.");
+                    mGroupView = null;
+                    mDraggedGroup=null;
+                    mDraggedMachine=null;
                     return true;
             }
             return false;
+        }
+
+        private void dropMachine(VMGroup parent, IMachine child) {
+            List<MachineView> machineViews = mMachineViewMap.get(mDraggedMachine.getIdRef());
+            //move the views
+            for(MachineView mv : machineViews) 
+                ((ViewGroup)mv.getParent()).removeView(mv);
+            for(int i=0; i<machineViews.size(); i++) {
+                MachineView mv = machineViews.get(i);
+                if(i<mNewParentViews.size()) //in case we are dragging to root group, there are less group panels than machine views
+                    mNewParentViews.get(i).addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                else if(mSectionView!=null)
+                    mSectionView.addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            }
+            //update the data
+            VMGroup oldParent = mGroupCache.get(mDraggedMachine.getGroups().get(0));
+            oldParent.removeChild(mDraggedMachine);
+            mParentGroup.addChild(mDraggedMachine);
+            _vmgr.getExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        ISession session = _vmgr.getVBox().getSessionObject();
+                        mDraggedMachine.lockMachine(session, LockType.WRITE);
+                        IMachine mutable = session.getMachine();
+                        mutable.setGroups(mParentGroup.getName());
+                        mutable.saveSettings();
+                        session.unlockMachine();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error", e);
+                    }
+                }
+            });
+        }
+
+        private void dropGroup(VMGroup parent, VMGroup child) {
+            String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+            //move the views
+            List<VMGroupPanel> groupViews = mGroupViewMap.get(mDraggedGroup.getName());
+            for(VMGroupPanel gv : groupViews) 
+                ((ViewGroup)gv.getParent()).removeView(gv);
+
+            for(int i=0; i<groupViews.size(); i++) {
+                VMGroupPanel gv = groupViews.get(i);
+                if(i<mNewParentViews.size()) //in case we are dragging to root group, there are less parent group panels than child views
+                    mNewParentViews.get(i).addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                else if(mSectionView!=null)
+                    mSectionView.addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            }
+
+            //update the data
+            final VMGroup dragged = mGroupCache.get(mDraggedGroup.getName());
+            VMGroup oldParent = mGroupCache.get(oldParentName);
+            Log.d(TAG, String.format("Dropping group %1$s --> %2$s", dragged, mParentGroup));
+            Log.d(TAG, "Old Parent: " + oldParentName);
+            oldParent.removeChild(dragged);
+            _vmgr.getExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        moveGroup(_vmgr.getVBox().getSessionObject(), mParentGroup, dragged);
+                    } catch(IOException e) {
+                        Log.e(TAG, "Exception moving group", e);
+                    }
+                }
+            });
+        }
+
+        private void moveGroup(ISession session, VMGroup parent, VMGroup group) throws IOException {
+            Log.d(TAG, "Fixing groups: " + group);
+            String oldName = group.getName();
+            group.setName(parent.getName() + "/" + group.getSimpleGroupName()  );
+            //update the group cache
+            mGroupCache.remove(oldName);
+            mGroupCache.put(group.getName(), group);
+            Log.d(TAG, String.format("Changed group name %1$s --> %2$s", oldName, group.getName()));
+            for(TreeNode c : group.getChildren()) {
+                if(c instanceof IMachine) {
+                    IMachine child = (IMachine)c;
+                    Log.d(TAG, "Processing: " + child.getName());
+                    child.lockMachine(session, LockType.WRITE);
+                    IMachine mutable = session.getMachine();
+                    mutable.setGroups(group.getName());
+                    mutable.saveSettings();
+                    session.unlockMachine();
+                } else {
+                    VMGroup child = (VMGroup)c;
+                    moveGroup(session, group, child);
+                }
+            }
         }
     }
 }

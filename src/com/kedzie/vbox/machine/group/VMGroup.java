@@ -74,6 +74,11 @@ public class VMGroup implements TreeNode {
     public String getName() {
         return _name;
     }
+    public String getSimpleGroupName() {
+        if(_name.equals("/"))
+            return "";
+        return _name.substring(_name.lastIndexOf('/')+1);
+    }
     public void setName(String name) {
         _name=name;
     }

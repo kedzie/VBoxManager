@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kedzie.vbox.R;
@@ -48,21 +47,23 @@ public class VMGroupPanel extends CollapsiblePanelView {
         _numMachinesText.setText(_group.getNumMachines()+"");
     }
     
-    protected View getTitleLayout() {
-        LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
-        setCollapseButton(titleLayout.findViewById(R.id.group_collapse));
-        _drillDownButton = (ImageView)titleLayout.findViewById(R.id.group_enter);
-        _drillDownButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(_drillDownListener!=null)
-                    _drillDownListener.onDrillDown(_group);
-            }
-        });
-        _numGroupsText  = (TextView)titleLayout.findViewById(R.id.group_num_groups);
-        _numMachinesText  = (TextView)titleLayout.findViewById(R.id.group_num_machine);
-        _titleLabel  = (TextView)titleLayout.findViewById(R.id.group_title);
-        return titleLayout;
+    public View getTitleView() {
+        if(mTitleView==null) {
+            mTitleView = LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
+            setCollapseButton(mTitleView.findViewById(R.id.group_collapse));
+            _drillDownButton = (ImageView)mTitleView.findViewById(R.id.group_enter);
+            _drillDownButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(_drillDownListener!=null)
+                        _drillDownListener.onDrillDown(_group);
+                }
+            });
+            _numGroupsText  = (TextView)mTitleView.findViewById(R.id.group_num_groups);
+            _numMachinesText  = (TextView)mTitleView.findViewById(R.id.group_num_machine);
+            _titleLabel  = (TextView)mTitleView.findViewById(R.id.group_title);
+        }
+        return mTitleView;
     }
     
     public void addChild(View view) {

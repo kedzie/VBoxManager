@@ -30,4 +30,7 @@
    <color name="blue_alpha">#9633B5E5</color>
    <color name="purple">#ffa466aa</color>
    <color name="orange">#fff7901e</color>
+   
+   <color name="accept_drop">#3CEB1313</color>
+   
 </resources>

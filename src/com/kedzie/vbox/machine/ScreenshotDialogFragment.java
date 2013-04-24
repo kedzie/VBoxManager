@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
 
 /**
@@ -60,9 +61,9 @@ public class ScreenshotDialogFragment extends SherlockDialogFragment {
 	private View _view;
 	private Bitmap _bitmap;
 	
-	public static ScreenshotDialogFragment getInstance(Bundle args) {
+	public static ScreenshotDialogFragment getInstance(byte[] bytes) {
 		ScreenshotDialogFragment f = new ScreenshotDialogFragment();
-		f.setArguments(args);
+		f.setArguments(new BundleBuilder().putByteArray(BUNDLE_BYTES, bytes).create());
 		return f;
 	}
 	

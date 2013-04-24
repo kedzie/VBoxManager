@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.kedzie.vbox.machine.SettingsActivity;
 
 /**
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
@@ -29,7 +30,11 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
         mViewPager=new ViewPager(mActivity);
         mViewPager.setId(99);
         mViewPager.setOffscreenPageLimit(4);
-        mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
+        String transition = Utils.getStringPreference(mActivity, SettingsActivity.PREF_TAB_TRANSITION);
+        if(transition.equals("Flip"))
+            mViewPager.setPageTransformer(false, new FlipPageTransformer());
+        else if(transition.equals("Slide"))
+            mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
         if(container==android.R.id.content)
             mActivity.setContentView(mViewPager);
         else
@@ -77,6 +82,7 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
 	
 	@Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
+//	    mViewPager.setCurrentItem(mAdapter.getTabs().indexOf(new FragmentElement((String)tab.getTag(), null, null)));
         for (int i=0; i<mAdapter.getTabs().size(); i++) 
             if (mAdapter.getTabs().get(i).name == tab.getTag()) 
                 mViewPager.setCurrentItem(i);

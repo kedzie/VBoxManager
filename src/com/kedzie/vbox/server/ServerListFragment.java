@@ -211,7 +211,7 @@ public class ServerListFragment extends SherlockFragment {
                 addServer();
                 return true;
             case R.id.menu_help:
-                Utils.launchActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
+                Utils.startActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
                 return true;
             }
         return false;
@@ -233,7 +233,7 @@ public class ServerListFragment extends SherlockFragment {
     			_listener.onSelectServer(getAdapter().getItem(position));
     			return true;
     		case R.id.server_list_context_menu_edit:
-    			Utils.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)s));
+    			Utils.startActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)s));
     			return true;
     		case R.id.server_list_context_menu_delete:
     			_db.delete(s.getId());
@@ -248,6 +248,6 @@ public class ServerListFragment extends SherlockFragment {
      * Launch activity to create a new Server
      */
     private void addServer() {
-    		Utils.launchActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)new Server()));
+    		Utils.startActivity(getActivity(), new Intent(getActivity(), EditServerActivity.class).putExtra(EditServerActivity.INTENT_SERVER, (Parcelable)new Server()));
     }
 }

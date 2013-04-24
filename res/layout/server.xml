@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layoutAnimation="@anim/layout_random_fade"
+    android:layoutAnimation="@anim/layout_random_slide"
     android:padding="8dp" >
 
 

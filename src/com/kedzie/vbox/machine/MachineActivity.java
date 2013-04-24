@@ -42,8 +42,8 @@ public class MachineActivity extends BaseActivity {
 		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
 		
 		_tabSupport = new TabSupportActionBarViewPager(this, android.R.id.content);
-		_tabSupport.addTab(new FragmentElement("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras()));
 		_tabSupport.addTab(new FragmentElement("Details", InfoFragment.class,getIntent().getExtras()));
+		_tabSupport.addTab(new FragmentElement("Actions", ActionsFragment.class, getIntent().putExtra("dualPane", false).getExtras()));
 		_tabSupport.addTab(new FragmentElement("Log", LogFragment.class, getIntent().getExtras()));
 		_tabSupport.addTab(new FragmentElement("Snapshots", SnapshotFragment.class, getIntent().getExtras()));
 		
@@ -70,7 +70,7 @@ public class MachineActivity extends BaseActivity {
 		    NavUtils.navigateUpTo(this, new Intent(this, MachineListActivity.class).putExtras(getIntent()));
 			return true;
 		case R.id.option_menu_preferences:
-			startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_PREFERENCES);
+		    Utils.startActivityForResult(this, new Intent(this, SettingsActivity.class), REQUEST_CODE_PREFERENCES);
 			return true;
 		}
 		return false;

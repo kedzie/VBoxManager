@@ -106,7 +106,7 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 		} else {
 			Intent intent = new Intent(this, MachineActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr);
 			BundleBuilder.addProxy(intent, IMachine.BUNDLE, machine );
-			Utils.launchActivity(this, intent);
+			Utils.startActivity(this, intent);
 		}
 	}
 

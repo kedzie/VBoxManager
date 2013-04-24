@@ -36,5 +36,14 @@
     	<item>30000</item>
     	<item>300000</item>
     	<item>600000</item>
-    </string-array>    
+    </string-array>  
+    
+     <string-array name="tab_transition_entries">
+    	<item>Flip</item>
+    	<item>Slide</item>
+    </string-array>
+    <string-array name="tab_transition_entryValues">
+    	<item>Flip</item>
+    	<item>Slide</item>
+    </string-array>   
 </resources>

@@ -482,16 +482,8 @@ public class Utils {
      * @param parent        parent activity
      * @param intent            intent to launch
      */
-    public static void launchActivity(Activity parent, Intent intent) {
-        launchActivity(parent, intent, R.anim.slide_in_right, R.anim.slide_out_left);
-    }
-    
-    /**
-     * Override transition for activity closing.
-     * @param activity      the activity
-     */
-    public static void overrideBackTransition(Activity activity) {
-        activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    public static void startActivity(Activity parent, Intent intent) {
+        startActivity(parent, intent, R.anim.slide_in_right, R.anim.slide_out_left);
     }
     
     /**
@@ -501,13 +493,56 @@ public class Utils {
      * @param animIn       In animation
      * @param animOut      Out animation
      */
-    public static void launchActivity(Activity parent, Intent intent, int animIn, int animOut) {
+    public static void startActivity(Activity parent, Intent intent, int animIn, int animOut) {
         if(isJellyBean())
             parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
         else {
             parent.startActivity(intent);
             parent.overridePendingTransition(animIn, animOut);
         }
+    }
+    
+    /**
+     * Launch activity using custom animations. Uses ActivityOptions if on JellyBean, otherwise overrides transition
+     * @param parent        parent activity
+     * @param intent            intent to launch
+     * @param animIn       In animation
+     * @param animOut      Out animation
+     */
+    public static void startActivityForResult(Activity parent, Intent intent, int requestCode) {
+        startActivityForResult(parent, intent, requestCode, R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+    
+    /**
+     * Launch activity using custom animations. Uses ActivityOptions if on JellyBean, otherwise overrides transition
+     * @param parent        parent activity
+     * @param intent            intent to launch
+     * @param animIn       In animation
+     * @param animOut      Out animation
+     */
+    public static void startActivityForResult(Activity parent, Intent intent, int requestCode, int animIn, int animOut) {
+        if(isJellyBean())
+            parent.startActivityForResult(intent, requestCode, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
+        else {
+            parent.startActivityForResult(intent, requestCode);
+            parent.overridePendingTransition(animIn, animOut);
+        }
+    }
+    
+    /**
+     * Override transition for activity closing.
+     * @param activity      the activity
+     */
+    public static void overrideBackTransition(Activity activity) {
+        overrideBackTransition(activity, R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+    
+    /**
+     * Override transition for activity closing.
+     * @param activity      the activity
+     */
+    public static void overrideBackTransition(Activity activity, int inAnim, int outAnim) {
+        activity.overridePendingTransition(inAnim, outAnim);
     }
     
     /**

@@ -1,5 +1,7 @@
 package com.kedzie.vbox.app;
 
+import com.kedzie.vbox.machine.SettingsActivity;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
@@ -126,7 +128,12 @@ public class PagerTabHost extends TabHost implements TabHost.OnTabChangeListener
             mRealTabContent = new ViewPager(context);
             mRealTabContent.setId(mContainerId);
             mRealTabContent.setOffscreenPageLimit(4);
-            mRealTabContent.setPageTransformer(false, new ZoomOutPageTransformer());
+            String transition = Utils.getStringPreference(getContext(), SettingsActivity.PREF_TAB_TRANSITION);
+            if(transition.equals("Flip"))
+                mRealTabContent.setPageTransformer(false, new FlipPageTransformer());
+            else if(transition.equals("Slide"))
+                mRealTabContent.setPageTransformer(false, new ZoomOutPageTransformer());
+            
             ll.addView(mRealTabContent, new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
         }

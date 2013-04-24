@@ -51,7 +51,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
         protected void onSuccess(IVirtualBox vbox) {
         	super.onSuccess(vbox);
             Utils.toastLong(ServerListFragmentActivity.this, getContext().getString(R.string.toast_connected_to_vbox) + vbox.getVersion());
-            Utils.launchActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
+            Utils.startActivity(ServerListFragmentActivity.this, new Intent(ServerListFragmentActivity.this, MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr));
         }
     }
     

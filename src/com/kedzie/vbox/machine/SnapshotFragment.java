@@ -35,7 +35,6 @@ import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.api.ISnapshotDeletedEvent;
 import com.kedzie.vbox.api.ISnapshotTakenEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
-import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -304,7 +303,7 @@ public class SnapshotFragment extends SherlockFragment {
     public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
         switch(item.getItemId()) {
             case R.id.option_menu_add:
-                Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(getArguments()) );
+                Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(_vmgr, _machine, null) );
                 return true;
             case R.id.option_menu_refresh:
                 refresh();
@@ -331,12 +330,7 @@ public class SnapshotFragment extends SherlockFragment {
         switch (item. getItemId()) {
             case R.id.context_menu_details_snapshot:
                 nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-                Bundle arguments = new BundleBuilder()
-                .putParcelable(VBoxSvc.BUNDLE, _vmgr)
-                .putParcelable(IMachine.BUNDLE, _machine)
-                .putParcelable("snapshot", nodeinfo.getId())
-                .create();
-                Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(arguments) );
+                Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(_vmgr, _machine, nodeinfo.getId()) );
                 return true;
             case R.id.context_menu_delete_snapshot:  
                 nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);

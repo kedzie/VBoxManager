@@ -69,6 +69,8 @@ public interface IHost extends IManagedObjectRef, Parcelable {
 	 */
 	@KSOAP(cacheable=true) public Integer getProcessorSpeed(@KSOAP(type="unsignedInt", value="cpuId") int cpuId);
 	
+	@KSOAP(cacheable=true) public String getProcessorDescription(@KSOAP(type="unsignedInt", value="cpuId") int cpuId);
+    
 	/**
 	 * @return	Name of the host system's operating system. 
 	 */

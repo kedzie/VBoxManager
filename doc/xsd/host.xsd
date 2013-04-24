@@ -3,23 +3,6 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" name="VirtualBox"  targetNamespace="http://www.virtualbox.org/">
 
       
-      <!-- method IHost::getProcessorDescription-->
-      <xsd:element name="IHost_getProcessorDescription">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="cpuId" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IHost_getProcessorDescriptionResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      
       <!-- method IHost::getProcessorCPUIDLeaf-->
       <xsd:element name="IHost_getProcessorCPUIDLeaf">
         <xsd:complexType>

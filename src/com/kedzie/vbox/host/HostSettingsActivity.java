@@ -104,4 +104,10 @@ public class HostSettingsActivity extends BaseActivity implements OnSelectHostCa
 		}
 		return false;
 	}
+	
+	@Override
+	public void finish() {
+	    super.finish();
+	    Utils.overrideBackTransition(this);
+	}
 }

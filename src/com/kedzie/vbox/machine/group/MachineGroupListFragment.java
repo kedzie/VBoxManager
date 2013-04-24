@@ -118,11 +118,11 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
 			return true;
 		case R.id.option_menu_preferences:
-			startActivityForResult(new Intent(getActivity(), SettingsActivity.class),REQUEST_CODE_PREFERENCES);
+			Utils.startActivityForResult(getActivity(), new Intent(getActivity(), SettingsActivity.class),REQUEST_CODE_PREFERENCES);
 			return true;
 		case R.id.machine_list_option_menu_host_settings:
 			if(VBoxApplication.getInstance().isPremiumVersion())
-				startActivity(new Intent(getActivity(), HostSettingsActivity.class).putExtra(IHost.BUNDLE, _vmgr.getVBox().getHost()));
+				Utils.startActivity(getActivity(), new Intent(getActivity(), HostSettingsActivity.class).putExtra(IHost.BUNDLE, _vmgr.getVBox().getHost()));
 			else
 				VBoxApplication.getInstance().showPremiumOffer(getActivity());
 			return true;

@@ -247,12 +247,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.TAKE_SNAPSHOT)) 	{
-		    Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), 
-                    "snapshotDialog", 
-                    TakeSnapshotFragment.getInstance(new BundleBuilder()
-										.putParcelable(VBoxSvc.BUNDLE, _vmgr)
-										.putProxy(IMachine.BUNDLE, _machine)
-										.create()) );
+		    Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), "snapshotDialog", 
+                    TakeSnapshotFragment.getInstance(_vmgr, _machine, null) );
 		} else if(action.equals(VMAction.VIEW_METRICS)) {
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
 					.putExtra(MetricActivity.INTENT_TITLE, _machine.getName() + " Metrics")
@@ -270,7 +266,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 				@Override
 				protected void onSuccess(byte[] result) {
 					super.onSuccess(result);
-					Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), "screenshotDialog", ScreenshotDialogFragment.getInstance(new BundleBuilder().putByteArray(ScreenshotDialogFragment.BUNDLE_BYTES, result).create()) );
+					Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), "screenshotDialog", ScreenshotDialogFragment.getInstance(result) );
 				}
 			}.execute();
 		} else if(action.equals(VMAction.EDIT_SETTINGS)) {
@@ -282,7 +278,7 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 						.setMessage("Session state is " + _machine.getSessionState())
 						.show();
 				} else
-					Utils.launchActivity(getActivity(), new Intent(getActivity(), VMSettingsActivity.class).putExtras(getArguments()));
+					Utils.startActivity(getActivity(), new Intent(getActivity(), VMSettingsActivity.class).putExtras(getArguments()));
 			} else
 				getApp().showPremiumOffer(getActivity());
 		}

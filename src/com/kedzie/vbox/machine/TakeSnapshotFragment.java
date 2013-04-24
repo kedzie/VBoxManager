@@ -36,9 +36,12 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 	private TextView _nameText;
 	private TextView _descriptionText;
 	
-	public static TakeSnapshotFragment getInstance(Bundle args) {
+	public static TakeSnapshotFragment getInstance(VBoxSvc vmgr, IMachine machine,ISnapshot snapshot) {
+	    BundleBuilder b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vmgr).putProxy(IMachine.BUNDLE, machine);
+	    if(snapshot!=null)
+	        b.putProxy(ISnapshot.BUNDLE, snapshot);
 		TakeSnapshotFragment f = new TakeSnapshotFragment();
-		f.setArguments(args);
+		f.setArguments(b.create());
 		return f;
 	}
 	

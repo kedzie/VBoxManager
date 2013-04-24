@@ -79,7 +79,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
     }
     
     private boolean mExpanded=true;
-    private View mTitleView;
+    protected View mTitleView;
     private FrameLayout mFrame;
     private LinearLayout mContents;
     private Drawable mIcon;
@@ -111,7 +111,6 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
     protected void init(Context context) {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         setOrientation(VERTICAL);
-        mTitleView=getTitleLayout();
         
         mContents = new LinearLayout(context);
         mContents.setOrientation(VERTICAL);
@@ -120,13 +119,14 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
         mFrame = new FrameLayout(context);
         mFrame.setBackgroundResource(R.drawable.panel_body);
         mFrame.addView(mContents, lp);
+        
+        super.addView(getTitleView(), lp);
+        super.addView(mFrame, lp);
+        
         if(!mExpanded) {
             mFrame.setVisibility(GONE);
             AnimatorProxy.wrap(mCollapseButton).setRotation(mCollapseRotation);
         }
-        
-        super.addView(mTitleView, lp);
-        super.addView(mFrame, lp);
         
         if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
 	    	setLayerType(LAYER_TYPE_HARDWARE, null);
@@ -136,12 +136,14 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
      * Override to create custom Panel header.  Make sure to also override {@link CollapsiblePanelView#getCollapseButton}.
      * @return  the initialized panel header
      */
-    protected View getTitleLayout() {
-        LinearLayout titleLayout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.panel_header, this, false);
-        setCollapseButton(titleLayout.findViewById(R.id.group_collapse));
-        Utils.setImageView(titleLayout, R.id.panel_icon, mIcon);
-        Utils.setTextView(titleLayout, R.id.group_title, mTitle);
-        return titleLayout;
+    public View getTitleView() {
+        if(mTitleView==null) {
+            mTitleView = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.panel_header, this, false);
+            setCollapseButton(mTitleView.findViewById(R.id.group_collapse));
+            Utils.setImageView(mTitleView, R.id.panel_icon, mIcon);
+            Utils.setTextView(mTitleView, R.id.group_title, mTitle);
+        }
+        return mTitleView;
     }
     
     protected void setCollapseButton(View view) {
