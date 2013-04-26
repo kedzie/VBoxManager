@@ -1,3 +1,7 @@
 /bin
-/proguard
-/gen
+/vbox-app/bin
+/vbox-app/gen
+/vbox-instrumentation/bin
+/vbox-instrumentation/gen
+/vbox-key/bin
+/vbox-key/gen
