@@ -46,7 +46,7 @@ public class DisplayRemoteFragment extends SherlockFragment {
 		protected IVRDEServer work(IMachine... m) throws Exception {
 			IVRDEServer server = m[0].getVRDEServer();
 			Log.i(TAG, "VRDE Properties: " + Arrays.toString(server.getVRDEProperties()));
-			Log.i(TAG, "TCP/Ports: " + server.getVRDEProperty("TCP/Ports"));
+			Log.i(TAG, "TCP/Ports: " + server.getVRDEProperty(IVRDEServer.PROPERTY_PORT));
 			server.getEnabled();
 			server.getAuthTimeout();
 			server.getAuthType();

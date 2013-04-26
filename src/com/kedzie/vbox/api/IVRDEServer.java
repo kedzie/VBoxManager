@@ -14,6 +14,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 @KSOAP
 public interface IVRDEServer extends IManagedObjectRef, Parcelable {
 	public static final String BUNDLE = "vrde";
+	public static final String PROPERTY_PORT = "TCP/Ports";
 	static final ClassLoader LOADER = IVRDEServer.class.getClassLoader();
     
     public static final Parcelable.Creator<IVRDEServer> CREATOR = new Parcelable.Creator<IVRDEServer>() {

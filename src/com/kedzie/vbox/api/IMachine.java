@@ -364,7 +364,7 @@ operation should be explicitly performed by the caller after the medium is succe
 	
 	public String queryLogFilename(@KSOAP(type="unsignedInt", value="idx") int idx);
 	
-	public byte[] readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size);
+	public byte[] readLog(@KSOAP(type="unsignedInt", value="idx") int idx, @KSOAP(type="long", value="offset") long offset, @KSOAP(type="long", value="size") long size) throws IOException;
 	
 	/**
 	 * <p>Creates a clone of this machine, either as a full clone (which means creating independent copies of the hard disk media, save states and so on), or as a linked clone 

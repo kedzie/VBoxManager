@@ -72,10 +72,10 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
     
 
-    private Animation _slideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
-    private Animation _slideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
-    private Animation _slideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
-    private Animation _slideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
+    private Animation mSlideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
+    private Animation mSlideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
+    private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
+    private Animation mSlideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
 
     private Dragger mDragger;
     private VMGroup mDraggedGroup;
@@ -98,14 +98,14 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     @Override
     public void onDrillDown(VMGroup group) {
         addView(new GroupSection(getContext(), group));
-        setInAnimation(_slideInRight);
-        setOutAnimation(_slideOutLeft);
+        setInAnimation(mSlideInRight);
+        setOutAnimation(mSlideOutLeft);
         showNext();
     }
 
     public void drillOut() {
-        setInAnimation(_slideInLeft);
-        setOutAnimation(_slideOutRight);
+        setInAnimation(mSlideInLeft);
+        setOutAnimation(mSlideOutRight);
         showPrevious();
         removeViewAt(getChildCount()-1);
     }
@@ -160,7 +160,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             scrollView.addView(mContents);
             super.addView(scrollView);
             if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
-                mContents.setOnDragListener(mDragger);
+                setOnDragListener(mDragger);
         }
 
         @Override
@@ -235,13 +235,15 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             notifyListener(v);
             return;
         }
-        if(_selected==v) {      //Deselect existing selection
+      //Deselect existing selection
+        if(_selected==v) {
             _selected.setSelected(false);
             _selected=null;
             _listener.onTreeNodeSelect(null);
             return;
         } 
-        if(_selected!=null)	//Make new Selection
+      //Make new Selection
+        if(_selected!=null)
             _selected.setSelected(false);
         _selected=v;
         _selected.setSelected(true);
@@ -358,8 +360,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     //                        if(oldParentName.equals(mParentGroup.getName()))
                     //                            return false;
                     //                    }
-                    view.setBackgroundColor(Color.RED);
-                    view.invalidate();
+//                    view.setBackgroundColor(Color.RED);
+//                    view.invalidate();
                     return true;
                 case DragEvent.ACTION_DRAG_LOCATION:
                     VMGroupPanel current = null;
@@ -367,7 +369,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                         Rect frame = new Rect();
                         child.getHitRect(frame);
                         if(frame.contains((int)event.getX(), (int)event.getY())) {
-                            Log.v(TAG, "Drag inside " + child);
+                            Log.v(TAG, "Drag inside " + child.getGroup());
                             current = child;
                             break;
                         }
@@ -390,8 +392,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     view.invalidate();
                     return true;
                 case DragEvent.ACTION_DROP:
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                    view.invalidate();
+//                    view.setBackgroundColor(Color.TRANSPARENT);
+//                    view.invalidate();
 
 //                    String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
 //

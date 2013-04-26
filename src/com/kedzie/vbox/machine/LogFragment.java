@@ -1,5 +1,7 @@
 package com.kedzie.vbox.machine;
 
+import java.io.IOException;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import com.kedzie.vbox.task.ActionBarTask;
  * @apiviz.stereotype fragment
  */
 public class LogFragment extends SherlockFragment {
+    private static final String TAG = "LogFragment";
 	private static final int MAX_LOG_SIZE=409600; //400 Kbps
 	
 	class LoadLogTask extends ActionBarTask<IMachine, String> {
@@ -28,13 +31,17 @@ public class LogFragment extends SherlockFragment {
 
 		@Override 
 		protected String work(IMachine... m) throws Exception {
-			return new String(m[0].readLog(0, 0, MAX_LOG_SIZE));
+		    try {
+		        return new String(m[0].readLog(0, 0, MAX_LOG_SIZE));
+		    } catch(IOException e) {
+		        return "";
+		    }
 		}
 
 		@Override
 		protected void onSuccess(String result) {
 			if(result.length()==MAX_LOG_SIZE)	
-			    Log.w(TAG,"Log size: " + result.length());
+			    Log.w(TAG,"Didn't get entire log file.  Log size: " + result.length());
 			_logText.setText(_log=result);
 		}
 	}
@@ -76,6 +83,7 @@ public class LogFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_refresh:
+		    Log.i(TAG, "Refreshing...");
 			new LoadLogTask().execute(_machine);
 			return true;
 		}

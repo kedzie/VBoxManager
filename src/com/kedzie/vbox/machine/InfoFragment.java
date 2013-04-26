@@ -22,6 +22,7 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.INetworkAdapter;
 import com.kedzie.vbox.api.IStorageController;
+import com.kedzie.vbox.api.IVRDEServer;
 import com.kedzie.vbox.api.jaxb.CPUPropertyType;
 import com.kedzie.vbox.api.jaxb.DeviceType;
 import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
@@ -42,6 +43,7 @@ import com.kedzie.vbox.task.MachineRunnable;
  * @apiviz.stereotype fragment
  */
 public class InfoFragment extends SherlockFragment {
+    private static final String TAG = "InfoFragment";
 
 	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
 
@@ -74,6 +76,9 @@ public class InfoFragment extends SherlockFragment {
                   //boot order
                     for(int i=1 ;i<=99; i++)
                         if(m.getBootOrder(i).equals(DeviceType.NULL)) break;
+                    
+                    //Remote Desktop
+                    m.getVRDEServer().getVRDEProperty(IVRDEServer.PROPERTY_PORT);
                 }
 			});
 			
@@ -271,6 +276,7 @@ public class InfoFragment extends SherlockFragment {
 		//audio devices
 		_audioController.setText(m.getAudioAdapter().getAudioController().toString());
 		_audioDriver.setText(m.getAudioAdapter().getAudioDriver().toString());
+		
 		//network devices
 		StringBuffer networkText = new StringBuffer();
 		for(int i=0; i<4; i++) {
@@ -279,21 +285,24 @@ public class InfoFragment extends SherlockFragment {
 				continue;
 			if(i>0) 
 				networkText.append("\n");
-			networkText.append("Adapter ").append(i).append(": ").append(adapter.getAdapterType());
-			if(adapter.getAttachmentType().equals(NetworkAttachmentType.BRIDGED))
-				networkText.append("(Bridged Adapter, ").append(adapter.getBridgedInterface()).append(")");
-			else if(adapter.getAttachmentType().equals(NetworkAttachmentType.BRIDGED))
-				networkText.append("(Host-Only Adapter, ").append(adapter.getHostOnlyInterface()).append(")");
-			if(adapter.getAttachmentType().equals(NetworkAttachmentType.GENERIC))
-				networkText.append("(Generic-Driver Adapter, ").append(adapter.getGenericDriver()).append(")");
-			if(adapter.getAttachmentType().equals(NetworkAttachmentType.INTERNAL))
-				networkText.append("(Internal-Network Adapter, ").append(adapter.getInternalNetwork()).append(")");
+			networkText.append("Adapter ").append(i+1).append(": ").append(adapter.getAdapterType());
+			NetworkAttachmentType type = adapter.getAttachmentType();
+			Log.v(TAG, "Adapter #" + (i+1) + " attachment Type: " + type);
+			if(type.equals(NetworkAttachmentType.BRIDGED))
+				networkText.append("  (Bridged Adapter, ").append(adapter.getBridgedInterface()).append(")");
+			else if(type.equals(NetworkAttachmentType.BRIDGED))
+				networkText.append("  (Host-Only Adapter, ").append(adapter.getHostOnlyInterface()).append(")");
+			else if(type.equals(NetworkAttachmentType.GENERIC))
+				networkText.append("  (Generic-Driver Adapter, ").append(adapter.getGenericDriver()).append(")");
+			else if(type.equals(NetworkAttachmentType.INTERNAL))
+				networkText.append("  (Internal-Network Adapter, ").append(adapter.getInternalNetwork()).append(")");
 		}
 		_networkText.setText(networkText.toString());
 		
 		_videoMemoryText.setText( m.getVRAMSize()+" MB");
 		_accelerationVideoText.setText( (m.getAccelerate2DVideoEnabled() ? "2D" : "") + " " +  (m.getAccelerate3DEnabled() ? "3D" : "") );
-		_rdpPortText.setText( "NaN" );
+		
+		_rdpPortText.setText(m.getVRDEServer().getVRDEProperty(IVRDEServer.PROPERTY_PORT));
 		_descriptionText.setText( m.getDescription()+"" );
 		
 		if(info.screenshot!=null) {
@@ -309,6 +318,7 @@ public class InfoFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 	    switch(item.getItemId()) {
 	        case R.id.option_menu_refresh:
+	            Log.d(TAG, "Refreshing...");
 	            new LoadInfoTask().execute(_machine);
 	            return true;
 	    }
