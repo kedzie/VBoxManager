@@ -399,6 +399,15 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                         mGroupView.setBackgroundColor(Color.BLACK);
                         mGroupView.invalidate();
                     }
+                    if(current==null && mGroupView!=null) {
+                        //entered root group
+                        mSectionView.setBackgroundColor(Color.RED);
+                        mSectionView.invalidate();
+                    } else if(current!=null && mGroupView==null) {
+                        //exited root group
+                        mSectionView.setBackgroundColor(Color.BLACK);
+                        mSectionView.invalidate();
+                    }
                     mGroupView = current;
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED:

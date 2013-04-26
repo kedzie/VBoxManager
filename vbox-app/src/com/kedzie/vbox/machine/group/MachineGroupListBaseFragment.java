@@ -15,9 +15,6 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
-import com.kedzie.vbox.api.IMedium;
-import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType;
-import com.kedzie.vbox.api.jaxb.ProcessorFeature;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
@@ -58,26 +55,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        @Override
 	        protected VMGroup work(Void... params) throws Exception {
 	            _vmgr.getVBox().getVersion();
-	            fork(new Runnable() {
-	                @Override
-	                public void run() {
-	                    _host = _vmgr.getVBox().getHost();
-	                    _host.getMemorySize();
-	                    _host.getMemoryAvailable();
-	                    _host.getOperatingSystem();
-	                    _host.getOSVersion();
-	                    for(IMedium drive : _host.getDVDDrives()) 
-	                        Utils.cacheProperties(drive);
-	                    _host.findHostNetworkInterfacesOfType(HostNetworkInterfaceType.BRIDGED);
-	                    for(int i=0; i<_host.getProcessorCount(); i++) {
-	                        _host.getProcessorDescription(i);
-	                        _host.getProcessorDescription(i);
-	                    }
-	                    _host.getProcessorFeature(ProcessorFeature.HW_VIRT_EX);
-	                    _host.getProcessorFeature(ProcessorFeature.LONG_MODE);
-	                    _host.getProcessorFeature(ProcessorFeature.PAE);
-	                }
-	            });
+	            _host = _vmgr.getVBox().getHost();
 	            List<String> vGroups = _vmgr.getVBox().getMachineGroups();
 	            for(String tmp : vGroups) {
 	                if(tmp.equals("/")) continue;

@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
@@ -18,6 +19,7 @@ import com.kedzie.vbox.app.TabSupport;
 import com.kedzie.vbox.app.TabSupportActionBarViewPager;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
+import com.kedzie.vbox.host.HostInfoFragment;
 import com.kedzie.vbox.machine.group.GroupInfoFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.machine.group.VMGroup;
@@ -93,6 +95,8 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 			onMachineSelected((IMachine)node);
 		else if (node instanceof VMGroup) 
 			onGroupSelected((VMGroup)node);
+		else if (node instanceof IHost)
+		    onHostSelected((IHost)node);
 	}
 
 	private void onMachineSelected(IMachine machine) {
@@ -116,9 +120,19 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 			_tabSupport.removeAllTabs();
 			_tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), GroupInfoFragment.class, b));
 		} else {
-			startActivity(new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement(group.getName(), GroupInfoFragment.class, b)));
+		    Utils.startActivity(this, new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement(group.getName(), GroupInfoFragment.class, b)));
 		}
 	}
+	
+	private void onHostSelected(IHost host) {
+        Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr).putParcelable(IHost.BUNDLE, host).create();
+        if(_dualPane) {
+            _tabSupport.removeAllTabs();
+            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), HostInfoFragment.class, b));
+        } else {
+            Utils.startActivity(this, new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement("Host", HostInfoFragment.class, b)));
+        }
+    }
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

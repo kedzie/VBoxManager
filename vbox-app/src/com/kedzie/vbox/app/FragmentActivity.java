@@ -24,4 +24,10 @@ public class FragmentActivity extends BaseActivity {
         	Utils.addFragment(this, getSupportFragmentManager(), android.R.id.content, element);
         }
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Utils.overrideBackTransition(this);
+    }
 }

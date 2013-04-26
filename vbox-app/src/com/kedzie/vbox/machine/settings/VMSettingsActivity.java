@@ -157,7 +157,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
             Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
             tx.commit();
 	    } else {
-	        startActivity(new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, category));
+	        Utils.startActivity(this, new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, category));
 	    }
 	    currentCategory = category.name;
     }
