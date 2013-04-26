@@ -28,11 +28,13 @@ import android.widget.ScrollView;
 import android.widget.ViewFlipper;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.host.HostView;
 import com.kedzie.vbox.machine.MachineView;
 import com.kedzie.vbox.machine.group.VMGroupPanel.OnDrillDownListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -71,7 +73,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     /** Cache of {@link VMGroup}s */
     private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
     
-
     private Animation mSlideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
     private Animation mSlideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
     private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
@@ -80,6 +81,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private Dragger mDragger;
     private VMGroup mDraggedGroup;
     private IMachine mDraggedMachine;
+    
+    private IHost mHost;
 
     private VBoxSvc _vmgr;
 
@@ -90,7 +93,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             mDragger = new Dragger();
     }
 
-    public void setRoot(VMGroup group) {
+    public void setRoot(VMGroup group, IHost host) {
+        mHost = host;
         mGroupCache.put(group.getName(), group);
         addView(new GroupSection(getContext(), group));
     }
@@ -136,6 +140,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             super(context);
             mGroup = group;
             setOrientation(LinearLayout.VERTICAL);
+            mContents = new LinearLayout(getContext());
+            mContents.setOrientation(LinearLayout.VERTICAL);
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             if(!mGroup.getName().equals("")) {
                 LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
                 ((ImageView)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
@@ -147,13 +154,17 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 Utils.setTextView(header, R.id.group_title, group.getName());
                 Utils.setTextView(header, R.id.group_num_groups, group.getNumGroups());
                 Utils.setTextView(header, R.id.group_num_machine, group.getNumMachines());
-                LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
                 lp.bottomMargin = Utils.dpiToPixels(getContext(), 4);
                 super.addView(header, lp);
+            } else {
+                //add host view
+                HostView h = new HostView(getContext());
+                h.update(mHost);
+                h.setBackgroundResource(R.drawable.list_selector_color);
+                h.setClickable(true);
+                h.setOnClickListener(VMGroupListView.this);
+                mContents.addView(h);
             }
-            mContents = new LinearLayout(getContext());
-            mContents.setOrientation(LinearLayout.VERTICAL);
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             for(TreeNode child : group.getChildren()) 
                 mContents.addView(createView(child), lp);
             ScrollView scrollView = new ScrollView(getContext());
@@ -162,7 +173,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
                 setOnDragListener(mDragger);
         }
-
+        
         @Override
         public void addView(View child, android.view.ViewGroup.LayoutParams params) {
             mContents.addView(child, params);
@@ -255,6 +266,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             _listener.onTreeNodeSelect(((MachineView)v).getMachine());
         else if(v instanceof VMGroupPanel)
             _listener.onTreeNodeSelect(((VMGroupPanel)v).getGroup());
+        else if(v instanceof HostView)
+            _listener.onTreeNodeSelect(((HostView)v).getHost());
     }
 
     @Override
@@ -374,12 +387,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                             break;
                         }
                     }
-                    if(mGroupView==null && current!=null) {
+                    if(current!=null && current!=mGroupView) {
                         //entered
                         Log.d(TAG, "Entered " + current.getGroup());
                         current.setBackgroundColor(Color.RED);
                         current.invalidate();
-                    } else if(mGroupView!=null && current==null) {
+                    }
+                    if(mGroupView!=null && current!=mGroupView) {
                         //exited
                         Log.d(TAG, "Exited " + mGroupView.getGroup());
                         mGroupView.setBackgroundColor(Color.BLACK);
@@ -395,13 +409,14 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
 //                    view.setBackgroundColor(Color.TRANSPARENT);
 //                    view.invalidate();
 
-//                    String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
-//
+//                    if(mDraggedGroup!=null) {
+//                        String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+                      //group dragged over itself or it's parent
+//                      if( mDraggedGroup!=null && (mDraggedGroup.equals(mParentGroup) || oldParentName.equals(mParentGroup.getName())) )
+//                          return false;
+//                    }
 //                    //machine dragged over current group
 //                    if(mDraggedMachine!=null && mDraggedMachine.getGroups().get(0).equals(mParentGroup))
-//                        return false;
-//                    //group dragged over itself or it's parent
-//                    if( mDraggedGroup!=null && (mDraggedGroup.equals(mParentGroup) || oldParentName.equals(mParentGroup.getName())) )
 //                        return false;
 //
 //                    if(mDraggedMachine!=null)
@@ -411,6 +426,10 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
+                    if(mGroupView!=null) {
+                        mGroupView.setBackgroundColor(Color.BLACK);
+                        mGroupView.invalidate();
+                    }
                     view.setBackgroundColor(Color.TRANSPARENT);
                     view.invalidate();
                     mGroupView = null;

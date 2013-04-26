@@ -91,7 +91,7 @@ public class NetworkFragment extends SherlockFragment {
     void populate() {
     	mTabHost.removeAllTabs();
     	for(int i=0; i<_adapters.size(); i++)
-    	    mTabHost.addTab(new FragmentElement("Adapter#"+i, NetworkAdapterFragment.class, 
+    	    mTabHost.addTab(new FragmentElement("Adapter#"+(i+1), NetworkAdapterFragment.class, 
     	            new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create()));
     }
 

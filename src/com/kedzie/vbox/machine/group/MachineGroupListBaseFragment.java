@@ -12,8 +12,12 @@ import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IMedium;
+import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType;
+import com.kedzie.vbox.api.jaxb.ProcessorFeature;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
@@ -30,6 +34,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	
 	protected VBoxSvc _vmgr;
 	protected VMGroup _root;
+	protected IHost _host;
 	protected VMGroupListView _listView;
 	protected OnTreeNodeSelectListener _selectListener;
 	
@@ -53,7 +58,26 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        @Override
 	        protected VMGroup work(Void... params) throws Exception {
 	            _vmgr.getVBox().getVersion();
-	            _vmgr.getVBox().getHost().getMemorySize();
+	            fork(new Runnable() {
+	                @Override
+	                public void run() {
+	                    _host = _vmgr.getVBox().getHost();
+	                    _host.getMemorySize();
+	                    _host.getMemoryAvailable();
+	                    _host.getOperatingSystem();
+	                    _host.getOSVersion();
+	                    for(IMedium drive : _host.getDVDDrives()) 
+	                        Utils.cacheProperties(drive);
+	                    _host.findHostNetworkInterfacesOfType(HostNetworkInterfaceType.BRIDGED);
+	                    for(int i=0; i<_host.getProcessorCount(); i++) {
+	                        _host.getProcessorDescription(i);
+	                        _host.getProcessorDescription(i);
+	                    }
+	                    _host.getProcessorFeature(ProcessorFeature.HW_VIRT_EX);
+	                    _host.getProcessorFeature(ProcessorFeature.LONG_MODE);
+	                    _host.getProcessorFeature(ProcessorFeature.PAE);
+	                }
+	            });
 	            List<String> vGroups = _vmgr.getVBox().getMachineGroups();
 	            for(String tmp : vGroups) {
 	                if(tmp.equals("/")) continue;
@@ -87,7 +111,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        @Override
 	        protected void onSuccess(VMGroup root) {
 	            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
-	            _listView.setRoot(root);
+	            _listView.setRoot(root, _host);
 	            _root = root;
 	        }
 	    }
@@ -121,14 +145,15 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		
 		if(savedInstanceState!=null)  { 
 			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, savedInstanceState.getString("version")));
-			_root = (VMGroup)savedInstanceState.getParcelable(VMGroup.BUNDLE);
-			_vmgr = (VBoxSvc)savedInstanceState.getParcelable(VBoxSvc.BUNDLE);
+			_root = savedInstanceState.getParcelable(VMGroup.BUNDLE);
+			_vmgr = savedInstanceState.getParcelable(VBoxSvc.BUNDLE);
+			_host = savedInstanceState.getParcelable(IHost.BUNDLE);
     	} 
 		
 		if(_root==null)
     		new LoadGroupsTask(_vmgr).execute();
 		else
-			_listView.setRoot(_root);
+			_listView.setRoot(_root, _host);
 	}
 	
 	@Override
@@ -137,6 +162,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		outState.putParcelable(VBoxSvc.BUNDLE, _vmgr);
 		outState.putString("version", _vmgr.getVBox().getVersion());
 		outState.putParcelable(VMGroup.BUNDLE, _root);
+		outState.putParcelable(IHost.BUNDLE, _host);
 		//save current machine
 	}
 }

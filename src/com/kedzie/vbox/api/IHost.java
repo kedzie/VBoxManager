@@ -9,6 +9,7 @@ import android.os.Parcelable;
 
 import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType;
 import com.kedzie.vbox.api.jaxb.ProcessorFeature;
+import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -20,7 +21,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * hardware, such as global USB device filters and host interface networking.
  */
 @KSOAP
-public interface IHost extends IManagedObjectRef, Parcelable {
+public interface IHost extends IManagedObjectRef, Parcelable, TreeNode {
 	public static final String BUNDLE = "host";
 	static ClassLoader loader = IHost.class.getClassLoader();
 	

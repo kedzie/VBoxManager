@@ -1,5 +1,8 @@
 package com.kedzie.vbox.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -159,6 +162,13 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
     @Override
     public void addView(View child, ViewGroup.LayoutParams params) {
         mContents.addView(child, params);
+    }
+    
+    public List<View> getContentViews() {
+        List<View> views = new ArrayList<View>(mContents.getChildCount());
+        for(int i=0; i<mContents.getChildCount(); i++)
+            views.add(mContents.getChildAt(i));
+        return views;
     }
     
     @Override
