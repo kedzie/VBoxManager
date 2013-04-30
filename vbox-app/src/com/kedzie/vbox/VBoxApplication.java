@@ -76,7 +76,7 @@ public class VBoxApplication extends Application {
 		putResource(MachineState.FIRST_TRANSIENT.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
 		putResource(MachineState.LAST_ONLINE.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
 		putResource(MachineState.LAST_TRANSIENT.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
-		putResource(MachineState.SETTING_UP.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);		
+		putResource(MachineState.SETTING_UP.name(), R.drawable.ic_list_start, R.drawable.ic_list_start_c);
 		
 		putResource( VMAction.START.name(), R.drawable.ic_list_start , R.drawable.ic_list_start_c );		
 		putResource(VMAction.POWER_OFF.name(), R.drawable.ic_list_poweroff, R.drawable.ic_list_poweroff_c);		

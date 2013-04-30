@@ -255,6 +255,7 @@ public class InfoFragment extends SherlockFragment {
 		if(m.getCPUProperty(CPUPropertyType.PAE))
 			Utils.appendWithComma(acceleration,  "PAE/NX");
 		_accelerationText.setText(acceleration.toString());
+		
 		//storage controllers
 		StringBuffer storage = new StringBuffer();
 		List<IStorageController> controllers = m.getStorageControllers();

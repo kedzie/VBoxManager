@@ -210,7 +210,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 if(!mGroupViewMap.containsKey(group.getName()))
                     mGroupViewMap.put(group.getName(), new ArrayList<VMGroupPanel>());
                 mGroupViewMap.get(group.getName()).add(groupView);
-                groupView.setBackgroundColor(Color.BLACK);
+                groupView.setBackgroundResource(android.R.color.background_dark);
                 return groupView;
             }
             throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");

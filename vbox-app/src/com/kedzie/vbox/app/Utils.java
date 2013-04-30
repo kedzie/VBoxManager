@@ -449,6 +449,7 @@ public class Utils {
     public static void cacheProperties(IMedium medium) {
     	synchronized(medium) {
     		medium.getName();
+    		medium.getDescription();
     		medium.getSize();
     		medium.getType();
 			medium.getLocation();
