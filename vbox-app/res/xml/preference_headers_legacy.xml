@@ -7,7 +7,7 @@
         <intent
             android:action="com.kedzie.vbox.prefs.GENERAL"
             android:targetClass="com.kedzie.vbox.machine.SettingsActivity"
-            android:targetPackage="com.kedzie.vbox.machine" />
+            android:targetPackage="com.kedzie.vbox" />
     </Preference>
     <Preference
         android:summary="@string/pref_category_metrics_summary"
@@ -15,7 +15,7 @@
         <intent
             android:action="com.kedzie.vbox.prefs.METRIC"
             android:targetClass="com.kedzie.vbox.machine.SettingsActivity"
-            android:targetPackage="com.kedzie.vbox.machine" />
+            android:targetPackage="com.kedzie.vbox" />
     </Preference>
 
 </PreferenceScreen>
