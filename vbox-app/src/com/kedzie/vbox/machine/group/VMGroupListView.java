@@ -10,6 +10,7 @@ import android.content.ClipData;
 import android.content.ClipData.Item;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -73,6 +74,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     /** Cache of {@link VMGroup}s */
     private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
     
+    private static final int VIEW_BACKGROUND = android.R.color.background_dark;
     private Animation mSlideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
     private Animation mSlideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
     private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
@@ -210,7 +212,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 if(!mGroupViewMap.containsKey(group.getName()))
                     mGroupViewMap.put(group.getName(), new ArrayList<VMGroupPanel>());
                 mGroupViewMap.get(group.getName()).add(groupView);
-                groupView.setBackgroundResource(android.R.color.background_dark);
+                groupView.setBackgroundResource(VIEW_BACKGROUND);
                 return groupView;
             }
             throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");
@@ -355,91 +357,68 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         public boolean onDrag(View view, DragEvent event) {
             mSectionView = (GroupSection)view;
 
-            //            final VMGroup mParentGroup = groupView!=null ? mGroupView.getGroup() : mSectionView.getGroup();
-            //            List<VMGroupPanel> mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
-
             final int action = event.getAction();
             switch(action) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     return true;
                 case DragEvent.ACTION_DRAG_ENTERED: 
-                    //                    if(mDraggedMachine!=null) {
-                    //                        if(mDraggedMachine.getGroups().get(0).equals(mParentGroup))
-                    //                            return false;
-                    //                    } else if(mDraggedGroup!=null) {
-                    //                        if(mDraggedGroup.equals(mParentGroup))
-                    //                            return false;
-                    //                        String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
-                    //                        if(oldParentName.equals(mParentGroup.getName()))
-                    //                            return false;
-                    //                    }
-//                    view.setBackgroundColor(Color.RED);
-//                    view.invalidate();
                     return true;
                 case DragEvent.ACTION_DRAG_LOCATION:
                     VMGroupPanel current = null;
                     for(VMGroupPanel child : mSectionView.getNodeViews()) {
-                        Rect frame = new Rect();
-                        child.getHitRect(frame);
-                        if(frame.contains((int)event.getX(), (int)event.getY())) {
-                            Log.v(TAG, "Drag inside " + child.getGroup());
-                            current = child;
+                        VMGroupPanel found = findCurrentGroupView(child, event.getX(), event.getY());
+                        if(found!=null) {
+                            current = found;
                             break;
                         }
                     }
-                    if(current!=null && current!=mGroupView) {
-                        //entered
+                    if(current!=null && current!=mGroupView) { //entered group panel
                         Log.d(TAG, "Entered " + current.getGroup());
-                        current.setBackgroundColor(Color.RED);
-                        current.invalidate();
+                        mParentGroup = mGroupView.getGroup();
+                        if(doAcceptDragEnter()) {
+                            current.setBackgroundColor(Color.RED);
+                            current.invalidate();
+                        }
                     }
-                    if(mGroupView!=null && current!=mGroupView) {
-                        //exited
+                    if(mGroupView!=null && current!=mGroupView) { //exited group panel
                         Log.d(TAG, "Exited " + mGroupView.getGroup());
                         mGroupView.setBackgroundColor(Color.BLACK);
                         mGroupView.invalidate();
                     }
-                    if(current==null && mGroupView!=null) {
-                        //entered root group
-                        mSectionView.setBackgroundColor(Color.RED);
-                        mSectionView.invalidate();
-                    } else if(current!=null && mGroupView==null) {
-                        //exited root group
+                    if(current==null && mGroupView!=null) { //entered root group
+                        mParentGroup = mSectionView.getGroup();
+                        if(doAcceptDragEnter()) {
+                            mSectionView.setBackgroundColor(Color.RED);
+                            mSectionView.invalidate();
+                        }
+                    } else if(current!=null && mGroupView==null) { //exited root group
                         mSectionView.setBackgroundColor(Color.BLACK);
                         mSectionView.invalidate();
                     }
                     mGroupView = current;
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED:
+                    mParentGroup = null;
                     view.setBackgroundColor(Color.TRANSPARENT);
                     view.invalidate();
                     return true;
                 case DragEvent.ACTION_DROP:
-//                    view.setBackgroundColor(Color.TRANSPARENT);
-//                    view.invalidate();
-
-//                    if(mDraggedGroup!=null) {
-//                        String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
-                      //group dragged over itself or it's parent
-//                      if( mDraggedGroup!=null && (mDraggedGroup.equals(mParentGroup) || oldParentName.equals(mParentGroup.getName())) )
-//                          return false;
-//                    }
-//                    //machine dragged over current group
-//                    if(mDraggedMachine!=null && mDraggedMachine.getGroups().get(0).equals(mParentGroup))
-//                        return false;
-//
+                    if(!doAcceptDragEnter())
+                        return false;
+                    
+                    mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
+                    
 //                    if(mDraggedMachine!=null)
 //                        dropMachine(mParentGroup, mDraggedMachine);
 //                    else if(mDraggedGroup!=null)
 //                        dropGroup(mParentGroup, mDraggedGroup);
-                    
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
                     if(mGroupView!=null) {
-                        mGroupView.setBackgroundColor(Color.BLACK);
+                        mGroupView.setBackgroundResource(VIEW_BACKGROUND);
                         mGroupView.invalidate();
                     }
-                    view.setBackgroundColor(Color.TRANSPARENT);
+                    view.setBackgroundColor(VIEW_BACKGROUND);
                     view.invalidate();
                     mGroupView = null;
                     mDraggedGroup=null;
@@ -447,6 +426,42 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     return true;
             }
             return false;
+        }
+        
+        private VMGroupPanel findCurrentGroupView(VMGroupPanel group, float x, float y) {
+            Rect frame = new Rect();
+            group.getHitRect(frame);
+            if(frame.contains((int)x, (int)y)) {
+                Matrix inverse = new Matrix();
+                group.getMatrix().invert(inverse);
+                float []mappedPoints = { x, y };
+                inverse.mapPoints(mappedPoints);
+                
+                Log.v(TAG, "Drag inside " + group.getGroup());
+                for(View child : group.getContentViews()) {
+                    if(!(child instanceof VMGroupPanel)) continue;
+                    VMGroupPanel gp = (VMGroupPanel)child;
+                    VMGroupPanel currentChild = findCurrentGroupView(gp, mappedPoints[0], mappedPoints[1]);
+                    if(currentChild!=null) 
+                        return currentChild;
+                }
+                return group;
+            }
+            return null;
+        }
+        
+        private boolean doAcceptDragEnter() {
+            if(mDraggedMachine!=null) {
+                if(mDraggedMachine.getGroups().get(0).equals(mParentGroup))
+                    return false;
+            } else if(mDraggedGroup!=null) {
+                if(mDraggedGroup.equals(mParentGroup))
+                    return false;
+                String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+                if(oldParentName.equals(mParentGroup.getName()))
+                    return false;
+            }
+            return true;
         }
 
         private void dropMachine(VMGroup parent, IMachine child) {
