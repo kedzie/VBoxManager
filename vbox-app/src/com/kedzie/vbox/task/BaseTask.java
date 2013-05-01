@@ -185,8 +185,13 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		Log.e(TAG, "SoapFault", e);
 		Node detail = e.detail;
 		while(detail.getChildCount()>0) {
-			detail = (Node) detail.getChild(0);
-			Log.i(TAG, "isText(0)? : " + detail.isText(0));
+		    Object child = detail.getChild(0);
+		    if(child instanceof Node)
+		        detail = (Node) detail.getChild(0);
+		    else {
+		        Log.i(TAG, "String detail: " + detail);
+		        break;
+		    }
 		}
 		new BundleBuilder().putString("title", "Soap Fault")
 				.putString("msg", String.format("Code: %1$s\nActor: %2$s\nString: %3$s", e.faultcode, e.faultactor, e.faultstring))
