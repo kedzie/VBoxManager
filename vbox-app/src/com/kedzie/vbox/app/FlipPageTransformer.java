@@ -14,6 +14,6 @@ public class FlipPageTransformer implements PageTransformer {
             ViewHelper.setAlpha(view, 1);
         else
             ViewHelper.setAlpha(view, 0);
-        ViewHelper.setRotationY(view, position*-180);
+        ViewHelper.setRotationY(view, position*180);
     }
 }
