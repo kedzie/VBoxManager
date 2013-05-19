@@ -2,10 +2,10 @@ package com.kedzie.vbox.task;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class LaunchVMProcessTask extends DialogTask<IMachine, IMachine> {

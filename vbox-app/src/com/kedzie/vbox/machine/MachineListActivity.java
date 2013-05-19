@@ -68,6 +68,7 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		setContentView(R.layout.machine_list);
 

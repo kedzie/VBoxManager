@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.kedzie.vbox.machine.SettingsActivity;
+import com.kedzie.vbox.SettingsActivity;
 
 /**
  * {@link FragmentPagerAdapter} which is integrated with {@link ActionBar} tab navigation.
@@ -35,6 +35,8 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
             mViewPager.setPageTransformer(false, new FlipPageTransformer());
         else if(transition.equals("Slide"))
             mViewPager.setPageTransformer(false, new ZoomOutPageTransformer());
+        else if(transition.equals("Accordian"))
+            mViewPager.setPageTransformer(false, new AccordianPageTransformer());
         if(container==android.R.id.content)
             mActivity.setContentView(mViewPager);
         else

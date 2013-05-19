@@ -142,6 +142,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             super(context);
             mGroup = group;
             setOrientation(LinearLayout.VERTICAL);
+            setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
             mContents = new LinearLayout(getContext());
             mContents.setOrientation(LinearLayout.VERTICAL);
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -156,7 +157,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 Utils.setTextView(header, R.id.group_title, group.getName());
                 Utils.setTextView(header, R.id.group_num_groups, group.getNumGroups());
                 Utils.setTextView(header, R.id.group_num_machine, group.getNumMachines());
-                lp.bottomMargin = Utils.dpiToPixels(getContext(), 4);
+                lp.bottomMargin = Utils.dpiToPx(getContext(), 4);
                 super.addView(header, lp);
             } else {
                 //add host view
@@ -204,6 +205,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 VMGroup group = (VMGroup)node;
                 mGroupCache.put(group.getName(), group);
                 VMGroupPanel groupView = new VMGroupPanel(getContext(), group);
+                setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
                 groupView.setOnClickListener(VMGroupListView.this);
                 groupView.setOnDrillDownListener(VMGroupListView.this);
                 groupView.setOnLongClickListener(VMGroupListView.this);
@@ -372,18 +374,18 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                             break;
                         }
                     }
-                    if(current!=null && current!=mGroupView) { //entered group panel
-                        Log.d(TAG, "Entered " + current.getGroup());
-                        mParentGroup = mGroupView.getGroup();
-                        if(doAcceptDragEnter()) {
-                            current.setBackgroundColor(Color.RED);
-                            current.invalidate();
-                        }
-                    }
                     if(mGroupView!=null && current!=mGroupView) { //exited group panel
                         Log.d(TAG, "Exited " + mGroupView.getGroup());
                         mGroupView.setBackgroundColor(Color.BLACK);
                         mGroupView.invalidate();
+                    }
+                    if(current!=null && current!=mGroupView) { //entered group panel
+                        Log.d(TAG, "Entered " + current.getGroup());
+                        mParentGroup = current.getGroup();
+                        if(doAcceptDragEnter()) {
+                            current.setBackgroundColor(Color.RED);
+                            current.invalidate();
+                        }
                     }
                     if(current==null && mGroupView!=null) { //entered root group
                         mParentGroup = mSectionView.getGroup();
@@ -429,6 +431,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         }
         
         private VMGroupPanel findCurrentGroupView(VMGroupPanel group, float x, float y) {
+        	Log.v(TAG,String.format( "Testing view: %1$s at %2$dx%3$d" 
+        				+ group.getGroup().getName(), (int)x, (int)y));
             Rect frame = new Rect();
             group.getHitRect(frame);
             if(frame.contains((int)x, (int)y)) {
@@ -437,7 +441,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 float []mappedPoints = { x, y };
                 inverse.mapPoints(mappedPoints);
                 
-                Log.v(TAG, "Drag inside " + group.getGroup());
                 for(View child : group.getContentViews()) {
                     if(!(child instanceof VMGroupPanel)) continue;
                     VMGroupPanel gp = (VMGroupPanel)child;

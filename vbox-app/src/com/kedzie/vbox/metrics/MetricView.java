@@ -2,12 +2,8 @@ package com.kedzie.vbox.metrics;
 
 import java.util.Map;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.TypedArray;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,14 +17,6 @@ public class MetricView extends LinearLayout {
 	private MetricRenderer _renderer;
 	private LinearLayout _metricNames;
 	private String _header;
-	private BroadcastReceiver _receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(MetricActivity.ACTION_METRIC_QUERY)) {
-//                _renderer.setQuery(q);
-            }
-        }
-    };
 	
     public MetricView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -68,7 +56,6 @@ public class MetricView extends LinearLayout {
         _metricNames = new LinearLayout(getContext());
         _metricNames.setOrientation(LinearLayout.HORIZONTAL);
         addView(_metricNames, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(_receiver, new IntentFilter(MetricActivity.ACTION_METRIC_QUERY));
 	}
 
 	public void init(int max, String []metrics) {
@@ -81,10 +68,6 @@ public class MetricView extends LinearLayout {
 			textView.setPadding(0,2,8,0);
 			_metricNames.addView(textView, p);
 		}
-	}
-	
-	public void close() {
-	    LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(_receiver);
 	}
 	
 	public void setMetricPrefs(int count, int period) {

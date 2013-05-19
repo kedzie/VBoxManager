@@ -18,9 +18,9 @@ import android.view.ViewGroup.LayoutParams;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
@@ -105,7 +105,7 @@ public class MetricActivity extends BaseActivity  {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.metrics_option_menu_preferences:
-			startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_CODE_PREFS);
+			Utils.startActivityForResult(this, new Intent(this, SettingsActivity.class), REQUEST_CODE_PREFS);
 			return true;
 		}
 		return true;

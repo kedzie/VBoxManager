@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.SettingsActivity;
 
 /**
  * Create notifications from Machine State change events

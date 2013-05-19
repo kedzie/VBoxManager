@@ -31,7 +31,7 @@ public class SliderView extends LinearLayout {
     }
     
     public class SliderBar extends SeekBar {
-    	private final int VALID_RANGE_BAR_HEIGHT=Utils.dpiToPixels(getContext(), 12);
+    	private final int VALID_RANGE_BAR_HEIGHT=Utils.dpiToPx(getContext(), 12);
     	
     	private Rect _invalidRect;
         private Rect _validRect;
@@ -75,7 +75,7 @@ public class SliderView extends LinearLayout {
             _tickPaint.setStrokeWidth(2f);
             _textPaint = new Paint();
             _textPaint.setColor(getResources().getColor(android.R.color.primary_text_dark));
-            _textPaint.setTextSize(Utils.dpiToPixels(getContext(), 12));
+            _textPaint.setTextSize(Utils.dpiToPx(getContext(), 12));
         }
         
         @Override

@@ -1,6 +1,6 @@
 package com.kedzie.vbox.app;
 
-import com.kedzie.vbox.machine.SettingsActivity;
+import com.kedzie.vbox.SettingsActivity;
 
 import android.content.Context;
 import android.content.res.TypedArray;

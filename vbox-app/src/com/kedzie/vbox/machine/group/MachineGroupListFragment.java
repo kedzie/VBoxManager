@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
@@ -20,7 +21,6 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventNotificationReceiver;
 import com.kedzie.vbox.host.HostSettingsActivity;
-import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;

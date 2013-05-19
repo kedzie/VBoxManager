@@ -1,5 +1,6 @@
 package com.kedzie.vbox.server;
 
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 import android.content.Intent;
@@ -21,8 +22,8 @@ import com.kedzie.vbox.machine.settings.ErrorSupport;
 public class EditServerActivity extends SherlockActivity {
 	public static final String INTENT_SERVER = "server";
 	
-	protected Server _server;
-	private ServerSQlite _db;
+	protected Server mServer;
+	private ServerSQlite mDb;
 
 	private TextView nameText;
 	private TextView hostText;
@@ -38,8 +39,8 @@ public class EditServerActivity extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.server);
-		_db = new ServerSQlite(this);
-		_server = (Server)(savedInstanceState==null ? getIntent().getParcelableExtra(INTENT_SERVER) : savedInstanceState.getParcelable(INTENT_SERVER));
+		mDb = new ServerSQlite(this);
+		mServer = (Server)(savedInstanceState==null ? getIntent().getParcelableExtra(INTENT_SERVER) : savedInstanceState.getParcelable(INTENT_SERVER));
 		nameText = (TextView)findViewById(R.id.server_name);
 		hostText = (TextView)findViewById(R.id.server_host);
 		if(Utils.isIceCreamSandwhich())
@@ -49,22 +50,25 @@ public class EditServerActivity extends SherlockActivity {
 		portText = (TextView)findViewById(R.id.server_port);
 		userText = (TextView)findViewById(R.id.server_username);
 		passText = (TextView)findViewById(R.id.server_password);
-		nameText.setText(_server.getName());
-		hostText.setText(_server.getHost());
+		nameText.setText(mServer.getName());
+		hostText.setText(mServer.getHost());
 		if(Utils.isIceCreamSandwhich())
-			sslSwitch.setChecked(_server.isSSL());
+			sslSwitch.setChecked(mServer.isSSL());
 		else
-			sslBox.setChecked(_server.isSSL());
-		portText.setText(""+_server.getPort());
+			sslBox.setChecked(mServer.isSSL());
+		portText.setText(""+mServer.getPort());
 		hostText.addTextChangedListener(new TextWatcher() {
 			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 			@Override public void afterTextChanged(Editable s) {}
 			@Override 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if(InetAddressValidator.getInstance().isValid(s.toString()))
+				if(DomainValidator.getInstance(true).isValid(s.toString())
+						|| InetAddressValidator.getInstance().isValid(s.toString())) {
 					_errorSupport.showError("host", "");
-				else
+				}
+				else {
 					_errorSupport.showError("host", "Invalid host name or IP address");
+				}
 			}
 		});
 		portText.addTextChangedListener(new TextWatcher() {
@@ -82,8 +86,8 @@ public class EditServerActivity extends SherlockActivity {
 			}
 		});
 		
-		userText.setText(_server.getUsername());
-		passText.setText(_server.getPassword());
+		userText.setText(mServer.getUsername());
+		passText.setText(mServer.getPassword());
 		
 		_errorSupport = new ErrorSupport();
 		_errorSupport.setTextView((TextView)findViewById(R.id.errors));
@@ -108,17 +112,17 @@ public class EditServerActivity extends SherlockActivity {
 				case R.id.server_list_option_menu_save:
 					if(!_errorSupport.hasErrors()) {
 						populateServer();
-						if(_server.getId().equals(-1L))
-							_db.insert(_server);
+						if(mServer.getId().equals(-1L))
+							mDb.insert(mServer);
 						else
-							_db.update(_server);
+							mDb.update(mServer);
 						finish();
 					} else {
 						Utils.toastLong(EditServerActivity.this, "Fix errors first");
 					}
 					return true;
 				case R.id.server_list_option_menu_delete:
-					_db.delete(_server.getId());
+					mDb.delete(mServer.getId());
 					finish();
 					return true;
 				default:
@@ -135,27 +139,27 @@ public class EditServerActivity extends SherlockActivity {
 	}
 	
 	private void populateServer() {
-		_server.setName( nameText.getText().toString() );
-		_server.setHost( hostText.getText().toString() );
-		_server.setSSL(Utils.isIceCreamSandwhich() ? sslSwitch.isChecked() : sslBox.isChecked());
+		mServer.setName( nameText.getText().toString() );
+		mServer.setHost( hostText.getText().toString() );
+		mServer.setSSL(Utils.isIceCreamSandwhich() ? sslSwitch.isChecked() : sslBox.isChecked());
 		try {
-		_server.setPort( Integer.parseInt( portText.getText().toString().trim()) );
+		mServer.setPort( Integer.parseInt( portText.getText().toString().trim()) );
 		} catch(NumberFormatException e) {}
-		_server.setUsername( userText.getText().toString() );
-		_server.setPassword( passText.getText().toString() );
+		mServer.setUsername( userText.getText().toString() );
+		mServer.setPassword( passText.getText().toString() );
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		populateServer();
-		outState.putParcelable(INTENT_SERVER, _server);
+		outState.putParcelable(INTENT_SERVER, mServer);
 	}
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		_db.close();
+		mDb.close();
 	}
 
 	@Override

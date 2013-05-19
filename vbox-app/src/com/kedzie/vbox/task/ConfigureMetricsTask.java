@@ -3,9 +3,9 @@ package com.kedzie.vbox.task;
 import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class ConfigureMetricsTask extends BaseTask<Integer, Void> {

@@ -15,12 +15,12 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineActivity;
-import com.kedzie.vbox.machine.SettingsActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class Provider extends AppWidgetProvider {

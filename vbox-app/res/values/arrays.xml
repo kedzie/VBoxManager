@@ -12,6 +12,7 @@
     	<item>3</item>
     	<item>4</item>
     </string-array>
+    
     <string-array name="metric_count_entries">
     	<item>20 samples</item>
     	<item>30 samples</item>
@@ -41,9 +42,11 @@
      <string-array name="tab_transition_entries">
     	<item>Flip</item>
     	<item>Slide</item>
+    	<item>Accordian</item>
     </string-array>
     <string-array name="tab_transition_entryValues">
     	<item>Flip</item>
     	<item>Slide</item>
+    	<item>Accordian</item>
     </string-array>   
 </resources>

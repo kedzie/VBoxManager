@@ -27,10 +27,6 @@
 		<url>https://github.com/kedzie/VBoxManager/issues</url>
 	</issueManagement>
 
-	<properties>
-		<android.debuggable>true</android.debuggable>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -44,24 +40,22 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.google.android</groupId>
+			<groupId>com.supportanimator</groupId>
 			<artifactId>support-v4-animator</artifactId>
+			<type>apklib</type>
 		</dependency>
 		<dependency>
 			<groupId>com.nineoldandroids</groupId>
 			<artifactId>library</artifactId>
-			<version>2.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>pl.polidea</groupId>
 			<artifactId>treeview</artifactId>
-			<version>1.0.0</version>
 			<type>apklib</type>
 		</dependency>
 		<dependency>
 			<groupId>com.actionbarsherlock</groupId>
 			<artifactId>actionbarsherlock</artifactId>
-			<version>4.2.0</version>
 			<type>apklib</type>
 			<exclusions>
 				<exclusion>
@@ -69,10 +63,6 @@
 					<artifactId>support-v4</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>
@@ -104,11 +94,6 @@
 			<groupId>nf.fr.eraasoft</groupId>
 			<artifactId>objectpool</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
-			<version>0.1.49</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -116,7 +101,6 @@
 		<directory>bin</directory>
 		<outputDirectory>bin/classes</outputDirectory>
 		<finalName>${project.artifactId}</finalName>
-		
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -136,7 +120,6 @@
 				<artifactId>android-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<manifestDebuggable>${android.debuggable}</manifestDebuggable>
 					<manifestVersionName/>
 					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 					<attachSources>true</attachSources>
@@ -178,9 +161,6 @@
 					<value>production</value>
 				</property>
 			</activation>
-			<properties>
-				<android.debuggable>false</android.debuggable>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -253,7 +233,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.8.1</version>
 				<configuration>
-				    <sourcepath>${basedir}/src/com/kedzie/vbox</sourcepath>
+				    <sourcepath>${basedir}/src</sourcepath>
 					<doclet>org.jboss.apiviz.APIviz</doclet>
 					<docletArtifact>
 						<groupId>org.jboss.apiviz</groupId>

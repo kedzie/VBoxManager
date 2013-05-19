@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <declare-styleable name="MetricView">
+
+    <declare-styleable name="MetricView">
        <attr name="header" format="string" />
        <attr name="backgroundColor" format="color" />
        <attr name="gridColor" format="color"/>
@@ -24,7 +25,4 @@
        <attr name="maxValue" format="integer" />
    </declare-styleable>
    
-    <declare-styleable name="RegexEditText">
-       <attr name="regex" format="string" />
-   </declare-styleable>
 </resources>

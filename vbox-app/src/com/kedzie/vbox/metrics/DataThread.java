@@ -15,8 +15,6 @@ public class DataThread extends LoopingThread {
 		private MetricView []_views;
 		private String _object;
 		private int _period;
-//		private Context _context;
-//		private LocalBroadcastManager _lbm;
 		
 		public DataThread(Context context, VBoxSvc vmgr, String object, int period, MetricView...views){
 			super("Metric Data");
@@ -24,19 +22,14 @@ public class DataThread extends LoopingThread {
 			_object=object;
 			_period=period;
 			_views=views;
-//			_context = context;
-//			_lbm = LocalBroadcastManager.getInstance(_context);
 		}
 
 		@Override
 		public void loop() {
 			try {
 				Map<String, MetricQuery> data = _vmgr.queryMetrics(_object, "*:");
-				for(MetricView v : _views) {
-				    if(v!=null)
-				        v.setQueries(data);
-//					_lbm.sendBroadcast(new Intent(MetricActivity.ACTION_METRIC_QUERY));
-				}
+				for(MetricView v : _views)
+				    if(v!=null) v.setQueries(data);
 			} catch (Exception e) {
 				Log.e(TAG, "Error querying metrics", e);
 			} finally {

@@ -86,7 +86,7 @@ public class HostSettingsActivity extends BaseActivity implements OnSelectHostCa
 	    if(_dualPane) {
 	        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
 	        Utils.setCustomAnimations(tx);
-	        Utils.detachExistingFragment(getSupportFragmentManager(), tx, currentCategory);
+	        Utils.detachFragment(getSupportFragmentManager(), tx, currentCategory);
             Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
             tx.commit();
 	    } else {

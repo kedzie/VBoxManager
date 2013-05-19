@@ -1,4 +1,4 @@
-package com.kedzie.vbox.machine;
+package com.kedzie.vbox;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils;
 
@@ -33,14 +34,37 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         String action = getIntent().getAction();
-        if (action != null && action.equals(ACTION_PREFS_GENERAL))
+        if (action != null && action.equals(ACTION_PREFS_GENERAL)) {
             addPreferencesFromResource(R.xml.general_preferences);
-        else if (action != null && action.equals(ACTION_PREFS_METRIC))
+            if(getPreferenceScreen()!=null) {
+                updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_ICON_COLORS);
+                updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_TAB_TRANSITION);
+                updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_NOTIFICATIONS);
+                updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_WIDGET_INTERVAL);
+            }
+        } else if (action != null && action.equals(ACTION_PREFS_METRIC)) {
             addPreferencesFromResource(R.xml.metric_preferences);
-        else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
+            if(getPreferenceScreen()!=null) {
+                updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_PERIOD);
+                updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_COUNT);
+            }
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
             addPreferencesFromResource(R.xml.preference_headers_legacy);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+    		case android.R.id.home:
+    			finish();
+    			return true;
+    	}
+    	return false;
     }
 
     @Override
@@ -64,6 +88,10 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        updateSummary(sharedPreferences, key);
+    }
+    
+    public void updateSummary(SharedPreferences sharedPreferences, String key) {
         if (key.equals(SettingsActivity.PREF_PERIOD))
             findPreference(key).setSummary(sharedPreferences.getString(key, "") + " seconds");
         else if (key.equals(SettingsActivity.PREF_COUNT))
@@ -79,12 +107,16 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         super.finish();
         Utils.overrideBackTransition(this);
     }
-
+    
     public static class GeneralFragment extends SummaryPreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.general_preferences);
+            updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_ICON_COLORS);
+            updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_TAB_TRANSITION);
+            updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_NOTIFICATIONS);
+            updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_WIDGET_INTERVAL);
         }
     }
 
@@ -93,6 +125,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.metric_preferences);
+            updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_PERIOD);
+            updateSummary(getPreferenceScreen().getSharedPreferences(), PREF_COUNT);
         }
     }
 
@@ -112,6 +146,10 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            updateSummary(sharedPreferences, key);
+        }
+        
+        public void updateSummary(SharedPreferences sharedPreferences, String key) {
             if (key.equals(SettingsActivity.PREF_PERIOD))
                 findPreference(key).setSummary(sharedPreferences.getString(key, "") + " seconds");
             else if (key.equals(SettingsActivity.PREF_COUNT))

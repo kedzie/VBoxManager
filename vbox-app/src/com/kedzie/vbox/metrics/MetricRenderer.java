@@ -148,8 +148,14 @@ public class MetricRenderer extends View {
 	
 	@Override
 	protected synchronized  void onDraw(Canvas canvas) {
-		if(bounds.width()==0)
+		if(bounds.width()==0) {
 			canvas.getClipBounds(bounds);
+			bounds.left+=getPaddingLeft();
+			bounds.right-=getPaddingRight();
+			bounds.top+=getPaddingTop();
+			bounds.bottom-=getPaddingBottom();
+			Log.v(TAG, String.format("Bounds %1$d,%2$d --> %3$d,%4$d", bounds.left, bounds.top, bounds.right, bounds.bottom));
+		}
 	    
 	    if(isInEditMode()) { 
 	        _editTextPaint.setTextSize(20f);

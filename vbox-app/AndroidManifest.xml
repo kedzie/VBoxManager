@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="321" android:versionName="3.2.1" package="com.kedzie.vbox">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3002001" android:versionName="3.2.1" package="com.kedzie.vbox">
     
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
     
@@ -48,7 +48,7 @@
         
 	<activity android:label="Metrics" android:name=".metrics.MetricActivity"/>
 	
-	<activity android:configChanges="orientation" android:label="Preferences" android:name="com.kedzie.vbox.machine.SettingsActivity"/>
+	<activity android:configChanges="orientation" android:label="Preferences" android:name="com.kedzie.vbox.SettingsActivity"/>
 	
 	<service android:name=".event.EventIntentService"/>
 	<service android:name=".event.EventNotificationService"/>

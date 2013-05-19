@@ -20,7 +20,6 @@ import android.util.SparseArray;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.SettingsActivity;
 
 /**
  * Stores a resource map storing Operating System, VMAction, and MachineState Icons.

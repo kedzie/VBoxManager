@@ -124,6 +124,10 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
@@ -153,7 +157,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
     public void onSelectCategory(FragmentElement category) {
 	    if(_dualPane) {
 	        FragmentTransaction tx = Utils.setCustomAnimations(getSupportFragmentManager().beginTransaction());
-	        Utils.detachExistingFragment(getSupportFragmentManager(), tx, currentCategory);
+	        Utils.detachFragment(getSupportFragmentManager(), tx, currentCategory);
             Utils.addOrAttachFragment(this, getSupportFragmentManager(), tx, R.id.details, category);
             tx.commit();
 	    } else {
@@ -177,6 +181,9 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		case R.id.option_menu_discard:
 		    discardSettings();
 		    return true;
+		case android.R.id.home:
+			onBackPressed();
+			return true;
 		}
 		return false;
 	}
