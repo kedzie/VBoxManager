@@ -1,7 +1,6 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class AudioFragment extends SherlockFragment {
 			adapter.getEnabled();
 			adapter.getAudioController();
 			adapter.getAudioDriver();
-			AudioDriverType[] types = AudioDriverType.getAudioDrivers(_vmgr.getVBox().getGuestOSType(params[0].getOSTypeId()));
+			AudioDriverType[] types = AudioDriverType.getAudioDrivers(_vmgr.getVBox().getHost().getOperatingSystem());
 			return new Tuple<IAudioAdapter, AudioDriverType[]>(adapter, types);
 		}
 		@Override
@@ -50,7 +49,6 @@ public class AudioFragment extends SherlockFragment {
 			super.onSuccess(result);
 			_adapter = result.first;
 		    _types = result.second;
-		    Log.d(TAG, "Audio Driver: " + _adapter.getAudioDriver());
 		    _audioDriverAdapter = new ArrayAdapter<AudioDriverType>(getActivity(), android.R.layout.simple_spinner_item, _types);
 			_audioDriverSpinner.setAdapter(_audioDriverAdapter);
 		    populate();

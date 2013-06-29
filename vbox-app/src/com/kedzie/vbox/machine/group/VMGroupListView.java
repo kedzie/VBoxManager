@@ -71,6 +71,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private Map<String, List<MachineView>> mMachineViewMap = new HashMap<String, List<MachineView>>();
     /** Maps {@link VMGroup} to all views which reference it.  Used for updating views when groups change. */
     private Map<String, List<VMGroupPanel>> mGroupViewMap = new HashMap<String, List<VMGroupPanel>>();
+    
+    private HostView mHostView;
+    
     /** Cache of {@link VMGroup}s */
     private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
     
@@ -127,6 +130,27 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     public void setSelectionEnabled(boolean selectionEnabled) {
         mSelectionEnabled = selectionEnabled;
     }
+    
+    public TreeNode getSelectedObject() {
+        if(_selected instanceof VMGroupPanel) {
+            return ((VMGroupPanel)_selected).getGroup();
+        } else if(_selected instanceof MachineView) {
+            return ((MachineView)_selected).getMachine();
+        } else if(_selected instanceof HostView) {
+            return ((HostView)_selected).getHost();
+        }
+        return null;
+    }
+    
+    public void setSelectedObject(TreeNode object) {
+        if(object instanceof IHost) {
+            
+        } else if(object instanceof IMachine) {
+            
+        } else if(object instanceof VMGroup) {
+            
+        }
+    }
 
     /**
      * Build a scrollable list of everything below a group
@@ -160,13 +184,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 lp.bottomMargin = Utils.dpiToPx(getContext(), 4);
                 super.addView(header, lp);
             } else {
-                //add host view
-                HostView h = new HostView(getContext());
-                h.update(mHost);
-                h.setBackgroundResource(R.drawable.list_selector_color);
-                h.setClickable(true);
-                h.setOnClickListener(VMGroupListView.this);
-                mContents.addView(h);
+                //add mHostViewost view
+                mHostView = new HostView(getContext());
+                mHostView.update(mHost);
+                mHostView.setBackgroundResource(R.drawable.list_selector_color);
+                mHostView.setClickable(true);
+                mHostView.setOnClickListener(VMGroupListView.this);
+                mContents.addView(mHostView);
             }
             for(TreeNode child : group.getChildren()) 
                 mContents.addView(createView(child), lp);
@@ -401,7 +425,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED:
                     mParentGroup = null;
-                    view.setBackgroundColor(Color.TRANSPARENT);
+                    view.setBackgroundColor(VIEW_BACKGROUND);
                     view.invalidate();
                     return true;
                 case DragEvent.ACTION_DROP:
@@ -432,7 +456,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         
         private VMGroupPanel findCurrentGroupView(VMGroupPanel group, float x, float y) {
         	Log.v(TAG,String.format( "Testing view: %1$s at %2$dx%3$d" 
-        				+ group.getGroup().getName(), (int)x, (int)y));
+        				,group.getGroup().getName(), (int)x, (int)y));
             Rect frame = new Rect();
             group.getHitRect(frame);
             if(frame.contains((int)x, (int)y)) {

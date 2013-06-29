@@ -94,6 +94,10 @@ public class MetricRenderer extends View {
 		hStep = getWidth()/_count;
 		Log.i(TAG, String.format("Set Metric Preferences period/count:  %1$d/%2$d\thStep/vStep: %3$d,%4$.2f",period, count, hStep, vStep ));
 		if(getWidth()>0 && getHeight()>0) {
+		    if(_gridBitmap!=null) {
+                _gridBitmap.recycle();
+                _gridBitmap=null;
+            }
 		    _gridBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
 		    Canvas gridCanvas = new Canvas(_gridBitmap);
 		    drawGrid(gridCanvas);
@@ -162,10 +166,8 @@ public class MetricRenderer extends View {
 	        canvas.drawText("Edit Mode", 100, 100, _editTextPaint);
 	        return;
 	    }
-		if(_gridBitmap==null)
-		    canvas.drawBitmap(_gridBitmap, 0, 0, null);
-		else
-		    drawGrid(canvas);
+
+	    canvas.drawBitmap(_gridBitmap, 0, 0, null);
 		
 		for(String metric : _metrics) {
 			if(!_data.containsKey(metric)) continue;
@@ -191,4 +193,13 @@ public class MetricRenderer extends View {
 			canvas.drawPath(path, metricFill);
 		}
 	}
+
+	    @Override
+	    protected void onDetachedFromWindow() {
+	        if(_gridBitmap!=null) {
+	            _gridBitmap.recycle();
+	            _gridBitmap=null;
+	        }
+	        super.onDetachedFromWindow();
+	    }
 }

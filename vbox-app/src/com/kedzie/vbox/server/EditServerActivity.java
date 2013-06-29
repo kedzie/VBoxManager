@@ -1,8 +1,5 @@
 package com.kedzie.vbox.server;
 
-import org.apache.commons.validator.routines.DomainValidator;
-import org.apache.commons.validator.routines.InetAddressValidator;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -62,13 +59,10 @@ public class EditServerActivity extends SherlockActivity {
 			@Override public void afterTextChanged(Editable s) {}
 			@Override 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if(DomainValidator.getInstance(true).isValid(s.toString())
-						|| InetAddressValidator.getInstance().isValid(s.toString())) {
+				if(com.google.common.net.InetAddresses.isInetAddress(s.toString()))
 					_errorSupport.showError("host", "");
-				}
-				else {
+				else
 					_errorSupport.showError("host", "Invalid host name or IP address");
-				}
 			}
 		});
 		portText.addTextChangedListener(new TextWatcher() {

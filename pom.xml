@@ -18,6 +18,12 @@
 		<github.global.server>github</github.global.server>
 	</properties>
 
+			<modules>
+				<module>vbox-app</module>
+				<module>vbox-instrumentation</module>
+				<module>vbox-key</module>
+			</modules>
+
 	<organization>
 		<name>Marek Kedzierski</name>
 		<url>http://kedzie.github.com</url>
@@ -134,7 +140,7 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.5.4</version>
+					<version>3.6.0</version>
 					<configuration>
 						<sdk>
 							<platform>17</platform>
@@ -200,15 +206,15 @@
 			<properties>
 				<deployment.stage>Building All Projects</deployment.stage>
 			</properties>
-			<modules>
-				<module>ActionBarSherlock</module>
-				<module>NineOldAndroids</module>
-				<module>fest-android</module>
-				<module>tree-view-list-android</module>
-				<module>vbox-app</module>
-				<module>vbox-instrumentation</module>
-				<module>vbox-key</module>
-			</modules>
+            <modules>
+                <module>ActionBarSherlock</module>
+                <module>NineOldAndroids</module>
+                <module>fest-android</module>
+                <module>tree-view-list-android</module>
+                <module>vbox-app</module>
+                <module>vbox-instrumentation</module>
+                <module>vbox-key</module>
+            </modules>
 		</profile>
 		<profile>
 			<id>development</id>

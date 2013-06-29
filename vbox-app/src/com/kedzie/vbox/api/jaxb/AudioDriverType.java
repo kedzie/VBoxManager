@@ -45,17 +45,17 @@ public enum AudioDriverType implements Serializable {
     
     /**
      * Get valid Audio Drivers for a particular operating system
-     * @param osFamily		Operating System family
+     * @param os		Operating System family
      * @return		valid {@link AudioDriverType}s for particular operating system
      */
-    public static AudioDriverType[] getAudioDrivers(IGuestOSType os) {
-    	if(os.getFamilyId().toLowerCase().equals("linux"))
+    public static AudioDriverType[] getAudioDrivers(String os) {
+    	if(os.toLowerCase().equals("linux"))
     		return new AudioDriverType[] { NULL, OSS, ALSA, PULSE };
-    	else if(os.getFamilyId().toLowerCase().equals("solaris"))
+    	else if(os.toLowerCase().equals("solaris"))
     		return new AudioDriverType[] { NULL, SOL_AUDIO };
-    	else if(os.getFamilyId().toLowerCase().equals("windows"))
+    	else if(os.toLowerCase().equals("windows"))
     		return new AudioDriverType[] { NULL, WIN_MM, DIRECT_SOUND };
-    	else if(os.getFamilyId().toLowerCase().equals("macoS"))
+    	else if(os.toLowerCase().equals("macos"))
     		return new AudioDriverType[] { NULL, CORE_AUDIO };
     	return new AudioDriverType[0];
     }

@@ -46,9 +46,9 @@
 	
         <activity android:name=".app.FragmentActivity" android:uiOptions="splitActionBarWhenNarrow"/>
         
-	<activity android:label="Metrics" android:name=".metrics.MetricActivity"/>
+	<activity android:configChanges="orientation" android:label="Metrics" android:name=".metrics.MetricActivity"/>
 	
-	<activity android:configChanges="orientation" android:label="Preferences" android:name="com.kedzie.vbox.SettingsActivity"/>
+	<activity android:label="Preferences" android:name="com.kedzie.vbox.SettingsActivity"/>
 	
 	<service android:name=".event.EventIntentService"/>
 	<service android:name=".event.EventNotificationService"/>

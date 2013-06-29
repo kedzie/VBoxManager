@@ -127,12 +127,12 @@ public class InfoFragment extends SherlockFragment {
 
 		@Override
 		protected void onSuccess(MachineInfo result) {
-		    _machine=result.machine;
 		    _machineInfo = result;
 		    populateViews(result);
 		}
 	}
 	
+//	private VBoxSvc _vmgr;
 	private IMachine _machine;
 	private MachineInfo _machineInfo;
 	private View _view;
@@ -171,9 +171,9 @@ public class InfoFragment extends SherlockFragment {
 		setHasOptionsMenu(true);
 		if(savedInstanceState!=null) {
 			_machineInfo = savedInstanceState.getParcelable("info");
-			_machine = _machineInfo.machine;
-		} else
-		    _machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+		}
+		_machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
+//		_vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
 	}
 	
 	@Override
@@ -224,7 +224,6 @@ public class InfoFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine);
 		outState.putParcelable("info", _machineInfo);
 	}
 
@@ -319,7 +318,7 @@ public class InfoFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 	    switch(item.getItemId()) {
 	        case R.id.option_menu_refresh:
-	            Log.d(TAG, "Refreshing...");
+	            Log.i(TAG, "Refreshing...");
 	            new LoadInfoTask().execute(_machine);
 	            return true;
 	    }

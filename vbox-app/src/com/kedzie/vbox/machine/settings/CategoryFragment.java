@@ -22,19 +22,19 @@ import com.kedzie.vbox.app.FragmentElementListAdapter;
  * @author Marek Kędzierski
  */
 public class CategoryFragment extends SherlockFragment {
-    
+
     /**
      * Listener which handles selection events
      */
     public static interface OnSelectCategoryListener {
-    	
+
         /**
          * Handle category selection event
          * @param category		the selected {@link FragmentElement}
          */
         public void onSelectCategory(FragmentElement category);
     }
-    
+
     private ListView _listView;
     private FragmentElementListAdapter _adapter;
     private OnSelectCategoryListener _listener;
@@ -62,23 +62,31 @@ public class CategoryFragment extends SherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	_dualPane = getActivity().findViewById(R.id.details)!=null;
+        _dualPane = getActivity().findViewById(R.id.details)!=null;
         _listView = new ListView(getActivity());
         _listView.setAdapter(_adapter);
         _listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
         _listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            	if(_dualPane)
-            		_listView.setSelection(position);
-                if(_listener!=null)
-                    _listener.onSelectCategory(_adapter.getItem(position));
+                setSelection(position);
             }
         });
         return _listView;
     }
+
+    public void setSelection(int position) {
+        if(_dualPane) {
+//            _listView.setSelection(position);
+            _listView.setItemChecked(position, true);
+        }
+        if(_listener!=null)
+            _listener.onSelectCategory(_adapter.getItem(position));
+    }
     
-    public void setSelection(int selection) {
-        _listView.setSelection(selection);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("checkedItem", _listView.getCheckedItemPosition());
     }
 }

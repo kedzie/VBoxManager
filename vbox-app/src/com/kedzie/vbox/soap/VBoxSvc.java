@@ -95,7 +95,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
 		public VBoxSvc createFromParcel(Parcel in) {
 			VBoxSvc svc = new VBoxSvc((Server)in.readParcelable(LOADER));
-			svc._vbox = svc.getProxy(IVirtualBox.class, in.readString());
+			String vboxId = in.readString();
+			svc._vbox = svc.getProxy(IVirtualBox.class, vboxId);
 			svc.init();
 			return svc;
 		}
@@ -423,9 +424,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	}
 	
 	private void init() {
-//		_transport = _server.isSSL() ? 
-//				new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
-//				new HttpTransport(_server, TIMEOUT);
 		_threadPoolExecutor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 		PoolSettings<HttpTransportSE> poolSettings = new PoolSettings<HttpTransportSE>(
 		                new PoolableObjectBase<HttpTransportSE>() {
@@ -464,7 +462,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(_server, 0);
+		dest.writeParcelable(_server, flags);
 		dest.writeString(_vbox.getIdRef());
 	}
 
@@ -473,7 +471,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		Log.w(TAG, "===========VBoxSvc has been SERIALIZED===========");
 		_server=(Server)input.readObject();
 		init();
-		_vbox = getProxy(IVirtualBox.class, input.readUTF());
+		String vboxId = input.readUTF();
+		_vbox = getProxy(IVirtualBox.class, vboxId);
 	}
 
 	@Override

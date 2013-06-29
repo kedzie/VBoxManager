@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android" name="Android">
+      <configuration>
+        <option name="GEN_FOLDER_RELATIVE_PATH_APT" value="/vbox-instrumentation/bin/generated-sources/r" />
+        <option name="GEN_FOLDER_RELATIVE_PATH_AIDL" value="/vbox-instrumentation/bin/generated-sources/aidl" />
+        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/vbox-instrumentation/AndroidManifest.xml" />
+        <option name="RES_FOLDER_RELATIVE_PATH" value="/vbox-instrumentation/res" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/vbox-instrumentation/assets" />
+        <option name="LIBS_FOLDER_RELATIVE_PATH" value="/vbox-instrumentation/libs" />
+        <option name="CUSTOM_APK_RESOURCE_FOLDER" value="/vbox-instrumentation/bin/generated-sources/combined-resources/res" />
+        <option name="APK_PATH" value="/vbox-instrumentation/bin/vbox-instrumentation.apk" />
+        <option name="RUN_PROCESS_RESOURCES_MAVEN_TASK" value="false" />
+        <includeAssetsFromLibraries>true</includeAssetsFromLibraries>
+        <resOverlayFolders>
+          <path>/vbox-instrumentation/res-overlay</path>
+        </resOverlayFolders>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/vbox-instrumentation/bin/idea-classes" />
+    <output-test url="file://$MODULE_DIR$/vbox-instrumentation/bin/idea-test-classes" />
+    <content url="file://$MODULE_DIR$/vbox-instrumentation">
+      <sourceFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/generated-sources/r" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/vbox-instrumentation/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/dexedLibs" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/generated-sources/combined-assets" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/generated-sources/combined-resources" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/generated-sources/extracted-dependencies" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/res" />
+      <excludeFolder url="file://$MODULE_DIR$/vbox-instrumentation/bin/unpack" />
+    </content>
+    <orderEntry type="jdk" jdkName="Maven Android 4.2.2 Platform" jdkType="Android SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.android:android:4.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.nineoldandroids:library:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:r09" level="project" />
+    <orderEntry type="library" name="Maven: nf.fr.eraasoft:objectpool:1.1.2" level="project" />
+    <orderEntry type="module" module-name="vbox-app" scope="PROVIDED" />
+    <orderEntry type="library" name="Maven: com.squareup:fest-android:1.0.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.easytesting:fest-assert-core:2.0M10" level="project" />
+    <orderEntry type="library" name="Maven: org.easytesting:fest-util:1.2.5" level="project" />
+    <orderEntry type="module" module-name="~apklib-com.supportanimator_support-v4-animator_r13" />
+    <orderEntry type="module" module-name="~apklib-com.actionbarsherlock_actionbarsherlock_4.3.1" />
+    <orderEntry type="module" module-name="~apklib-pl.polidea_treeview_1.0.0" />
+  </component>
+</module>
+

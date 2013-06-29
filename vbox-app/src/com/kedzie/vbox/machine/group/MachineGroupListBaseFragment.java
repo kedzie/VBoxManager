@@ -16,6 +16,7 @@ import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -121,12 +122,15 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		super.onActivityCreated(savedInstanceState);
         _listView.setSelectionEnabled(getActivity().findViewById(R.id.details)!=null);
 		
-		if(savedInstanceState!=null)  { 
-			getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, savedInstanceState.getString("version")));
-			_root = savedInstanceState.getParcelable(VMGroup.BUNDLE);
-			_vmgr = savedInstanceState.getParcelable(VBoxSvc.BUNDLE);
-			_host = savedInstanceState.getParcelable(IHost.BUNDLE);
-    	} 
+        if(savedInstanceState!=null)  { 
+            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, 
+                    savedInstanceState.getString("version")));
+            _root = savedInstanceState.getParcelable(VMGroup.BUNDLE);
+            _vmgr = savedInstanceState.getParcelable(VBoxSvc.BUNDLE);
+            IVirtualBox vbox = savedInstanceState.getParcelable("vbox");
+            _vmgr.setVBox(vbox);
+            _host = vbox.getHost();
+        } 
 		
 		if(_root==null)
     		new LoadGroupsTask(_vmgr).execute();
@@ -139,8 +143,10 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		super.onSaveInstanceState(outState);
 		outState.putParcelable(VBoxSvc.BUNDLE, _vmgr);
 		outState.putString("version", _vmgr.getVBox().getVersion());
+		outState.putParcelable("vbox", _vmgr.getVBox());
 		outState.putParcelable(VMGroup.BUNDLE, _root);
-		outState.putParcelable(IHost.BUNDLE, _host);
+//		outState.putParcelable(IHost.BUNDLE, _host);
+		outState.putParcelable("checkedItem", _listView.getSelectedObject());
 		//save current machine
 	}
 }

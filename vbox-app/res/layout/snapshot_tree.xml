@@ -10,7 +10,9 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:smoothScrollbar="true"
-        vbox:indent_width="4dp"
+        
         android:animateLayoutChanges="true" />
 
 </FrameLayout>
+
+<!--vbox:indent_width="4dp"-->
