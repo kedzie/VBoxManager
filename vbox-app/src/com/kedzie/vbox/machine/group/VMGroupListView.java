@@ -436,10 +436,10 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     
                     mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
                     
-//                    if(mDraggedMachine!=null)
-//                        dropMachine(mParentGroup, mDraggedMachine);
-//                    else if(mDraggedGroup!=null)
-//                        dropGroup(mParentGroup, mDraggedGroup);
+                    if(mDraggedMachine!=null)
+                        dropMachine(mParentGroup, mDraggedMachine);
+                    else if(mDraggedGroup!=null)
+                        dropGroup(mParentGroup, mDraggedGroup);
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
                     if(mGroupView!=null) {
