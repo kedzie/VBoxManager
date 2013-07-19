@@ -25,7 +25,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 @KSOAP
 public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	static ClassLoader loader = IVirtualBox.class.getClassLoader();
-
+    public static final String BUNDLE = "vbox";
 	/** Object corresponding to the supplied arguments does not exist. */
 	public static final long VBOX_E_OBJECT_NOT_FOUND = 0x80BB000;
 	/** Current virtual machine state prevents the operation.  */

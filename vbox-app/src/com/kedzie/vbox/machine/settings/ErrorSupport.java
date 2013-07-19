@@ -44,6 +44,8 @@ public class ErrorSupport implements Parcelable {
 			_bundle.remove(field);
 		else
 			_bundle.putString(field, msg);
+        if(_textView!=null)
+            _textView.setError(msg==null || msg.isEmpty() ? null : msg);
 		showErrors();
 	}
 	

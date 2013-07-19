@@ -89,6 +89,8 @@ public class HostInfoFragment extends SherlockFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        _vmgr = BundleBuilder.getVBoxSvc(getArguments());
+        _host = BundleBuilder.getProxy(getArguments(), IHost.BUNDLE, IHost.class);
     }
 
     @Override
@@ -107,12 +109,11 @@ public class HostInfoFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+
         if(savedInstanceState!=null) {
             _host = savedInstanceState.getParcelable(IHost.BUNDLE);
             populateViews(_host);
         } else {
-            _host = BundleBuilder.getProxy(getArguments(), IHost.BUNDLE, IHost.class);
             new LoadInfoTask().execute(_host);
         }
     }
@@ -130,7 +131,7 @@ public class HostInfoFragment extends SherlockFragment {
         
         StringBuffer sb = new StringBuffer();
         for(int i=0; i<host.getProcessorCount(); i++) {
-            if(i>=0)
+            if(i>0)
                 sb.append("\n");
             sb.append(host.getProcessorDescription(i));
         }
@@ -147,7 +148,7 @@ public class HostInfoFragment extends SherlockFragment {
         List<IHostNetworkInterface> nets = host.findHostNetworkInterfacesOfType(HostNetworkInterfaceType.BRIDGED);
         for(int i=0; i<nets.size(); i++ ) {
             IHostNetworkInterface net = nets.get(i);
-            if(i>=0)
+            if(i>0)
                 sb.append("\n\n");
             sb.append(net.getNetworkName());
             sb.append("\n\t").append(net.getIPAddress()).append(" / ").append(net.getNetworkMask());
@@ -159,7 +160,7 @@ public class HostInfoFragment extends SherlockFragment {
         List<IMedium> dvds = host.getDVDDrives();
         for(int i=0; i<dvds.size(); i++ ) {
             IMedium dvd = dvds.get(i);
-            if(i>=0)
+            if(i>0)
                 sb.append("\n");
             sb.append(dvd.getName()).append(" ").append(dvd.getDescription());
         }

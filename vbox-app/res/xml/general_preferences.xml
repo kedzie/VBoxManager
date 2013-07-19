@@ -9,7 +9,7 @@
             android:title="@string/pref_colored_icons" />
 
         <ListPreference
-            android:defaultValue="Flip"
+            android:defaultValue="Slide"
             android:dialogTitle="@string/pref_tab_transition_title"
             android:entries="@array/tab_transition_entries"
             android:entryValues="@array/tab_transition_entryValues"

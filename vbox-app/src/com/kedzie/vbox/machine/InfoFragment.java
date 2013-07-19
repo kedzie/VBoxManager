@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -128,7 +129,7 @@ public class InfoFragment extends SherlockFragment {
 		@Override
 		protected void onSuccess(MachineInfo result) {
 		    _machineInfo = result;
-		    populateViews(result);
+		    populateViews();
 		}
 	}
 	
@@ -173,7 +174,6 @@ public class InfoFragment extends SherlockFragment {
 			_machineInfo = savedInstanceState.getParcelable("info");
 		}
 		_machine = BundleBuilder.getProxy(getArguments(), IMachine.BUNDLE, IMachine.class);
-//		_vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
 	}
 	
 	@Override
@@ -210,7 +210,7 @@ public class InfoFragment extends SherlockFragment {
 		super.onStart();
 		lbm.registerReceiver(_receiver, Utils.createIntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
 		if(_machineInfo!=null) 
-			populateViews(_machineInfo);
+			safePopulate();
 		else 
 			new LoadInfoTask().execute(_machine);
 	}
@@ -227,8 +227,17 @@ public class InfoFragment extends SherlockFragment {
 		outState.putParcelable("info", _machineInfo);
 	}
 
-	private void populateViews(MachineInfo info) {
-	    IMachine m = info.machine;
+    private void safePopulate() {
+        try {
+            populateViews();
+        } catch(NetworkOnMainThreadException e) {
+            Log.e(TAG, "Populate error", e);
+            new LoadInfoTask().execute(_machine);
+        }
+    }
+
+	private void populateViews() {
+	    IMachine m = _machineInfo.machine;
 		_nameText.setText( m.getName());
 		_osTypeText.setText( m.getOSTypeId() );
 		if(!Utils.isEmpty(m.getGroups())) 
@@ -305,8 +314,8 @@ public class InfoFragment extends SherlockFragment {
 		_rdpPortText.setText(m.getVRDEServer().getVRDEProperty(IVRDEServer.PROPERTY_PORT));
 		_descriptionText.setText( m.getDescription()+"" );
 		
-		if(info.screenshot!=null) {
-			_preview.setImageBitmap(info.screenshot.getBitmap());
+		if(_machineInfo.screenshot!=null) {
+			_preview.setImageBitmap(_machineInfo.screenshot.getBitmap());
 		    _preview.setAdjustViewBounds(true);
 			_preview.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			_previewPanel.expand();

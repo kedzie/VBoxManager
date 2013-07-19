@@ -20,8 +20,16 @@ public class SystemFragment extends SherlockFragment {
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
         mTabHost.addTab(new FragmentElement("Motherboard", SystemMotherboardFragment.class, getArguments()));
         mTabHost.addTab(new FragmentElement("Processors", SystemProcessorsFragment.class, getArguments()));
-        mTabHost.addTab(new FragmentElement("Accleration", SystemAccelerationFragment.class, getArguments()));
+        mTabHost.addTab(new FragmentElement("Acceleration", SystemAccelerationFragment.class, getArguments()));
+        if(savedInstanceState!=null)
+            mTabHost.setCurrentTab(savedInstanceState.getInt("tab", 0));
         return mTabHost;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("tab", mTabHost.getCurrentTab());
     }
 
     @Override

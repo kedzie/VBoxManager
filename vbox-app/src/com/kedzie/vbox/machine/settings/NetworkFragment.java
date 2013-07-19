@@ -23,7 +23,8 @@ public class NetworkFragment extends SherlockFragment {
     
     private IMachine _machine;
     private ArrayList<INetworkAdapter> _adapters;
-    
+    private int mSavedTab;
+
     public static class DummyFragment extends SherlockFragment {
     	public DummyFragment() {
     		super();
@@ -61,14 +62,17 @@ public class NetworkFragment extends SherlockFragment {
     public void onSaveInstanceState(Bundle outState) {
     	super.onSaveInstanceState(outState);
     	outState.putParcelableArrayList("adapters", _adapters);
+        outState.putInt("tab", mTabHost.getCurrentTab());
     }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	_machine = (IMachine)getArguments().getParcelable(IMachine.BUNDLE);
-    	if(savedInstanceState!=null)
+    	if(savedInstanceState!=null) {
     		_adapters = savedInstanceState.getParcelableArrayList("adapters");
+            mSavedTab = savedInstanceState.getInt("tab", 0);
+        }
     }
 
     @Override
@@ -93,6 +97,7 @@ public class NetworkFragment extends SherlockFragment {
     	for(int i=0; i<_adapters.size(); i++)
     	    mTabHost.addTab(new FragmentElement("Adapter#"+(i+1), NetworkAdapterFragment.class, 
     	            new BundleBuilder().putParcelable(INetworkAdapter.BUNDLE, _adapters.get(i)).create()));
+        mTabHost.setCurrentTab(mSavedTab);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class HostView extends FrameLayout {
 	
 	public void update(IHost h) {
 			_host=h;
-			ipText.setText(h.getAPI().getServer().getHost());
+			ipText.setText("("+h.getAPI().getServer().getHost()+")");
 			versionText.setText(h.getAPI().getVBox().getVersion());
 	}
 

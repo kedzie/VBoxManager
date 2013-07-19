@@ -33,7 +33,6 @@ import com.kedzie.vbox.task.DialogTask;
  * @apiviz.stereotype activity
  */
 public class MachineListActivity extends BaseActivity implements OnTreeNodeSelectListener {
-	public final static String INTENT_VERSION = "version";
 
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
@@ -69,16 +68,13 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 		super.onCreate(savedInstanceState);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
+        _vmgr = BundleBuilder.getVBoxSvc(getIntent());
 		setContentView(R.layout.machine_list);
 
 		FrameLayout detailsFrame = (FrameLayout)findViewById(R.id.details);
 		_dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-		if(_dualPane) {
-			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			_tabSupport = new TabSupportActionBarViewPager(this, R.id.details);
-		}
-		startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
+
+        startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
 	}
 
 	@Override
@@ -89,9 +85,6 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 
 	@Override
 	public void onTreeNodeSelect(TreeNode node) {
-		if(node==null && _dualPane) 
-			_tabSupport.removeAllTabs();
-
 		if(node instanceof IMachine)
 			onMachineSelected((IMachine)node);
 		else if (node instanceof VMGroup) 
@@ -101,37 +94,28 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 	}
 
 	private void onMachineSelected(IMachine machine) {
-		if (_dualPane) {
-			_tabSupport.removeAllTabs();
-			Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr).putProxy(IMachine.BUNDLE, machine).create();
-			_tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), InfoFragment.class, b));
-			_tabSupport.addTab(new FragmentElement(getString(R.string.tab_actions), ActionsFragment.class, b));
-			_tabSupport.addTab(new FragmentElement(getString(R.string.tab_log), LogFragment.class, b));
-			_tabSupport.addTab(new FragmentElement(getString(R.string.tab_snapshots), SnapshotFragment.class, b));
-		} else {
-			Intent intent = new Intent(this, MachineActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr);
-			BundleBuilder.addProxy(intent, IMachine.BUNDLE, machine );
-			Utils.startActivity(this, intent);
-		}
+        Bundle b = new BundleBuilder().putVBoxSvc(_vmgr).putProxy(IMachine.BUNDLE, machine).create();
+		if (_dualPane)
+            show(new FragmentElement(machine.getName(), MachineFragment.class, b));
+		else
+            Utils.startActivity(this, new Intent(this, MachineActivity.class).putExtras(b));
 	}
 
 	private void onGroupSelected(VMGroup group) {
-		Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr).putParcelable(VMGroup.BUNDLE, group).create();
-		if(_dualPane) {
-			_tabSupport.removeAllTabs();
-			_tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), GroupInfoFragment.class, b));
-		} else {
-		    Utils.startActivity(this, new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement(group.getName(), GroupInfoFragment.class, b)));
-		}
+        show(new FragmentElement(group.getName(), GroupInfoFragment.class,
+                new BundleBuilder().putVBoxSvc(_vmgr).putParcelable(VMGroup.BUNDLE, group).create()));
 	}
 	
 	private void onHostSelected(IHost host) {
-        Bundle b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, _vmgr).putParcelable(IHost.BUNDLE, host).create();
+        show(new FragmentElement("Host", HostInfoFragment.class,
+                new BundleBuilder().putVBoxSvc(_vmgr).putParcelable(IHost.BUNDLE, host).create()));
+    }
+
+    private void show(FragmentElement details) {
         if(_dualPane) {
-            _tabSupport.removeAllTabs();
-            _tabSupport.addTab(new FragmentElement(getString(R.string.tab_info), HostInfoFragment.class, b));
+            Utils.setCustomAnimations(getSupportFragmentManager().beginTransaction()).replace(R.id.details, details.instantiate(this)).commit();
         } else {
-            Utils.startActivity(this, new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, new FragmentElement("Host", HostInfoFragment.class, b)));
+            Utils.startActivity(this, new Intent(this, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, details));
         }
     }
 

@@ -95,7 +95,8 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		protected void onSuccess(IMachine result) {
 			_machine=result;
 			_headerView.update(result);
-			_listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(result.getState())));
+            if(getActivity()!=null)
+			    _listView.setAdapter(new MachineActionAdapter(VMAction.getVMActions(result.getState())));
 		}
 	}
 	
@@ -156,14 +157,14 @@ public class ActionsFragment extends SherlockFragment implements OnItemClickList
 		_listView.setOnItemClickListener(this);
 		return _listView;
 	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
-		new UpdateMachineViewTask(_vmgr).execute(_machine);
-	}
-	
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        lbm = LocalBroadcastManager.getInstance(getActivity().getApplicationContext());
+        new UpdateMachineViewTask(_vmgr).execute(_machine);
+    }
+
 	@Override
 	public void onStart() {
 		super.onStart();

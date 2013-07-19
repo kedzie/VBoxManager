@@ -13,6 +13,8 @@ import android.os.RemoteException;
 import android.util.SparseArray;
 
 import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Builder pattern for {@link Bundle}.  
@@ -58,7 +60,7 @@ public class BundleBuilder {
 	 * @return unbundled remote proxy
 	 */
 	public static <T> T getProxy(Bundle bundle, String name, Class<T> clazz) {
-		if(Parcelable.class.isAssignableFrom(clazz)) 
+		if(Parcelable.class.isAssignableFrom(clazz))
 			return clazz.cast( bundle.getParcelable(name) );
 		else 
 			return clazz.cast( bundle.getSerializable(name) );
@@ -72,25 +74,75 @@ public class BundleBuilder {
 	 * @return the un-parceled remote proxy
 	 */
 	public static <T> T getProxy(Intent intent, String name, Class<T> clazz) {
-		if(Parcelable.class.isAssignableFrom(clazz)) 
-			return clazz.cast( intent.getParcelableExtra(name) );
-		else 
-			return clazz.cast( intent.getSerializableExtra(name) );
+        return getProxy(intent.getExtras(), name, clazz);
 	}
 	
-	/**
-	 * Add a parceled remote proxy to bundle
-	 * @param key entry key
-	 * @param value remote proxy
-	 * @return builder pattern
-	 */
-	public BundleBuilder putProxy(String key, IManagedObjectRef value) {
-		if(value instanceof Parcelable) 
-			b.putParcelable(key, (Parcelable)value);
-		else 
-			b.putSerializable(key, (Serializable)value);
-		return this;
-	}
+    /**
+     * Unparcel a @{link VBoxSvc} from intent
+     * @param intent the intent
+     * @return the un-parceled remote proxy
+     */
+    public static VBoxSvc getVBoxSvc(Intent intent) {
+        return getVBoxSvc(intent.getExtras());
+    }
+
+    /**
+     * Unparcel a @{link VBoxSvc} from bundle
+     * @param bundle the bungle
+     * @return the un-parceled remote proxy
+     */
+    public static VBoxSvc getVBoxSvc(Bundle bundle) {
+        VBoxSvc ret = bundle.getParcelable(VBoxSvc.BUNDLE);
+        IVirtualBox vbox = bundle.getParcelable(IVirtualBox.BUNDLE);
+        if(vbox!=null)
+            ret.setVBox(vbox);
+        return ret;
+    }
+
+    /**
+     * Add a parceled {@link VBoxSvc} to bundle
+     * @param vmgr VirtualBox service
+     * @return builder pattern
+     */
+    public static void putVBoxSvc(Bundle bundle, VBoxSvc vmgr) {
+        bundle.putParcelable(IVirtualBox.BUNDLE, vmgr.getVBox());
+        bundle.putParcelable(VBoxSvc.BUNDLE, vmgr);
+    }
+
+    /**
+     * Add a parceled {@link VBoxSvc} to intent
+     * @param vmgr VirtualBox service
+     * @return builder pattern
+     */
+    public static void putVBoxSvc(Intent intent, VBoxSvc vmgr) {
+        intent.putExtra(VBoxSvc.BUNDLE, (Parcelable)vmgr);
+        intent.putExtra(IVirtualBox.BUNDLE, vmgr.getVBox());
+    }
+
+    /**
+     * Add a parceled {@link VBoxSvc} to bundle
+     * @param vmgr VirtualBox service
+     * @return builder pattern
+     */
+    public BundleBuilder putVBoxSvc(VBoxSvc vmgr) {
+        b.putParcelable(IVirtualBox.BUNDLE, vmgr.getVBox());
+        b.putParcelable(VBoxSvc.BUNDLE, vmgr);
+        return this;
+    }
+
+    /**
+     * Add a parceled remote proxy to bundle
+     * @param key entry key
+     * @param value remote proxy
+     * @return builder pattern
+     */
+    public BundleBuilder putProxy(String key, IManagedObjectRef value) {
+        if(value instanceof Parcelable)
+            b.putParcelable(key, (Parcelable)value);
+        else
+            b.putSerializable(key, (Serializable)value);
+        return this;
+    }
 	
 	public BundleBuilder putAll(Bundle map) {
 		b.putAll(map);

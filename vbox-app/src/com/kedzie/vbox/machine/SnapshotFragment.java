@@ -251,6 +251,7 @@ public class SnapshotFragment extends SherlockFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+
         _machine = getArguments().getParcelable(IMachine.BUNDLE);
         _machine = _vmgr.getProxy(IMachine.class, _machine.getIdRef());
         if(savedInstanceState!=null) {

@@ -97,7 +97,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         else if (key.equals(SettingsActivity.PREF_COUNT))
             findPreference(key).setSummary(sharedPreferences.getString(key, "") + " samples");
         else if (key.equals(SettingsActivity.PREF_WIDGET_INTERVAL))
-            findPreference(key).setSummary(sharedPreferences.getString(key, "") + " seconds");
+            findPreference(key).setSummary(sharedPreferences.getString(key, "") + " ms");
         else if (key.equals(SettingsActivity.PREF_TAB_TRANSITION))
             findPreference(key).setSummary(sharedPreferences.getString(key, ""));
     }
@@ -155,7 +155,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
             else if (key.equals(SettingsActivity.PREF_COUNT))
                 findPreference(key).setSummary(sharedPreferences.getString(key, "") + " samples");
             else if (key.equals(SettingsActivity.PREF_WIDGET_INTERVAL))
-                findPreference(key).setSummary(sharedPreferences.getString(key, "") + " seconds");
+                findPreference(key).setSummary(sharedPreferences.getString(key, "") + " ms");
             else if (key.equals(SettingsActivity.PREF_TAB_TRANSITION))
                 findPreference(key).setSummary(sharedPreferences.getString(key, ""));
         }

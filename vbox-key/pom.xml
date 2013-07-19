@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.2.1</version>
+		<version>3.2.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vbox-key</artifactId>
@@ -15,47 +15,28 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.google.android</groupId>
+			<groupId>android</groupId>
 			<artifactId>android</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<directory>bin</directory>
-		<outputDirectory>bin/classes</outputDirectory>
-		<finalName>${project.artifactId}</finalName>
-		
 		<plugins>
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<manifestVersionName></manifestVersionName>
-					<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
-				</configuration>
-				<executions>
-					<execution>
-						<id>manifest</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>manifest-update</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
 
 	<profiles>
 		<profile>
-			<id>production</id>
+			<id>release</id>
 			<activation>
 				<property>
-					<name>environment</name>
-					<value>production</value>
+					<name>performRelease</name>
+					<value>true</value>
 				</property>
 			</activation>
 			<build>

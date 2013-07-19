@@ -1,42 +1,5 @@
 package com.kedzie.vbox.soap;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import nf.fr.eraasoft.pool.ObjectPool;
-import nf.fr.eraasoft.pool.PoolException;
-import nf.fr.eraasoft.pool.PoolSettings;
-import nf.fr.eraasoft.pool.PoolableObjectBase;
-
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.KvmSerializable;
-import org.ksoap2.serialization.PropertyInfo;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -71,6 +34,42 @@ import com.kedzie.vbox.metrics.MetricQuery;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.ssl.InteractiveTrustedHttpsTransport;
 import com.kedzie.vbox.soap.ssl.KeystoreTrustedHttpsTransport;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
+import org.ksoap2.serialization.KvmSerializable;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import nf.fr.eraasoft.pool.ObjectPool;
+import nf.fr.eraasoft.pool.PoolException;
+import nf.fr.eraasoft.pool.PoolSettings;
+import nf.fr.eraasoft.pool.PoolableObjectBase;
 
 /**
  * VirtualBox JAX-WS API
@@ -130,17 +129,226 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				}
 		}
 	}
+//
+//	/**
+//	 * Make remote calls to VBox JAXWS API based on method
+//	 * metadata from {@link KSOAP} annotations.  JavAssist implementation.
+//	 */
+//	public class KSOAPMethodHandler implements MethodHandler {
+//
+//		public KSOAPMethodHandler(String id, Class<?> type, Map<String,Object> cache) {
+//			_uiud=id;
+//			_type=type;
+//			_cache = cache!=null ? cache : new HashMap<String, Object>();
+//		}
+//
+//		@Override
+//		public Object invoke(Object proxy, Method method, Object[] args)throws Throwable {
+//			String name = method.getName();
+//
+//			KSOAP ksoap = method.getAnnotation(KSOAP.class);
+//			if(ksoap==null)
+//				ksoap=method.getDeclaringClass().getAnnotation(KSOAP.class);
+//
+//			String cacheKey = name;
+//			if(ksoap.cacheable()) {
+//				if(args!=null) {
+//					for(Object arg : args)
+//						cacheKey+="-"+arg.toString();
+//				}
+//				if(_cache.containsKey(cacheKey))
+//					return _cache.get(cacheKey);
+//			}
+//
+//			SoapObject request = new SoapObject(NAMESPACE, (Utils.isEmpty(ksoap.prefix()) ? _type.getSimpleName() : ksoap.prefix())+"_"+method.getName());
+//
+//			if (!Utils.isEmpty(ksoap.thisReference()))
+//				request.addProperty(ksoap.thisReference(), _uiud);
+//
+//			if(args!=null) {
+//				for(int i=0; i<args.length; i++)
+//					marshal(request, Utils.getAnnotation(KSOAP.class, method.getParameterAnnotations()[i]),  method.getParameterTypes()[i],	method.getGenericParameterTypes()[i],	args[i]);
+//			}
+//
+//			SerializationEnvelope envelope = new SerializationEnvelope(request);
+//
+//			if(method.isAnnotationPresent(Asyncronous.class)) {
+//				_threadPoolExecutor.execute(new AsynchronousThread(NAMESPACE+request.getName(), envelope));
+//				return null;
+//			} else {
+//				HttpTransportSE transport = null;
+//				try {
+//					transport = _transportPool.getObj();
+//					transport.call(NAMESPACE+request.getName(), envelope);
+//					Object ret = envelope.getResponse(method.getReturnType(), method.getGenericReturnType());
+//					if(ksoap.cacheable())
+//						_cache.put(cacheKey, ret);
+//					if(name.startsWith("set"))		//update cache if we are calling a setter
+//						_cache.put("get"+name.substring(3), ret);
+//					return ret;
+//				} catch(PoolException e) {
+//					Log.e(TAG, "PoolException", e);
+//					throw new RuntimeException(e.getMessage(), e);
+//				} finally {
+//					_transportPool.returnObj(transport);
+//				}
+//			}
+//		}
+//
+//		/**
+//
+//		 * Add an argument to a SOAP request
+//		 * @param request  SOAP request
+//		 * @param ksoap   parameter annotation with marshalling configuration
+//		 * @param clazz     {@link Class} of parameter
+//		 * @param gType   Generic type of parameter
+//		 * @param obj  object to marshall
+//
+//		 */
+//		private void marshal(SoapObject request, KSOAP ksoap, Class<?> clazz, Type gType, Object obj) {
+//			if(obj==null) return;
+//			if(clazz.isArray()) { //Arrays
+//				for(Object o : (Object[])obj)
+//					marshal( request, ksoap, clazz.getComponentType(), gType,  o );
+//			} else if(Collection.class.isAssignableFrom(clazz)) { //Collections
+//				Class<?> pClazz = Utils.getTypeParameter(gType,0);
+//				for(Object o : (List<?>)obj)
+//					marshal(request, ksoap, pClazz, gType,  o );
+//			} else if(!Utils.isEmpty(ksoap.type())) //if annotation specifies SOAP datatype, i.e. unsignedint
+//				request.addProperty( ksoap.value(), new SoapPrimitive(ksoap.namespace(), ksoap.type(), obj.toString()));
+//			else if(IManagedObjectRef.class.isAssignableFrom(clazz))
+//				request.addProperty(ksoap.value(),  ((IManagedObjectRef)obj).getIdRef() );
+//			else if(clazz.isEnum())
+//				request.addProperty(ksoap.value(),  new SoapPrimitive(NAMESPACE, clazz.getSimpleName(), obj.toString() ));
+//			else
+//				request.addProperty(ksoap.value(), obj);
+//		}
+//	}
+//
+//	/**
+//	 * Base class for SOAP proxies
+//	 */
+//	@KSOAP(prefix="IManagedObjectRef")
+//	public class ManagedObjectRef implements IManagedObjectRef, Parcelable {
+//
+//		/** Unique identifier (UIUD) of {@link ManagedObjectRef} */
+//		private String _uiud;
+//
+//		/** Type of {@link IManagedObjectRef} */
+//		private Class<?> _type;
+//
+//		/** Cached property values */
+//		private Map<String, Object> _cache;
+//
+//		/**
+//		 * Get the managed object identifier
+//		 * @return	Unique identifier (UIUD) of {@link ManagedObjectRef}
+//		 */
+//		@Override
+//		public String getIdRef() {
+//			return _uiud;
+//		}
+//
+//		/**
+//		 * Get property cache
+//		 */
+//		@Override
+//		public Map<String, Object> getCache() {
+//			return _cache;
+//		}
+//
+//		/**
+//		 * Clear all cached property values
+//		 */
+//		@Override
+//		public void clearCache() {
+//			_cache.clear();
+//		}
+//
+//		/**
+//		 * Clear specific cached property values
+//		 * @param names  names of properties to clear
+//		 */
+//		@Override
+//		public void clearCacheNamed(String...names) {
+//			for(String arg : (String[])args[0])
+//				_cache.remove(arg);
+//		}
+//
+//		/**
+//		 * @return VirtualBox JAXWS API
+//		 */
+//		@Override
+//		public VBoxSvc getAPI() {
+//			return VBoxSvc.this;
+//		}
+//
+//		/**
+//		 * Returns the name of the interface that this managed object represents, for example "IMachine", as a string.
+//		 */
+//		@Override
+//		@KSOAP(prefix="IManagedObjectRef")
+//		public String getInterfaceName() {
+//			return _type;
+//		}
+//
+//		@Override
+//		public int hashCode() {
+//			return Objects.hashCode(_uiud);
+//		}
+//
+//		@Override
+//		public boolean equals(Object other) {
+//			if(other==null || !this.getClass().equals(other.getClass()))
+//				return false;
+//			IManagedObjectRef that = (IManagedObjectRef)other;
+//			return Objects.equal(_uiud, that.getIdRef());
+//		}
+//
+//		@Override
+//		public String toString() {
+//			return _type.getSimpleName() + "\t#" + _uiud + "\t" + Utils.toString("Cache", _cache);
+//		}
+//
+//		@Override
+//		public int describeContents() {
+//			return 0;
+//		}
+//
+//		@Override
+//		public void writeToParcel(Parcel dest, int flags) {
+//			dest.writeParcelable(VBoxSvc.this, 0);
+//			dest.writeString(_uiud);
+//			dest.writeMap(_cache);
+//		}
+//
+//		/**
+//		 * Releases this managed object reference and frees the resources that were allocated for it in the webservice server process.
+//		 * After calling this method the identifier of the reference can no longer be used.
+//		 */
+//		@Override
+//		@KSOAP(prefix="IManagedObjectRef")
+//		public void release();
+//	}
+
+//	public static <T> T getJavassistProxy(Class<T> superclazz) throws Exception {
+//		ProxyFactory factory = new ProxyFactory();
+//		factory.setSuperclass(superclazz);
+//		Class clazz = factory.createClass();
+//		Object instance = clazz.newInstance();
+//		((ProxyObject) instance).setHandler(new KSOAPMethodHandler(instance));
+//		return (T) instance;
+//	}
 
 	/**
 	 * Make remote calls to VBox JAXWS API based on method metadata from {@link KSOAP} annotations.
 	 */
-	public class KSOAPInvocationHandler implements InvocationHandler, Serializable {
-		private static final long serialVersionUID = 1L;
+	public class KSOAPInvocationHandler implements InvocationHandler {
 
-		/** managed object UIUD */
+		/** Unique identifier (UIUD) of {@link IManagedObjectRef} */
 		private String _uiud;
 
-		/** type of {@link IManagedObjectRef} */
+		/** Type of {@link IManagedObjectRef} */
 		private Class<?> _type;
 
 		/** cached property values */
@@ -496,7 +704,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * Create remote-invocation proxy w/cached properties
 	 * @param clazz 		type of {@link IManagedObjectRef}
 	 * @param id 			UIUD of {@link IManagedObjectRef}
-	 * @param 				cached properties
+	 * @param cache			cached properties
 	 * @return 				remote invocation proxy
 	 */
 	public <T> T getProxy(Class<T> clazz, String id, Map<String, Object> cache) {
@@ -517,8 +725,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 
 	/**
 	 * Connect to <code>vboxwebsrv</code> & initialize the VBoxSvc API interface
-	 * @param username username
-	 * @param password password
 	 * @return initialized {@link IVirtualBox} API interface
 	 * @throws IOException
 	 * @throws XmlPullParserException

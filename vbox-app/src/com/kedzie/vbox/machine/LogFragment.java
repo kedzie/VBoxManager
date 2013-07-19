@@ -33,7 +33,7 @@ public class LogFragment extends SherlockFragment {
 		protected String work(IMachine... m) throws Exception {
 		    try {
 		        return new String(m[0].readLog(0, 0, MAX_LOG_SIZE));
-		    } catch(IOException e) {
+		    } catch(Exception e) {
 		        return "";
 		    }
 		}

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,6 +36,7 @@ import com.kedzie.vbox.task.DialogTask;
  * @apiviz.stereotype fragment
  */
 public class NetworkAdapterFragment extends SherlockFragment {
+    private static final String TAG = "NetworkAdapterFragment";
 
 	class LoadInfoTask extends DialogTask<INetworkAdapter, Tuple<INetworkAdapter, String[]>> {
 		
@@ -150,11 +152,20 @@ public class NetworkAdapterFragment extends SherlockFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-//		if(_adapter.getCache().containsKey("getEnabled")) 
-//			populate();
-//		else 
+		if(_adapter.getCache().containsKey("getEnabled"))
+			safePopulate();
+		else
 			new LoadInfoTask().execute(_adapter);
 	}
+
+    private void safePopulate() {
+        try {
+            populate();
+        } catch(NetworkOnMainThreadException e) {
+            Log.e(TAG, "Populate error", e);
+            new LoadInfoTask().execute(_adapter);
+        }
+    }
 
 	private void populate() {
 		boolean enabled = _adapter.getEnabled();

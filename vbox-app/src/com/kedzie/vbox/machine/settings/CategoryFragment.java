@@ -75,11 +75,19 @@ public class CategoryFragment extends SherlockFragment {
         return _listView;
     }
 
-    public void setSelection(int position) {
-        if(_dualPane) {
-//            _listView.setSelection(position);
-            _listView.setItemChecked(position, true);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(savedInstanceState!=null && _dualPane) {
+            int position = savedInstanceState.getInt("checkedItem");
+            if(position!=ListView.INVALID_POSITION)
+                setSelection(position);
         }
+    }
+
+    public void setSelection(int position) {
+        if(_dualPane)
+            _listView.setItemChecked(position, true);
         if(_listener!=null)
             _listener.onSelectCategory(_adapter.getItem(position));
     }

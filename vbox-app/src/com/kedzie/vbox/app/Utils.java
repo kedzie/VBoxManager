@@ -16,6 +16,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -28,6 +30,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.AdapterView;
@@ -361,7 +364,7 @@ public class Utils {
 
 	/**
 	 * Remove existing fragment with same tag and add new one.
-	 * 
+	 *
 	 * @param context context
 	 * @param manager fragment manager
 	 * @param containerId container
@@ -375,12 +378,12 @@ public class Utils {
 
 	/**
 	 * Remove existing fragment with same tag and add new one.
-	 * 
+	 *
 	 * @param context context
 	 * @param manager fragment manager
 	 * @param tx existing transaction
 	 * @param containerId container
-	 * @param info fragment definition
+	 * @param element fragment definition
 	 */
 	public static void replaceFragment(Context context, FragmentManager manager, FragmentTransaction tx, int containerId, FragmentElement element) {
 		Fragment existing = manager.findFragmentByTag(element.name);
@@ -393,7 +396,7 @@ public class Utils {
 	/**
 	 * Set the contents of a {@link TextView}
 	 * 
-	 * @param view parent view
+	 * @param parent parent view
 	 * @param id textview id
 	 * @param text text contents
 	 */
@@ -404,12 +407,12 @@ public class Utils {
 	/**
 	 * Set the contents of a {@link TextView}
 	 * 
-	 * @param view parent view
+	 * @param parent parent view
 	 * @param id textview id
 	 * @param text text contents
 	 */
 	public static void setTextView(View parent, int id, int text) {
-		((TextView) parent.findViewById(id)).setText(text + "");
+        setTextView(parent, id, text + "");
 	}
 
 	/**
@@ -431,13 +434,13 @@ public class Utils {
 	 * @param text text contents
 	 */
 	public static void setTextView(SparseArray<View> holder, int id, int text) {
-		((TextView) holder.get(id)).setText(text + "");
+        setTextView(holder, id, text+"");
 	}
 
 	/**
 	 * Set the contents of a {@link ImageView}
 	 * 
-	 * @param view parent view
+	 * @param parent parent view
 	 * @param id textview id
 	 * @param image contents
 	 */
@@ -448,7 +451,7 @@ public class Utils {
 	/**
 	 * Set the contents of a {@link ImageView}
 	 * 
-	 * @param view parent view
+	 * @param parent parent view
 	 * @param id textview id
 	 * @param image contents
 	 */
@@ -530,22 +533,22 @@ public class Utils {
 		}
 	}
 
-	/**
-	 * Cache commonly used Machine properties
-	 * 
-	 * @param m
-	 */
-	public static void cacheProperties(IMachine m) {
-		synchronized (m) {
-			m.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
-			m.getName();
-			m.getState();
-			m.getCurrentStateModified();
-			m.getOSTypeId();
-			if (m.getCurrentSnapshot() != null)
-				m.getCurrentSnapshot().getName();
-		}
-	}
+    /**
+     * Cache commonly used Machine properties
+     *
+     * @param machine
+     */
+    public static void cacheProperties(IMachine machine) {
+        synchronized (machine) {
+            machine.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
+            machine.getName();
+            machine.getState();
+            machine.getCurrentStateModified();
+            machine.getOSTypeId();
+            if (machine.getCurrentSnapshot() != null)
+                machine.getCurrentSnapshot().getName();
+        }
+    }
 
 	/**
 	 * Launch activity using custom animations. Uses ActivityOptions if on
@@ -582,8 +585,6 @@ public class Utils {
 	 * 
 	 * @param parent parent activity
 	 * @param intent intent to launch
-	 * @param animIn In animation
-	 * @param animOut Out animation
 	 */
 	public static void startActivityForResult(Activity parent, Intent intent, int requestCode) {
 		startActivityForResult(parent, intent, requestCode, R.anim.slide_in_right, R.anim.slide_out_left);
@@ -648,4 +649,51 @@ public class Utils {
 			Log.v(TAG, "Scale factor: " + scale);
 		return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
 	}
+
+    public static Point mapPoint(View view, Point point) {
+        Point mapped = new Point(point.x, point.y);
+        Matrix matrix = view.getMatrix();
+        if(!matrix.isIdentity()) {
+            Matrix inverse = new Matrix();
+            matrix.invert(inverse);
+            float []n = { point.x, point.y };
+            matrix.mapPoints(n);
+            mapped.x= (int) n[0];
+            mapped.y= (int) n[1];
+        }
+        mapped.offset(-view.getLeft(), -view.getTop());
+        return mapped;
+    }
+
+    /**
+     *
+     * @param view    View to search
+     * @param p     point in view's coordinate space
+     * @return  deepest view
+     */
+    public static View getDeepestView(View view, Point p) {
+        Rect hit = new Rect();
+        if(view instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup)view;
+            for(int i=0; i<parent.getChildCount(); i++) {
+                View child = parent.getChildAt(i);
+                child.getHitRect(hit);
+                if(hit.contains(p.x, p.y)) {
+                    return getDeepestView(child, mapPoint(child, p));
+                }
+            }
+        }
+        return view;
+    }
+
+    public static <T> T getDeepestView(View view, Point p, Class<T> clazz) {
+        View deepest = getDeepestView(view, p);
+        while(deepest!=null && !(clazz.isAssignableFrom(deepest.getClass()))) {
+            if(deepest.getParent() instanceof View)
+                deepest = (View)deepest.getParent();
+            else
+                deepest=null;
+        }
+        return clazz.cast(deepest);
+    }
 }

@@ -105,7 +105,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
             finish();
         }
     }
-    
+
 	/** Is the dual Fragment Layout active? */
 	private boolean _dualPane;
 	
@@ -128,7 +128,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
+		_vmgr = BundleBuilder.getVBoxSvc(getIntent());
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 		
 		getSupportActionBar().setTitle(_machine.getName() + " Settings");

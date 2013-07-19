@@ -60,8 +60,12 @@ public interface IMachine extends IManagedObjectRef, TreeNode {
 		}
 	};
 	
-	public static enum LaunchMode { headless, gui, sdl, emergencystop; }
-	
+	public static enum LaunchMode {
+        headless,
+        gui,
+        sdl,
+        emergencystop; }
+
 	/**
 	 * @return UUID of the virtual machine. 
 	 */

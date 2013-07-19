@@ -10,17 +10,24 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 /**
  * Specifies marshalling into SOAP Envelope.
  * Can be applied to
+ * 
  * <dl>
  * <dt>Arguments</dt>
- * <dd><ul>
+ * <dd>
+ * <ul>
  * <li>Specify the SOAP property name</li>
- * <li>Specify Namespace/Datatype of marshalled parameter,  (<code>@KSOAP(namespace=SoapSerializationEnvelope.XSD, type="int", "timeout")</code>)
- * </ul></dd>
+ * <li>Specify Namespace or Datatype of marshalled parameter
+ * i.e. <code>@KSOAP(namespace=SoapSerializationEnvelope.XSD, type="unsigned_int", value="timeout")</code>
+ * </ul>
+ * </dd>
+ * 
  * <dt>Method</dt>
- * <dd><ul>
+ * <dd>
+ * <ul>
  * <li>SOAP method prefix and name</li>
  * <li>Whether the return value is stored in the In-Memory Cache (<code>@KSOAP(cacheable=true)</code>)</li>
- * </ul></dd>
+ * </ul>
+ * </dd>
  * @apiviz.landmark
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.TYPE})

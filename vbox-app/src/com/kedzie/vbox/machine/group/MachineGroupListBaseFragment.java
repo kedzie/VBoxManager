@@ -17,6 +17,7 @@ import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -57,6 +58,8 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        protected VMGroup work(Void... params) throws Exception {
 	            _vmgr.getVBox().getVersion();
 	            _host = _vmgr.getVBox().getHost();
+                _host.getMemorySize();
+                _host.getAPI().getVBox().getVersion();
 	            List<String> vGroups = _vmgr.getVBox().getMachineGroups();
 	            for(String tmp : vGroups) {
 	                if(tmp.equals("/")) continue;
@@ -89,7 +92,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        
 	        @Override
 	        protected void onSuccess(VMGroup root) {
-	            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
+//	            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
 	            _listView.setRoot(root, _host);
 	            _root = root;
 	        }
@@ -105,13 +108,20 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		}
 	}
 
-	@Override
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _vmgr = BundleBuilder.getVBoxSvc(getActivity().getIntent());
+
+        if(savedInstanceState!=null)  {
+            _root = savedInstanceState.getParcelable(VMGroup.BUNDLE);
+            _vmgr = BundleBuilder.getVBoxSvc(savedInstanceState);
+            _host = _vmgr.getVBox().getHost();
+        }
+    }
+
+    @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	    if(_vmgr==null) {
-    	    _vmgr = (VBoxSvc)((getArguments() != null && getArguments().containsKey(VBoxSvc.BUNDLE)) ? 
-                    getArguments().getParcelable(VBoxSvc.BUNDLE)
-                    : getActivity().getIntent().getParcelableExtra(VBoxSvc.BUNDLE) );
-	    }
 		_listView = new VMGroupListView(getActivity(), _vmgr);
 		_listView.setOnTreeNodeSelectListener(_selectListener);
 		return _listView;
@@ -121,17 +131,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
         _listView.setSelectionEnabled(getActivity().findViewById(R.id.details)!=null);
-		
-        if(savedInstanceState!=null)  { 
-            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, 
-                    savedInstanceState.getString("version")));
-            _root = savedInstanceState.getParcelable(VMGroup.BUNDLE);
-            _vmgr = savedInstanceState.getParcelable(VBoxSvc.BUNDLE);
-            IVirtualBox vbox = savedInstanceState.getParcelable("vbox");
-            _vmgr.setVBox(vbox);
-            _host = vbox.getHost();
-        } 
-		
+
 		if(_root==null)
     		new LoadGroupsTask(_vmgr).execute();
 		else
@@ -141,12 +141,10 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelable(VBoxSvc.BUNDLE, _vmgr);
-		outState.putString("version", _vmgr.getVBox().getVersion());
-		outState.putParcelable("vbox", _vmgr.getVBox());
+        BundleBuilder.putVBoxSvc(outState, _vmgr);
 		outState.putParcelable(VMGroup.BUNDLE, _root);
-//		outState.putParcelable(IHost.BUNDLE, _host);
+
+        //save current machine
 		outState.putParcelable("checkedItem", _listView.getSelectedObject());
-		//save current machine
 	}
 }

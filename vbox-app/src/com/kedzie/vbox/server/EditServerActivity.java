@@ -59,10 +59,11 @@ public class EditServerActivity extends SherlockActivity {
 			@Override public void afterTextChanged(Editable s) {}
 			@Override 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if(com.google.common.net.InetAddresses.isInetAddress(s.toString()))
+				if(com.google.common.net.InetAddresses.isInetAddress(s.toString())) {
 					_errorSupport.showError("host", "");
-				else
-					_errorSupport.showError("host", "Invalid host name or IP address");
+                } else {
+					_errorSupport.showError("host", "Invalid host name or IP Address");
+                }
 			}
 		});
 		portText.addTextChangedListener(new TextWatcher() {

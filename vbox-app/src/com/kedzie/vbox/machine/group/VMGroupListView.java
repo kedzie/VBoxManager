@@ -11,6 +11,7 @@ import android.content.ClipData.Item;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -45,7 +46,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * 
  * @author Marek Kędzierski
  */
-public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener { 
+public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener {
     private static final String TAG = "VMGroupListView";
 
     /**
@@ -58,6 +59,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
          */
         public void onTreeNodeSelect(TreeNode node);
     }
+
+    static final int DRAG_ACCEPT_COLOR = Color.GREEN;
+    static final int VIEW_BACKGROUND = android.R.color.background_dark;
 
     /** Currently selected view */
     private View _selected;
@@ -77,7 +81,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     /** Cache of {@link VMGroup}s */
     private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
     
-    private static final int VIEW_BACKGROUND = android.R.color.background_dark;
     private Animation mSlideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
     private Animation mSlideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
     private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
@@ -154,8 +157,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
 
     /**
      * Build a scrollable list of everything below a group
-     * @param group     the root
-     * @return  scrollable list of things below the group
      */
     private class GroupSection extends LinearLayout {
 
@@ -208,7 +209,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
 
         /**
          * Create a view for a single node in the tree
-         * @param context  the {@link Context}
          * @param node      tree node
          * @return  Fully populated view representing the node
          */
@@ -238,7 +238,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                 if(!mGroupViewMap.containsKey(group.getName()))
                     mGroupViewMap.put(group.getName(), new ArrayList<VMGroupPanel>());
                 mGroupViewMap.get(group.getName()).add(groupView);
-                groupView.setBackgroundResource(VIEW_BACKGROUND);
+                groupView.setBackgroundColor(VIEW_BACKGROUND);
                 return groupView;
             }
             throw new IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed");
@@ -374,6 +374,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
 
     private class Dragger implements OnDragListener {
 
+
+
         private VMGroupPanel mGroupView;
         private GroupSection mSectionView;
         private VMGroup mParentGroup;
@@ -387,38 +389,38 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             switch(action) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     return true;
-                case DragEvent.ACTION_DRAG_ENTERED: 
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    mSectionView.setBackgroundColor(DRAG_ACCEPT_COLOR);
+                    mSectionView.invalidate();
                     return true;
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    VMGroupPanel current = null;
-                    for(VMGroupPanel child : mSectionView.getNodeViews()) {
-                        VMGroupPanel found = findCurrentGroupView(child, event.getX(), event.getY());
-                        if(found!=null) {
-                            current = found;
-                            break;
-                        }
-                    }
+                    VMGroupPanel current = Utils.getDeepestView(mSectionView,
+                            new Point((int)event.getX(), (int)event.getY())
+                            , VMGroupPanel.class);
+
                     if(mGroupView!=null && current!=mGroupView) { //exited group panel
                         Log.d(TAG, "Exited " + mGroupView.getGroup());
-                        mGroupView.setBackgroundColor(Color.BLACK);
+                        mGroupView.setBackgroundColor(VIEW_BACKGROUND);
                         mGroupView.invalidate();
                     }
                     if(current!=null && current!=mGroupView) { //entered group panel
                         Log.d(TAG, "Entered " + current.getGroup());
                         mParentGroup = current.getGroup();
                         if(doAcceptDragEnter()) {
-                            current.setBackgroundColor(Color.RED);
+                            current.setBackgroundColor(DRAG_ACCEPT_COLOR);
                             current.invalidate();
                         }
                     }
                     if(current==null && mGroupView!=null) { //entered root group
+                        Log.v(TAG, "Entered Root");
                         mParentGroup = mSectionView.getGroup();
                         if(doAcceptDragEnter()) {
-                            mSectionView.setBackgroundColor(Color.RED);
+                            mSectionView.setBackgroundColor(DRAG_ACCEPT_COLOR);
                             mSectionView.invalidate();
                         }
                     } else if(current!=null && mGroupView==null) { //exited root group
-                        mSectionView.setBackgroundColor(Color.BLACK);
+                        Log.v(TAG, "Exited Root");
+                        mSectionView.setBackgroundColor(VIEW_BACKGROUND);
                         mSectionView.invalidate();
                     }
                     mGroupView = current;
@@ -441,7 +443,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
                     if(mGroupView!=null) {
-                        mGroupView.setBackgroundResource(VIEW_BACKGROUND);
+                        mGroupView.setBackgroundColor(VIEW_BACKGROUND);
                         mGroupView.invalidate();
                     }
                     view.setBackgroundColor(VIEW_BACKGROUND);
@@ -449,37 +451,16 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     mGroupView = null;
                     mDraggedGroup=null;
                     mDraggedMachine=null;
+                    mParentGroup=null;
                     return true;
             }
             return false;
         }
-        
-        private VMGroupPanel findCurrentGroupView(VMGroupPanel group, float x, float y) {
-        	Log.v(TAG,String.format( "Testing view: %1$s at %2$dx%3$d" 
-        				,group.getGroup().getName(), (int)x, (int)y));
-            Rect frame = new Rect();
-            group.getHitRect(frame);
-            if(frame.contains((int)x, (int)y)) {
-                Matrix inverse = new Matrix();
-                group.getMatrix().invert(inverse);
-                float []mappedPoints = { x, y };
-                inverse.mapPoints(mappedPoints);
-                
-                for(View child : group.getContentViews()) {
-                    if(!(child instanceof VMGroupPanel)) continue;
-                    VMGroupPanel gp = (VMGroupPanel)child;
-                    VMGroupPanel currentChild = findCurrentGroupView(gp, mappedPoints[0], mappedPoints[1]);
-                    if(currentChild!=null) 
-                        return currentChild;
-                }
-                return group;
-            }
-            return null;
-        }
-        
+
         private boolean doAcceptDragEnter() {
+            Log.d(TAG, "doAccept? parent:" + mParentGroup.getName());
             if(mDraggedMachine!=null) {
-                if(mDraggedMachine.getGroups().get(0).equals(mParentGroup))
+                if(mDraggedMachine.getGroups().get(0).equals(mParentGroup.getName()))
                     return false;
             } else if(mDraggedGroup!=null) {
                 if(mDraggedGroup.equals(mParentGroup))
