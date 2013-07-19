@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android-parent</artifactId>
-	<version>3.2.1-SNAPSHOT</version>
+	<version>3.3.0</version>
 	<packaging>pom</packaging>
 
 	<name>VirtualBox Manager - Parent</name>
@@ -52,7 +51,7 @@
 		<url>https://github.com/kedzie/VBoxManager</url>
 		<connection>scm:git:git://github.com/kedzie/VBoxManager.git</connection>
 		<developerConnection>scm:git:git://github.com/kedzie/VBoxManager.git</developerConnection>
-	</scm>
+  </scm>
 
 	<issueManagement>
 		<url>https://www.github.com/kedzie/VBoxManager/issues</url>
@@ -126,7 +125,7 @@
 					<extensions>true</extensions>
 					<configuration>
 						<sdk><platform>17</platform></sdk>
-						<manifestVersionName/>
+						<manifestVersionName />
 						<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 						<attachSources>true</attachSources>
 					</configuration>
@@ -160,7 +159,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
