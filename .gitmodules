@@ -1,12 +1,3 @@
 [submodule "tree-view-list-android"]
 	path = tree-view-list-android
 	url = git@github.com:kedzie/tree-view-list-android.git
-[submodule "fest-android"]
-	path = fest-android
-	url = git@github.com:square/fest-android.git
-[submodule "NineOldAndroids"]
-	path = NineOldAndroids
-	url = git@github.com:JakeWharton/NineOldAndroids.git
-[submodule "ActionBarSherlock"]
-	path = ActionBarSherlock
-	url = git@github.com:JakeWharton/ActionBarSherlock.git

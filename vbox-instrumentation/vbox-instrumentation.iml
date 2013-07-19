@@ -41,7 +41,7 @@
     <orderEntry type="library" name="Maven: nf.fr.eraasoft:objectpool:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.18.0-GA" level="project" />
     <orderEntry type="module" module-name="vbox-app" scope="PROVIDED" />
-    <orderEntry type="library" name="Maven: com.squareup:fest-android:1.0.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup:fest-android:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.easytesting:fest-assert-core:2.0M10" level="project" />
     <orderEntry type="library" name="Maven: org.easytesting:fest-util:1.2.5" level="project" />
     <orderEntry type="module" module-name="~apklib-com.github.kedzie.supportanimator_support-v4-animator_13.0.0" />

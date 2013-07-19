@@ -90,11 +90,6 @@
 				<type>apklib</type>
 			</dependency>
 			<dependency>
-				<groupId>com.squareup</groupId>
-				<artifactId>fest-android</artifactId>
-				<version>1.0.5-SNAPSHOT</version>
-			</dependency>
-			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>r09</version>
