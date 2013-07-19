@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/vbox-android-parent.iml" filepath="$PROJECT_DIR$/vbox-android-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vbox-app/vbox-app.iml" filepath="$PROJECT_DIR$/vbox-app/vbox-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vbox-instrumentation/vbox-instrumentation.iml" filepath="$PROJECT_DIR$/vbox-instrumentation/vbox-instrumentation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vbox-key/vbox-key.iml" filepath="$PROJECT_DIR$/vbox-key/vbox-key.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/~apklib-com.actionbarsherlock_actionbarsherlock_4.3.1.iml" filepath="$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/~apklib-com.actionbarsherlock_actionbarsherlock_4.3.1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/~apklib-com.github.kedzie.supportanimator_support-v4-animator_13.0.0.iml" filepath="$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/~apklib-com.github.kedzie.supportanimator_support-v4-animator_13.0.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/~apklib-pl.polidea_treeview_1.0.0.iml" filepath="$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/~apklib-pl.polidea_treeview_1.0.0.iml" />
+    </modules>
+  </component>
+</project>
+

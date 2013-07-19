@@ -1,0 +1,3 @@
+[submodule "tree-view-list-android"]
+	path = tree-view-list-android
+	url = git@github.com:kedzie/tree-view-list-android.git

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/pref_category_general" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="colored_icons"
+            android:summary="@string/pref_colored_icons_summary"
+            android:title="@string/pref_colored_icons" />
+
+        <ListPreference
+            android:defaultValue="Slide"
+            android:dialogTitle="@string/pref_tab_transition_title"
+            android:entries="@array/tab_transition_entries"
+            android:entryValues="@array/tab_transition_entryValues"
+            android:key="tab_transition"
+            android:summary="@string/pref_tab_transition_summary"
+            android:title="@string/pref_tab_transition_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="notifications"
+            android:summary="@string/pref_notifications_summary"
+            android:title="@string/pref_notifications" />
+
+        <ListPreference
+            android:defaultValue="30000"
+            android:dialogTitle="@string/pref_widget_interval_title"
+            android:entries="@array/widget_interval_entries"
+            android:entryValues="@array/widget_interval_entryValues"
+            android:key="widget_interval"
+            android:summary="@string/pref_widget_interval_summary"
+            android:title="@string/pref_widget_interval_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

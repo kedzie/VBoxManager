@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" name="VirtualBox"  targetNamespace="http://www.virtualbox.org/">
+
+      
+      <!-- method IHost::getProcessorCPUIDLeaf-->
+      <xsd:element name="IHost_getProcessorCPUIDLeaf">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="cpuId" type="xsd:unsignedInt"/>
+            <xsd:element name="leaf" type="xsd:unsignedInt"/>
+            <xsd:element name="subLeaf" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IHost_getProcessorCPUIDLeafResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="valEax" type="xsd:unsignedInt"/>
+            <xsd:element name="valEbx" type="xsd:unsignedInt"/>
+            <xsd:element name="valEcx" type="xsd:unsignedInt"/>
+            <xsd:element name="valEdx" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      
+      <!-- method IHost::createUSBDeviceFilter-->
+      <xsd:element name="IHost_createUSBDeviceFilter">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IHost_createUSBDeviceFilterResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      
+      <!-- method IHost::insertUSBDeviceFilter-->
+      <xsd:element name="IHost_insertUSBDeviceFilter">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="position" type="xsd:unsignedInt"/>
+            <xsd:element name="filter" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IHost_insertUSBDeviceFilterResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      
+      <!-- method IHost::removeUSBDeviceFilter-->
+      <xsd:element name="IHost_removeUSBDeviceFilter">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="position" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IHost_removeUSBDeviceFilterResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      
+      <!-- method IHost::findUSBDeviceById-->
+      <xsd:element name="IHost_findUSBDeviceById">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="id" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IHost_findUSBDeviceByIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      
+      <!-- method IHost::findUSBDeviceByAddress-->
+      <xsd:element name="IHost_findUSBDeviceByAddress">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IHost_findUSBDeviceByAddressResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>

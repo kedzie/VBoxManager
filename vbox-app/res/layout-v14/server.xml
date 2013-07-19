@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutAnimation="@anim/layout_random_slide"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/name_label"
+        style="@style/MediumText"
+        android:text="@string/server_name" />
+
+    <EditText
+        android:id="@+id/server_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:inputType="text"
+        android:nextFocusDown="@+id/server_host"
+        android:layout_alignBaseline="@id/name_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/name_label" />
+
+    <TextView
+        android:id="@+id/host_label"
+        style="@style/MediumText"
+        android:text="@string/server_host"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/name_label" />
+
+    <EditText
+        android:id="@id/server_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:inputType="text"
+        android:nextFocusUp="@id/server_name"
+        android:nextFocusDown="@+id/server_ssl"
+        android:layout_alignBaseline="@id/host_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/host_label" >
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/ssl_label"
+        style="@style/MediumText"
+        android:text="@string/server_ssl"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/host_label" />
+
+    <Switch
+        android:id="@id/server_ssl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:nextFocusUp="@id/server_host"
+        android:nextFocusDown="@+id/server_port"
+        android:textOn="Enabled"
+        android:textOff="Disabled"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/ssl_label"
+        android:layout_alignBaseline="@id/ssl_label" />
+
+    <TextView
+        android:id="@+id/port_label"
+        style="@style/MediumText"
+        android:text="@string/server_port" 
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/ssl_label"/>
+
+    <EditText
+        android:id="@id/server_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:lines="1"
+        android:nextFocusUp="@id/server_ssl"
+        android:nextFocusDown="@+id/server_username"
+        android:layout_alignBaseline="@id/port_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/port_label" />
+
+    <TextView
+        android:id="@+id/username_label"
+        style="@style/MediumText"
+        android:text="@string/server_username"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/port_label" />
+
+    <EditText
+        android:id="@id/server_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:inputType="text"
+        android:nextFocusUp="@id/server_port"
+        android:nextFocusDown="@+id/server_password"
+        android:layout_alignBaseline="@id/username_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/username_label" />
+
+    <TextView
+        android:id="@+id/password_label"
+        style="@style/MediumText"
+        android:text="@string/server_password"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/username_label" />
+
+    <EditText
+        android:id="@id/server_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:nextFocusUp="@id/server_username"
+        android:layout_alignBaseline="@id/password_label"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/password_label"
+        android:inputType="textPassword" />
+    
+    <TextView
+        android:id="@+id/errors"
+        style="@style/ErrorMessage"
+        android:layout_below="@id/password_label"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"/>
+
+</RelativeLayout>

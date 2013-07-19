@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources xmlns:ff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">VirtualBox® Manager</string>
+    <string name="server_name">Display Name:</string>
+    <string name="server_host">Host/IP Address:</string>
+    <string name="server_ssl">Use SSL?</string>
+    <string name="server_port">Port:</string>
+    <string name="server_username">Username:</string>
+    <string name="server_password">Password:</string>
+    <string name="metric_cpu">CPU Load</string>
+    <string name="metric_ram">Memory Usage</string>
+    <string name="menu_context_snapshot_details">View Details</string>
+    
+    <string name="pref_metric_period_title">Interval</string>
+    <string name="pref_metric_period_summary">Metric Sampling Rate (seconds)</string>
+    <string name="pref_widget_interval_title">Widget Update Interval</string>
+    <string name="pref_widget_interval_summary">How often AppWidgets perform updates</string>
+    <string name="pref_metric_count_title">Count</string>
+    <string name="pref_metric_count_summary"># of data points</string>
+    <string name="pref_colored_icons">Color Icons</string>
+    <string name="pref_colored_icons_summary">Use Colored or B/W Icons</string>
+    <string name="pref_tab_transition_title">Transition Animation</string>
+    <string name="pref_tab_transition_summary">Tab Transition Animation</string>
+    <string name="pref_notifications">Event Notifications</string>
+    <string name="pref_notifications_summary">Publish VirtualBox® event notifications</string>
+    <string name="pref_category_general">General</string>
+    <string name="pref_category_general_summary">General settings</string>
+    <string name="pref_category_appearance">Appearance</string>
+    <string name="pref_category_appearance_summary">Application visual appearance</string>
+    <string name="pref_category_metrics">Metrics</string>
+    <string name="pref_category_metrics_summary">Settings for displaying metric graphs</string>
+    
+    <string name="firstrun_welcome">Welcome</string>
+    <string name="event_handler_notification_title">VirtualBox® is connected</string>
+    <string name="firstrun_message">Make sure you VirtualBox® web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
+    <string name="event_handler_notification_content">You are connected to VirtualBox® server at <ff:g id="server">%1$s</ff:g>.  Events are being processed in real-time.</string>
+    <string name="vbox_version">VirtualBox® v.<ff:g id="version">%1$s</ff:g></string>
+    <string name="notification_text">Virtual Machine <ff:g id="vm">%1$s</ff:g> changed state to [<ff:g id="state">%2$s</ff:g>]</string>
+    <string name="notification_title"><ff:g id="vm">%1$s</ff:g> is <ff:g id="state">%2$s</ff:g></string>
+    <string name="add_server_question_title">Add new VirtualBox® server?</string>
+    <string name="add_server_question">You have no servers defined.  Would you like to add one?</string>
+    <string name="snapshot_name">Name</string>
+    <string name="snapshot_description">Description</string>
+    <string name="snapshot_name_new">New Snapshot</string>
+    <string name="snapshot_description_new">None</string>
+    <string name="host_metrics">Host Metrics</string>
+    <string name="tab_actions">Actions</string>
+    <string name="tab_info">Info</string>
+    <string name="tab_log">Log</string>
+    <string name="tab_snapshots">Snapshots</string>
+    <string name="widget_server_list">Select Server for Widget</string>
+    
+    <string name="action_machine_settings">Machine Settings</string>
+    <string name="action_start">Start</string>
+    <string name="action_poweroff">Power Off</string>
+    <string name="action_acpi">ACPI Button</string>
+    <string name="action_save_state">Save State</string>
+    <string name="action_discard_state">Discard State</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_edit_snapshot">Edit Snapshot</string>
+    <string name="action_restore_snapshot">Restore Snapshot</string>
+    <string name="action_delete_snapshot">Delete Snapshot</string>
+    
+    <string name="progress_taking_snapshot">Taking Snapshot</string>
+    <string name="progress_saving_state">Saving State</string>
+    <string name="progress_discarding_state">Discarding State</string>
+    <string name="progress_starting">Starting</string>
+    <string name="progress_powering_off">Powering Off</string>
+    <string name="progress_acpi_down">ACPI Powering Down</string>
+    <string name="progress_resuming">Resuming</string>
+    <string name="progress_pausing">Pausing</string>
+    <string name="progress_restarting">Restarting</string>
+    <string name="progress_creating_network_interface">Creating Network Interface</string>
+    <string name="progress_logging_off">Logging Off</string>
+    <string name="progress_connecting">Connecting</string>
+    <string name="progress_updating_keystore">Updating Keystore</string>
+    <string name="progress_loading_machines">Loading Machines</string>
+    <string name="progress_deleting_snapshot">Deleting Snapshot</string>
+    <string name="progress_restore_snapshot">Restoring Snapshot</string>
+    <string name="progress_load_storage_controllers">Loading Storage Controllers</string>
+    <string name="progress_mounting_medium">Mounting medium</string>
+    <string name="progress_loading_data_generic">Loading Data</string>
+    
+    <string name="contentDescription_preview">Preview</string>
+    <string name="acceleration">Acceleration:</string>
+    <string name="boot_order">Boot Order:</string>
+    <string name="processors">Processors:</string>
+    <string name="base_memory">Base Memory:</string>
+    <string name="operating_system">Operating System:</string>
+    <string name="name">"Name: "</string>
+    <string name="groups">Groups:</string>
+    <string name="settings_description">Description:</string>
+    <string name="settings_operating_system">Operating System:</string>
+    <string name="settings_name">"Name: "</string>
+    <string name="settings_num_monitors">Monitors</string>
+    <string name="settings_vram">Video Memory</string>
+    <string name="settings_3d_acceleration">3D Acceleration</string>
+    <string name="settings_2d_acceleration">2D Acceleration</string>
+    <string name="add_server_title">No Servers</string>
+    <string name="edit_server_actionmode_title">Edit Server</string>
+    <string name="server_connect">Connect</string>
+    <string name="cancelling_operation_toast">Cancelling Operation...</string>
+    <string name="pro_key_required_dialog_title">Not Authorized</string>
+    <string name="pro_key_required_dialog_message">This feature requires the Premium Version of the application.  Would you like to upgrade?</string>
+    <string name="pro_key_required_dialog_ok_button">Upgrade</string>
+    <string name="pro_key_required_dialog_cancel_button">Not Now</string>
+    <string name="dhcp_mask">Server Mask</string>
+    <string name="dhcp_lower_bound">Lower Address Bound</string>
+    <string name="dhcp_upper_bound">Upper Address Bound</string>
+    <string name="dhcp_ip">Server Address</string>
+    <string name="host_interface_ipv4_ip">IPv4 Address</string>
+    <string name="host_interface_ipv4_mask">IPv4 Mask</string>
+    <string name="host_interface_ipv6_ip">IPv6 Address</string>
+    <string name="host_interface_ipv6_mask">IPv6 Mask</string>
+    <string name="settings_general">General</string>
+    <string name="settings_system">System</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_network">Network</string>
+    <string name="settings_audio">Audio</string>
+    <string name="settings_storage">Storage</string>
+    <string name="settings_usb">USB</string>
+    <string name="settings_shared_folders">Shared Folders</string>
+    <string name="host_interface_adapter">Adapter:</string>
+    <string name="host_interface_dhcp_enabled">DHCP Enabled:</string>
+    <string name="storage_attributes">Attributes</string>
+    <string name="storage_information">Information</string>
+    <string name="storage_use_host_io_cache">Use Host IO Cache</string>
+    <string name="storage_hard_disk">Hard Disk:</string>
+    <string name="storage_cd_dvd_drive">CD/DVD Drive:</string>
+    <string name="enabled">Enabled</string>
+    <string name="extended_features">Extended Features:</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="toast_discarding_settings">Discarded Settings</string>
+    <string name="toast_saved_settings">Saved Settings</string>
+    <string name="virtualbox_error_dialog_title">VirtualBox Error</string>
+    <string name="select_virtual_machine_widget_config">Select Virtual Machine</string>
+    <string name="toast_connected_to_vbox">Connected to VirtualBox v.</string>
+    <string name="host_settings_title">Host Settings</string>
+    <string name="new_snapshot_dialog_title">New Snapshot</string>
+    <string name="edit_snapshot_dialog_title">Edit Snapshot</string>
+    
+    <string name="help">Help</string>
+    <string name="help_main">&lt;H1&gt;Help&lt;/H1&gt;&lt;p&gt;To use this application the vboxwebsrv command (from the VirtualBox installation directory), must be running on your host.  &lt;em&gt;In Windows the default installation folder is C:\\Program Files\\Oracle\\VirtualBox&lt;/em&gt;&lt;/p&gt; &lt;code&gt;vboxwebsrv -H 0.0.0.0 -p 18083&lt;/code&gt;    &lt;p&gt;Then launch the Android app and create a new server definition with the IP address of the computer running VirtualBox and your normal OS login credentials.  You can also disable authentication by executing &lt;block&gt;vboxmanage setproperty websrvauthlibrary null&lt;/block&gt;    &lt;/p&gt;</string>
+    <string name="help_ssl">&lt;H3&gt;SSL Support&lt;/H3&gt;&lt;p&gt;For SSL support you must have a the following: &lt;ul&gt;&lt;li&gt;PEM file containing server certificate and key (&lt;em&gt;self-signed or signed by authority&lt;/em&gt;)&lt;li&gt;CRT file containg Certificate Authority certificate (&lt;em&gt;not needed if self-signed server certificate&lt;/em&gt;)&lt;/ul&gt;&lt;/p&gt;  &lt;p&gt;To start the webservice execute &lt;/p&gt;  &lt;code&gt;vboxwebsrv -H 0.0.0.0 -p 18083 --ssl -K server.pem -c ca.crt&lt;/code&gt;  &lt;p&gt;For more info on creating a self-signed server certificate consult &lt;a href=\"http://www.openssl.org/docs/HOWTO/certificates.txt\"&gt;\"OpenSSL documentation\"&lt;/a&gt;&lt;/p&gt;</string>
+    <string name="edit_virtualbox_server">Edit VirtualBox Server</string>
+</resources>

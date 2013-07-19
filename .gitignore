@@ -1,3 +1,4 @@
-/bin
-/proguard
-/gen
+bin
+gen
+gen-external-apklibs
+out

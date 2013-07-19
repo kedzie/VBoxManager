@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    android:layout_width="match_parent" android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <com.kedzie.vbox.app.CollapsiblePanelView vbox:name="General" android:layout_width="match_parent" android:layout_height="wrap_content" vbox:headerIcon="@drawable/ic_settings_general" >
+            <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
+
+                <TextView
+                    android:id="@+id/ostype_label"
+                    style="@style/SmallTextPrimary"
+                    android:text="OS Type:" />
+
+                <TextView
+                    android:id="@+id/ostype"
+                    style="@style/SmallTextPrimary"
+                    android:layout_marginLeft="16dp"
+                    android:layout_alignBaseline="@id/ostype_label"
+                    android:layout_toRightOf="@+id/memory_label" />
+
+                <TextView
+                    android:id="@+id/vbox_label"
+                    style="@style/SmallTextPrimary"
+                    android:layout_below="@id/ostype_label"
+                    android:text="VirtualBox:" />
+
+                <TextView
+                    android:id="@+id/vbox"
+                    style="@style/SmallTextPrimary"
+                    android:layout_alignBaseline="@id/vbox_label"
+                    android:layout_alignLeft="@id/ostype" />
+
+                <TextView
+                    android:id="@id/memory_label"
+                    style="@style/SmallTextPrimary"
+                    android:layout_below="@id/vbox_label"
+                    android:text="Base Memory:" />
+
+                <TextView
+                    android:id="@+id/memory"
+                    style="@style/SmallTextPrimary"
+                    android:layout_alignBaseline="@id/memory_label"
+                    android:layout_alignLeft="@id/ostype"/>
+                
+                <TextView
+                    android:id="@id/processors_label"
+                    style="@style/SmallTextPrimary"
+                    android:layout_below="@id/memory_label"
+                    android:text="Processor(s):" />
+
+                <TextView
+                    android:id="@+id/processors"
+                    style="@style/SmallTextPrimary"
+                    android:layout_alignBaseline="@id/processors_label"
+                    android:layout_alignLeft="@id/ostype"/>
+                
+            </RelativeLayout>
+        </com.kedzie.vbox.app.CollapsiblePanelView>
+        
+        <com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Network" android:layout_width="match_parent" android:layout_height="wrap_content" vbox:headerIcon="@drawable/ic_settings_network" >
+            
+                <TextView
+                    android:id="@+id/networks"
+                    style="@style/SmallTextPrimary"/>
+                
+        </com.kedzie.vbox.app.CollapsiblePanelView>
+        
+        <com.kedzie.vbox.app.CollapsiblePanelView vbox:name="CD/DVD Devices" android:layout_width="match_parent" android:layout_height="wrap_content" vbox:headerIcon="@drawable/ic_button_dvd_c" >
+            
+                <TextView
+                    android:id="@+id/dvds"
+                    style="@style/SmallTextPrimary"/>
+                
+        </com.kedzie.vbox.app.CollapsiblePanelView>
+    </LinearLayout>
+
+</ScrollView>
