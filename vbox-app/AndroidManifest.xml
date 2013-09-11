@@ -33,11 +33,7 @@
         <activity android:name="com.kedzie.vbox.machine.MachineListActivity" android:uiOptions="splitActionBarWhenNarrow">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
 	</activity>
-	
-        <activity android:name="com.kedzie.vbox.machine.MachineActivity" android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".machine.MachineListFragmentActivity"/>
-	</activity>
-	
+
         <activity android:name="com.kedzie.vbox.host.HostSettingsActivity" android:uiOptions="splitActionBarWhenNarrow">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".machine.MachineListFragmentActivity"/>
 	</activity>

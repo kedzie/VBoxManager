@@ -14,7 +14,7 @@
 
 	<properties>
 		<github.global.server>github</github.global.server>
-		<android.version>4.2.2_r2</android.version>
+		<android.version>4.3_r1</android.version>
 	</properties>
 
 	<modules>
@@ -106,25 +106,13 @@
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
-                <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.7</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                </plugin>
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.6.1</version>
 					<extensions>true</extensions>
 					<configuration>
-						<sdk><platform>17</platform></sdk>
+						<sdk><platform>18</platform></sdk>
 						<manifestVersionName />
 						<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 						<attachSources>true</attachSources>
@@ -137,58 +125,8 @@
 						</execution>
 					</executions>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.9.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-										<artifactId>android-maven-plugin</artifactId>
-										<versionRange>[3.6.0,)</versionRange>
-										<goals>
-											<goal>manifest-update</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>all</id>
-			<activation>
-				<property>
-					<name>environment</name>
-					<value>all</value>
-				</property>
-			</activation>
-			<properties>
-				<deployment.stage>Building All Projects</deployment.stage>
-			</properties>
-            <modules>
-                <module>tree-view-list-android</module>
-                <module>vbox-app</module>
-                <module>vbox-instrumentation</module>
-                <module>vbox-key</module>
-            </modules>
-		</profile>
-	</profiles>
 
 </project>

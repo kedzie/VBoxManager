@@ -367,14 +367,13 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             if(result!=null) {
                 mDraggedGroup = result;
                 ClipData data = new ClipData(result.getName(), new String[] {"vbox/group"}, new Item(result.getName()));
+                data.getDescription().getMimeType(0)
                 mView.startDrag(data, new DragShadowBuilder(mView.getTitleView()), null, 0);
             }
         }
     }
 
     private class Dragger implements OnDragListener {
-
-
 
         private VMGroupPanel mGroupView;
         private GroupSection mSectionView;
@@ -400,6 +399,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
 
                     if(mGroupView!=null && current!=mGroupView) { //exited group panel
                         Log.d(TAG, "Exited " + mGroupView.getGroup());
+                        mParentGroup=null;
                         mGroupView.setBackgroundColor(VIEW_BACKGROUND);
                         mGroupView.invalidate();
                     }
@@ -420,6 +420,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                         }
                     } else if(current!=null && mGroupView==null) { //exited root group
                         Log.v(TAG, "Exited Root");
+                        mParentGroup=null;
                         mSectionView.setBackgroundColor(VIEW_BACKGROUND);
                         mSectionView.invalidate();
                     }
@@ -437,9 +438,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                     mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
                     
                     if(mDraggedMachine!=null)
-                        dropMachine(mParentGroup, mDraggedMachine);
+                        dropMachine(mDraggedMachine, mParentGroup, mDraggedMachine);
                     else if(mDraggedGroup!=null)
-                        dropGroup(mParentGroup, mDraggedGroup);
+                        dropGroup(mDraggedGroup, mParentGroup, mDraggedGroup);
                     return true;
                 case DragEvent.ACTION_DRAG_ENDED:
                     if(mGroupView!=null) {
@@ -458,7 +459,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         }
 
         private boolean doAcceptDragEnter() {
-            Log.d(TAG, "doAccept? parent:" + mParentGroup.getName());
             if(mDraggedMachine!=null) {
                 if(mDraggedMachine.getGroups().get(0).equals(mParentGroup.getName()))
                     return false;
@@ -472,30 +472,30 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             return true;
         }
 
-        private void dropMachine(VMGroup parent, IMachine child) {
-            List<MachineView> machineViews = mMachineViewMap.get(mDraggedMachine.getIdRef());
+        private void dropMachine(final IMachine draggedMachine, final VMGroup parent, IMachine child) {
+            List<MachineView> machineViews = mMachineViewMap.get(draggedMachine.getIdRef());
             //move the views
             for(MachineView mv : machineViews) 
                 ((ViewGroup)mv.getParent()).removeView(mv);
             for(int i=0; i<machineViews.size(); i++) {
                 MachineView mv = machineViews.get(i);
-                if(i<mNewParentViews.size()) //in case we are dragging to root group, there are less group panels than machine views
+                if(mNewParentViews!=null && i<mNewParentViews.size()) //in case we are dragging to root group, there are less group panels than machine views
                     mNewParentViews.get(i).addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
                 else if(mSectionView!=null)
                     mSectionView.addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             }
             //update the data
-            VMGroup oldParent = mGroupCache.get(mDraggedMachine.getGroups().get(0));
-            oldParent.removeChild(mDraggedMachine);
-            mParentGroup.addChild(mDraggedMachine);
+            VMGroup oldParent = mGroupCache.get(draggedMachine.getGroups().get(0));
+            oldParent.removeChild(draggedMachine);
+            parent.addChild(draggedMachine);
             _vmgr.getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         ISession session = _vmgr.getVBox().getSessionObject();
-                        mDraggedMachine.lockMachine(session, LockType.WRITE);
+                        draggedMachine.lockMachine(session, LockType.WRITE);
                         IMachine mutable = session.getMachine();
-                        mutable.setGroups(mParentGroup.getName());
+                        mutable.setGroups(parent.getName());
                         mutable.saveSettings();
                         session.unlockMachine();
                     } catch (IOException e) {
@@ -505,32 +505,31 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             });
         }
 
-        private void dropGroup(VMGroup parent, VMGroup child) {
-            String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+        private void dropGroup(final VMGroup draggedGroup, final VMGroup parent, VMGroup child) {
+            String oldParentName = draggedGroup.getName().substring(0, draggedGroup.getName().lastIndexOf('/'));
             //move the views
-            List<VMGroupPanel> groupViews = mGroupViewMap.get(mDraggedGroup.getName());
+            List<VMGroupPanel> groupViews = mGroupViewMap.get(draggedGroup.getName());
             for(VMGroupPanel gv : groupViews) 
                 ((ViewGroup)gv.getParent()).removeView(gv);
 
             for(int i=0; i<groupViews.size(); i++) {
                 VMGroupPanel gv = groupViews.get(i);
-                if(i<mNewParentViews.size()) //in case we are dragging to root group, there are less parent group panels than child views
+                if(mNewParentViews!=null && i<mNewParentViews.size()) //in case we are dragging to root group, there are less parent group panels than child views
                     mNewParentViews.get(i).addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
                 else if(mSectionView!=null)
                     mSectionView.addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             }
 
             //update the data
-            final VMGroup dragged = mGroupCache.get(mDraggedGroup.getName());
             VMGroup oldParent = mGroupCache.get(oldParentName);
-            Log.d(TAG, String.format("Dropping group %1$s --> %2$s", dragged, mParentGroup));
-            Log.d(TAG, "Old Parent: " + oldParentName);
-            oldParent.removeChild(dragged);
+            Log.v(TAG, String.format("Moving group [%1$s]  from %2$s --> %2$s", draggedGroup, oldParentName, parent));
+            oldParent.removeChild(draggedGroup);
+            parent.addChild(draggedGroup);
             _vmgr.getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        moveGroup(_vmgr.getVBox().getSessionObject(), mParentGroup, dragged);
+                        moveGroup(_vmgr.getVBox().getSessionObject(), parent, draggedGroup);
                     } catch(IOException e) {
                         Log.e(TAG, "Exception moving group", e);
                     }
@@ -539,17 +538,17 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         }
 
         private void moveGroup(ISession session, VMGroup parent, VMGroup group) throws IOException {
-            Log.d(TAG, "Fixing groups: " + group);
+            Log.v(TAG, "Processing group: " + group);
             String oldName = group.getName();
             group.setName(parent.getName() + "/" + group.getSimpleGroupName()  );
             //update the group cache
             mGroupCache.remove(oldName);
             mGroupCache.put(group.getName(), group);
-            Log.d(TAG, String.format("Changed group name %1$s --> %2$s", oldName, group.getName()));
+            Log.v(TAG, String.format("Changed group name %1$s --> %2$s", oldName, group.getName()));
             for(TreeNode c : group.getChildren()) {
                 if(c instanceof IMachine) {
                     IMachine child = (IMachine)c;
-                    Log.d(TAG, "Processing: " + child.getName());
+                    Log.v(TAG, "Updating Machine: " + child.getName());
                     child.lockMachine(session, LockType.WRITE);
                     IMachine mutable = session.getMachine();
                     mutable.setGroups(group.getName());

@@ -11,6 +11,18 @@
 	<packaging>apk</packaging>
 
 	<name>VirtualBox Manager Pro Key</name>
+	<url>http://kedzie.github.io/VBoxManager</url>
+	
+	<scm>
+		<url>https://github.com/kedzie/VBoxManager</url>
+		<connection>scm:git:git://github.com/kedzie/VBoxManager.git</connection>
+		<developerConnection>scm:git:git://github.com/kedzie/VBoxManager.git</developerConnection>
+  	</scm>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/kedzie/VBoxManager/issues</url>
+	</issueManagement>
 
 	<dependencies>
 		<dependency>

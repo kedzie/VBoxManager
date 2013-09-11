@@ -95,10 +95,12 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 
 	private void onMachineSelected(IMachine machine) {
         Bundle b = new BundleBuilder().putVBoxSvc(_vmgr).putProxy(IMachine.BUNDLE, machine).create();
-		if (_dualPane)
-            show(new FragmentElement(machine.getName(), MachineFragment.class, b));
-		else
-            Utils.startActivity(this, new Intent(this, MachineActivity.class).putExtras(b));
+        show(new FragmentElement(machine.getName(), MachineFragment.class,
+                new BundleBuilder().putVBoxSvc(_vmgr).putProxy(IMachine.BUNDLE, machine).create()));
+//		if (_dualPane)
+//            show(new FragmentElement(machine.getName(), MachineFragment.class, b));
+//		else
+//            Utils.startActivity(this, new Intent(this, MachineActivity.class).putExtras(b));
 	}
 
 	private void onGroupSelected(VMGroup group) {

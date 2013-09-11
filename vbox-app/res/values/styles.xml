@@ -35,7 +35,10 @@
     </style>
     
     <style name="ErrorMessage" parent="@style/MediumText">
-        <item name="android:textColor">#FFFF0000</item>
-        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
     </style>
 </resources>

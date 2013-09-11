@@ -16,7 +16,6 @@ import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.MachineActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 /**

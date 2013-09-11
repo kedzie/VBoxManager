@@ -40,10 +40,10 @@ public class MachineFragment extends SherlockFragment {
         mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
         Bundle args =  getArguments();
         args.putBoolean("dualPane", false);
-        mTabHost.addTab(new FragmentElement("Details", InfoFragment.class, args));
+        mTabHost.addTab(new FragmentElement("Details", R.drawable.ic_menu_info_details, InfoFragment.class, args));
         mTabHost.addTab(new FragmentElement("Actions", ActionsFragment.class, args));
         mTabHost.addTab(new FragmentElement("Log", LogFragment.class, args));
-        mTabHost.addTab(new FragmentElement("Snapshots", SnapshotFragment.class, args));
+        mTabHost.addTab(new FragmentElement("Snapshots", R.drawable.ic_menu_camera, SnapshotFragment.class, args));
         if(savedInstanceState!=null)
             mTabHost.setCurrentTab(savedInstanceState.getInt("tab", 0));
         return mTabHost;

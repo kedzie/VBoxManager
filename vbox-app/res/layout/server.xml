@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layoutAnimation="@anim/layout_random_slide"
-    android:padding="8dp" >
+    android:padding="8dp"
+    android:layoutAnimation="@anim/layout_random_slide">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,6 +21,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="Display Name"
             android:nextFocusDown="@+id/server_host" />
     </LinearLayout>
 
@@ -40,6 +41,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="Server Host"
             android:nextFocusDown="@+id/server_ssl"
             android:nextFocusUp="@id/server_name" >
 
@@ -84,6 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="Server Port"
             android:nextFocusDown="@+id/server_username"
             android:nextFocusUp="@id/server_ssl" />
     </LinearLayout>
@@ -104,6 +107,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="Login username"
             android:nextFocusDown="@+id/server_password"
             android:nextFocusUp="@id/server_port" />
     </LinearLayout>
@@ -124,14 +128,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:hint="Login password"
             android:inputType="textPassword"
             android:nextFocusUp="@id/server_username" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/errors"
-        style="@style/ErrorMessage"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp" />
+    <TextView android:id="@+id/errors" style="@style/ErrorMessage"/>
 
 </LinearLayout>
