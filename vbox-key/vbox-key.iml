@@ -8,6 +8,7 @@
         <option name="CUSTOM_APK_RESOURCE_FOLDER" value="/bin/generated-sources/combined-resources/res" />
         <option name="APK_PATH" value="/bin/vbox-key.apk" />
         <option name="RUN_PROCESS_RESOURCES_MAVEN_TASK" value="false" />
+        <option name="COMPILE_CUSTOM_GENERATED_SOURCES" value="false" />
         <includeAssetsFromLibraries>true</includeAssetsFromLibraries>
       </configuration>
     </facet>
@@ -15,15 +16,16 @@
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/bin/classes" />
     <output-test url="file://$MODULE_DIR$/bin/test-classes" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/bin/generated-sources/r" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/bin/generated-sources/combined-assets" />
       <excludeFolder url="file://$MODULE_DIR$/bin/generated-sources/combined-resources" />
       <excludeFolder url="file://$MODULE_DIR$/bin/generated-sources/extracted-dependencies" />
     </content>
-    <orderEntry type="jdk" jdkName="Maven Android 4.2.2 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Maven Android 4.3 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: android:android:4.2.2_r2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: android:android:4.3_r1" level="project" />
   </component>
 </module>
 

@@ -28,6 +28,7 @@ public class MachineView extends FrameLayout {
 	public MachineView(Context context) {
 		super(context);
 		_app=VBoxApplication.getInstance();
+        setFocusable(true);
 		LayoutInflater.from(context).inflate(R.layout.machine_view, this, true);
 		osIcon = (ImageView)findViewById(R.id.machine_list_item_ostype);
 		nameText =(TextView)findViewById(R.id.machine_list_item_name);

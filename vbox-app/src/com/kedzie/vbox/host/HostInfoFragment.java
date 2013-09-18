@@ -1,17 +1,11 @@
 package com.kedzie.vbox.host;
 
-import java.util.List;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IHostNetworkInterface;
@@ -22,12 +16,15 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboSherlockFragment;
+
+import java.util.List;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class HostInfoFragment extends SherlockFragment {
+public class HostInfoFragment extends RoboSherlockFragment {
     private static final String TAG = "InfoFragment";
 
     class LoadInfoTask extends ActionBarTask<IHost, IHost> {

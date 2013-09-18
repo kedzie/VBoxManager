@@ -1,8 +1,5 @@
 package com.kedzie.vbox.machine;
 
-import java.io.IOException;
-import java.util.List;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,33 +14,28 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.INetworkAdapter;
 import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.IVRDEServer;
-import com.kedzie.vbox.api.jaxb.CPUPropertyType;
-import com.kedzie.vbox.api.jaxb.DeviceType;
-import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
-import com.kedzie.vbox.api.jaxb.IMediumAttachment;
-import com.kedzie.vbox.api.jaxb.MachineState;
-import com.kedzie.vbox.api.jaxb.NetworkAttachmentType;
-import com.kedzie.vbox.api.jaxb.StorageBus;
-import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.api.jaxb.*;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineRunnable;
+import roboguice.fragment.RoboSherlockFragment;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class InfoFragment extends SherlockFragment {
+public class InfoFragment extends RoboSherlockFragment {
     private static final String TAG = "InfoFragment";
 
 	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
@@ -231,7 +223,6 @@ public class InfoFragment extends SherlockFragment {
         try {
             populateViews();
         } catch(NetworkOnMainThreadException e) {
-            Log.e(TAG, "Populate error", e);
             new LoadInfoTask().execute(_machine);
         }
     }

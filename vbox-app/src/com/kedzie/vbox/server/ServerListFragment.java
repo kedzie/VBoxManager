@@ -1,7 +1,5 @@
 package com.kedzie.vbox.server;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,30 +11,27 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.view.ContextMenu;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboSherlockFragment;
+
+import java.util.List;
 
 /**
  * Show list of VirtualBox servers
  * @apiviz.stereotype fragment
  */
-public class ServerListFragment extends SherlockFragment {
+public class ServerListFragment extends RoboSherlockFragment {
     static final int REQUEST_CODE_ADD = 0xF000;
     static final int REQUEST_CODE_EDIT = 0x0F00;
     static final int RESULT_CODE_SAVE = 0x00F0;

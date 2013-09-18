@@ -2,19 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/vbox-key/bin/generated-sources/r" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-key/bin/generated-sources/aidl" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/bin/generated-sources/r" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/bin/generated-sources/aidl" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-app/bin/generated-sources/r" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-app/bin/generated-sources/aidl" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/pl.polidea_treeview_1.0.0/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/com.supportanimator_support-v4-animator_r13/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/com.actionbarsherlock_actionbarsherlock_4.3.1/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_r13/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_13.0.0/gen" includeSubdirectories="true" />
-    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
@@ -30,12 +17,12 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
-      <profile default="false" name="Annotation profile for vbox-key" enabled="true">
+      <profile default="false" name="Annotation profile for vbox-app" enabled="true">
         <sourceOutputDir name="bin/generated-sources/annotations" />
         <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="vbox-key" />
+        <module name="vbox-app" />
       </profile>
       <profile default="false" name="Annotation profile for vbox-instrumentation" enabled="true">
         <sourceOutputDir name="bin/generated-sources/annotations" />
@@ -44,12 +31,12 @@
         <processorPath useClasspath="true" />
         <module name="vbox-instrumentation" />
       </profile>
-      <profile default="false" name="Annotation profile for vbox-app" enabled="true">
+      <profile default="false" name="Annotation profile for vbox-key" enabled="true">
         <sourceOutputDir name="bin/generated-sources/annotations" />
         <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="vbox-app" />
+        <module name="vbox-key" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

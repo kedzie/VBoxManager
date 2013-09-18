@@ -1,16 +1,15 @@
 package com.kedzie.vbox.app;
 
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.kedzie.vbox.VBoxApplication;
+import roboguice.activity.RoboSherlockFragmentActivity;
 
 /**
  * Base Activity for all application activities.  Enables indeterminate progress bar and disables it.
  * @author Marek Kędzierski
  */
-public class BaseActivity extends SherlockFragmentActivity {
+public class BaseActivity extends RoboSherlockFragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

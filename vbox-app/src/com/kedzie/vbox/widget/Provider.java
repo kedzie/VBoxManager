@@ -19,7 +19,11 @@ import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.FragmentActivity;
+import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.MachineFragment;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 public class Provider extends AppWidgetProvider {
@@ -72,9 +76,12 @@ public class Provider extends AppWidgetProvider {
         String snapshotText = vm.getCurrentSnapshot()!=null ?
                             String.format("(%1$s)%2$s", vm.getCurrentSnapshot().getName(), vm.getCurrentStateModified() ? "*" : "") : "";
         views.setTextViewText(R.id.machine_list_item_snapshot, snapshotText);
-                            
-        views.setOnClickPendingIntent(R.id.machine_view, PendingIntent.getService(context, 0, 
-                new Intent(context, MachineActivity.class).putExtra(IMachine.BUNDLE, vm).putExtra(VBoxSvc.BUNDLE, (Parcelable)vm.getAPI()), 0));
+
+        FragmentElement fragment = new FragmentElement(vm.getName(), MachineFragment.class,
+                new BundleBuilder().putVBoxSvc(vm.getAPI()).putProxy(IMachine.BUNDLE, vm).create());
+
+        views.setOnClickPendingIntent(R.id.machine_view, PendingIntent.getActivity(context, 0,
+                new Intent(context, FragmentActivity.class).putExtra(FragmentElement.BUNDLE, fragment), 0));
         
         AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
     }

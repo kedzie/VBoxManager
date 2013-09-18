@@ -44,7 +44,6 @@
             android:hint="Server Host"
             android:nextFocusDown="@+id/server_ssl"
             android:nextFocusUp="@id/server_name" >
-
             <requestFocus />
         </EditText>
     </LinearLayout>
@@ -86,6 +85,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:inputType="number"
             android:hint="Server Port"
             android:nextFocusDown="@+id/server_username"
             android:nextFocusUp="@id/server_ssl" />

@@ -1,5 +1,6 @@
 package com.kedzie.vbox.server;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -7,7 +8,6 @@ import android.text.TextWatcher;
 import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -18,41 +18,52 @@ import com.kedzie.vbox.machine.settings.ErrorSupport;
 
 public class EditServerActivity extends SherlockActivity {
 	public static final String INTENT_SERVER = "server";
-	
+
 	protected Server mServer;
+
 	private ServerSQlite mDb;
 
 	private TextView nameText;
 	private TextView hostText;
-	private Switch sslSwitch;
-	private CheckBox sslBox;
-	private TextView portText;
+    private TextView portText;
 	private TextView userText;
 	private TextView passText;
 
-	private ErrorSupport _errorSupport;
+    private Switch sslSwitch;
+    private CheckBox sslBox;
+
+    private ErrorSupport _errorSupport;
 
 	@Override
+    @SuppressLint("NewApi")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.server);
 		mDb = new ServerSQlite(this);
-		mServer = (Server)(savedInstanceState==null ? getIntent().getParcelableExtra(INTENT_SERVER) : savedInstanceState.getParcelable(INTENT_SERVER));
+		mServer = getIntent().getParcelableExtra(INTENT_SERVER);
+
+        if(savedInstanceState!=null)
+            mServer = savedInstanceState.getParcelable(INTENT_SERVER);
+
 		nameText = (TextView)findViewById(R.id.server_name);
 		hostText = (TextView)findViewById(R.id.server_host);
-		if(Utils.isIceCreamSandwhich())
-			sslSwitch = (Switch)findViewById(R.id.server_ssl);
-		else
-			sslBox = (CheckBox)findViewById(R.id.server_ssl);
 		portText = (TextView)findViewById(R.id.server_port);
 		userText = (TextView)findViewById(R.id.server_username);
 		passText = (TextView)findViewById(R.id.server_password);
-		nameText.setText(mServer.getName());
+
+        if(Utils.isIceCreamSandwhich())
+            sslSwitch = (Switch)findViewById(R.id.server_ssl);
+        else
+            sslBox = (CheckBox)findViewById(R.id.server_ssl);
+
+        nameText.setText(mServer.getName());
 		hostText.setText(mServer.getHost());
+
 		if(Utils.isIceCreamSandwhich())
 			sslSwitch.setChecked(mServer.isSSL());
 		else
 			sslBox.setChecked(mServer.isSSL());
+
 		portText.setText(""+mServer.getPort());
 		hostText.addTextChangedListener(new TextWatcher() {
 			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

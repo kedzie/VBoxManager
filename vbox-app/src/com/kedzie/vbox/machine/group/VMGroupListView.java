@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipData.Item;
 import android.content.Context;
@@ -43,9 +44,8 @@ import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * Scrollable list of {@link VMGroup} objects with drill-down support to focus on a particular group.
- * 
- * @author Marek Kędzierski
  */
+@SuppressLint("NewApi")
 public class VMGroupListView extends ViewFlipper implements OnClickListener, OnLongClickListener, OnDrillDownListener {
     private static final String TAG = "VMGroupListView";
 
@@ -146,6 +146,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     }
     
     public void setSelectedObject(TreeNode object) {
+        //TODO implement programmatic selection
         if(object instanceof IHost) {
             
         } else if(object instanceof IMachine) {
@@ -367,7 +368,6 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             if(result!=null) {
                 mDraggedGroup = result;
                 ClipData data = new ClipData(result.getName(), new String[] {"vbox/group"}, new Item(result.getName()));
-                data.getDescription().getMimeType(0)
                 mView.startDrag(data, new DragShadowBuilder(mView.getTitleView()), null, 0);
             }
         }

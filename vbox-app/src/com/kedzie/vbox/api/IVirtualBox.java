@@ -26,6 +26,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	static ClassLoader loader = IVirtualBox.class.getClassLoader();
     public static final String BUNDLE = "vbox";
+
 	/** Object corresponding to the supplied arguments does not exist. */
 	public static final long VBOX_E_OBJECT_NOT_FOUND = 0x80BB000;
 	/** Current virtual machine state prevents the operation.  */
@@ -132,7 +133,7 @@ public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	 * <tr><td>E_INVALIDARG </td><td><em>name</em> is empty or <code>null</code>.   </td></tr></tbody></table></dd></dl>
 	 * <dl class="note"><dt><b>Note:</b></dt><dd>There is no way to change the name of the settings file or subfolder of the created machine directly. </dd></dl>
 	 */
-	public IMachine createMachine(@KSOAP("settingsFile") String settingsFiles, @KSOAP("name") String name, @KSOAP("osTypeId") String osTypeId, @KSOAP("flags") String flags, @KSOAP("groups") String...groups) throws IOException;
+	public IMachine createMachine(@KSOAP("settingsFile") String settingsFile, @KSOAP("name") String name, @KSOAP("osTypeId") String osTypeId, @KSOAP("flags") String flags, @KSOAP("groups") String...groups) throws IOException;
 
 	/**
 	 *<p>Registers the machine previously created using {@link openMachine}<b></b> within this VirtualBox installation. </p>
@@ -152,7 +153,7 @@ public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	 * <p>Returns an object describing the specified guest OS type. </p>
 	 * <p>The requested guest OS type is specified using a string which is a mnemonic identifier of the guest operating system, such as <code>win31</code> or <code>ubuntu</code>. 
 	 * The guest OS type ID of a particular virtual machine can be read or set using the {@link IMachine#getOSTypeId} attribute.</p>
-	 * <p>The {@link IVirtualBox#guestOSTypes} collection contains all available guest OS type objects. Each object has an 
+	 * <p>The {@link IVirtualBox#getGuestOSTypes} collection contains all available guest OS type objects. Each object has an
 	 * {@link IGuestOSType#getId} attribute which contains an identifier of the guest OS this object describes.</p>
 	 * <dl><dt><b>Expected result codes:</b></dt><dd><table>
 	 * <tbody><tr><td>{@link IVirtualBox#E_INVALIDARG}</td><td><code>id</code> is not a valid Guest OS type.  </td></tr>

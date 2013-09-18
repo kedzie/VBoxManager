@@ -24,6 +24,7 @@ public class HostView extends FrameLayout {
 		LayoutInflater.from(context).inflate(R.layout.host_view, this, true);
 		ipText =(TextView)findViewById(R.id.host_ip);
 		versionText = (TextView)findViewById(R.id.host_version);
+        setFocusable(true);
 	}
 	
 	public void update(IHost h) {

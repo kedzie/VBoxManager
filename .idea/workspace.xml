@@ -1,684 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AndroidConfiguredLogFilters">
-    <filters>
-      <filter>
-        <option name="logLevel" value="verbose" />
-        <option name="logMessagePattern" value="" />
-        <option name="logTagPattern" value="VMGroupListView" />
-        <option name="name" value="VMGroupListView" />
-        <option name="packageNamePattern" value="" />
-        <option name="pid" value="" />
-      </filter>
-    </filters>
-  </component>
-  <component name="AndroidExternalApklibDependenciesManager">
-    <artifacts>
-      <entry key="com.actionbarsherlock_actionbarsherlock_4.3.1" value="$MAVEN_REPOSITORY$/com/actionbarsherlock/actionbarsherlock/4.3.1/actionbarsherlock-4.3.1.apklib" />
-      <entry key="com.github.kedzie.supportanimator_support-v4-animator_13.0.0" value="$MAVEN_REPOSITORY$/com/github/kedzie/supportanimator/support-v4-animator/13.0.0/support-v4-animator-13.0.0.apklib" />
-      <entry key="com.github.kedzie.supportanimator_support-v4-animator_r13" value="$MAVEN_REPOSITORY$/com/github/kedzie/supportanimator/support-v4-animator/r13/support-v4-animator-r13.apklib" />
-      <entry key="com.supportanimator_support-v4-animator_r13" value="$MAVEN_REPOSITORY$/com/supportanimator/support-v4-animator/r13/support-v4-animator-r13.apklib" />
-      <entry key="pl.polidea_treeview_1.0.0" value="$MAVEN_REPOSITORY$/pl/polidea/treeview/1.0.0/treeview-1.0.0.apklib" />
-    </artifacts>
-    <resolved-infos>
-      <entry key="com.actionbarsherlock_actionbarsherlock_4.3.1">
-        <value>
-          <resolved-info>
-            <option name="apiLevel" value="14" />
-            <dependencies>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="android" />
-                <option name="groupId" value="com.google.android" />
-                <option name="libName" value="Maven: com.google.android:android:4.0.1.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/google/android/android/4.0.1.2/android-4.0.1.2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.0.1.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="commons-logging" />
-                <option name="groupId" value="commons-logging" />
-                <option name="libName" value="Maven: commons-logging:commons-logging:1.1.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.1.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="httpclient" />
-                <option name="groupId" value="org.apache.httpcomponents" />
-                <option name="libName" value="Maven: org.apache.httpcomponents:httpclient:4.0.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.0.1/httpclient-4.0.1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.0.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="httpcore" />
-                <option name="groupId" value="org.apache.httpcomponents" />
-                <option name="libName" value="Maven: org.apache.httpcomponents:httpcore:4.0.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.0.1/httpcore-4.0.1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.0.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="commons-codec" />
-                <option name="groupId" value="commons-codec" />
-                <option name="libName" value="Maven: commons-codec:commons-codec:1.3" />
-                <option name="path" value="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.3" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="opengl-api" />
-                <option name="groupId" value="org.khronos" />
-                <option name="libName" value="Maven: org.khronos:opengl-api:gl1.1-android-2.1_r1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/khronos/opengl-api/gl1.1-android-2.1_r1/opengl-api-gl1.1-android-2.1_r1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="gl1.1-android-2.1_r1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="xmlParserAPIs" />
-                <option name="groupId" value="xerces" />
-                <option name="libName" value="Maven: xerces:xmlParserAPIs:2.6.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.6.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="xpp3" />
-                <option name="groupId" value="xpp3" />
-                <option name="libName" value="Maven: xpp3:xpp3:1.1.4c" />
-                <option name="path" value="$MAVEN_REPOSITORY$/xpp3/xpp3/1.1.4c/xpp3-1.1.4c.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.1.4c" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="json" />
-                <option name="groupId" value="org.json" />
-                <option name="libName" value="Maven: org.json:json:20080701" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/json/json/20080701/json-20080701.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="20080701" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="support-v4" />
-                <option name="groupId" value="com.google.android" />
-                <option name="libName" value="Maven: com.google.android:support-v4:r7" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7.jar" />
-                <option name="scope" value="compile" />
-                <option name="type" value="jar" />
-                <option name="version" value="r7" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="junit" />
-                <option name="groupId" value="junit" />
-                <option name="libName" value="Maven: junit:junit:4.10" />
-                <option name="path" value="$MAVEN_REPOSITORY$/junit/junit/4.10/junit-4.10.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.10" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="hamcrest-core" />
-                <option name="groupId" value="org.hamcrest" />
-                <option name="libName" value="Maven: org.hamcrest:hamcrest-core:1.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="fest-assert-core" />
-                <option name="groupId" value="org.easytesting" />
-                <option name="libName" value="Maven: org.easytesting:fest-assert-core:2.0M10" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/easytesting/fest-assert-core/2.0M10/fest-assert-core-2.0M10.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.0M10" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="fest-util" />
-                <option name="groupId" value="org.easytesting" />
-                <option name="libName" value="Maven: org.easytesting:fest-util:1.2.5" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/easytesting/fest-util/1.2.5/fest-util-1.2.5.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.2.5" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="robolectric" />
-                <option name="groupId" value="org.robolectric" />
-                <option name="libName" value="Maven: org.robolectric:robolectric:2.0-alpha-2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/robolectric/robolectric/2.0-alpha-2/robolectric-2.0-alpha-2.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.0-alpha-2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="objenesis" />
-                <option name="groupId" value="org.objenesis" />
-                <option name="libName" value="Maven: org.objenesis:objenesis:1.0" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/objenesis/objenesis/1.0/objenesis-1.0.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.0" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="sqlite-jdbc" />
-                <option name="groupId" value="org.xerial" />
-                <option name="libName" value="Maven: org.xerial:sqlite-jdbc:3.7.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/xerial/sqlite-jdbc/3.7.2/sqlite-jdbc-3.7.2.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="3.7.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="javassist" />
-                <option name="groupId" value="org.javassist" />
-                <option name="libName" value="Maven: org.javassist:javassist:3.14.0-GA" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/javassist/javassist/3.14.0-GA/javassist-3.14.0-GA.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="3.14.0-GA" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="asm" />
-                <option name="groupId" value="org.ow2.asm" />
-                <option name="libName" value="Maven: org.ow2.asm:asm:4.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/ow2/asm/asm/4.1/asm-4.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="asm-commons" />
-                <option name="groupId" value="org.ow2.asm" />
-                <option name="libName" value="Maven: org.ow2.asm:asm-commons:4.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/ow2/asm/asm-commons/4.1/asm-commons-4.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="asm-tree" />
-                <option name="groupId" value="org.ow2.asm" />
-                <option name="libName" value="Maven: org.ow2.asm:asm-tree:4.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/ow2/asm/asm-tree/4.1/asm-tree-4.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="asm-util" />
-                <option name="groupId" value="org.ow2.asm" />
-                <option name="libName" value="Maven: org.ow2.asm:asm-util:4.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/ow2/asm/asm-util/4.1/asm-util-4.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="asm-analysis" />
-                <option name="groupId" value="org.ow2.asm" />
-                <option name="libName" value="Maven: org.ow2.asm:asm-analysis:4.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/ow2/asm/asm-analysis/4.1/asm-analysis-4.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-ant-tasks" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-ant-tasks:2.1.3" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.1.3" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="ant" />
-                <option name="groupId" value="org.apache.ant" />
-                <option name="libName" value="Maven: org.apache.ant:ant:1.8.0" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/ant/ant/1.8.0/ant-1.8.0.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.8.0" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="ant-launcher" />
-                <option name="groupId" value="org.apache.ant" />
-                <option name="libName" value="Maven: org.apache.ant:ant-launcher:1.8.0" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.8.0/ant-launcher-1.8.0.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.8.0" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="classworlds" />
-                <option name="groupId" value="classworlds" />
-                <option name="libName" value="Maven: classworlds:classworlds:1.1-alpha-2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/classworlds/classworlds/1.1-alpha-2/classworlds-1.1-alpha-2.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.1-alpha-2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="plexus-container-default" />
-                <option name="groupId" value="org.codehaus.plexus" />
-                <option name="libName" value="Maven: org.codehaus.plexus:plexus-container-default:1.0-alpha-9-stable-1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-container-default/1.0-alpha-9-stable-1/plexus-container-default-1.0-alpha-9-stable-1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.0-alpha-9-stable-1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="plexus-utils" />
-                <option name="groupId" value="org.codehaus.plexus" />
-                <option name="libName" value="Maven: org.codehaus.plexus:plexus-utils:1.5.15" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.5.15/plexus-utils-1.5.15.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.5.15" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="plexus-interpolation" />
-                <option name="groupId" value="org.codehaus.plexus" />
-                <option name="libName" value="Maven: org.codehaus.plexus:plexus-interpolation:1.11" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-interpolation/1.11/plexus-interpolation-1.11.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.11" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-artifact" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-artifact:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/2.2.1/maven-artifact-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-artifact-manager" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-artifact-manager:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact-manager/2.2.1/maven-artifact-manager-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-repository-metadata" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-repository-metadata:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-repository-metadata/2.2.1/maven-repository-metadata-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="wagon-provider-api" />
-                <option name="groupId" value="org.apache.maven.wagon" />
-                <option name="libName" value="Maven: org.apache.maven.wagon:wagon-provider-api:1.0-beta-6" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-provider-api/1.0-beta-6/wagon-provider-api-1.0-beta-6.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.0-beta-6" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="backport-util-concurrent" />
-                <option name="groupId" value="backport-util-concurrent" />
-                <option name="libName" value="Maven: backport-util-concurrent:backport-util-concurrent:3.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="3.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-model" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-model:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-model/2.2.1/maven-model-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-project" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-project:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-project/2.2.1/maven-project-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-settings" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-settings:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-settings/2.2.1/maven-settings-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-profile" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-profile:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-profile/2.2.1/maven-profile-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-plugin-registry" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-plugin-registry:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-registry/2.2.1/maven-plugin-registry-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="maven-error-diagnostics" />
-                <option name="groupId" value="org.apache.maven" />
-                <option name="libName" value="Maven: org.apache.maven:maven-error-diagnostics:2.2.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/maven-error-diagnostics/2.2.1/maven-error-diagnostics-2.2.1.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.2.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="wagon-file" />
-                <option name="groupId" value="org.apache.maven.wagon" />
-                <option name="libName" value="Maven: org.apache.maven.wagon:wagon-file:1.0-beta-6" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-file/1.0-beta-6/wagon-file-1.0-beta-6.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.0-beta-6" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="wagon-http-lightweight" />
-                <option name="groupId" value="org.apache.maven.wagon" />
-                <option name="libName" value="Maven: org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-http-lightweight/1.0-beta-6/wagon-http-lightweight-1.0-beta-6.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.0-beta-6" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="wagon-http-shared" />
-                <option name="groupId" value="org.apache.maven.wagon" />
-                <option name="libName" value="Maven: org.apache.maven.wagon:wagon-http-shared:1.0-beta-6" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-http-shared/1.0-beta-6/wagon-http-shared-1.0-beta-6.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.0-beta-6" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="xercesMinimal" />
-                <option name="groupId" value="nekohtml" />
-                <option name="libName" value="Maven: nekohtml:xercesMinimal:1.9.6.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/nekohtml/xercesMinimal/1.9.6.2/xercesMinimal-1.9.6.2.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.9.6.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="nekohtml" />
-                <option name="groupId" value="nekohtml" />
-                <option name="libName" value="Maven: nekohtml:nekohtml:1.9.6.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/nekohtml/nekohtml/1.9.6.2/nekohtml-1.9.6.2.jar" />
-                <option name="scope" value="test" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.9.6.2" />
-              </MavenDependencyInfo>
-            </dependencies>
-          </resolved-info>
-        </value>
-      </entry>
-      <entry key="com.github.kedzie.supportanimator_support-v4-animator_13.0.0">
-        <value>
-          <resolved-info>
-            <option name="apiLevel" value="17" />
-            <dependencies>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="android" />
-                <option name="groupId" value="android" />
-                <option name="libName" value="Maven: android:android:4.2.2_r2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/android/android/4.2.2_r2/android-4.2.2_r2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.2.2_r2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="library" />
-                <option name="groupId" value="com.nineoldandroids" />
-                <option name="libName" value="Maven: com.nineoldandroids:library:2.4.0" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/nineoldandroids/library/2.4.0/library-2.4.0.jar" />
-                <option name="scope" value="compile" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.4.0" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="actionbarsherlock" />
-                <option name="groupId" value="com.actionbarsherlock" />
-                <option name="libName" value="Maven: com.actionbarsherlock:actionbarsherlock:apklib:4.3.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/actionbarsherlock/actionbarsherlock/4.3.1/actionbarsherlock-4.3.1.apklib" />
-                <option name="scope" value="compile" />
-                <option name="type" value="apklib" />
-                <option name="version" value="4.3.1" />
-              </MavenDependencyInfo>
-            </dependencies>
-          </resolved-info>
-        </value>
-      </entry>
-      <entry key="com.github.kedzie.supportanimator_support-v4-animator_r13">
-        <value>
-          <resolved-info>
-            <option name="apiLevel" value="17" />
-            <dependencies>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="android" />
-                <option name="groupId" value="android" />
-                <option name="libName" value="Maven: android:android:4.2.2_r2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/android/android/4.2.2_r2/android-4.2.2_r2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.2.2_r2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="library" />
-                <option name="groupId" value="com.nineoldandroids" />
-                <option name="libName" value="Maven: com.nineoldandroids:library:2.4.0" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/nineoldandroids/library/2.4.0/library-2.4.0.jar" />
-                <option name="scope" value="compile" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.4.0" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="actionbarsherlock" />
-                <option name="groupId" value="com.actionbarsherlock" />
-                <option name="libName" value="Maven: com.actionbarsherlock:actionbarsherlock:apklib:4.3.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/actionbarsherlock/actionbarsherlock/4.3.1/actionbarsherlock-4.3.1.apklib" />
-                <option name="scope" value="compile" />
-                <option name="type" value="apklib" />
-                <option name="version" value="4.3.1" />
-              </MavenDependencyInfo>
-            </dependencies>
-          </resolved-info>
-        </value>
-      </entry>
-      <entry key="com.supportanimator_support-v4-animator_r13">
-        <value>
-          <resolved-info>
-            <option name="apiLevel" value="17" />
-            <dependencies>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="android" />
-                <option name="groupId" value="com.google.android" />
-                <option name="libName" value="Maven: com.google.android:android:4.2.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/google/android/android/4.2.2/android-4.2.2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.2.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="library" />
-                <option name="groupId" value="com.nineoldandroids" />
-                <option name="libName" value="Maven: com.nineoldandroids:library:2.4.0" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/nineoldandroids/library/2.4.0/library-2.4.0.jar" />
-                <option name="scope" value="compile" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.4.0" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="actionbarsherlock" />
-                <option name="groupId" value="com.actionbarsherlock" />
-                <option name="libName" value="Maven: com.actionbarsherlock:actionbarsherlock:apklib:4.3.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/actionbarsherlock/actionbarsherlock/4.3.1/actionbarsherlock-4.3.1.apklib" />
-                <option name="scope" value="compile" />
-                <option name="type" value="apklib" />
-                <option name="version" value="4.3.1" />
-              </MavenDependencyInfo>
-            </dependencies>
-          </resolved-info>
-        </value>
-      </entry>
-      <entry key="pl.polidea_treeview_1.0.0">
-        <value>
-          <resolved-info>
-            <option name="apiLevel" value="7" />
-            <dependencies>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="android" />
-                <option name="groupId" value="com.google.android" />
-                <option name="libName" value="Maven: com.google.android:android:2.1.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/com/google/android/android/2.1.2/android-2.1.2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.1.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="commons-logging" />
-                <option name="groupId" value="commons-logging" />
-                <option name="libName" value="Maven: commons-logging:commons-logging:1.1.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.1.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="httpclient" />
-                <option name="groupId" value="org.apache.httpcomponents" />
-                <option name="libName" value="Maven: org.apache.httpcomponents:httpclient:4.0.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.0.1/httpclient-4.0.1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.0.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="httpcore" />
-                <option name="groupId" value="org.apache.httpcomponents" />
-                <option name="libName" value="Maven: org.apache.httpcomponents:httpcore:4.0.1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.0.1/httpcore-4.0.1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="4.0.1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="commons-codec" />
-                <option name="groupId" value="commons-codec" />
-                <option name="libName" value="Maven: commons-codec:commons-codec:1.3" />
-                <option name="path" value="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.3" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="opengl-api" />
-                <option name="groupId" value="org.khronos" />
-                <option name="libName" value="Maven: org.khronos:opengl-api:gl1.1-android-2.1_r1" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/khronos/opengl-api/gl1.1-android-2.1_r1/opengl-api-gl1.1-android-2.1_r1.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="gl1.1-android-2.1_r1" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="xmlParserAPIs" />
-                <option name="groupId" value="xerces" />
-                <option name="libName" value="Maven: xerces:xmlParserAPIs:2.6.2" />
-                <option name="path" value="$MAVEN_REPOSITORY$/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="2.6.2" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="xpp3" />
-                <option name="groupId" value="xpp3" />
-                <option name="libName" value="Maven: xpp3:xpp3:1.1.4c" />
-                <option name="path" value="$MAVEN_REPOSITORY$/xpp3/xpp3/1.1.4c/xpp3-1.1.4c.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="1.1.4c" />
-              </MavenDependencyInfo>
-              <MavenDependencyInfo>
-                <option name="artifactId" value="json" />
-                <option name="groupId" value="org.json" />
-                <option name="libName" value="Maven: org.json:json:20080701" />
-                <option name="path" value="$MAVEN_REPOSITORY$/org/json/json/20080701/json-20080701.jar" />
-                <option name="scope" value="provided" />
-                <option name="type" value="jar" />
-                <option name="version" value="20080701" />
-              </MavenDependencyInfo>
-            </dependencies>
-          </resolved-info>
-        </value>
-      </entry>
-    </resolved-infos>
-  </component>
-  <component name="AndroidLayoutPreviewToolWindow">
-    <option name="state">
-      <GlobalState />
-    </option>
-  </component>
   <component name="AndroidLayouts">
     <shared>
       <config />
     </shared>
   </component>
-  <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
-  </component>
   <component name="ChangeListManager">
-    <list id="7f2af928-76b7-473f-b959-54318bb7975d" name="Default" comment="gingerbread prefs.  host view. orientation fixes. vbox marshalling" />
-    <list default="true" id="7d3e3d16-c6d5-469b-bfe4-43873054cee5" name="gingerbread prefs.  host view. orientation fixes. vbox marshalling" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_r09.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineActivity.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/AndroidManifest.xml" afterPath="$PROJECT_DIR$/vbox-app/AndroidManifest.xml" />
+    <list default="true" id="5828041f-6e3e-4134-94b5-90331918b060" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__android_test_uiautomator_uiautomator_4_2_2_r2.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nineoldandroids_library_2_4_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_squareup_fest_android_1_0_5.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_beanutils_commons_beanutils_1_8_3.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_digester_commons_digester_1_8.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_validator_commons_validator_1_4_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__nf_fr_eraasoft_objectpool_1_1_2.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_easytesting_fest_assert_core_2_0M10.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_easytesting_fest_util_1_2_5.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BaseActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BaseActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/EditServerActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/EditServerActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventIntentService.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventIntentService.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostView.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IVirtualBox.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IVirtualBox.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/InfoFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/InfoFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineView.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__android_android_4_2_2_r2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__android_android_4_2_2_r2.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/ServerListFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/ServerListFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/VMGroupListView.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/VMGroupListView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/pom.xml" afterPath="$PROJECT_DIR$/vbox-app/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-key/pom.xml" afterPath="$PROJECT_DIR$/vbox-key/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/project.properties" afterPath="$PROJECT_DIR$/vbox-app/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-instrumentation/project.properties" afterPath="$PROJECT_DIR$/vbox-instrumentation/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/res/layout/server.xml" afterPath="$PROJECT_DIR$/vbox-app/res/layout/server.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/res/values/styles.xml" afterPath="$PROJECT_DIR$/vbox-app/res/values/styles.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-android-parent.iml" afterPath="$PROJECT_DIR$/vbox-android-parent.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/vbox-app.iml" afterPath="$PROJECT_DIR$/vbox-app/vbox-app.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-instrumentation/vbox-instrumentation.iml" afterPath="$PROJECT_DIR$/vbox-instrumentation/vbox-instrumentation.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-key/vbox-key.iml" afterPath="$PROJECT_DIR$/vbox-key/vbox-key.iml" />
@@ -693,12 +54,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
-  <component name="CompilerWorkspaceConfiguration">
-    <option name="USE_COMPILE_SERVER" value="false" />
-    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
-    <option name="PARALLEL_COMPILATION" value="true" />
-    <option name="COMPILER_PROCESS_HEAP_SIZE" value="2048" />
-  </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -706,7 +61,8 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
         <option name="NOTIFY_UNCAUGHT" value="true" />
@@ -750,35 +106,7 @@
     <favorites_list name="vbox-android-parent" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Utils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="665" column="5" selection-start="19144" selection-end="19648" vertical-scroll-proportion="0.0" vertical-offset="9512" max-vertical-offset="9960">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vbox-app/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="126" column="29" selection-start="3875" selection-end="3875" vertical-scroll-proportion="0.0" vertical-offset="379" max-vertical-offset="3975">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="703" selection-end="703" vertical-scroll-proportion="0.42825112" vertical-offset="4" max-vertical-offset="2070">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -796,22 +124,18 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BundleBuilder.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/SettingsActivity.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/NetworkAdapterFragment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListBaseFragment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java" />
-        <option value="$PROJECT_DIR$/vbox-instrumentation/pom.xml" />
-        <option value="$PROJECT_DIR$/vbox-instrumentation/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_13.0.0/src/android/support/v4/widget/DrawerLayout.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineFragment.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java" />
-        <option value="$PROJECT_DIR$/vbox-app/res/values/styles.xml" />
-        <option value="$PROJECT_DIR$/vbox-app/res/layout/server.xml" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/VMGroupListView.java" />
         <option value="$PROJECT_DIR$/vbox-app/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventIntentService.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/ServerListFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BaseActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/EditServerActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IVirtualBox.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/InfoFragment.java" />
       </list>
     </option>
   </component>
@@ -857,25 +181,15 @@
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
         </PATH_ELEMENT>
       </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Profiles" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProfilesNode" />
-        </PATH_ELEMENT>
-      </PATH>
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="191" />
-    <option name="y" value="27" />
-    <option name="width" value="1098" />
-    <option name="height" value="646" />
+    <option name="x" value="90" />
+    <option name="y" value="36" />
+    <option name="width" value="1190" />
+    <option name="height" value="709" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
@@ -901,6 +215,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -953,59 +268,32 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="107" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="132" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="124" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="135" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="923" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="929" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="129" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="127" />
-    <property name="GoToClass.includeJavaFiles" value="false" />
+    <property name="project.structure.side.proportion" value="0.35341832" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="emulator-5554" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Droid4" />
-    <property name="AndroidTargetDevices" value="192.168.1.5:5555" />
-    <property name="FullScreen" value="false" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="Nexus10" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
+    <property name="restartRequiresConfirmation" value="true" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
-    <property name="options.lastSelected" value="preferences.externalResources" />
-    <property name="project.structure.side.proportion" value="0.3196147" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="192.168.1.5:5555" />
-    <property name="MemberChooser.copyJavadoc" value="false" />
-    <property name="restartRequiresConfirmation" value="true" />
     <property name="dynamic.classpath" value="false" />
-    <property name="options.searchVisible" value="true" />
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/vbox-app/res/menu" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Android Application.vbox-app">
+  <component name="RunManager" selected="Android Application.vbox">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
       <module name="" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
       <option name="PROGRAM_PARAMETERS" />
       <method />
     </configuration>
@@ -1120,7 +408,7 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="vbox-app" type="AndroidRunConfigurationType" factoryName="Android Application">
+    <configuration default="false" name="vbox" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="vbox-app" />
       <option name="ACTIVITY_CLASS" value="" />
       <option name="MODE" value="default_activity" />
@@ -1138,34 +426,9 @@
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="vbox-pro" type="AndroidRunConfigurationType" factoryName="Android Application">
-      <module name="vbox-key" />
-      <option name="ACTIVITY_CLASS" value="" />
-      <option name="MODE" value="do_nothing" />
-      <option name="DEPLOY" value="true" />
-      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
-      <option name="PREFERRED_AVD" value="" />
-      <option name="USE_COMMAND_LINE" value="true" />
-      <option name="COMMAND_LINE" value="" />
-      <option name="WIPE_USER_DATA" value="false" />
-      <option name="DISABLE_BOOT_ANIMATION" value="false" />
-      <option name="NETWORK_SPEED" value="full" />
-      <option name="NETWORK_LATENCY" value="none" />
-      <option name="CLEAR_LOGCAT" value="false" />
-      <RunnerSettings RunnerId="AndroidDebugRunner" />
-      <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
-      <method />
-    </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Android Application.vbox-app" />
-      <item index="1" class="java.lang.String" itemvalue="Android Application.vbox-pro" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Android Application.vbox" />
     </list>
-    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    </configuration>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
       <Port>5050</Port>
@@ -1173,86 +436,40 @@
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
   <component name="TaskManager">
-    <task id="Default" summary="Default task">
-      <changelist id="7f2af928-76b7-473f-b959-54318bb7975d" name="Default" comment="" />
-      <created>1372468002875</created>
-      <updated>1372808370333</updated>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5828041f-6e3e-4134-94b5-90331918b060" name="Default" comment="" />
+      <created>1379111048775</created>
+      <updated>1379111048775</updated>
     </task>
-    <task active="true" id="LOCAL-00001" summary="gingerbread prefs.  host view. orientation fixes. vbox marshalling">
-      <changelist id="7d3e3d16-c6d5-469b-bfe4-43873054cee5" name="gingerbread prefs.  host view. orientation fixes. vbox marshalling" comment="" />
-      <created>1372468573660</created>
-      <updated>1372808370337</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
-    <option name="searchClosedTasks" value="true" />
-    <servers>
-      <GitHub shared="false" url="">
-        <commitMessageFormat>{id} {summary}</commitMessageFormat>
-        <password>dfe7dfc1df9adf98df9adf9edf8edf8e</password>
-        <token />
-        <option name="loginAnonymously" value="false" />
-        <option name="repoAuthor" value="kedzie" />
-        <option name="repoName" value="VBoxManager" />
-        <option name="shouldFormatCommitMessage" value="false" />
-        <option name="useHttpAuthentication" value="true" />
-        <option name="useProxy" value="false" />
-        <option name="user" value="" />
-        <username>kedzie</username>
-      </GitHub>
-    </servers>
-  </component>
-  <component name="TodoView" selected-index="0">
-    <todo-panel id="selected-file">
-      <are-packages-shown value="false" />
-      <are-modules-shown value="false" />
-      <flatten-packages value="false" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <are-modules-shown value="false" />
-      <flatten-packages value="false" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="default-changelist">
-      <are-packages-shown value="false" />
-      <are-modules-shown value="false" />
-      <flatten-packages value="false" />
-      <is-autoscroll-to-source value="false" />
-    </todo-panel>
+    <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="191" y="27" width="1098" height="646" extended-state="6" />
-    <editor active="true" />
+    <frame x="90" y="36" width="1190" height="709" extended-state="0" />
+    <editor active="false" />
     <layout>
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32793522" sideWeight="0.6276803" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5996678" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32890365" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33173844" sideWeight="0.76408166" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3266399" sideWeight="0.7925089" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.35" sideWeight="0.78142077" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32916668" sideWeight="0.6936648" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34856537" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32894737" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3246124" sideWeight="0.6111111" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.2870229" sideWeight="0.68070173" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="TCPMON" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291367" sideWeight="0.7147088" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Gerrit" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299595" sideWeight="0.6276803" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32982457" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32906765" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29250458" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.64533824" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.61627907" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31405693" sideWeight="0.3546618" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38372093" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289638" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32698414" sideWeight="0.6878216" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30453563" sideWeight="0.6716839" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1260,108 +477,128 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="gingerbread prefs.  host view. orientation fixes. vbox marshalling" />
-    <option name="LAST_COMMIT_MESSAGE" value="gingerbread prefs.  host view. orientation fixes. vbox marshalling" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/inject/guice/3.0/guice-3.0-sources.jar!/com/google/inject/spi/InjectionPoint.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="171" column="0" selection-start="6475" selection-end="6475" vertical-scroll-proportion="0.6097561" vertical-offset="1785" max-vertical-offset="2400" />
+        <state line="648" column="0" selection-start="24151" selection-end="24151" vertical-scroll-proportion="0.93303573" vertical-offset="8866" max-vertical-offset="11820">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../android-sdk/sources/android-18/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="718" column="12" selection-start="28916" selection-end="28916" vertical-scroll-proportion="0.29464287" vertical-offset="9879" max-vertical-offset="17535">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/roboguice/roboguice/3.0-alpha-SNAPSHOT/roboguice-3.0-alpha-SNAPSHOT-sources.jar!/roboguice/fragment/RoboSherlockFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="22" selection-start="184" selection-end="184" vertical-scroll-proportion="-0.12931034" vertical-offset="90" max-vertical-offset="345">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/ServerListFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="53" selection-start="1105" selection-end="1105" vertical-scroll-proportion="-0.20710059" vertical-offset="225" max-vertical-offset="3270">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BaseActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="38" selection-start="371" selection-end="371" vertical-scroll-proportion="0.20118344" vertical-offset="18" max-vertical-offset="525">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="43" selection-start="408" selection-end="408" vertical-scroll-proportion="0.147929" vertical-offset="0" max-vertical-offset="570">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/EditServerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="150" column="0" selection-start="4715" selection-end="4715" vertical-scroll-proportion="3.994083" vertical-offset="225" max-vertical-offset="2730">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/DialogTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="104" column="44" selection-start="3264" selection-end="3282" vertical-scroll-proportion="1.183432" vertical-offset="765" max-vertical-offset="1605">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/BaseTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="127" column="25" selection-start="3802" selection-end="3811" vertical-scroll-proportion="2.9230769" vertical-offset="3" max-vertical-offset="3300">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IVirtualBox.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="151" column="7" selection-start="10063" selection-end="10063" vertical-scroll-proportion="2.6923077" vertical-offset="675" max-vertical-offset="4170">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/soap/VBoxSvc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="724" column="0" selection-start="25395" selection-end="25395" vertical-scroll-proportion="0.037475344" vertical-offset="9806" max-vertical-offset="12555">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/ServerListFragmentActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="71" column="16" selection-start="2575" selection-end="2575" vertical-scroll-proportion="1.4201183" vertical-offset="0" max-vertical-offset="1500">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="25" selection-start="1354" selection-end="1354" vertical-scroll-proportion="0.78821653" vertical-offset="0" max-vertical-offset="765" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentElement.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="11" selection-start="1006" selection-end="1006" vertical-scroll-proportion="0.33333334" vertical-offset="171" max-vertical-offset="1215" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable-xhdpi/ic_menu_info_details.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+        <state line="9" column="13" selection-start="198" selection-end="198" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="765">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="98" column="97" selection-start="3149" selection-end="3149" vertical-scroll-proportion="1.795082" vertical-offset="0" max-vertical-offset="1965" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/machine_view.xml">
-      <provider editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="945" />
-      </provider>
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="57" selection-start="1861" selection-end="1861" vertical-scroll-proportion="0.75797874" vertical-offset="0" max-vertical-offset="752" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/server.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="55" selection-start="309" selection-end="309" vertical-scroll-proportion="0.12413793" vertical-offset="0" max-vertical-offset="2145" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/host_view.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="71" selection-start="2256" selection-end="2256" vertical-scroll-proportion="0.24940617" vertical-offset="495" max-vertical-offset="1200" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/ServerSQlite.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="56" selection-start="2349" selection-end="2403" vertical-scroll-proportion="0.036945812" vertical-offset="810" max-vertical-offset="1680" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/StorageFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="13" selection-start="1026" selection-end="1026" vertical-scroll-proportion="0.035971224" vertical-offset="45" max-vertical-offset="1155" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/VMGroupListView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="369" column="16" selection-start="13839" selection-end="13874" vertical-scroll-proportion="-6.0143886" vertical-offset="7413" max-vertical-offset="7830" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="665" column="5" selection-start="19144" selection-end="19648" vertical-scroll-proportion="0.0" vertical-offset="9512" max-vertical-offset="9960">
+        <state line="34" column="13" selection-start="1155" selection-end="1155" vertical-scroll-proportion="0.2662722" vertical-offset="0" max-vertical-offset="1890">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/pom.xml">
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="126" column="29" selection-start="3875" selection-end="3875" vertical-scroll-proportion="0.0" vertical-offset="379" max-vertical-offset="3975">
+        <state line="122" column="30" selection-start="4416" selection-end="4416" vertical-scroll-proportion="2.8994083" vertical-offset="0" max-vertical-offset="2400">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/InfoFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="703" selection-end="703" vertical-scroll-proportion="0.42825112" vertical-offset="4" max-vertical-offset="2070">
+        <state line="37" column="41" selection-start="1228" selection-end="1228" vertical-scroll-proportion="0.2366864" vertical-offset="0" max-vertical-offset="4500">
           <folding />
         </state>
       </provider>
@@ -1375,7 +612,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.3196147" />
+                <option value="0.2" />
               </list>
             </option>
           </splitter-proportions>
@@ -1387,7 +624,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.3196147" />
+                <option value="0.2" />
               </list>
             </option>
           </splitter-proportions>
@@ -1398,7 +635,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.3196147" />
+                <option value="0.2" />
               </list>
             </option>
           </splitter-proportions>
@@ -1410,7 +647,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.3196147" />
+                <option value="0.2" />
               </list>
             </option>
           </splitter-proportions>
@@ -1422,7 +659,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.3196147" />
+                <option value="0.35341832" />
               </list>
             </option>
           </splitter-proportions>
@@ -1430,7 +667,7 @@
       </state>
       <state key="ProjectJDKs.UI">
         <settings>
-          <last-edited>Android 4.2.2</last-edited>
+          <last-edited>Android 4.3 Platform</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1442,20 +679,17 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>Maven: android.test.uiautomator:uiautomator:4.2.2_r2</last-edited>
+          <last-edited>Maven: android.test.uiautomator:uiautomator:4.3_r1</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.3196147" />
+                <option value="0.35341832" />
               </list>
             </option>
           </splitter-proportions>
         </settings>
       </state>
     </states>
-  </component>
-  <component name="se.expertsystem.intellij.aop.aspectj.AspectJProjectComponent">
-    <setting name="isActivated" value="true" />
   </component>
 </project>
 
