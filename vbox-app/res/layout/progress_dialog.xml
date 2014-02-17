@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/determinate"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="10dp" >
@@ -7,6 +10,7 @@
     <TextView
         android:id="@+id/message"
         style="@style/MediumText"
+        android:text="Message"
         android:layout_centerHorizontal="true" />
 
     <ProgressBar
@@ -15,9 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/message"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="50" />
+        android:indeterminate="true"
+        android:max="100" />
 
     <TextView
         android:id="@+id/operation_description"
@@ -38,9 +41,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/operation_description"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="25" />
+        android:indeterminate="true"
+        android:max="100" />
 
     <TextView
         android:id="@+id/time_remaining"

@@ -190,6 +190,10 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 
 	@Override 
 	public void onBackPressed() {
+		Fragment frag = getSupportFragmentManager().findFragmentById(R.id.details);
+		if(frag!=null && frag.getChildFragmentManager().popBackStackImmediate())
+			return;
+
 		new AlertDialog.Builder(this)
 	        .setTitle("Save Changes?")
 	        .setMessage("Do you wish to save changes?")

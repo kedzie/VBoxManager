@@ -42,13 +42,14 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
+import roboguice.fragment.RoboSherlockFragment;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class ActionsFragment extends SherlockFragment implements OnItemClickListener {
+public class ActionsFragment extends RoboSherlockFragment implements OnItemClickListener {
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
 	
 	private MachineView _headerView;

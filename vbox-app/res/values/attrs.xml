@@ -14,6 +14,7 @@
        <attr name="headerIcon" format="reference" />
        <attr name="collapseRotation" format="integer" />
        <attr name="expanded" format="boolean"/>
+       <attr name="state_expanded" format="boolean"/>
    </declare-styleable>
    
     <declare-styleable name="SliderView">

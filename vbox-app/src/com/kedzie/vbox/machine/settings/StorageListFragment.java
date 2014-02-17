@@ -45,13 +45,15 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
+import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 /**
  * Expandable list of storage controllers and associated attachments
  * 
  * @apiviz.stereotype Fragment
  */
-public class StorageListFragment extends SherlockFragment {
+public class StorageListFragment extends RoboSherlockFragment {
 
 	/**
 	 * Listener for Storage Controller clicks
@@ -76,6 +78,7 @@ public class StorageListFragment extends SherlockFragment {
 		public void onMediumAttachmentClicked(IMediumAttachment element);
 	}
 
+	@InjectView(R.id.storage_tree)
 	private ExpandableListView _listView;
 	private ItemAdapter _listAdapter;
 
@@ -214,7 +217,7 @@ public class StorageListFragment extends SherlockFragment {
 	}
 	
 	/**
-	 * Move the medium to a different slot within controller.
+	 * List mountable mediums
 	 */
 	abstract class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
@@ -297,7 +300,7 @@ public class StorageListFragment extends SherlockFragment {
 	}
 
 	/**
-	 * Move the medium to a different slot within controller.
+	 * Mount medium
 	 */
 	class MountTask extends DialogTask<IMedium, IMediumAttachment> {
 
@@ -419,7 +422,7 @@ public class StorageListFragment extends SherlockFragment {
 		public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 			final IStorageController controller = (IStorageController)getGroup(groupPosition);
 			convertView = mInflater.inflate(R.layout.settings_storage_controller_list_item, parent, false);
-			convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
+			convertView.setTag(convertView.findViewById(android.R.id.text1));
 			TextView text1 = (TextView)convertView.getTag();
 			text1.setText(controller.getName());
 			LinearLayout linear = (LinearLayout)convertView;
@@ -459,7 +462,7 @@ public class StorageListFragment extends SherlockFragment {
 			final IMediumAttachment attachment = (IMediumAttachment)getChild(groupPosition, childPosition);
 			if(convertView==null) {
 				convertView = mInflater.inflate(R.layout.simple_selectable_list_item, parent, false);
-				convertView.setTag((TextView)convertView.findViewById(android.R.id.text1));
+				convertView.setTag(convertView.findViewById(android.R.id.text1));
 			}
 			TextView text1 = (TextView)convertView.getTag();
 			text1.setText(attachment.getMedium()!=null ? attachment.getMedium().getBase().getName() : "Empty");
@@ -480,13 +483,17 @@ public class StorageListFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		_machine = (IMachine)getArguments().getParcelable(IMachine.BUNDLE);
+		_machine = getArguments().getParcelable(IMachine.BUNDLE);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.settings_storage_tree, container, false);
-		_listView = (ExpandableListView)view.findViewById(R.id.storage_tree);
+		return inflater.inflate(R.layout.settings_storage_tree, container, false);
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		_listView.setOnGroupClickListener(new OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -507,7 +514,6 @@ public class StorageListFragment extends SherlockFragment {
 			}
 		});
 		registerForContextMenu(_listView);
-		return view;
 	}
 
 	@Override

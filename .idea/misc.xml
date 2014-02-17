@@ -2,9 +2,13 @@
 <project version="4">
   <component name="EclipseCodeFormatter">
     <option name="defaultSettings" value="true" />
+    <option name="formatter" value="ECLIPSE" />
     <option name="id" value="1372696478589" />
+    <option name="importOrderConfigFilePath" value="$PROJECT_DIR$/../CNH/aosp/development/ide/eclipse/android.importorder" />
+    <option name="importOrderFromFile" value="true" />
     <option name="name" value="default" />
-    <option name="pathToConfigFileJava" value="$USER_HOME$/Desktop/formatter.xml" />
+    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../CNH/aosp/development/ide/eclipse/android-formatting.xml" />
+    <option name="selectedJavaProfile" value="Android" />
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />

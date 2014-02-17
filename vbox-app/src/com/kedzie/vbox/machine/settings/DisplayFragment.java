@@ -10,8 +10,9 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
+import roboguice.fragment.RoboSherlockFragment;
 
-public class DisplayFragment extends SherlockFragment {
+public class DisplayFragment extends RoboSherlockFragment {
     private PagerTabHost mTabHost;
 
     @Override

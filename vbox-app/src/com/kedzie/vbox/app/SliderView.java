@@ -8,6 +8,9 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -24,6 +27,7 @@ import com.kedzie.vbox.R;
  * </ul>
  */
 public class SliderView extends LinearLayout {
+	private static final String TAG = "SliderView";
 	
     public static interface OnSliderViewChangeListener {
         public void onSliderValidValueChanged(int newValue);
@@ -175,6 +179,20 @@ public class SliderView extends LinearLayout {
         
         _valueEditText = new EditText(getContext());
         _valueEditText.setText(getValue()+"");
+		_valueEditText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+		_valueEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+		_valueEditText.setLines(1);
+		_valueEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				try {
+					setValue(Integer.parseInt(v.getText().toString()));
+				} catch(NumberFormatException e) {
+					Log.e(TAG, "Format exception: " + e.getMessage());
+				}
+				return false;
+			}
+		});
         addView(_valueEditText, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         _unitLabel = new TextView(getContext());

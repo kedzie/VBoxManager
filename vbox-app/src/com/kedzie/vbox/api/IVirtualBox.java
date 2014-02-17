@@ -284,4 +284,12 @@ public interface IVirtualBox extends IManagedObjectRef, Parcelable {
 	public List<MachineState> getMachineStates(@KSOAP("machines") List<IMachine> machines) throws IOException;
 	
 	public IMachine openMachine(@KSOAP("settingsFile") String settingsFile) throws IOException;
+
+	@KSOAP(cacheable=true) public List<INATNetwork> getNATNetworks() throws IOException;
+
+	public INATNetwork createNATNetwork(@KSOAP("networkName") String networkName) throws IOException;
+
+	@KSOAP(cacheable=true) public INATNetwork findNATNetworkByName(@KSOAP("networkName") String networkName) throws IOException;
+
+	public void removeNATNetwork(@KSOAP("network") INATNetwork network) throws IOException;
 }

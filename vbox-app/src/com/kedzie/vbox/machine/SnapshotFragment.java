@@ -40,12 +40,13 @@ import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
+import roboguice.fragment.RoboSherlockFragment;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class SnapshotFragment extends SherlockFragment {
+public class SnapshotFragment extends RoboSherlockFragment {
 
     /**
      *	Load complete snapshot tree.
@@ -216,7 +217,7 @@ public class SnapshotFragment extends SherlockFragment {
     /**
      * Recursively populate the tree structure
      * @param parent
-     * @param child
+     * @param snapshot
      */
     protected void populate(ISnapshot parent, ISnapshot snapshot) {
         if(parent==null)

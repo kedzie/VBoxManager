@@ -29,12 +29,14 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
+import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class StorageDVDFragment extends SherlockFragment {
+public class StorageDVDFragment extends RoboSherlockFragment {
 
 	/**
 	 * Fetch DVD/Medium details
@@ -164,14 +166,18 @@ public class StorageDVDFragment extends SherlockFragment {
 	private IStorageController _controller;
 	private ArrayList<IMediumAttachment> _attachments;
 
-	private View _view;
+	@InjectView(R.id.storage_port)
 	private Spinner _slotSpinner;
 	private ArrayList<Slot> _slots;
 	private ArrayAdapter<Slot> _slotAdapter;
 
+	@InjectView(R.id.storage_mount)
 	private ImageButton _mountButton;
+	@InjectView(R.id.storage_type)
 	private TextView _storageTypeText;
+	@InjectView(R.id.storage_size)
 	private TextView _sizeText;
+	@InjectView(R.id.storage_location)
 	private TextView _locationText;
 
 	@Override
@@ -183,19 +189,18 @@ public class StorageDVDFragment extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.settings_storage_details_dvd, null);
-		_slotSpinner = (Spinner)_view.findViewById(R.id.storage_port);
-		_mountButton = (ImageButton)_view.findViewById(R.id.storage_mount);
+		return inflater.inflate(R.layout.settings_storage_details_dvd, null);
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		_mountButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new ListMediumsTask().execute();
 			}
 		});
-		_storageTypeText = (TextView)_view.findViewById(R.id.storage_type);
-		_sizeText = (TextView)_view.findViewById(R.id.storage_size);
-		_locationText = (TextView)_view.findViewById(R.id.storage_location);
-		return _view;
 	}
 
 	@Override

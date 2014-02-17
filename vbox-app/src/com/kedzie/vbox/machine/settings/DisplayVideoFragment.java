@@ -18,11 +18,12 @@ import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.DialogTask;
+import roboguice.fragment.RoboSherlockFragment;
 
 /**
  * @apiviz.stereotype fragment
  */
-public class DisplayVideoFragment extends SherlockFragment {
+public class DisplayVideoFragment extends RoboSherlockFragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<ISystemProperties, IHost>> {
 		

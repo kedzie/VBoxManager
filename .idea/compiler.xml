@@ -24,19 +24,19 @@
         <processorPath useClasspath="true" />
         <module name="vbox-app" />
       </profile>
-      <profile default="false" name="Annotation profile for vbox-instrumentation" enabled="true">
-        <sourceOutputDir name="bin/generated-sources/annotations" />
-        <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="vbox-instrumentation" />
-      </profile>
       <profile default="false" name="Annotation profile for vbox-key" enabled="true">
         <sourceOutputDir name="bin/generated-sources/annotations" />
         <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="vbox-key" />
+      </profile>
+      <profile default="false" name="Annotation profile for vbox-instrumentation" enabled="true">
+        <sourceOutputDir name="bin/generated-sources/annotations" />
+        <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="vbox-instrumentation" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

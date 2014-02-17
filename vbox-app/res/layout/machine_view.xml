@@ -19,8 +19,8 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentTop="true"
 			android:layout_toRightOf="@id/machine_list_item_ostype"
-		   	android:layout_marginRight="6dp"  
-			android:textSize="18sp"  
+		   	android:layout_marginRight="6dp"
+			android:textSize="18sp"
 			android:textStyle="bold"
 			android:text="Machine Name" />
 		
@@ -30,7 +30,7 @@
 			android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/machine_list_item_name"
 			android:layout_marginTop="5dp"
-			android:textSize="8sp" 
+			android:textSize="8sp"
 			android:textStyle="italic"  
 			android:text="Current Snapshot" />
 		
@@ -50,7 +50,7 @@
 			android:layout_toRightOf="@id/machine_list_item_state"
 			android:layout_below="@id/machine_list_item_name"
 			android:layout_marginTop="1dp"
-			android:textSize="12sp" 
+			android:textSize="12sp"
 			android:textStyle="italic"   
 			android:text="Machine State"  />
 			

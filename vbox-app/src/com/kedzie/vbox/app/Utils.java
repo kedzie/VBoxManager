@@ -538,7 +538,7 @@ public class Utils {
      *
      * @param machine
      */
-    public static void cacheProperties(IMachine machine) {
+    public static IMachine cacheProperties(IMachine machine) {
         synchronized (machine) {
             machine.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
             machine.getName();
@@ -548,6 +548,7 @@ public class Utils {
             if (machine.getCurrentSnapshot() != null)
                 machine.getCurrentSnapshot().getName();
         }
+		return machine;
     }
 
 	/**

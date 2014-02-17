@@ -1,0 +1,8 @@
+#!/usr/bin/sed -f
+
+\%.*XmlType.*%d
+\%.*XmlEnum.*%d
+\%.*XmlEnumValue.*%d
+\%.*XmlElement.*%d
+\%.*XmlSchemaType.*%d
+\%^//%d

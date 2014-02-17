@@ -41,5 +41,19 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      
+
+    <!-- method IVirtualBox::removeNATNetwork-->
+    <xsd:element name="IVirtualBox_removeNATNetwork">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="_this" type="xsd:string"/>
+                <xsd:element name="network" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="IVirtualBox_removeNATNetworkResponse">
+        <xsd:complexType>
+            <xsd:sequence/>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

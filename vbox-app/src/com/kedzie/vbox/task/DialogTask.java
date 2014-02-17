@@ -1,11 +1,10 @@
 package com.kedzie.vbox.task;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.app.VBoxProgressDialog;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -18,12 +17,10 @@ import com.kedzie.vbox.soap.VBoxSvc;
  */
 public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> {
 
-	private ProgressDialog iDialog;
 	private VBoxProgressDialog pDialog;
 	
 	/**
 	 * Constructor in <em>Indeterminate</em> operation
-	 * @param TAG LogCat tag
 	 * @param context Android <code>Context</code>
 	 * @param vmgr VirtualBox API service
 	 * @param msg  operation description string resource
@@ -34,8 +31,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	
 	/**
 	 * Constructor in <em>Determinate</em> operation
-	 * @param TAG LogCat tag
-	 * @param ctx Android <code>Context</code>
+	 * @param context Android <code>Context</code>
 	 * @param vmgr VirtualBox API service
 	 * @param msg  operation description
 	 */
@@ -45,7 +41,6 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	
 	/**
 	 * Constructor in <em>Determinate</em> operation
-	 * @param TAG 				LogCat tag
 	 * @param context 			Android <code>Context</code>
 	 * @param vmgr 				VirtualBox API service
 	 * @param msg  				operation description string resource
@@ -57,7 +52,6 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	
 	/**
 	 * Constructor in <em>Determinate</em> operation
-	 * @param TAG 				LogCat tag
 	 * @param context 			Android <code>Context</code>
 	 * @param vmgr 				VirtualBox API service
 	 * @param msg  				operation description
@@ -65,28 +59,18 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 */
 	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, String msg, boolean cancelable) {
 		super(context, vmgr);
-		iDialog = new ProgressDialog(context);
-		iDialog.setMessage(msg);
-		iDialog.setCancelable(cancelable);
-		if(cancelable)
-		iDialog.setOnCancelListener(new OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                DialogTask.this.cancel(true);
-            }
-        });
-		iDialog.setIndeterminate(true);
+        pDialog = new VBoxProgressDialog();
+        pDialog.setArguments(new BundleBuilder().putString("msg", msg).putBoolean("cancelable", cancelable).create());
+        pDialog.setTask(this);
 	}
 	
 	@Override
 	protected void onPreExecute()		{
-		iDialog.show();
+        Utils.showDialog(getContext().getSupportFragmentManager(), "progress", pDialog);
 	}
 	
 	@Override
 	protected void onPostExecute(Output result)	{
-			if(iDialog!=null)
-				iDialog.dismiss(); 
 			if(pDialog!=null)
 				pDialog.dismiss();
 			super.onPostExecute(result);
@@ -99,21 +83,6 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 
     @Override
 	protected void onProgressUpdate(IProgress... p) {
-		if(iDialog!=null) {	//Dismiss Indeterminate progress dialog and display the determinate one.
-			iDialog.dismiss();
-			iDialog=null;
-			pDialog = new VBoxProgressDialog();
-			pDialog.setCancelable(p[0].getCancelable());
-			if(p[0].getCancelable()) {
-				pDialog.setOnCancelListener(new OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						DialogTask.this.cancel(true);
-					}
-				});
-			}
-			Utils.showDialog(getContext().getSupportFragmentManager(), "progress", pDialog);
-		}
 		pDialog.update(p[0]);
 	}
 }

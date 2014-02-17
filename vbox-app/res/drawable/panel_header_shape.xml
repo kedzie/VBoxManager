@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox">
+
+    <item vbox:state_expanded="true" android:state_pressed="true" >
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/yellow"/>
+            <corners android:topLeftRadius="@dimen/panel_corner_radius" android:topRightRadius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                     android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+            <gradient android:angle="90" android:startColor="@color/yellow" android:endColor="@android:color/transparent"/>
+        </shape>
+    </item>
+
+    <item vbox:state_expanded="true" android:state_selected="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/blue"/>
+            <corners android:topLeftRadius="@dimen/panel_corner_radius" android:topRightRadius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                     android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+            <gradient android:angle="90" android:startColor="@color/blue" android:endColor="@android:color/transparent"/>
+        </shape>
+    </item>
+
+    <item vbox:state_expanded="true" >
+        <shape>
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/gray_light"/>
+            <corners android:topLeftRadius="@dimen/panel_corner_radius" android:topRightRadius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                     android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+            <gradient android:angle="90" android:startColor="@color/gray_light" android:endColor="@android:color/transparent"/>
+        </shape>
+    </item>
+
+    <item vbox:state_expanded="false" android:state_pressed="true" >
+        <shape android:shape="rectangle">
+            <gradient android:angle="90" android:startColor="@color/yellow" android:endColor="@android:color/transparent"/>
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/yellow"/>
+            <corners android:radius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                     android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+        </shape>
+    </item>
+
+    <item vbox:state_expanded="false" android:state_selected="true">
+        <shape android:shape="rectangle">
+            <gradient android:angle="90" android:startColor="@color/blue" android:endColor="@android:color/transparent"/>
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/blue"/>
+            <corners android:radius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                     android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+        </shape>
+    </item>
+
+    <item vbox:state_expanded="false" android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient android:angle="90" android:startColor="@color/gray_light" android:endColor="@android:color/transparent"/>
+                    <stroke android:width="@dimen/panel_stroke_width" android:color="@color/gray_light"/>
+                    <corners android:radius="@dimen/panel_corner_radius"/>
+                    <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                             android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+                </shape>
+            </item>
+            <item android:drawable="@drawable/list_selector_color_focus"/>
+        </layer-list>
+    </item>
+
+    <item vbox:state_expanded="false" >
+        <shape android:shape="rectangle">
+            <gradient android:angle="90" android:startColor="@color/gray_light" android:endColor="@android:color/transparent"/>
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/gray_light"/>
+            <corners android:radius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_header_padding" android:top="@dimen/panel_header_padding"
+                     android:left="@dimen/panel_header_padding" android:right="@dimen/panel_header_padding"/>
+        </shape>
+    </item>
+
+</selector>

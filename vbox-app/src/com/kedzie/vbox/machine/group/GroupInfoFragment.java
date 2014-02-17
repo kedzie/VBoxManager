@@ -232,9 +232,9 @@ public class GroupInfoFragment extends SherlockFragment {
 	        	preview.setAdjustViewBounds(true);
 				preview.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				preview.setImageBitmap(node.screenshot.getBitmap());
-				previewPanel.expand();
+				previewPanel.expand(false);
 	        } else {
-	        	previewPanel.collapse();
+	        	previewPanel.collapse(false);
 	        }
 	        _view.addView(view);
 	    }

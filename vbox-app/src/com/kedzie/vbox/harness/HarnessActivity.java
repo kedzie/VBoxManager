@@ -10,12 +10,15 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.app.VBoxProgressDialog;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.machine.settings.VMSettingsActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.DialogTask;
 
 /**
  * Initializes & launches arbitrary activity from main launcher
@@ -72,12 +75,30 @@ public class HarnessActivity extends BaseActivity {
 		}
 	}
 
+    private class MockProgressTask extends DialogTask<Void, String> {
+
+        public MockProgressTask() {
+            super(HarnessActivity.this, null, "Mock Task");
+        }
+
+        @Override
+        protected String work(Void... params) throws Exception {
+            handleProgress(new MockProgress());
+            return "Bla";
+        }
+
+        @Override
+        protected void onSuccess(String result) {
+            super.onSuccess(result);
+        }
+    }
+
 	private VBoxSvc _vboxApi;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		new LogonTask( _vboxApi).execute(new Server(null,"192.168.1.10", false, 18083, "kedzie", "Mk0204$$"));
+		new LogonTask( _vboxApi).execute(new Server(null,"10.0.2.2", false, 19083, "kedzie", "Mk0204$$"));
 	}
 	
 	@Override
@@ -101,6 +122,8 @@ public class HarnessActivity extends BaseActivity {
 			case R.id.harness_machineSettings:
 				new MachineSettingsTask(_vboxApi).execute("TEST");
 				return true;
+            case R.id.harness_task:
+                new MockProgressTask().execute();
 		}
 		return false;
 	}

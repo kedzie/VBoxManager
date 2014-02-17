@@ -13,14 +13,17 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.LoggingFrameLayout;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class LogFragment extends SherlockFragment {
+public class LogFragment extends RoboSherlockFragment {
     private static final String TAG = "LogFragment";
 	private static final int MAX_LOG_SIZE=409600; //400 Kbps
 	
@@ -46,6 +49,7 @@ public class LogFragment extends SherlockFragment {
 		}
 	}
 
+	@InjectView(R.id.logText)
 	private TextView _logText;
 	private IMachine _machine;
 	private String _log;
@@ -60,9 +64,7 @@ public class LogFragment extends SherlockFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.machine_log, null);
-		_logText = (TextView)view.findViewById(R.id.logText);
-		return view;
+		return inflater.inflate(R.layout.machine_log, null);
 	}
 	
 	@Override

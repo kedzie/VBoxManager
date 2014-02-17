@@ -15,15 +15,17 @@ import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.jaxb.StorageControllerType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class StorageControllerFragment extends SherlockFragment {
+public class StorageControllerFragment extends RoboSherlockFragment {
 
-    class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
+    private class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
     	
         public LoadInfoTask() { 
         	super(getSherlockActivity(), null); 
@@ -44,13 +46,15 @@ public class StorageControllerFragment extends SherlockFragment {
     }
 
     private IStorageController _controller;
-    
-    private View _view;
-    private Spinner _typeSpinner;
-    private StorageControllerType[] _types;
-    private ArrayAdapter<StorageControllerType> _typeAdapter;
+
+	@InjectView(R.id.controller_host_io_cache)
     private CheckBox _hostIOCheckbox;
+	@InjectView(R.id.controller_name)
     private TextView _nameText;
+	@InjectView(R.id.controller_type)
+	private Spinner _typeSpinner;
+	private StorageControllerType[] _types;
+	private ArrayAdapter<StorageControllerType> _typeAdapter;
     
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,17 +64,13 @@ public class StorageControllerFragment extends SherlockFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.settings_storage_controller, null);
-		_typeSpinner = (Spinner)_view.findViewById(R.id.controller_type);
-		_hostIOCheckbox = (CheckBox)_view.findViewById(R.id.controller_host_io_cache);
-		_nameText = (TextView)_view.findViewById(R.id.controller_name);
-		return _view;
+		return inflater.inflate(R.layout.settings_storage_controller, null);
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
-			new LoadInfoTask().execute(_controller);
+		new LoadInfoTask().execute(_controller);
 	}
 
 	private void populate() {

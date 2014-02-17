@@ -31,7 +31,7 @@
 		</LinearLayout>
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
 			<TextView style="@style/SmallTextPrimary" android:text="Controller: " android:layout_gravity="left"  />
-			<TextView style="@style/SmallTextPrimary" android:id="@+id/audio_controlller" android:layout_weight="1" />
+			<TextView style="@style/SmallTextPrimary" android:id="@+id/audio_controller" android:layout_weight="1" />
 		</LinearLayout>
 	</com.kedzie.vbox.app.CollapsiblePanelView>
 		

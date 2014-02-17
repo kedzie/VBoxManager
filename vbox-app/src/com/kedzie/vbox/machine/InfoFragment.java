@@ -27,6 +27,7 @@ import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineRunnable;
 import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 import java.io.IOException;
 import java.util.List;
@@ -128,24 +129,42 @@ public class InfoFragment extends RoboSherlockFragment {
 //	private VBoxSvc _vmgr;
 	private IMachine _machine;
 	private MachineInfo _machineInfo;
-	private View _view;
+
+    @InjectView(R.id.name)
 	private TextView _nameText;
+    @InjectView(R.id.description)
 	private TextView _descriptionText;
+    @InjectView(R.id.groups)
 	private TextView _groupText;
+    @InjectView(R.id.ostype)
 	private TextView _osTypeText;
+    @InjectView(R.id.baseMemory)
 	private TextView _baseMemoryText;
+    @InjectView(R.id.processors)
 	private TextView _processorsText;
+    @InjectView(R.id.bootOrder)
 	private TextView _bootOrderText;
+    @InjectView(R.id.acceleration)
 	private TextView _accelerationText;
+    @InjectView(R.id.videoMemory)
 	private TextView _videoMemoryText;
+    @InjectView(R.id.accelerationVideo)
 	private TextView _accelerationVideoText;
+    @InjectView(R.id.rdpPort)
 	private TextView _rdpPortText;
+    @InjectView(R.id.storage)
 	private TextView _storageText;
+    @InjectView(R.id.network)
 	private TextView _networkText;
+    @InjectView(R.id.audio_driver)
 	private TextView _audioDriver;
+    @InjectView(R.id.audio_controller)
 	private TextView _audioController;
+    @InjectView(R.id.previewPanel)
 	private CollapsiblePanelView _previewPanel;
+    @InjectView(R.id.preview)
 	private ImageView _preview;
+
 	private LocalBroadcastManager lbm;
 	/** Event-handling local broadcasts */
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
@@ -170,25 +189,7 @@ public class InfoFragment extends RoboSherlockFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.machine_info, null);
-		_nameText = (TextView)_view.findViewById(R.id.name);
-		_descriptionText = (TextView)_view.findViewById(R.id.description);
-		_groupText = (TextView)_view.findViewById(R.id.groups);
-		_osTypeText = (TextView)_view.findViewById(R.id.ostype);
-		_baseMemoryText = (TextView)_view.findViewById(R.id.baseMemory);
-		_processorsText = (TextView)_view.findViewById(R.id.processors);
-		_bootOrderText = (TextView)_view.findViewById(R.id.bootOrder);
-		_accelerationText = (TextView)_view.findViewById(R.id.acceleration);
-		_videoMemoryText = (TextView)_view.findViewById(R.id.videoMemory);
-		_accelerationVideoText = (TextView)_view.findViewById(R.id.accelerationVideo);
-		_storageText = (TextView)_view.findViewById(R.id.storage);
-		_networkText = (TextView)_view.findViewById(R.id.network);
-		_audioDriver = (TextView)_view.findViewById(R.id.audio_driver);
-		_audioController = (TextView)_view.findViewById(R.id.audio_controlller);
-		_rdpPortText = (TextView)_view.findViewById(R.id.rdpPort);
-		_preview = (ImageView)_view.findViewById(R.id.preview);
-		_previewPanel =(CollapsiblePanelView)_view.findViewById(R.id.previewPanel);
-		return _view;
+		return inflater.inflate(R.layout.machine_info, null);
 	}
 	
 	@Override
@@ -290,7 +291,7 @@ public class InfoFragment extends RoboSherlockFragment {
 			Log.v(TAG, "Adapter #" + (i+1) + " attachment Type: " + type);
 			if(type.equals(NetworkAttachmentType.BRIDGED))
 				networkText.append("  (Bridged Adapter, ").append(adapter.getBridgedInterface()).append(")");
-			else if(type.equals(NetworkAttachmentType.BRIDGED))
+			else if(type.equals(NetworkAttachmentType.HOST_ONLY))
 				networkText.append("  (Host-Only Adapter, ").append(adapter.getHostOnlyInterface()).append(")");
 			else if(type.equals(NetworkAttachmentType.GENERIC))
 				networkText.append("  (Generic-Driver Adapter, ").append(adapter.getGenericDriver()).append(")");
@@ -309,9 +310,9 @@ public class InfoFragment extends RoboSherlockFragment {
 			_preview.setImageBitmap(_machineInfo.screenshot.getBitmap());
 		    _preview.setAdjustViewBounds(true);
 			_preview.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			_previewPanel.expand();
+			_previewPanel.expand(false);
 		} else
-			_previewPanel.collapse();
+			_previewPanel.collapse(false);
 	}
 	
 	@Override

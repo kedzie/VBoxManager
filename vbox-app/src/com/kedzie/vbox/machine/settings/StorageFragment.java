@@ -3,6 +3,7 @@ package com.kedzie.vbox.machine.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +75,11 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     	if(_dualPane) {
     		Utils.setCustomAnimations(getChildFragmentManager().beginTransaction()).replace(R.id.details, details.instantiate(getActivity())).commit();
         } else {
-        	startActivity(new Intent(getActivity(), FragmentActivity.class).putExtra(FragmentElement.BUNDLE, details));
+            Utils.setCustomAnimations(getChildFragmentManager().beginTransaction())
+                    .addToBackStack(null)
+                    .detach(_listFragment)
+                    .add(R.id.list, details.instantiate(getActivity()))
+                    .commit();
         }
     }
     

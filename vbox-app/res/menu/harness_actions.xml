@@ -8,5 +8,9 @@
     <item android:id="@+id/harness_machineSettings"
     	android:title="Machine Settings"
     	android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/harness_task"
+          android:title="Task"
+          android:showAsAction="ifRoom"/>
     
 </menu>

@@ -1,5 +1,11 @@
 package com.kedzie.vbox.app;
 
+import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
 import com.actionbarsherlock.view.MenuItem;
 
 import android.content.res.Configuration;
@@ -9,6 +15,9 @@ import android.support.v4.app.NavUtils;
 
 public class FragmentActivity extends BaseActivity {
 
+	private String TAG = "FragmentActivity";
+	private FragmentElement mFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,17 +26,18 @@ public class FragmentActivity extends BaseActivity {
             finish();
         }
         
-        FragmentElement element = (FragmentElement)getIntent().getParcelableExtra(FragmentElement.BUNDLE);
+        mFragment = getIntent().getParcelableExtra(FragmentElement.BUNDLE);
+		TAG = mFragment.name;
         
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle(element.name);
-        if(element.icon!=-1)
-        	getSupportActionBar().setIcon(element.icon);
+        getSupportActionBar().setTitle(mFragment.name);
+        if(mFragment.icon!=-1)
+        	getSupportActionBar().setIcon(mFragment.icon);
         
         if(savedInstanceState==null) {
-        	Utils.replaceFragment(this, getSupportFragmentManager(), android.R.id.content, element);
+        	Utils.replaceFragment(this, getSupportFragmentManager(), android.R.id.content, mFragment);
         }
     }
     
@@ -46,4 +56,11 @@ public class FragmentActivity extends BaseActivity {
         super.finish();
         Utils.overrideBackTransition(this);
     }
+
+	@Override
+	public void onBackPressed() {
+		Fragment frag = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		if(frag!=null && !frag.getChildFragmentManager().popBackStackImmediate())
+			super.onBackPressed();
+	}
 }

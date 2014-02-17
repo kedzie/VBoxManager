@@ -1,9 +1,7 @@
-
 package com.kedzie.vbox.api.jaxb;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.google.common.base.Objects;
 import com.kedzie.vbox.api.IMedium;
 import com.kedzie.vbox.app.Utils;
@@ -20,19 +18,14 @@ public class IMediumAttachment implements Parcelable {
 			object.setMedium((IMedium) in.readParcelable(loader));
 			object.setController(in.readString());
 			object.setType((DeviceType) in.readSerializable());
-			object.setSlot((Slot)in.readParcelable(loader));
-			boolean[] tmp = new boolean[1];
-			in.readBooleanArray(tmp);
-			object.setPassthrough(tmp[0]);
-			in.readBooleanArray(tmp);
-			object.setTemporaryEject(tmp[0]);
-			in.readBooleanArray(tmp);
-			object.setIsEjected(tmp[0]);
-			in.readBooleanArray(tmp);
-			object.setNonRotational(tmp[0]);
-			in.readBooleanArray(tmp);
-			object.setDiscard(tmp[0]);
+			object.setSlot((Slot) in.readParcelable(loader));
+			object.setPassthrough(in.readInt() == 1);
+			object.setTemporaryEject(in.readInt() == 1);
+			object.setIsEjected(in.readInt() == 1);
+			object.setNonRotational(in.readInt() == 1);
+			object.setDiscard(in.readInt() == 1);
 			object.setBandwidthGroup(in.readString());
+			object.setHotPluggable(in.readInt() == 1);
 			return object;
 		}
 
@@ -63,12 +56,13 @@ public class IMediumAttachment implements Parcelable {
 		public int device;
 		public String name;
 
-		public Slot() {}
+		public Slot() {
+		}
 
 		public Slot(int port, int device) {
 			this(port, device, null);
 		}
-		
+
 		public Slot(int port, int device, String name) {
 			this.port = port;
 			this.device = device;
@@ -91,7 +85,7 @@ public class IMediumAttachment implements Parcelable {
 		public String toString() {
 			if (!Utils.isEmpty(name))
 				return name;
-			return new StringBuffer(port+"").append(", ").append(device).toString();
+			return String.format("%d, %d", port, device);
 		}
 
 		@Override
@@ -120,6 +114,7 @@ public class IMediumAttachment implements Parcelable {
 	private boolean nonRotational;
 	private boolean discard;
 	private String bandwidthGroup;
+	private boolean hotPluggable;
 
 	@Override
 	public int describeContents() {
@@ -132,22 +127,13 @@ public class IMediumAttachment implements Parcelable {
 		dest.writeString(controller);
 		dest.writeSerializable(type);
 		dest.writeParcelable(slot, flags);
-		dest.writeBooleanArray(new boolean[] {
-			passthrough
-		});
-		dest.writeBooleanArray(new boolean[] {
-			temporaryEject
-		});
-		dest.writeBooleanArray(new boolean[] {
-			isEjected
-		});
-		dest.writeBooleanArray(new boolean[] {
-			nonRotational
-		});
-		dest.writeBooleanArray(new boolean[] {
-			discard
-		});
+		dest.writeInt(passthrough ? 1 : 0);
+		dest.writeInt(temporaryEject ? 1 : 0);
+		dest.writeInt(isEjected ? 1 : 0);
+		dest.writeInt(nonRotational ? 1 : 0);
+		dest.writeInt(discard ? 1 : 0);
 		dest.writeString(bandwidthGroup);
+		dest.writeInt(hotPluggable ? 1 : 0);
 	}
 
 	public IMedium getMedium() {
@@ -246,6 +232,14 @@ public class IMediumAttachment implements Parcelable {
 		this.bandwidthGroup = bandwidthGroup;
 	}
 
+	public boolean isHotPluggable() {
+		return hotPluggable;
+	}
+
+	public void setHotPluggable(boolean hotPluggable) {
+		this.hotPluggable = hotPluggable;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(slot, controller);
@@ -258,6 +252,6 @@ public class IMediumAttachment implements Parcelable {
 		if (obj == null || !(obj instanceof IMediumAttachment))
 			return false;
 		IMediumAttachment that = (IMediumAttachment) obj;
-		return Objects.equal(slot, that.slot) && Objects.equal(controller, that.controller) && Objects.equal(medium , that.medium);
+		return Objects.equal(slot, that.slot) && Objects.equal(controller, that.controller) && Objects.equal(medium, that.medium);
 	}
 }

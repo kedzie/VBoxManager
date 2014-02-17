@@ -26,12 +26,13 @@ import com.kedzie.vbox.api.jaxb.AuthType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboSherlockFragment;
 
 /**
  * Edit remote desktop server
  * @apiviz.stereotype fragment
  */
-public class DisplayRemoteFragment extends SherlockFragment {
+public class DisplayRemoteFragment extends RoboSherlockFragment {
 	
 	/**
 	 * load Remote Desktop Server info

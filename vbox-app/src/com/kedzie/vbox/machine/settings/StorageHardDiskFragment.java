@@ -28,13 +28,15 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
+import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 /**
  * Hard disk medium details
  * 
  * @apiviz.stereotype fragment
  */
-public class StorageHardDiskFragment extends SherlockFragment {
+public class StorageHardDiskFragment extends RoboSherlockFragment {
 
 	/**
 	 * Load medium details
@@ -81,7 +83,7 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	}
 
 	/**
-	 * Move the medium to a different slot within controller.
+	 * Show list of mediums to mount
 	 */
 	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
@@ -117,7 +119,7 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	}
 
 	/**
-	 * Move the medium to a different slot within controller.
+	 * Mount medium
 	 */
 	class MountTask extends DialogTask<IMedium, Void> {
 
@@ -147,17 +149,21 @@ public class StorageHardDiskFragment extends SherlockFragment {
 	private IStorageController _controller;
 	private ArrayList<IMediumAttachment> _attachments;
 
-	private View _view;
+	@InjectView(R.id.storage_mount)
+	private ImageButton _mountButton;
+	@InjectView(R.id.storage_type)
+	private TextView _storageTypeText;
+	@InjectView(R.id.storage_virtual_size)
+	private TextView _virtualSizeText;
+	@InjectView(R.id.storage_actual_size)
+	private TextView _actualSizeText;
+	@InjectView(R.id.storage_location)
+	private TextView _locationText;
+	@InjectView(R.id.storage_port)
 	private Spinner _slotSpinner;
 	private ArrayList<Slot> _slots;
 	private ArrayAdapter<Slot> _slotAdapter;
-
-	private ImageButton _mountButton;
 //	private CheckBox _solidStateCheckbox;
-	private TextView _storageTypeText;
-	private TextView _virtualSizeText;
-	private TextView _actualSizeText;
-	private TextView _locationText;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -168,21 +174,18 @@ public class StorageHardDiskFragment extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		_view = inflater.inflate(R.layout.settings_storage_details_harddisk, null);
-		_slotSpinner = (Spinner)_view.findViewById(R.id.storage_port);
-		_mountButton = (ImageButton)_view.findViewById(R.id.storage_mount);
+		return inflater.inflate(R.layout.settings_storage_details_harddisk, null);
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		_mountButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				new ListMediumsTask().execute();
 			}
 		});
-//		_solidStateCheckbox = (CheckBox)_view.findViewById(R.id.storage_solid_state);
-		_storageTypeText = (TextView)_view.findViewById(R.id.storage_type);
-		_virtualSizeText = (TextView)_view.findViewById(R.id.storage_virtual_size);
-		_actualSizeText = (TextView)_view.findViewById(R.id.storage_actual_size);
-		_locationText = (TextView)_view.findViewById(R.id.storage_location);
-		return _view;
 	}
 
 	@Override

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.3.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vbox-app</artifactId>
@@ -41,7 +41,7 @@
 		<dependency>
 				<groupId>com.github.kedzie.supportanimator</groupId>
 				<artifactId>support-v4-animator</artifactId>
-				<version>13.0.0</version>
+				<version>19.0.0</version>
 				<type>apklib</type>
 			</dependency>
 			<dependency>
@@ -58,7 +58,7 @@
 			<dependency>
 				<groupId>com.actionbarsherlock</groupId>
 				<artifactId>actionbarsherlock</artifactId>
-				<version>4.3.1</version>
+				<version>4.4.0</version>
 				<type>apklib</type>
 				<exclusions>
 					<exclusion>
@@ -99,7 +99,17 @@
 				<artifactId>objectpool</artifactId>
 				<version>1.1.2</version>
 			</dependency>
-	</dependencies>
+            <dependency>
+                <groupId>com.intellij</groupId>
+                <artifactId>annotations</artifactId>
+                <version>12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

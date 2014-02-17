@@ -4,7 +4,7 @@
 
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android-parent</artifactId>
-	<version>3.3.0</version>
+	<version>3.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>VirtualBox Manager - Parent</name>
@@ -14,7 +14,7 @@
 
 	<properties>
 		<github.global.server>github</github.global.server>
-		<android.version>4.3_r1</android.version>
+		<android.version>4.4_r1</android.version>
 	</properties>
 
 	<modules>
@@ -109,10 +109,10 @@
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.8.2</version>
 					<extensions>true</extensions>
 					<configuration>
-						<sdk><platform>18</platform></sdk>
+						<sdk><platform>19</platform></sdk>
 						<manifestVersionName />
 						<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
 						<attachSources>true</attachSources>

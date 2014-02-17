@@ -1,12 +1,19 @@
 package com.kedzie.vbox.host;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IHostNetworkInterface;
 import com.kedzie.vbox.api.IMedium;
@@ -14,9 +21,12 @@ import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType;
 import com.kedzie.vbox.api.jaxb.ProcessorFeature;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.ConfigureMetricsTask;
 import roboguice.fragment.RoboSherlockFragment;
+import roboguice.inject.InjectView;
 
 import java.util.List;
 
@@ -26,6 +36,8 @@ import java.util.List;
  */
 public class HostInfoFragment extends RoboSherlockFragment {
     private static final String TAG = "InfoFragment";
+
+    private static final int REQUEST_CODE_PREFERENCES = 6;
 
     class LoadInfoTask extends ActionBarTask<IHost, IHost> {
 
@@ -77,11 +89,17 @@ public class HostInfoFragment extends RoboSherlockFragment {
     private IHost _host;
     private VBoxSvc _vmgr;
     private View _view;
+    @InjectView(R.id.ostype)
     private TextView _ostypeText;
+    @InjectView(R.id.vbox)
     private TextView _vboxText;
+    @InjectView(R.id.memory)
     private TextView _memoryText;
+    @InjectView(R.id.processors)
     private TextView _processorsText;
+    @InjectView(R.id.processors)
     private TextView _networksText;
+    @InjectView(R.id.dvds)
     private TextView _dvdsText;
 
     @Override
@@ -94,15 +112,7 @@ public class HostInfoFragment extends RoboSherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        _view = inflater.inflate(R.layout.host_info, null);
-        _ostypeText = (TextView)_view.findViewById(R.id.ostype);
-        _vboxText = (TextView)_view.findViewById(R.id.vbox);
-        _memoryText = (TextView)_view.findViewById(R.id.memory);
-        _processorsText = (TextView)_view.findViewById(R.id.processors);
-        _networksText = (TextView)_view.findViewById(R.id.networks);
-        _processorsText = (TextView)_view.findViewById(R.id.processors);
-        _dvdsText = (TextView)_view.findViewById(R.id.dvds);
-        return _view;
+        return _view = inflater.inflate(R.layout.host_info, null);
     }
 
     @Override
@@ -111,7 +121,7 @@ public class HostInfoFragment extends RoboSherlockFragment {
 
         if(savedInstanceState!=null) {
             _host = savedInstanceState.getParcelable(IHost.BUNDLE);
-            populateViews(_host);
+            safePopulateViews(_host);
         } else {
             new LoadInfoTask().execute(_host);
         }
@@ -121,6 +131,14 @@ public class HostInfoFragment extends RoboSherlockFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         BundleBuilder.putProxy(outState, IHost.BUNDLE, _host);
+    }
+
+    private void safePopulateViews(IHost host) {
+        try {
+            populateViews(host);
+        } catch(NetworkOnMainThreadException e) {
+            new LoadInfoTask().execute(host);
+        }
     }
 
     private void populateViews(IHost host) {
@@ -167,13 +185,32 @@ public class HostInfoFragment extends RoboSherlockFragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.host_actions, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.option_menu_preferences:
+                Utils.startActivityForResult(getActivity(), new Intent(getActivity(), SettingsActivity.class), REQUEST_CODE_PREFERENCES);
+                return true;
             case R.id.option_menu_refresh:
                 Log.d(TAG, "Refreshing...");
                 new LoadInfoTask().execute(_host);
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==REQUEST_CODE_PREFERENCES) {
+            new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
+                    Utils.getIntPreference(getActivity(), SettingsActivity.PREF_PERIOD),
+                    Utils.getIntPreference(getActivity(), SettingsActivity.PREF_COUNT) );
+        }
     }
 }

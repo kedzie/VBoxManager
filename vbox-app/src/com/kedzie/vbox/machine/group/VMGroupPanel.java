@@ -40,6 +40,8 @@ public class VMGroupPanel extends CollapsiblePanelView {
     public VMGroupPanel(Context context, VMGroup group) {
         super(context);
         setClickable(true);
+        setFocusable(true);
+        setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
         setCollapseRotation(COLLAPSE_ROTATION);
         _group = group;
         _titleLabel.setText(_group.getName());
@@ -49,7 +51,7 @@ public class VMGroupPanel extends CollapsiblePanelView {
     
     public View getTitleView() {
         if(mTitleView==null) {
-            mTitleView = LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
+            mTitleView = (ExpandableLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_title, this, false);
             setCollapseButton(mTitleView.findViewById(R.id.group_collapse));
             _drillDownButton = (ImageView)mTitleView.findViewById(R.id.group_enter);
             _drillDownButton.setOnClickListener(new OnClickListener() {
