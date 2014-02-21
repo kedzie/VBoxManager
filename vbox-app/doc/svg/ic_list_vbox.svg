@@ -14,12 +14,12 @@
    width="48"
    height="48"
    id="svg3215"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="ic_list_vbox.svg"
    style="display:inline"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/working/Color/ic_list_vbox.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/kedzie/Development/git/VBoxManager/vbox-app/doc/svg-xhdpi/Holo-Light/ic_list_vbox.png"
+   inkscape:export-xdpi="135"
+   inkscape:export-ydpi="135">
   <metadata
      id="metadata12">
     <rdf:RDF>
@@ -41,19 +41,19 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1280"
-     inkscape:window-height="951"
+     inkscape:window-width="1366"
+     inkscape:window-height="719"
      id="namedview10"
      showgrid="true"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:zoom="8.6118945"
-     inkscape:cx="22.786978"
-     inkscape:cy="33.133033"
+     inkscape:cx="8.156051"
+     inkscape:cy="32.029908"
      inkscape:window-x="0"
-     inkscape:window-y="24"
+     inkscape:window-y="22"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="layer3"
      inkscape:snap-to-guides="true"
      inkscape:object-paths="true"
      inkscape:snap-bbox="true"
@@ -156,7 +156,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Holo-Light"
-     style="display:none">
+     style="display:inline">
     <rect
        transform="translate(0,26)"
        ry="2.2499998"
@@ -178,9 +178,10 @@
   <g
      inkscape:groupmode="layer"
      id="layer5"
-     inkscape:label="Color">
+     inkscape:label="Color"
+     style="display:none">
     <rect
-       style="display:inline;fill:none;stroke:#a6aca9;stroke-width:2.24999976000000013;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#a6aca9;stroke-width:2.24999976;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
        id="rect3001"
        width="33.75"
        height="33.75"
@@ -190,7 +191,7 @@
        ry="2.2499998"
        transform="translate(0,26)" />
     <path
-       style="display:inline;fill:none;stroke:#a6aca9;stroke-width:3.61607170000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#a6aca9;stroke-width:3.6160717;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
        d="m 9.5357142,-4.4107143 4.8214278,0 3.616072,10.103189 4.821428,-14.9246173 3.616072,7.2321425 2.410714,-7.2321425 4.82143,10.848214 4.821428,0"
        id="path3003"
        inkscape:connector-curvature="0"

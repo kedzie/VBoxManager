@@ -14,12 +14,12 @@
    width="36"
    height="36"
    id="svg3215"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="ic_notif_vbox.svg"
    style="display:inline"
-   inkscape:export-filename="/home/kedzie/git/VirtualBox-Manager/VBoxManager/res/drawable-hdpi/ic_notif_vbox.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/kedzie/Development/git/VBoxManager/vbox-app/res/drawable-xhdpi/ic_notif_vbox.png"
+   inkscape:export-xdpi="120"
+   inkscape:export-ydpi="120">
   <metadata
      id="metadata12">
     <rdf:RDF>
@@ -41,18 +41,18 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1280"
-     inkscape:window-height="951"
+     inkscape:window-width="1119"
+     inkscape:window-height="663"
      id="namedview10"
      showgrid="true"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:zoom="9.2271872"
-     inkscape:cx="18.341407"
-     inkscape:cy="19.534044"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"
+     inkscape:cx="15.393535"
+     inkscape:cy="18.504478"
+     inkscape:window-x="207"
+     inkscape:window-y="167"
+     inkscape:window-maximized="0"
      inkscape:current-layer="layer3"
      inkscape:snap-to-guides="true"
      inkscape:object-paths="true"
@@ -135,17 +135,17 @@
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Holo-Dark Positive"
-     style="display:inline"
+     inkscape:label="Holo-Dark"
+     style="display:none"
      transform="translate(0,14)">
     <path
-       style="fill:none;stroke:#ffffff;stroke-width:3.31447672999999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#ffffff;stroke-width:3.31447673;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.8;stroke-dasharray:none"
        d="m 4.7411733,1.7894348 4.4200376,0 3.3150311,9.2590002 4.420037,-13.6775659 3.315031,6.6278489 2.210016,-6.6278489 4.420041,9.9417736 4.420037,0"
        id="path3771"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
     <rect
-       style="fill:none;stroke:#ffffff;stroke-width:2.06234049999999991;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#ffffff;stroke-width:2.0623405;stroke-miterlimit:4;stroke-opacity:0.8;stroke-dasharray:none"
        id="rect3781"
        width="30.940269"
        height="30.929964"
@@ -153,5 +153,28 @@
        y="-11.466264"
        rx="2.0626843"
        ry="2.0619974" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Holo-Light"
+     style="display:inline">
+    <path
+       transform="translate(0,14)"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path3762"
+       d="m 4.7411733,1.7894348 4.4200376,0 3.3150311,9.2590002 4.420037,-13.6775659 3.315031,6.6278489 2.210016,-6.6278489 4.420041,9.9417736 4.420037,0"
+       style="fill:none;stroke:#333333;stroke-width:3.31447673;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.6;stroke-dasharray:none;display:inline" />
+    <rect
+       transform="translate(0,14)"
+       ry="2.0619974"
+       rx="2.0626843"
+       y="-11.466264"
+       x="2.5311542"
+       height="30.929964"
+       width="30.940269"
+       id="rect3764"
+       style="fill:none;stroke:#333333;stroke-width:2.0623405;stroke-miterlimit:4;stroke-opacity:0.6;stroke-dasharray:none;display:inline" />
   </g>
 </svg>
