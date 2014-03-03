@@ -1,11 +1,14 @@
 package com.kedzie.vbox.server;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils;
 import roboguice.activity.RoboSherlockActivity;
@@ -25,7 +28,9 @@ public class HelpActivity extends RoboSherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.help);
-        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         mainText.setText(Html.fromHtml(getResources().getString(R.string.help_main)));
         mainText.setMovementMethod(LinkMovementMethod.getInstance());
         

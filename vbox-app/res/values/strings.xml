@@ -49,7 +49,11 @@
     <string name="tab_log">Log</string>
     <string name="tab_snapshots">Snapshots</string>
     <string name="widget_server_list">Select Server for Widget</string>
-    
+
+    <string name="progress_notification_text">Operation <ff:g id="operation">%1$d</ff:g>/<ff:g id="operationCount">%2$d</ff:g> - <ff:g id="operationDescription">%3$s</ff:g></string>
+    <string name="progress_notification_success">Operation <ff:g id="description">%1$s</ff:g> finished successfully</string>
+    <string name="progress_notification_failure">Operation <ff:g id="description">%1$s</ff:g> failed: <ff:g id="error">%2$s</ff:g></string>
+
     <string name="action_machine_settings">Machine Settings</string>
     <string name="action_start">Start</string>
     <string name="action_poweroff">Power Off</string>

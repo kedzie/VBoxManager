@@ -88,7 +88,7 @@ public class HostInfoFragment extends RoboSherlockFragment {
 
     private IHost _host;
     private VBoxSvc _vmgr;
-    private View _view;
+
     @InjectView(R.id.ostype)
     private TextView _ostypeText;
     @InjectView(R.id.vbox)
@@ -112,7 +112,7 @@ public class HostInfoFragment extends RoboSherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return _view = inflater.inflate(R.layout.host_info, null);
+        return inflater.inflate(R.layout.host_info, null);
     }
 
     @Override

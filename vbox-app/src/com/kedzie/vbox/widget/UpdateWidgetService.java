@@ -40,31 +40,22 @@ public class UpdateWidgetService extends IntentService {
 			VBoxSvc vboxApi = new VBoxSvc(server);
 			vboxApi.setVBox(vboxApi.getProxy(IVirtualBox.class, Provider.loadPref(this, widgetId, Provider.KEY_VBOX)));
 			IMachine machine = vboxApi.getProxy(IMachine.class, Provider.loadPref(this, widgetId, Provider.KEY_IDREF));
-			
-			if(Utils.isEmpty(machine.getInterfaceName())) {      //check if logged on
-			    machine = loginAndFindMachine(vboxApi, machineName);
-			    if(machine==null)
-			        return;
-			    Provider.savePref(this, widgetId, Provider.KEY_IDREF, machine.getIdRef());
-			    Provider.savePref(this, widgetId, Provider.KEY_VBOX, vboxApi.getVBox().getIdRef());
-			}
-			Utils.cacheProperties(machine);
-			Provider.updateAppWidget(this, widgetId, machine);
+
+            try {
+                if (Utils.isEmpty(machine.getInterfaceName())) {      //check if logged on
+                    vboxApi.logon();
+                    machine = vboxApi.getVBox().findMachine(machineName);
+                    if (machine == null)
+                        return;
+                    Provider.savePref(this, widgetId, Provider.KEY_IDREF, machine.getIdRef());
+                    Provider.savePref(this, widgetId, Provider.KEY_VBOX, vboxApi.getVBox().getIdRef());
+                }
+                Utils.cacheProperties(machine);
+                Provider.updateAppWidget(this, widgetId, machine);
+            } catch(IOException e) {
+                Log.w(TAG, "Couldn't update appwidget", e);
+            }
 		}
-	}
-	
-	private IMachine loginAndFindMachine(VBoxSvc vboxApi, String machineName) {
-	    try {
-            vboxApi.logon();
-            return vboxApi.getVBox().findMachine(machineName);
-//            for(IMachine m : vboxApi.getVBox().getMachines()) {
-//                if(m.getName().equals(machineName))
-//                    return m;
-//            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error logging on", e);
-        }
-	    return null;
 	}
 	
 	private Server loadServer(long id) {

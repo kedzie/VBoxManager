@@ -16,8 +16,7 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 	private static int _numActiveTasks;
 	
 	/**
-	 * @param TAG LogCat tag
-	 * @param ctx calling Activity
+	 * @param context calling Activity
 	 * @param vmgr VirtualBox API service
 	 */
 	public ActionBarTask(SherlockFragmentActivity context, VBoxSvc vmgr) {

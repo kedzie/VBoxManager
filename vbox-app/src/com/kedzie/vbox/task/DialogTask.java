@@ -2,12 +2,17 @@ package com.kedzie.vbox.task;
 
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.app.VBoxProgressDialog;
 import com.kedzie.vbox.soap.VBoxSvc;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Shows progress in a modal dialog
@@ -18,6 +23,9 @@ import com.kedzie.vbox.soap.VBoxSvc;
 public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> {
 
 	private VBoxProgressDialog pDialog;
+    private TaskFragment taskFragment;
+    private String message;
+    private boolean cancelable;
 	
 	/**
 	 * Constructor in <em>Indeterminate</em> operation
@@ -59,22 +67,28 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 */
 	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, String msg, boolean cancelable) {
 		super(context, vmgr);
+        this.message=msg;
+        this.cancelable=cancelable;
+        taskFragment = new TaskFragment(this);
+        getContext().getSupportFragmentManager().beginTransaction().add(taskFragment, "work").commit();
+	}
+	
+	@Override
+	protected void onPreExecute() {
         pDialog = new VBoxProgressDialog();
-        pDialog.setArguments(new BundleBuilder().putString("msg", msg).putBoolean("cancelable", cancelable).create());
+        pDialog.setArguments(new BundleBuilder().putString("msg", message).putBoolean("cancelable", cancelable).create());
         pDialog.setTask(this);
+        pDialog.showAllowingStateLoss(getContext().getSupportFragmentManager().beginTransaction(), "progress");
+//        Utils.showDialog(getContext().getSupportFragmentManager(), "progress", pDialog);
 	}
 	
 	@Override
-	protected void onPreExecute()		{
-        Utils.showDialog(getContext().getSupportFragmentManager(), "progress", pDialog);
-	}
-	
-	@Override
-	protected void onPostExecute(Output result)	{
-			if(pDialog!=null)
-				pDialog.dismiss();
-			super.onPostExecute(result);
-	}
+    protected void onPostExecute(Output result)	{
+        if(pDialog!=null)
+            pDialog.dismiss();
+        getContext().getSupportFragmentManager().beginTransaction().remove(taskFragment).commit();
+        super.onPostExecute(result);
+    }
 
 	@Override
     protected Output work(Input... params) throws Exception {
@@ -83,6 +97,19 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 
     @Override
 	protected void onProgressUpdate(IProgress... p) {
-		pDialog.update(p[0]);
+        if(pDialog!=null)
+		    pDialog.update(p[0]);
 	}
+
+    public void setProgressDialog(VBoxProgressDialog dialog) {
+        pDialog = dialog;
+    }
+
+    public VBoxProgressDialog getProgressDialog() {
+        return pDialog;
+    }
+
+    public void setActivity(SherlockFragmentActivity activity) {
+        this._context = new WeakReference<SherlockFragmentActivity>(activity);
+    }
 }

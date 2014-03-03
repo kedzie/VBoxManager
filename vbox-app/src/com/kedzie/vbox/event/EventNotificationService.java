@@ -20,6 +20,7 @@ import com.kedzie.vbox.app.FragmentActivity;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineFragment;
+import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import roboguice.inject.InjectExtra;
 import roboguice.service.RoboIntentService;
@@ -46,6 +47,7 @@ public class EventNotificationService extends RoboIntentService {
         FragmentElement fragment = new FragmentElement(eventMachine.getName(), MachineFragment.class,
                 new BundleBuilder().putVBoxSvc(eventMachine.getAPI()).putProxy(IMachine.BUNDLE, eventMachine).create());
 		Intent i = new Intent(EventNotificationService.this, FragmentActivity.class)
+                .putExtra(FragmentActivity.KEY_PARENT_ACTIVITY, MachineListActivity.class.getName())
                 .putExtra(FragmentElement.BUNDLE, fragment);
 		Utils.cacheProperties(eventMachine);
 		BundleBuilder.addProxy(i, IMachine.BUNDLE, eventMachine);

@@ -116,6 +116,9 @@
 						<sdk><platform>19</platform></sdk>
 						<manifestVersionName />
 						<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
+                        <manifest>
+                            <debuggable>true</debuggable>
+                        </manifest>
 						<attachSources>true</attachSources>
 					</configuration>
 					<executions>

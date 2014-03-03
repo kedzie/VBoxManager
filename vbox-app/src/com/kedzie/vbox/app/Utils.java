@@ -2,9 +2,7 @@
 package com.kedzie.vbox.app;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Map;
 
@@ -503,14 +501,20 @@ public class Utils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] removeNull(T[] array) {
-		T[] ret = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length - 1);
-		int retIndex = 0;
-		for (int i = 0; i < array.length; i++) {
-			if (!array[i].toString().equals("Null"))
-				ret[retIndex++] = array[i];
-		}
-		return ret;
-	}
+        try {
+            Class<?> enumType = array.getClass().getComponentType();
+            Method valueMethod = enumType.getMethod("value");
+            T[] ret = (T[]) Array.newInstance(enumType, array.length-1);
+            int retIndex = 0;
+            for (int i=0; i<array.length; i++) {
+                if (!valueMethod.invoke(array[i]).equals("Null"))
+                    ret[retIndex++] = array[i];
+            }
+            return ret;
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
+    }
 
 	/**
 	 * Cache commonly used Medium properties

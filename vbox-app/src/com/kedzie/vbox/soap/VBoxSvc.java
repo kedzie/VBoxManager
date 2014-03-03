@@ -452,6 +452,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	}
 	
 	private void init() {
+        Log.i(TAG, "Initializing Virtualbox API");
 		_threadPoolExecutor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 		PoolSettings<HttpTransportSE> poolSettings = new PoolSettings<HttpTransportSE>(
 		                new PoolableObjectBase<HttpTransportSE>() {
@@ -505,7 +506,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 
 	@Override
 	public void writeExternal(ObjectOutput output) throws IOException {
-		Log.w(TAG, "===========VBoxSvc has been SERIALIZED===========");
+		Log.w(TAG, "===========VBoxSvc being SERIALIZED===========");
 		output.writeObject(_server);
 		output.writeUTF(_vbox.getIdRef());
 	}
@@ -695,7 +696,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * <td>{@link IVirtualBox#E_INVALIDARG}</td><td>Host network interface <em>name</em> already exists.  </td></tr>
 	 * </tbody></table></dd></dl></p>
 	 * @param name		server name
-	 * @param server	DHCP server settings
 	 */
 	public IDHCPServer findDHCPServerByNetworkName(String name) throws IOException {
 		try {

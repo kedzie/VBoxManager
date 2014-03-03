@@ -55,10 +55,12 @@ public class Provider extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(appWidgetIds[0]+KEY_NAME);
-        prefs.remove(appWidgetIds[0]+KEY_SERVER);
-        prefs.remove(appWidgetIds[0]+KEY_IDREF);
-        prefs.remove(appWidgetIds[0]+KEY_VBOX);
+        for(int id : appWidgetIds) {
+            prefs.remove(id + KEY_NAME);
+            prefs.remove(id + KEY_SERVER);
+            prefs.remove(id + KEY_IDREF);
+            prefs.remove(id + KEY_VBOX);
+        }
         prefs.commit();
     }
     

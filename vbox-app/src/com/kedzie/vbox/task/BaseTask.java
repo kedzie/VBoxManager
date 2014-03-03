@@ -37,8 +37,8 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
-	private WeakReference<SherlockFragmentActivity> _context;
-	protected final String TAG;
+	protected WeakReference<SherlockFragmentActivity> _context;
+	protected String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
 	 protected boolean _indeterminate=true;
@@ -64,14 +64,11 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	};
 	
 	/**
-	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
 	 */
 	protected BaseTask(SherlockFragmentActivity context, VBoxSvc vmgr) {
+        this("", context, vmgr);
 		TAG = getClass().getSimpleName();
-		_vmgr=vmgr;
-		_context = new WeakReference<SherlockFragmentActivity>(context);
-		init();
 	}
 	
 	/**
@@ -82,14 +79,10 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 		this.TAG = TAG;
 		_vmgr=vmgr;
 		_context=new WeakReference<SherlockFragmentActivity>(context);
-		init();
-	}
-	
-	private void init() {
-	    _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
-	}
+        _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
+    }
 
-	protected ExecutorService getExecutor() {
+    protected ExecutorService getExecutor() {
 	    return _executor;
 	}
 	

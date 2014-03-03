@@ -10,6 +10,14 @@
         <option name="packageNamePattern" value="com.kedzie.vbox" />
         <option name="pid" value="" />
       </filter>
+      <filter>
+        <option name="name" value="app: com.kedzie.vbox.pro" />
+        <option name="packageNamePattern" value="com.kedzie.vbox.pro" />
+      </filter>
+      <filter>
+        <option name="name" value="app: com.kedzie.vbox" />
+        <option name="packageNamePattern" value="com.kedzie.vbox" />
+      </filter>
     </filters>
   </component>
   <component name="AndroidExternalApklibDependenciesManager">
@@ -1071,12 +1079,43 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="com.kedzie.vbox" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="app: com.kedzie.vbox.pro" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5828041f-6e3e-4134-94b5-90331918b060" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_actionbarsherlock_actionbarsherlock_apklib_4_4_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__pl_polidea_treeview_apklib_1_0_0.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tree-view-list-android" afterPath="$PROJECT_DIR$/tree-view-list-android" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/ActionBarTask.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/ActionBarTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/AndroidManifest.xml" afterPath="$PROJECT_DIR$/vbox-app/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/BaseTask.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/BaseTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/DialogTask.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/DialogTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/harness/HarnessActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/harness/HarnessActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IManagedObjectRef.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IManagedObjectRef.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListBaseFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListBaseFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/MachineListPickActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/MachineListPickActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/metrics/MetricActivity.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/metrics/MetricActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/SnapshotFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/SnapshotFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/StorageFragment.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/StorageFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/UpdateWidgetService.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/UpdateWidgetService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/VBoxProgressDialog.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/VBoxProgressDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/soap/VBoxSvc.java" afterPath="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/soap/VBoxSvc.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tree-view-list-android/pom.xml" afterPath="$PROJECT_DIR$/tree-view-list-android/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/pom.xml" afterPath="$PROJECT_DIR$/vbox-app/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/res/values/strings.xml" afterPath="$PROJECT_DIR$/vbox-app/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-android-parent.iml" afterPath="$PROJECT_DIR$/vbox-android-parent.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-app/vbox-app.iml" afterPath="$PROJECT_DIR$/vbox-app/vbox-app.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-instrumentation/vbox-instrumentation.iml" afterPath="$PROJECT_DIR$/vbox-instrumentation/vbox-instrumentation.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbox-key/vbox-key.iml" afterPath="$PROJECT_DIR$/vbox-key/vbox-key.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="vbox-android-parent.iws" />
@@ -1159,35 +1198,8 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/SliderView.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/vbox-app/pom.xml" />
-        <option value="$PROJECT_DIR$/vbox-app/res/layout/machine_info_column_1.xml" />
-        <option value="$PROJECT_DIR$/../CNH/aosp/TrimbleAndroid.iml" />
-        <option value="$PROJECT_DIR$/vbox-app/doc/xsd/complex-types.xsd" />
-        <option value="$PROJECT_DIR$/vbox-app/doc/xsd/machine.xsd" />
-        <option value="$PROJECT_DIR$/vbox-app/doc/xsd/virtualbox.xsd" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IVirtualBox.java" />
-        <option value="$PROJECT_DIR$/vbox-app/doc/xsd/natnetwork.xsd" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/INATNetwork.java" />
-        <option value="$PROJECT_DIR$/vbox-app/doc/xsd/bindings.xjb" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/AudioDriverType.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/StorageControllerType.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/IAdditionsFacility.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/IGuestOSType.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/IPCIDeviceAttachment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/ISharedFolder.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/IVRDEServerInfo.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/soap/VBoxSvc.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/IMediumAttachment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/doc/xsd/strip-jaxb" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/jaxb/AccessMode.java" />
-        <option value="$PROJECT_DIR$/vbox-app/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineActivity.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/SnapshotFragment.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/VMSettingsActivity.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/DisplayFragment.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/DisplayRemoteFragment.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/DisplayVideoFragment.java" />
@@ -1205,11 +1217,38 @@
         <option value="$PROJECT_DIR$/vbox-app/res/layout/vmgroup_title.xml" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/LoggingFrameLayout.java" />
-        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/LogFragment.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineFragment.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FlipPageTransformer.java" />
         <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/CollapsiblePanelView.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/VMSettingsActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/StorageFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostInfoFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/MachineListPickActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IManagedObjectRef.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/UpdateWidgetService.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/metrics/MetricActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/SnapshotFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/ActionBarTask.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/soap/VBoxSvc.java" />
+        <option value="$PROJECT_DIR$/vbox-app/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/VBoxProgressDialog.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/BaseTask.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/DialogTask.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/TaskFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/harness/HarnessActivity.java" />
+        <option value="$PROJECT_DIR$/vbox-app/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/ProgressService.java" />
+        <option value="$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListBaseFragment.java" />
+        <option value="$PROJECT_DIR$/vbox-app/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -1263,10 +1302,10 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="83" />
-    <option name="y" value="52" />
-    <option name="width" value="1157" />
-    <option name="height" value="659" />
+    <option name="x" value="-10" />
+    <option name="y" value="14" />
+    <option name="width" value="1386" />
+    <option name="height" value="764" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -1299,7 +1338,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -1321,18 +1359,19 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../android-sdk/sources/android-15" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../android-sdk/extras/android/support/samples/Support4Demos/src/com/example/android/supportv4/app/FragmentRetainInstanceSupport.java" />
     <property name="project.structure.side.proportion" value="0.35535535" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="emulator-5554" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="emulator-5556" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="GalaxyNexus" />
@@ -1341,7 +1380,7 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="dynamic.classpath" value="false" />
-    <property name="options.lastSelected" value="preferences.sourceCode.Java" />
+    <property name="options.lastSelected" value="preferences.sourceCode.XML" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -1375,8 +1414,8 @@
       <recent name="$PROJECT_DIR$/vbox-app/res/menu" />
     </key>
   </component>
-  <component name="RunManager" selected="Android Application.vbox">
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
+  <component name="RunManager" selected="Android Application.vbox-key">
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
       <option name="PROGRAM_PARAMETERS" />
@@ -1422,6 +1461,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -1496,6 +1536,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="vbox" type="AndroidRunConfigurationType" factoryName="Android Application">
@@ -1515,9 +1556,12 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <RunnerSettings RunnerId="AndroidDebugRunner" />
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
-      <method />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
     </configuration>
     <configuration default="false" name="vbox-key" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="vbox-key" />
@@ -1536,6 +1580,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <RunnerSettings RunnerId="AndroidDebugRunner" />
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
       <method />
@@ -1557,14 +1602,40 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <RunnerSettings RunnerId="AndroidDebugRunner" />
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
       <method />
     </configuration>
-    <list size="3">
+    <configuration default="false" name="harness" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="vbox-app" />
+      <option name="ACTIVITY_CLASS" value="com.kedzie.vbox.harness.HarnessActivity" />
+      <option name="MODE" value="specific_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <RunnerSettings RunnerId="AndroidDebugRunner" />
+      <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Android Application.vbox" />
       <item index="1" class="java.lang.String" itemvalue="Android Application.vbox-key" />
       <item index="2" class="java.lang.String" itemvalue="Android Application.vbox harness" />
+      <item index="3" class="java.lang.String" itemvalue="Android Application.harness" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -1620,35 +1691,35 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="83" y="52" width="1157" height="659" extended-state="0" />
-    <editor active="false" />
+    <frame x="-10" y="14" width="1386" height="764" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6916836" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="TCPMON" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5066007" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="TCPMON" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5045386" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="TunnelliJ" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6257198" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="TunnelliJ" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.62458473" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.49335548" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.49168208" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26060605" sideWeight="0.5856905" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286052" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.68356997" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286052" sideWeight="0.5" order="14" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.68356997" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26060605" sideWeight="0.5856905" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.50498337" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.47134936" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.7116451" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3286004" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29984894" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4608051" sideWeight="0.61627907" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34246576" sideWeight="0.41430947" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46855983" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24205749" sideWeight="0.41430947" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4668008" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.49169436" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26744187" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1717,370 +1788,370 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostView.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/ServerListPickActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23316061" vertical-offset="0" max-vertical-offset="579">
-          <caret line="15" column="13" selection-start="303" selection-end="303" />
+        <state vertical-scroll-proportion="1.8710359" vertical-offset="0" max-vertical-offset="1320">
+          <caret line="106" column="21" selection-start="3463" selection-end="3472" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/harness/HarnessActivity.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.actionbarsherlock_actionbarsherlock_4.4.0/src/com/actionbarsherlock/app/SherlockFragmentActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="212" max-vertical-offset="1185">
-          <caret line="67" column="27" selection-start="1817" selection-end="1817" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/EditServerActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.5129534" vertical-offset="936" max-vertical-offset="1515">
-          <caret line="18" column="13" selection-start="596" selection-end="596" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46632123" vertical-offset="0" max-vertical-offset="579">
-          <caret line="27" column="8" selection-start="774" selection-end="774" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.6580311" vertical-offset="165" max-vertical-offset="1935">
-          <caret line="75" column="51" selection-start="3072" selection-end="3072" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/host/HostSettingsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.39896372" vertical-offset="336" max-vertical-offset="1230">
-          <caret line="24" column="13" selection-start="782" selection-end="782" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/CategoryFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41450778" vertical-offset="225" max-vertical-offset="1185">
-          <caret line="53" column="126" selection-start="1625" selection-end="1655" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragPagerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.1391305" vertical-offset="715" max-vertical-offset="1785">
-          <caret line="15" column="13" selection-start="423" selection-end="423" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7.jar!/android/support/v4/app/FragmentActivity.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3482309" vertical-offset="233" max-vertical-offset="1590">
-          <caret line="29" column="35" selection-start="1188" selection-end="1188" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable/list_selector_color.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="562">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable/list_selector_color_focus_selected.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="553">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable/list_selector_color_focus.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="553">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable/panel_body_shape.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31304348" vertical-offset="0" max-vertical-offset="575">
-          <caret line="12" column="39" selection-start="696" selection-end="696" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable/focus_background.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="575">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24021353" vertical-offset="0" max-vertical-offset="2370">
-          <caret line="51" column="57" selection-start="1753" selection-end="1753" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/SnapshotFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.816726" vertical-offset="2655" max-vertical-offset="3240">
-          <caret line="114" column="28" selection-start="3947" selection-end="3947" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/values/attrs.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.43636364" vertical-offset="0" max-vertical-offset="550">
-          <caret line="16" column="7" selection-start="613" selection-end="613" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../CNH/uiexample/module/widget/src/com/cnh/android/widget/control/ProgressiveDisclosureView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.6014235" vertical-offset="900" max-vertical-offset="12390">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/DisplayVideoFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18683274" vertical-offset="0" max-vertical-offset="1290">
-          <caret line="25" column="62" selection-start="860" selection-end="860" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/DisplayRemoteFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.049822062" vertical-offset="92" max-vertical-offset="1260">
-          <caret line="34" column="63" selection-start="1097" selection-end="1097" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/VMSettingsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5960854" vertical-offset="1360" max-vertical-offset="2295">
-          <caret line="194" column="19" selection-start="6445" selection-end="6445" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/vmgroup_list_header.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.041322313" vertical-offset="0" max-vertical-offset="600">
-          <caret line="1" column="0" selection-start="39" selection-end="39" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/GroupInfoFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4128114" vertical-offset="1493" max-vertical-offset="2055">
-          <caret line="236" column="43" selection-start="8982" selection-end="8982" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/InfoFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4064838" vertical-offset="2777" max-vertical-offset="3225">
-          <caret line="314" column="40" selection-start="11975" selection-end="11975" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/vmgroup_title.xml">
-      <provider editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.76" vertical-offset="226" max-vertical-offset="750">
-          <caret line="18" column="44" selection-start="690" selection-end="690" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/VMGroupPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.25266904" vertical-offset="443" max-vertical-offset="1005">
-          <caret line="53" column="107" selection-start="1726" selection-end="1726" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4260">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/google/android/android/4.0.1.2/android-4.0.1.2.jar!/android/app/Activity.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51582867" vertical-offset="1823" max-vertical-offset="5175">
-          <caret line="141" column="19" selection-start="6032" selection-end="6032" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../android-sdk/sources/android-15/android/app/Activity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="33518" max-vertical-offset="68040">
-          <caret line="2359" column="19" selection-start="101625" selection-end="101625" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/android/android/4.4_r1/android-4.4_r1-sources.jar!/android/app/Activity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46619216" vertical-offset="31628" max-vertical-offset="79830">
-          <caret line="2247" column="8" selection-start="98055" selection-end="98055" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/drawable/panel_header_shape.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.0614525" vertical-offset="0" max-vertical-offset="1290">
-          <caret line="38" column="52" selection-start="2614" selection-end="2614" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/panel_header.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.114503816" vertical-offset="30" max-vertical-offset="600">
-          <caret line="6" column="43" selection-start="345" selection-end="345" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/android/android/4.4_r1/android-4.4_r1-sources.jar!/android/widget/TabHost.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41410488" vertical-offset="7406" max-vertical-offset="8610">
-          <caret line="622" column="16" selection-start="20527" selection-end="20527" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/PagerTabHost.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4128114" vertical-offset="3128" max-vertical-offset="3885">
-          <caret line="224" column="23" selection-start="7776" selection-end="7776" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3469751" vertical-offset="585" max-vertical-offset="1695">
-          <caret line="94" column="104" selection-start="2885" selection-end="2885" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/LoggingFrameLayout.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31304348" vertical-offset="0" max-vertical-offset="575">
-          <caret line="12" column="4" selection-start="309" selection-end="309" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7826087" vertical-offset="0" max-vertical-offset="930">
-          <caret line="40" column="9" selection-start="1496" selection-end="1496" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/LogFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.76521736" vertical-offset="10" max-vertical-offset="960">
-          <caret line="66" column="59" selection-start="1905" selection-end="1905" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/DisplayFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6" vertical-offset="0" max-vertical-offset="575">
-          <caret line="32" column="5" selection-start="1247" selection-end="1247" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3594306" vertical-offset="203" max-vertical-offset="1170">
-          <caret line="44" column="72" selection-start="1696" selection-end="1696" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/res/xml/general_preferences.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FlipPageTransformer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.1826087" vertical-offset="0" max-vertical-offset="575">
-          <caret line="10" column="58" selection-start="295" selection-end="295" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/android/android/4.4_r1/android-4.4_r1-sources.jar!/android/view/ViewGroup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33274022" vertical-offset="49778" max-vertical-offset="86925">
-          <caret line="3389" column="16" selection-start="127416" selection-end="127416" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/FragmentActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39130434" vertical-offset="1950" max-vertical-offset="12675">
-          <caret line="203" column="0" selection-start="7448" selection-end="7448" />
+        <state vertical-scroll-proportion="0.3318584" vertical-offset="3360" max-vertical-offset="4065">
+          <caret line="273" column="16" selection-start="8783" selection-end="8783" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BaseActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31304348" vertical-offset="0" max-vertical-offset="575">
-          <caret line="15" column="0" selection-start="464" selection-end="464" />
+        <state vertical-scroll-proportion="0.39139786" vertical-offset="28" max-vertical-offset="495">
+          <caret line="17" column="18" selection-start="577" selection-end="577" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IStorageController.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/NavUtilsJB.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13043478" vertical-offset="0" max-vertical-offset="575">
-          <caret line="15" column="17" selection-start="373" selection-end="373" />
+        <state vertical-scroll-proportion="0.33913043" vertical-offset="0" max-vertical-offset="575">
+          <caret line="31" column="23" selection-start="1081" selection-end="1081" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/StorageFragment.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/NavUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.22597864" vertical-offset="293" max-vertical-offset="1215">
-          <caret line="51" column="51" selection-start="2225" selection-end="2225" />
+        <state vertical-scroll-proportion="0.61913043" vertical-offset="1564" max-vertical-offset="4215">
+          <caret line="159" column="0" selection-start="6436" selection-end="6436" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/settings/StorageListFragment.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/TaskStackBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3469751" vertical-offset="1133" max-vertical-offset="2865">
-          <caret line="542" column="38" selection-start="18005" selection-end="18005" />
+        <state vertical-scroll-proportion="4.9495654" vertical-offset="574" max-vertical-offset="4890">
+          <caret line="301" column="5" selection-start="12164" selection-end="12164" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/SliderView.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/server/HelpActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5053381" vertical-offset="856" max-vertical-offset="2070">
-          <caret line="194" column="11" selection-start="7916" selection-end="7916" />
+        <state vertical-scroll-proportion="0.79130435" vertical-offset="25" max-vertical-offset="600">
+          <caret line="44" column="5" selection-start="1470" selection-end="1470" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/CollapsiblePanelView.java">
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/api/IManagedObjectRef.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.37010676" vertical-offset="2038" max-vertical-offset="4710">
-          <caret line="150" column="0" selection-start="5409" selection-end="5409" />
+        <state vertical-scroll-proportion="0.8131673" vertical-offset="323" max-vertical-offset="900">
+          <caret line="56" column="44" selection-start="2077" selection-end="2077" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/UpdateWidgetService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8086957" vertical-offset="0" max-vertical-offset="900">
+          <caret line="46" column="27" selection-start="1634" selection-end="1641" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/res/layout/metrics.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+          <caret line="0" column="0" selection-start="0" selection-end="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/MachineListActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3469751" vertical-offset="585" max-vertical-offset="1665">
+          <caret line="94" column="104" selection-start="2885" selection-end="2885" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/InfoFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.28695652" vertical-offset="0" max-vertical-offset="1950">
+          <caret line="41" column="0" selection-start="1335" selection-end="1335" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/BundleBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5147826" vertical-offset="964" max-vertical-offset="4035">
+          <caret line="100" column="0" selection-start="2842" selection-end="2842" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/SnapshotFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33274022" vertical-offset="293" max-vertical-offset="3150">
+          <caret line="115" column="28" selection-start="3989" selection-end="3989" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/metrics/MetricActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.9875445" vertical-offset="1035" max-vertical-offset="1710">
+          <caret line="54" column="44" selection-start="1779" selection-end="1793" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4395018" vertical-offset="83" max-vertical-offset="1485">
+          <caret line="66" column="4" selection-start="2131" selection-end="2131" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventIntentService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.67826086" vertical-offset="270" max-vertical-offset="1035">
+          <caret line="65" column="37" selection-start="2586" selection-end="2586" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/harness/MockProgress.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.2935943" vertical-offset="270" max-vertical-offset="1680">
+          <caret line="14" column="13" selection-start="326" selection-end="326" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/MachineCallable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18987341" vertical-offset="0" max-vertical-offset="553">
+          <caret line="9" column="22" selection-start="182" selection-end="182" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/LaunchVMProcessTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.108499095" vertical-offset="0" max-vertical-offset="553">
+          <caret line="10" column="13" selection-start="325" selection-end="325" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/nf/fr/eraasoft/objectpool/1.1.2/objectpool-1.1.2-sources.jar!/nf/fr/eraasoft/pool/ObjectPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.054249547" vertical-offset="0" max-vertical-offset="553">
+          <caret line="2" column="17" selection-start="47" selection-end="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../android-sdk/sources/android-19/java/util/concurrent/ExecutorService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.7830018" vertical-offset="2576" max-vertical-offset="4875">
+          <caret line="111" column="17" selection-start="4212" selection-end="4212" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/soap/VBoxSvc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.8611112" vertical-offset="2820" max-vertical-offset="5055">
+          <caret line="508" column="45" selection-start="18260" selection-end="18260" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../android-sdk/sources/android-18/android/app/IntentService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.027124774" vertical-offset="360" max-vertical-offset="1995">
+          <caret line="42" column="2" selection-start="1786" selection-end="1786" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/event/EventNotificationService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5833333" vertical-offset="180" max-vertical-offset="720">
+          <caret line="58" column="55" selection-start="2151" selection-end="2839" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3888889" vertical-offset="600" max-vertical-offset="2415">
+          <caret line="54" column="47" selection-start="3917" selection-end="3917" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/FragmentActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33274022" vertical-offset="398" max-vertical-offset="960">
+          <caret line="50" column="25" selection-start="1788" selection-end="1788" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/widget/Provider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.50711745" vertical-offset="630" max-vertical-offset="1770">
+          <caret line="85" column="76" selection-start="4099" selection-end="4099" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/samples/Support4Demos/src/com/example/android/supportv4/app/FragmentRetainInstanceSupport.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.5026087" vertical-offset="1129" max-vertical-offset="3195">
+          <caret line="82" column="56" selection-start="2979" selection-end="2979" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/ksoap3-src/org/ksoap2/transport/ServiceConnectionSE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.31304348" vertical-offset="525" max-vertical-offset="1455">
+          <caret line="84" column="0" selection-start="3268" selection-end="3268" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7.jar!/android/support/v4/app/FragmentActivity.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.45996276" vertical-offset="923" max-vertical-offset="1485">
+          <caret line="79" column="50" selection-start="3351" selection-end="3351" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/FragmentManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="17581" max-vertical-offset="29220">
+          <caret line="1334" column="0" selection-start="53968" selection-end="53968" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/FragmentTransaction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.53887886" vertical-offset="3407" max-vertical-offset="3960">
+          <caret line="261" column="24" selection-start="10750" selection-end="10750" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/roboguice/roboguice/3.0-alpha-SNAPSHOT/roboguice-3.0-alpha-SNAPSHOT-sources.jar!/roboguice/fragment/RoboSherlockDialogFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="420">
+          <caret line="14" column="63" selection-start="489" selection-end="489" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.actionbarsherlock_actionbarsherlock_4.4.0/src/com/actionbarsherlock/app/SherlockDialogFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
+          <caret line="14" column="55" selection-start="648" selection-end="648" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7.jar!/android/support/v4/app/DialogFragment.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.36312848" vertical-offset="270" max-vertical-offset="1110">
+          <caret line="6" column="13" selection-start="165" selection-end="165" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/gen-external-apklibs/com.github.kedzie.supportanimator_support-v4-animator_19.0.0/src/android/support/v4/app/DialogFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.57391304" vertical-offset="495" max-vertical-offset="6075">
+          <caret line="78" column="18" selection-start="2870" selection-end="2877" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.46619216" vertical-offset="3083" max-vertical-offset="9465">
+          <caret line="298" column="29" selection-start="8482" selection-end="8669" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/app/VBoxProgressDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="135" max-vertical-offset="1470">
+          <caret line="46" column="15" selection-start="1517" selection-end="1517" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/DialogTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.5739131" vertical-offset="460" max-vertical-offset="1515">
+          <caret line="111" column="57" selection-start="3859" selection-end="3859" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/harness/HarnessActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8608696" vertical-offset="270" max-vertical-offset="1230">
+          <caret line="105" column="31" selection-start="2856" selection-end="2856" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/TaskFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6086956" vertical-offset="130" max-vertical-offset="750">
+          <caret line="34" column="68" selection-start="958" selection-end="958" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/ActionBarTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43534482" vertical-offset="38" max-vertical-offset="795">
+          <caret line="18" column="23" selection-start="529" selection-end="529" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/ProgressService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.5299335" vertical-offset="0" max-vertical-offset="1530">
+          <caret line="62" column="25" selection-start="2326" selection-end="2326" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/ActionsFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.2572064" vertical-offset="0" max-vertical-offset="2685">
+          <caret line="240" column="48" selection-start="8806" selection-end="8806" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/BaseTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.3569846" vertical-offset="0" max-vertical-offset="3015">
+          <caret line="165" column="0" selection-start="4685" selection-end="4685" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/task/MachineTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.2638581" vertical-offset="0" max-vertical-offset="780">
+          <caret line="45" column="44" selection-start="1518" selection-end="1518" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/src/com/kedzie/vbox/machine/group/MachineGroupListBaseFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.3652174" vertical-offset="295" max-vertical-offset="1995">
+          <caret line="94" column="33" selection-start="3526" selection-end="3526" />
+          <folding>
+            <element signature="class#2691:2970" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4491018" vertical-offset="30" max-vertical-offset="1050">
+          <caret line="17" column="58" selection-start="1099" selection-end="1099" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2070">
-          <caret line="0" column="0" selection-start="0" selection-end="0" />
+        <state vertical-scroll-proportion="0.5808383" vertical-offset="1494" max-vertical-offset="2130">
+          <caret line="119" column="44" selection-start="3630" selection-end="3630" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vbox-app/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34468085" vertical-offset="2979" max-vertical-offset="4380">
+          <caret line="204" column="34" selection-start="6342" selection-end="6342" />
           <folding />
         </state>
       </provider>
@@ -2102,11 +2173,11 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Android</last-edited>
+          <last-edited>Android (vbox-app)|Android</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.35535535" />
               </list>
             </option>
           </splitter-proportions>
@@ -2137,7 +2208,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>vbox-app</last-edited>
+          <last-edited>vbox-android-parent</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

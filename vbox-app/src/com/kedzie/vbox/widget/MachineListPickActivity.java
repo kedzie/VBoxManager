@@ -55,8 +55,8 @@ public class MachineListPickActivity extends BaseActivity implements OnTreeNodeS
 		super.onCreate(savedInstanceState);
 		setResult(RESULT_CANCELED);
 		getSupportActionBar().setTitle(R.string.select_virtual_machine_widget_config);
-		_vmgr = (VBoxSvc)getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
-		 mAppWidgetId = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
+		 mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
 		if (savedInstanceState==null) {
 			Utils.replaceFragment(this, getSupportFragmentManager(), android.R.id.content, 

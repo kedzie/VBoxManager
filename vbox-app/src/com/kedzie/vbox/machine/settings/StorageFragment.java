@@ -1,15 +1,12 @@
 package com.kedzie.vbox.machine.settings;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -19,15 +16,15 @@ import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.jaxb.DeviceType;
 import com.kedzie.vbox.api.jaxb.IMediumAttachment;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.FragmentActivity;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnMediumAttachmentClickedListener;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnStorageControllerClickedListener;
 
-public class StorageFragment extends SherlockFragment implements OnStorageControllerClickedListener, OnMediumAttachmentClickedListener {
+import roboguice.fragment.RoboSherlockFragment;
 
-	private View _view;
+public class StorageFragment extends RoboSherlockFragment implements OnStorageControllerClickedListener, OnMediumAttachmentClickedListener {
+
     private boolean _dualPane;
     private StorageListFragment _listFragment;
     
@@ -39,8 +36,8 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	    _view = LayoutInflater.from(getActivity()).inflate(R.layout.settings_storage, null);
-        FrameLayout detailsFrame = (FrameLayout)_view.findViewById(R.id.details);
+	    View view = LayoutInflater.from(getActivity()).inflate(R.layout.settings_storage, null);
+        FrameLayout detailsFrame = (FrameLayout)view.findViewById(R.id.details);
         _dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         
         Fragment f = getChildFragmentManager().findFragmentByTag("list");
@@ -51,7 +48,7 @@ public class StorageFragment extends SherlockFragment implements OnStorageContro
         } else {
             _listFragment = (StorageListFragment)f;
         }
-        return _view;
+        return view;
 	}
 
     @Override

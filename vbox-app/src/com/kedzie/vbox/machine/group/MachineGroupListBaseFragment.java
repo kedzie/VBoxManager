@@ -92,7 +92,6 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        
 	        @Override
 	        protected void onSuccess(VMGroup root) {
-//	            getSherlockActivity().getSupportActionBar().setSubtitle(getResources().getString(R.string.vbox_version, _vmgr.getVBox().getVersion()));
 	            _listView.setRoot(root, _host);
 	            _root = root;
 	        }

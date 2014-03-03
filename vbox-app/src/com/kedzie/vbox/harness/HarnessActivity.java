@@ -102,10 +102,10 @@ public class HarnessActivity extends BaseActivity {
 	}
 	
 	@Override
-	protected void onDestroy() {
-		new LogoffTask(_vboxApi).execute();
-		super.onDestroy();
-	}
+    protected void onDestroy() {
+        new LogoffTask(_vboxApi).execute();
+        super.onDestroy();
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

@@ -64,12 +64,7 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 		    _listView.update(result);
 		}
 	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-		return _listView;
-	}
+
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

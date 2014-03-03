@@ -3,6 +3,7 @@ package com.kedzie.vbox.app;
 import android.app.Dialog;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,6 +43,15 @@ public class VBoxProgressDialog extends RoboSherlockDialogFragment {
 	private TextView _timeRemainingText;
     @InjectView(R.id.cancel_button)
 	private Button _cancelButton;
+
+    public void showAllowingStateLoss(FragmentTransaction transaction, String tag) {
+//            mDismissed = false;
+//            mShownByMe = true;
+            transaction.add(this, tag).commitAllowingStateLoss();
+//            mViewDestroyed = false;
+//            mBackStackId = transaction;
+//            return mBackStackId;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

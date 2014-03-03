@@ -20,6 +20,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.app.BaseActivity;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -50,7 +51,7 @@ public class MetricActivity extends BaseActivity  {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setTitle(getIntent().getStringExtra(INTENT_TITLE));
 
-		_vmgr = getIntent().getParcelableExtra(VBoxSvc.BUNDLE);
+        _vmgr = BundleBuilder.getVBoxSvc(getIntent());
 		_object = getIntent().getStringExtra(INTENT_OBJECT);
 		_ramAvailable = getIntent().getIntExtra(INTENT_RAM_AVAILABLE, 0);
 		_count = Utils.getIntPreference(this, SettingsActivity.PREF_COUNT);

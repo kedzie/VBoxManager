@@ -1,5 +1,6 @@
 package com.kedzie.vbox.machine;
 
+import com.kedzie.vbox.app.BundleBuilder;
 import pl.polidea.treeview.AbstractTreeViewAdapter;
 import pl.polidea.treeview.InMemoryTreeStateManager;
 import pl.polidea.treeview.TreeBuilder;
@@ -251,7 +252,7 @@ public class SnapshotFragment extends RoboSherlockFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+        _vmgr = BundleBuilder.getVBoxSvc(getArguments());
 
         _machine = getArguments().getParcelable(IMachine.BUNDLE);
         _machine = _vmgr.getProxy(IMachine.class, _machine.getIdRef());

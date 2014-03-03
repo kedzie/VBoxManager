@@ -145,7 +145,7 @@ public class ActionsFragment extends RoboSherlockFragment implements OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        _vmgr = getArguments().getParcelable(VBoxSvc.BUNDLE);
+        _vmgr = BundleBuilder.getVBoxSvc(getArguments());
         _machine = BundleBuilder.getProxy(savedInstanceState!=null ? savedInstanceState : getArguments(), IMachine.BUNDLE, IMachine.class);
     }
 

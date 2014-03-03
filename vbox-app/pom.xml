@@ -199,6 +199,9 @@
 						<artifactId>android-maven-plugin</artifactId>
 						<inherited>true</inherited>
 						<configuration>
+                            <manifest>
+                                <debuggable>false</debuggable>
+                            </manifest>
 							<sign>
 								<debug>false</debug>
 							</sign>
@@ -222,6 +225,11 @@
 								<phase>package</phase>
 								<goals><goal>zipalign</goal></goals>
 							</execution>
+                                <execution>
+                                    <id>manifest</id>
+                                    <phase>process-resources</phase>
+                                    <goals><goal>manifest-update</goal></goals>
+                                </execution>
 						</executions>
 					</plugin>
 				</plugins>
