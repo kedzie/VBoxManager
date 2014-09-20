@@ -4,6 +4,8 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/robolectric/robolectric/2.0/robolectric-2.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/robolectric-2.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.takari.m2e.workspace:org.eclipse.m2e.workspace.cli:0.2.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/takari/m2e/workspace/org.eclipse.m2e.workspace.cli/0.2.0/org.eclipse.m2e.workspace.cli-0.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/takari/m2e/workspace/org.eclipse.m2e.workspace.cli/0.2.0/org.eclipse.m2e.workspace.cli-0.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/takari/m2e/workspace/org.eclipse.m2e.workspace.cli/0.2.0/org.eclipse.m2e.workspace.cli-0.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

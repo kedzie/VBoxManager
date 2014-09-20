@@ -5,11 +5,17 @@
       <configuration>
         <option name="GEN_FOLDER_RELATIVE_PATH_APT" value="/bin/generated-sources/r" />
         <option name="GEN_FOLDER_RELATIVE_PATH_AIDL" value="/bin/generated-sources/aidl" />
+        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
+        <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
         <option name="CUSTOM_APK_RESOURCE_FOLDER" value="/bin/generated-sources/combined-resources/res" />
         <option name="APK_PATH" value="/bin/vbox-key.apk" />
         <option name="RUN_PROCESS_RESOURCES_MAVEN_TASK" value="false" />
         <option name="COMPILE_CUSTOM_GENERATED_SOURCES" value="false" />
         <includeAssetsFromLibraries>true</includeAssetsFromLibraries>
+        <resOverlayFolders>
+          <path>/res-overlay</path>
+        </resOverlayFolders>
       </configuration>
     </facet>
   </component>
@@ -23,6 +29,7 @@
       <excludeFolder url="file://$MODULE_DIR$/bin/generated-sources/combined-resources" />
       <excludeFolder url="file://$MODULE_DIR$/bin/generated-sources/extracted-dependencies" />
       <excludeFolder url="file://$MODULE_DIR$/bin/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/bin/maven-status" />
       <excludeFolder url="file://$MODULE_DIR$/target/generated-sources/aidl" />
       <excludeFolder url="file://$MODULE_DIR$/target/generated-sources/r" />
     </content>

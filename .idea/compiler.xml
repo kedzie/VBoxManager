@@ -38,8 +38,80 @@
         <processorPath useClasspath="true" />
         <module name="vbox-instrumentation" />
       </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="android-activity-graphs" />
+        <module name="android-maven-plugin" />
+        <module name="android-simple" />
+        <module name="apidemos-application" />
+        <module name="apidemos-tests" />
+        <module name="compiler (1) (com.github.kedzie.drools)" />
+        <module name="dagger" />
+        <module name="helloflashlight" />
+        <module name="helloworld" />
+        <module name="java-with-native-apklib-dependency" />
+        <module name="java-with-native-dependency" />
+        <module name="java-with-native-dependency-x86-only" />
+        <module name="java-with-native-library" />
+        <module name="java-with-native-statically-linked-dependency" />
+        <module name="libraryprojects-aar-actionbarsherlock-example" />
+        <module name="libraryprojects-aar-from-aar" />
+        <module name="libraryprojects-aar1" />
+        <module name="libraryprojects-apk-with-deps" />
+        <module name="libraryprojects-apklib-from-apklib" />
+        <module name="libraryprojects-apklib1" />
+        <module name="libraryprojects-tests" />
+        <module name="mixed-java-native-code" />
+        <module name="mixed-java-native-with-apklib-dependency" />
+        <module name="morseflash-app" />
+        <module name="morseflash-instrumentation" />
+        <module name="morseflash-library" />
+        <module name="native-apklib" />
+        <module name="native-code" />
+        <module name="native-code-including-static-lib" />
+        <module name="native-java-transient-dependency" />
+        <module name="native-static-lib" />
+        <module name="non-android-project" />
+        <module name="scala" />
+        <module name="simple" />
+        <module name="support4demos" />
+        <module name="tictactoe-app" />
+        <module name="tictactoe-library" />
+        <module name="transient-apklib-with-native" />
+      </profile>
+      <profile default="false" name="Annotation profile for sample" enabled="true">
+        <sourceOutputDir name="bin/generated-sources/annotations" />
+        <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sample" />
+      </profile>
+      <profile default="false" name="Annotation profile for treeview" enabled="true">
+        <sourceOutputDir name="bin/generated-sources/annotations" />
+        <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="treeview" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="android-activity-graphs" target="1.6" />
+      <module name="android-maven-plugin" target="1.6" />
+      <module name="android-simple" target="1.6" />
+      <module name="compiler" target="1.6" />
+      <module name="compiler (1) (com.github.kedzie.drools)" target="1.6" />
+      <module name="dagger" target="1.6" />
+      <module name="dagger-compiler" target="1.6" />
+      <module name="dagger-example-parent" target="1.6" />
+      <module name="dagger-parent" target="1.6" />
+      <module name="drools-android-parent" target="1.6" />
+      <module name="helloworld" target="1.6" />
+      <module name="sample" target="1.6" />
+      <module name="simple" target="1.6" />
+      <module name="treeview" target="1.6" />
       <module name="vbox-android-parent" target="1.6" />
       <module name="vbox-app" target="1.6" />
       <module name="vbox-instrumentation" target="1.6" />

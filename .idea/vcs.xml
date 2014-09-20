@@ -3,6 +3,11 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/tree-view-list-android" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../dagger" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../drools-android/drools-android" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../drools-android/drools-android/rules" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../maven-android-plugin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../maven-android-plugin-samples" vcs="Git" />
   </component>
 </project>
 

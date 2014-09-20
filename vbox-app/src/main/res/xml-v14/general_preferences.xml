@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/pref_category_general" >
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="colored_icons"
+            android:summaryOff="@string/pref_colored_icons_summary_off"
+            android:summaryOn="@string/pref_colored_icons_summary_on"
+            android:switchTextOff="@string/pref_colored_icons_switch_off"
+            android:switchTextOn="@string/pref_colored_icons_switch_on"
+            android:title="@string/pref_colored_icons_title" />
+
+        <ListPreference
+            android:defaultValue="Slide"
+            android:dialogTitle="@string/pref_tab_transition_title"
+            android:entries="@array/tab_transition_entries"
+            android:entryValues="@array/tab_transition_entryValues"
+            android:key="tab_transition"
+            android:summary="@string/pref_tab_transition_summary"
+            android:title="@string/pref_tab_transition_title" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications"
+            android:summaryOff="@string/pref_notifications_summary_off"
+            android:summaryOn="@string/pref_notifications_summary_on"
+            android:switchTextOff="@string/pref_notifications_switch_off"
+            android:switchTextOn="@string/pref_notifications_switch_on"
+            android:title="@string/pref_notifications_title" />
+
+        <ListPreference
+            android:defaultValue="30000"
+            android:dialogTitle="@string/pref_widget_interval_title"
+            android:entries="@array/widget_interval_entries"
+            android:entryValues="@array/widget_interval_entryValues"
+            android:key="widget_interval"
+            android:summary="@string/pref_widget_interval_summary"
+            android:title="@string/pref_widget_interval_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

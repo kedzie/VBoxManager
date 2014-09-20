@@ -2,9 +2,31 @@
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/compiler" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/vbox-app" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/vbox-instrumentation" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/vbox-key" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger/compiler" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger/core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger/examples" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger/examples/android-activity-graphs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger/examples/android-simple" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../dagger/examples/simple" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-aar-from-aar" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-aar1" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-apk-with-deps" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-apklib-from-apklib" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-apklib1" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-tests" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/morseflash/morseflash-app" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/morseflash/morseflash-instrumentation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/morseflash/morseflash-lib" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/tictactoe/tictactoe-app" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../maven-android-plugin-samples/tictactoe/tictactoe-lib" charset="UTF-8" />
   </component>
 </project>
 

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="EclipseCodeFormatter">
     <option name="defaultSettings" value="true" />
-    <option name="formatter" value="ECLIPSE" />
     <option name="id" value="1372696478589" />
     <option name="importOrderConfigFilePath" value="$PROJECT_DIR$/../CNH/aosp/development/ide/eclipse/android.importorder" />
     <option name="importOrderFromFile" value="true" />
@@ -14,19 +13,61 @@
     <entry_points version="2.0" />
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="android" url="file://$PROJECT_DIR$/../dagger/examples/android-activity-graphs" />
+    <file type="android" url="file://$PROJECT_DIR$/../dagger/examples/android-simple" />
+    <file type="android" url="file://$PROJECT_DIR$/../drools-android/drools-android/sample" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/apidemos-android-16/apidemos-application" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/apidemos-android-16/apidemos-tests" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/helloflashlight" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-aar-actionbarsherlock-example" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-aar-from-aar" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-aar1" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-apk-with-deps" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-apklib-from-apklib" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-apklib1" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/libraryprojects/libraryprojects-tests" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/morseflash/morseflash-app" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/morseflash/morseflash-instrumentation" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/java-transient-dependency" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/java-with-native-apklib-dependency" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/java-with-native-dependency" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/java-with-native-dependency-x86-only" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/java-with-native-library" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/java-with-native-statically-linked-dependency" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/mixed-java-native-code" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/mixed-java-native-with-apklib-dependency" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/native-apklib" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/native/transient-apklib-with-native" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/scala" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/support4demos" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/tictactoe/tictactoe-app" />
+    <file type="android" url="file://$PROJECT_DIR$/../maven-android-plugin-samples/tictactoe/tictactoe-lib" />
+    <file type="android" url="file://$PROJECT_DIR$/tree-view-list-android" />
     <file type="android" url="file://$PROJECT_DIR$/vbox-app" />
     <file type="android" url="file://$PROJECT_DIR$/vbox-instrumentation" />
     <file type="android" url="file://$PROJECT_DIR$/vbox-key" />
   </component>
+  <component name="IdProvider" IDEtalkID="C3A63DC09037B089B8FE7DA89C424B4A" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/../dagger/pom.xml" />
+        <option value="$PROJECT_DIR$/compiler/pom.xml" />
+        <option value="$PROJECT_DIR$/../drools-android/drools-android/pom.xml" />
+        <option value="$PROJECT_DIR$/tree-view-list-android/pom.xml" />
+        <option value="$PROJECT_DIR$/../maven-android-plugin-samples/native/mixed-java-native-with-apklib-dependency/pom.xml" />
+        <option value="$PROJECT_DIR$/../maven-android-plugin-samples/pom.xml" />
+        <option value="$PROJECT_DIR$/../maven-android-plugin/src/test/projects/non-android-project/pom.xml" />
+        <option value="$PROJECT_DIR$/../maven-android-plugin/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="Android 4.3 Platform" project-jdk-type="Android SDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true">
     <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="mySupportsUserInfoFilter" value="true" />
   </component>
 </project>
 

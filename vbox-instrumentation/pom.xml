@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.3.1</version>
+		<version>3.3.2-SNAPSHOT</version>
 	</parent>
     
 	<artifactId>vbox-instrumentation</artifactId>
@@ -48,6 +48,12 @@
 			<type>jar</type>
 		</dependency>
         <dependency>
+            <groupId>virtualbox</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>fest-android</artifactId>
             <version>1.0.5</version>
@@ -63,7 +69,17 @@
 				<configuration>
 					<test>
 						<createReport>true</createReport>
+                        <instrumentationPackage>com.kedzie.vbox</instrumentationPackage>
 					</test>
+                    <uiautomator>
+                        <skip>false</skip>
+                        <createReport>true</createReport>
+                        <takeScreenshotOnFailure>true</takeScreenshotOnFailure>
+                        <screenshotsPathOnDevice>/sdcard/uiautomator-screenshots/</screenshotsPathOnDevice>
+                        <testClassOrMethods>
+                            <testClassOrMethod>com.kedzie.vbox.test.uiautomator.HelpTest</testClassOrMethod>
+                        </testClassOrMethods>
+                    </uiautomator>
 				</configuration>
 			</plugin>
 		</plugins>

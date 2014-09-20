@@ -3,7 +3,25 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7.jar!/" />
     </CLASSES>
-    <JAVADOC />
-    <SOURCES />
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/ics" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/java" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/froyo" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/tests/java" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/eclair" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/kitkat" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/ics-mr1" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/honeycomb" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/jellybean" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/eclair-mr1" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/gingerbread" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/honeycomb_mr2" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/jellybean-mr1" />
+      <root url="file://$PROJECT_DIR$/../../android-sdk/extras/android/support/v4/src/jellybean-mr2" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/android/support-v4/r7/support-v4-r7-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
