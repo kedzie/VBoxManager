@@ -117,6 +117,8 @@ public class IMediumAttachment implements Parcelable {
 	private boolean discard;
 	private String bandwidthGroup;
 	private boolean hotPluggable;
+    private int port;
+    private int device;
 
 	@Override
 	public int describeContents() {

@@ -7,8 +7,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -28,7 +30,8 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineRunnable;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.RoboGuice;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 import java.io.IOException;
@@ -38,17 +41,22 @@ import java.util.List;
  * 
  * @apiviz.stereotype fragment
  */
-public class InfoFragment extends RoboSherlockFragment {
+public class InfoFragment extends RoboFragment {
     private static final String TAG = "InfoFragment";
 
 	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
 
-		public LoadInfoTask() { 
-			super(getSherlockActivity(), _machine.getAPI()); 
+        private boolean clearCache = false;
+
+		public LoadInfoTask(boolean clearCache) {
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
+            this.clearCache = clearCache;
 		}
 
 		@Override 
 		protected MachineInfo work(IMachine... m) throws Exception {
+            if(clearCache)
+                m[0].clearCache();
 			//cache values
 			Utils.cacheProperties(m[0]);
 			
@@ -174,7 +182,7 @@ public class InfoFragment extends RoboSherlockFragment {
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())) {
 				IMachine m = BundleBuilder.getProxy(intent.getExtras(), IMachine.BUNDLE, IMachine.class);
-				new LoadInfoTask().execute(m);
+				new LoadInfoTask(false).execute(m);
 			} 
 		}
 	};
@@ -187,7 +195,8 @@ public class InfoFragment extends RoboSherlockFragment {
             FrameLayout view = (FrameLayout) getView();
             view.removeAllViews();
             LayoutInflater.from(getActivity()).inflate(R.layout.machine_info, view, true);
-            safePopulate();
+            RoboGuice.getInjector(getActivity()).injectViewMembers(this);
+            populateViews();
         }
     }
 
@@ -219,9 +228,9 @@ public class InfoFragment extends RoboSherlockFragment {
 		super.onStart();
 		lbm.registerReceiver(_receiver, Utils.createIntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name()));
 		if(_machineInfo!=null) 
-			safePopulate();
+			populateViews();
 		else 
-			new LoadInfoTask().execute(_machine);
+			new LoadInfoTask(false).execute(_machine);
 	}
 
 	@Override
@@ -236,108 +245,106 @@ public class InfoFragment extends RoboSherlockFragment {
 		outState.putParcelable("info", _machineInfo);
 	}
 
-    private void safePopulate() {
-        try {
-            populateViews();
-        } catch(NetworkOnMainThreadException e) {
-            new LoadInfoTask().execute(_machine);
-        }
-    }
-
 	private void populateViews() {
-	    IMachine m = _machineInfo.machine;
-		_nameText.setText( m.getName());
-		_osTypeText.setText( m.getOSTypeId() );
-		if(!Utils.isEmpty(m.getGroups())) 
-		    _groupText.setText(m.getGroups().get(0));
-	    else
-	        _groupText.setText("None");
-		_baseMemoryText.setText( m.getMemorySize()+"" );
-		_processorsText.setText( m.getCPUCount()+"" );
-		//boot order
-		StringBuffer bootOrder = new StringBuffer();
-		for(int i=1; i<=99; i++) {
-			DeviceType b = m.getBootOrder(i);
-			if(b.equals(DeviceType.NULL)) break;
-			Utils.appendWithComma(bootOrder, b.toString());
-		}
-		_bootOrderText.setText( bootOrder.toString() );
-		
-		StringBuffer acceleration = new StringBuffer();
-		if(m.getHWVirtExProperty(HWVirtExPropertyType.ENABLED))
-			Utils.appendWithComma(acceleration, "VT-x/AMD-V");
-		if(m.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING))
-			Utils.appendWithComma(acceleration, "Nested Paging");
-		if(m.getCPUProperty(CPUPropertyType.PAE))
-			Utils.appendWithComma(acceleration,  "PAE/NX");
-		_accelerationText.setText(acceleration.toString());
-		
-		//storage controllers
-		StringBuffer storage = new StringBuffer();
-		List<IStorageController> controllers = m.getStorageControllers();
-		for(IStorageController controller : controllers) {
-			storage.append("Controller: ").append(controller.getName()).append("\n");
-			if(controller.getBus().equals(StorageBus.SATA)) {
-				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
-					storage.append(String.format("SATA Port %1$d\t\t%2$s\n", a.getPort(), a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
-			} else if (controller.getBus().equals(StorageBus.IDE)){
-				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName())) {
-					storage.append(String.format("IDE %1$s %2$s\t\t%3$s\n", a.getPort()==0 ? "Primary" : "Secondary", a.getDevice()==0 ? "Master" : "Slave", a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
-				}
-			} else {
-				for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
-					storage.append(String.format("Port: %1$d Device: %2$d\t\t%3$s\n", a.getPort(), a.getDevice(), a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
-			}
-		}
-		_storageText.setText(storage.toString());
-		//audio devices
-		_audioController.setText(m.getAudioAdapter().getAudioController().toString());
-		_audioDriver.setText(m.getAudioAdapter().getAudioDriver().toString());
-		
-		//network devices
-		StringBuffer networkText = new StringBuffer();
-		for(int i=0; i<4; i++) {
-			INetworkAdapter adapter = m.getNetworkAdapter(i);
-			if(!adapter.getEnabled())
-				continue;
-			if(i>0) 
-				networkText.append("\n");
-			networkText.append("Adapter ").append(i+1).append(": ").append(adapter.getAdapterType());
-			NetworkAttachmentType type = adapter.getAttachmentType();
-			Log.v(TAG, "Adapter #" + (i+1) + " attachment Type: " + type);
-			if(type.equals(NetworkAttachmentType.BRIDGED))
-				networkText.append("  (Bridged Adapter, ").append(adapter.getBridgedInterface()).append(")");
-			else if(type.equals(NetworkAttachmentType.HOST_ONLY))
-				networkText.append("  (Host-Only Adapter, ").append(adapter.getHostOnlyInterface()).append(")");
-			else if(type.equals(NetworkAttachmentType.GENERIC))
-				networkText.append("  (Generic-Driver Adapter, ").append(adapter.getGenericDriver()).append(")");
-			else if(type.equals(NetworkAttachmentType.INTERNAL))
-				networkText.append("  (Internal-Network Adapter, ").append(adapter.getInternalNetwork()).append(")");
-		}
-		_networkText.setText(networkText.toString());
-		
-		_videoMemoryText.setText( m.getVRAMSize()+" MB");
-		_accelerationVideoText.setText( (m.getAccelerate2DVideoEnabled() ? "2D" : "") + " " +  (m.getAccelerate3DEnabled() ? "3D" : "") );
-		
-		_rdpPortText.setText(m.getVRDEServer().getVRDEProperty(IVRDEServer.PROPERTY_PORT));
-		_descriptionText.setText( m.getDescription()+"" );
-		
-		if(_machineInfo.screenshot!=null) {
-			_preview.setImageBitmap(_machineInfo.screenshot.getBitmap());
-		    _preview.setAdjustViewBounds(true);
-			_preview.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			_previewPanel.expand(false);
-		} else
-			_previewPanel.collapse(false);
+        try {
+            IMachine m = _machineInfo.machine;
+            _nameText.setText( m.getName());
+            _osTypeText.setText( m.getOSTypeId() );
+            if(!Utils.isEmpty(m.getGroups()))
+                _groupText.setText(m.getGroups().get(0));
+            else
+                _groupText.setText("None");
+            _baseMemoryText.setText( m.getMemorySize()+"" );
+            _processorsText.setText( m.getCPUCount()+"" );
+            //boot order
+            StringBuffer bootOrder = new StringBuffer();
+            for(int i=1; i<=99; i++) {
+                DeviceType b = m.getBootOrder(i);
+                if(b.equals(DeviceType.NULL)) break;
+                Utils.appendWithComma(bootOrder, b.toString());
+            }
+            _bootOrderText.setText( bootOrder.toString() );
+
+            StringBuffer acceleration = new StringBuffer();
+            if(m.getHWVirtExProperty(HWVirtExPropertyType.ENABLED))
+                Utils.appendWithComma(acceleration, "VT-x/AMD-V");
+            if(m.getHWVirtExProperty(HWVirtExPropertyType.NESTED_PAGING))
+                Utils.appendWithComma(acceleration, "Nested Paging");
+            if(m.getCPUProperty(CPUPropertyType.PAE))
+                Utils.appendWithComma(acceleration,  "PAE/NX");
+            _accelerationText.setText(acceleration.toString());
+
+            //storage controllers
+            StringBuffer storage = new StringBuffer();
+            List<IStorageController> controllers = m.getStorageControllers();
+            for(IStorageController controller : controllers) {
+                storage.append("Controller: ").append(controller.getName()).append("\n");
+                if(controller.getBus().equals(StorageBus.SATA)) {
+                    for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
+                        storage.append(String.format("SATA Port %1$d\t\t%2$s\n", a.getPort(), a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
+                } else if (controller.getBus().equals(StorageBus.IDE)){
+                    for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName())) {
+                        storage.append(String.format("IDE %1$s %2$s\t\t%3$s\n", a.getPort()==0 ? "Primary" : "Secondary", a.getDevice()==0 ? "Master" : "Slave", a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
+                    }
+                } else {
+                    for(IMediumAttachment a : m.getMediumAttachmentsOfController(controller.getName()))
+                        storage.append(String.format("Port: %1$d Device: %2$d\t\t%3$s\n", a.getPort(), a.getDevice(), a.getMedium()==null ? "" : a.getMedium().getBase().getName()));
+                }
+            }
+            _storageText.setText(storage.toString());
+            //audio devices
+            _audioController.setText(m.getAudioAdapter().getAudioController().toString());
+            _audioDriver.setText(m.getAudioAdapter().getAudioDriver().toString());
+
+            //network devices
+            StringBuffer networkText = new StringBuffer();
+            for(int i=0; i<4; i++) {
+                INetworkAdapter adapter = m.getNetworkAdapter(i);
+                if(!adapter.getEnabled())
+                    continue;
+                if(i>0)
+                    networkText.append("\n");
+                networkText.append("Adapter ").append(i+1).append(": ").append(adapter.getAdapterType());
+                NetworkAttachmentType type = adapter.getAttachmentType();
+                Log.v(TAG, "Adapter #" + (i+1) + " attachment Type: " + type);
+                if(type.equals(NetworkAttachmentType.BRIDGED))
+                    networkText.append("  (Bridged Adapter, ").append(adapter.getBridgedInterface()).append(")");
+                else if(type.equals(NetworkAttachmentType.HOST_ONLY))
+                    networkText.append("  (Host-Only Adapter, ").append(adapter.getHostOnlyInterface()).append(")");
+                else if(type.equals(NetworkAttachmentType.GENERIC))
+                    networkText.append("  (Generic-Driver Adapter, ").append(adapter.getGenericDriver()).append(")");
+                else if(type.equals(NetworkAttachmentType.INTERNAL))
+                    networkText.append("  (Internal-Network Adapter, ").append(adapter.getInternalNetwork()).append(")");
+                else if(type.equals(NetworkAttachmentType.NAT))
+                    networkText.append("  (NAT)");
+            }
+            _networkText.setText(networkText.toString());
+
+            _videoMemoryText.setText( m.getVRAMSize()+" MB");
+            _accelerationVideoText.setText( (m.getAccelerate2DVideoEnabled() ? "2D" : "") + " " +  (m.getAccelerate3DEnabled() ? "3D" : "") );
+
+            _rdpPortText.setText(m.getVRDEServer().getVRDEProperty(IVRDEServer.PROPERTY_PORT));
+            _descriptionText.setText( m.getDescription()+"" );
+
+            if(_machineInfo.screenshot!=null) {
+                _preview.setImageBitmap(_machineInfo.screenshot.getBitmap());
+                _preview.setAdjustViewBounds(true);
+                _preview.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                _previewPanel.expand(false);
+            } else
+                _previewPanel.collapse(false);
+        } catch(NetworkOnMainThreadException e) {
+            new LoadInfoTask(false).execute(_machine);
+        }
 	}
 	
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch(item.getItemId()) {
 	        case R.id.option_menu_refresh:
 	            Log.i(TAG, "Refreshing...");
-	            new LoadInfoTask().execute(_machine);
-	            return true;
+	            new LoadInfoTask(true).execute(_machine);
+	            return false;
 	    }
 	    return false;
 	}

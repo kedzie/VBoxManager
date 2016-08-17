@@ -4,12 +4,13 @@ package com.kedzie.vbox.machine.settings;
 import java.util.ArrayList;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.INetworkAdapter;
@@ -17,15 +18,16 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboFragment;
 
-public class NetworkFragment extends SherlockFragment {
+public class NetworkFragment extends RoboFragment {
     private PagerTabHost mTabHost;
     
     private IMachine _machine;
     private ArrayList<INetworkAdapter> _adapters;
     private int mSavedTab;
 
-    public static class DummyFragment extends SherlockFragment {
+    public static class DummyFragment extends RoboFragment {
     	public DummyFragment() {
     		super();
     	}
@@ -37,7 +39,7 @@ public class NetworkFragment extends SherlockFragment {
     class LoadDataTask extends ActionBarTask<IMachine, ArrayList<INetworkAdapter>> {
     	
     	public LoadDataTask() {
-    		super(getSherlockActivity(), _machine.getAPI());
+    		super((AppCompatActivity)getActivity(), _machine.getAPI());
     	}
     	
     	@Override

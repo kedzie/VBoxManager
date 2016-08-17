@@ -2,6 +2,7 @@ package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,7 +24,7 @@ import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.DialogTask;
 
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 import java.util.Arrays;
@@ -32,13 +33,13 @@ import java.util.List;
 /**
  * @apiviz.stereotype fragment
  */
-public class NetworkAdapterFragment extends RoboSherlockFragment {
+public class NetworkAdapterFragment extends RoboFragment {
     private static final String TAG = "NetworkAdapterFragment";
 
 	class LoadInfoTask extends DialogTask<INetworkAdapter, Tuple<INetworkAdapter, String[]>> {
 		
 		public LoadInfoTask() {
-			super(getSherlockActivity(), _adapter.getAPI(), R.string.progress_loading_data_generic);
+			super((AppCompatActivity)getActivity(), _adapter.getAPI(), R.string.progress_loading_data_generic);
 		}
 
 		@Override 

@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -26,7 +27,7 @@ import com.kedzie.vbox.app.Utils;
  * @author Marek Kedzierski
  * @apiviz.stereotype application
  */
-public class VBoxApplication extends Application {
+public class VBoxApplication extends MultiDexApplication {
 	private static final String TAG = "VBoxApplication";
 	private static final String APPLICATION_PRO_KEY_PACKAGE = "com.kedzie.vbox.pro";
 	private static final String APPLICATION_PACKAGE = "com.kedzie.vbox";
@@ -111,7 +112,7 @@ public class VBoxApplication extends Application {
 	
 	/**
 	 * Populate the drawable cache
-	 * @param name                     name of drawable resource
+	 * @param id                     name of drawable resource
 	 * @param bwResource			B/W drawable id
 	 * @param colorResource		Color drawable id
 	 */
@@ -177,11 +178,11 @@ public class VBoxApplication extends Application {
 	}
 	
 	/**
-	 * Get {@link Drawable} for given {@link MachineState}
-	 * @param state    The {@link MachineState}
+	 * Get {@link Drawable}
+	 * @param id    The id
 	 * @return     Android resource id
 	 */
-	public int getDrawable(int id) {
+	public int getVDrawable(int id) {
 		return getGeneralDrawables().get(id);	
 	}
 	

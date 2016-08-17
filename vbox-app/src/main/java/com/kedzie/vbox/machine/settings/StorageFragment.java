@@ -1,15 +1,14 @@
 package com.kedzie.vbox.machine.settings;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.*;
 import android.widget.FrameLayout;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMedium;
 import com.kedzie.vbox.api.IStorageController;
@@ -21,10 +20,11 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnMediumAttachmentClickedListener;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnStorageControllerClickedListener;
 
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 
-public class StorageFragment extends RoboSherlockFragment implements OnStorageControllerClickedListener, OnMediumAttachmentClickedListener {
 
+public class StorageFragment extends RoboFragment implements OnStorageControllerClickedListener, OnMediumAttachmentClickedListener {
+    private static final String TAG = "StorageFragment";
     private boolean _dualPane;
     private StorageListFragment _listFragment;
     
@@ -36,7 +36,8 @@ public class StorageFragment extends RoboSherlockFragment implements OnStorageCo
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	    View view = LayoutInflater.from(getActivity()).inflate(R.layout.settings_storage, null);
+        FrameLayout view = new FrameLayout(getActivity());
+	    LayoutInflater.from(getActivity()).inflate(R.layout.settings_storage, view, true);
         FrameLayout detailsFrame = (FrameLayout)view.findViewById(R.id.details);
         _dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
         
@@ -50,6 +51,34 @@ public class StorageFragment extends RoboSherlockFragment implements OnStorageCo
         }
         return view;
 	}
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(Utils.getScreenSize(newConfig)==Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            Log.i(TAG, "Handling orientation change");
+            FragmentManager mgr = getChildFragmentManager();
+            FragmentTransaction tx = mgr.beginTransaction();
+            for(Fragment fragment : mgr.getFragments()) {
+                tx.detach(fragment);
+            }
+            tx.commit();
+            FrameLayout view = (FrameLayout)getView();
+            view.removeAllViews();
+            LayoutInflater.from(getActivity()).inflate(R.layout.settings_storage, view, true);
+            FrameLayout detailsFrame = (FrameLayout)view.findViewById(R.id.details);
+            _dualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
+            _listFragment = (StorageListFragment) getChildFragmentManager().findFragmentByTag("list");
+            Fragment detailsFragment = getChildFragmentManager().findFragmentByTag("details");
+            tx = getChildFragmentManager().beginTransaction();
+            tx.attach(_listFragment);
+            if(detailsFragment!=null && _dualPane) {
+                tx.remove(detailsFragment).add(R.id.details, Fragment.instantiate(getActivity(), detailsFragment.getClass().getName(), detailsFragment.getArguments()), "details");
+            }
+            tx.commit();
+        }
+    }
 
     @Override
     public void onStorageControllerClicked(IStorageController element) {
@@ -75,11 +104,12 @@ public class StorageFragment extends RoboSherlockFragment implements OnStorageCo
             Utils.setCustomAnimations(getChildFragmentManager().beginTransaction())
                     .addToBackStack(null)
                     .detach(_listFragment)
-                    .add(R.id.list, details.instantiate(getActivity()))
+                    .add(R.id.list, details.instantiate(getActivity()), "details")
                     .commit();
         }
     }
-    
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if(_listFragment !=null)

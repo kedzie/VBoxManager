@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,13 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.jaxb.StorageControllerType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 /**
@@ -23,12 +24,12 @@ import roboguice.inject.InjectView;
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class StorageControllerFragment extends RoboSherlockFragment {
+public class StorageControllerFragment extends RoboFragment {
 
     private class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
     	
         public LoadInfoTask() { 
-        	super(getSherlockActivity(), null); 
+        	super((AppCompatActivity)getActivity(), null);
         }
         
         @Override 

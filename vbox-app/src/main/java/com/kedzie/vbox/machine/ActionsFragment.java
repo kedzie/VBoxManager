@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,8 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.MenuItem;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
@@ -42,14 +43,14 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class ActionsFragment extends RoboSherlockFragment implements OnItemClickListener {
+public class ActionsFragment extends RoboFragment implements OnItemClickListener {
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
 	
 	private MachineView _headerView;
@@ -81,7 +82,7 @@ public class ActionsFragment extends RoboSherlockFragment implements OnItemClick
 	class UpdateMachineViewTask extends ActionBarTask<IMachine, IMachine> {
 		
 		public UpdateMachineViewTask(VBoxSvc vmgr) {
-			super(getSherlockActivity(), vmgr);
+			super((AppCompatActivity)getActivity(), vmgr);
 		}
 		
 		@Override 
@@ -107,7 +108,7 @@ public class ActionsFragment extends RoboSherlockFragment implements OnItemClick
 	class HandleSessionChangedEvent extends ActionBarTask<Bundle, SessionState> {
 		
 		public HandleSessionChangedEvent(VBoxSvc vmgr) {  
-			super(getSherlockActivity(), vmgr);
+			super((AppCompatActivity)getActivity(), vmgr);
 		}
 
 		@Override
@@ -200,56 +201,56 @@ public class ActionsFragment extends RoboSherlockFragment implements OnItemClick
 		VMAction action = (VMAction)_listView.getAdapter().getItem(position);
 		if(action==null) return;
 		if(action.equals(VMAction.START))	
-			new LaunchVMProcessTask(getSherlockActivity(), _vmgr).execute(_machine);
+			new LaunchVMProcessTask((AppCompatActivity)getActivity(), _vmgr).execute(_machine);
 		else if(action.equals(VMAction.POWER_OFF))	
-			new MachineTask<IMachine, Void>(getSherlockActivity(), _vmgr, R.string.progress_powering_off, false, _machine) {	
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_powering_off, false, _machine) {
 			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  return console.powerDown();
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.RESET))
-			new MachineTask<IMachine, Void>(getSherlockActivity(), _vmgr, R.string.progress_restarting, true, _machine) {	
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_restarting, true, _machine) {
 			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.reset(); 
 				  return null;
 			  }
 			  }.execute(_machine);
 		else if(action.equals(VMAction.PAUSE)) 	
-			new MachineTask<IMachine, Void>(getSherlockActivity(), _vmgr, R.string.progress_pausing, true, _machine) {	
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_pausing, true, _machine) {
 			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
 				  console.pause();	
 				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.RESUME)) 
-			new MachineTask<IMachine, Void>(getSherlockActivity(), _vmgr, R.string.progress_resuming, true, _machine) {	
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_resuming, true, _machine) {
 			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.resume();
 				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.POWER_BUTTON)) 	
-			new MachineTask<IMachine, Void>( getSherlockActivity(), _vmgr, R.string.progress_acpi_down, true, _machine) {
+			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, R.string.progress_acpi_down, true, _machine) {
 			  protected Void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
 				  console.powerButton(); 	
 				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.SAVE_STATE)) 	
-			new MachineTask<IMachine, Void>( getSherlockActivity(), _vmgr, R.string.progress_saving_state, false, _machine) { 
+			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, R.string.progress_saving_state, false, _machine) {
 				protected IProgress workWithProgress(IMachine m, IConsole console, IMachine...i) throws Exception { 	
 					return console.saveState(); 
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.DISCARD_STATE)) 	
-			new MachineTask<IMachine, Void>( getSherlockActivity(), _vmgr, R.string.progress_discarding_state, true, _machine) { 
+			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, R.string.progress_discarding_state, true, _machine) {
 				protected Void work(IMachine m, IConsole console, IMachine...i) throws Exception { 	
 					console.discardSavedState(true); 
 					return null;
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.TAKE_SNAPSHOT)) 	{
-		    Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), "snapshotDialog", 
+		    Utils.showDialog(((AppCompatActivity)getActivity()).getSupportFragmentManager(), "snapshotDialog",
                     TakeSnapshotFragment.getInstance(_vmgr, _machine, null) );
 		} else if(action.equals(VMAction.VIEW_METRICS)) {
 			startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
@@ -260,7 +261,7 @@ public class ActionsFragment extends RoboSherlockFragment implements OnItemClick
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 		} else if(action.equals(VMAction.TAKE_SCREENSHOT)) 	{
-			new MachineTask<Void, byte []>(getSherlockActivity(), _vmgr, R.string.progress_taking_snapshot, true, _machine) { 
+			new MachineTask<Void, byte []>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_taking_snapshot, true, _machine) {
 				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
 					IDisplay display = console.getDisplay();
 					Map<String, String> res = display.getScreenResolution(0);
@@ -269,7 +270,7 @@ public class ActionsFragment extends RoboSherlockFragment implements OnItemClick
 				@Override
 				protected void onSuccess(byte[] result) {
 					super.onSuccess(result);
-					Utils.showDialog(getSherlockActivity().getSupportFragmentManager(), "screenshotDialog", ScreenshotDialogFragment.getInstance(result) );
+					Utils.showDialog(((AppCompatActivity)getActivity()).getSupportFragmentManager(), "screenshotDialog", ScreenshotDialogFragment.getInstance(result) );
 				}
 			}.execute();
 		} else if(action.equals(VMAction.EDIT_SETTINGS)) {

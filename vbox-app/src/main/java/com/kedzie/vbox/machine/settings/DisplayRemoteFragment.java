@@ -3,6 +3,7 @@ package com.kedzie.vbox.machine.settings;
 import java.util.Arrays;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,7 +19,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IVRDEServer;
@@ -26,13 +27,13 @@ import com.kedzie.vbox.api.jaxb.AuthType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 
 /**
  * Edit remote desktop server
  * @apiviz.stereotype fragment
  */
-public class DisplayRemoteFragment extends RoboSherlockFragment {
+public class DisplayRemoteFragment extends RoboFragment {
 	
 	/**
 	 * load Remote Desktop Server info
@@ -40,7 +41,7 @@ public class DisplayRemoteFragment extends RoboSherlockFragment {
 	class LoadDataTask extends ActionBarTask<IMachine, IVRDEServer> {
 		
 		public LoadDataTask() { 
-			super(getSherlockActivity(), _machine.getAPI()); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 		
 		@Override 

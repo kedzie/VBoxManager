@@ -14,9 +14,10 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.server.Server;
@@ -38,7 +39,7 @@ public class SSLUtil {
 
 		private Server server;
 
-		public AddCertificateToKeystoreTask(SherlockFragmentActivity context, Server server) {
+		public AddCertificateToKeystoreTask(AppCompatActivity context, Server server) {
 			super(context, null, R.string.progress_updating_keystore);
 			this.server = server;
 		}

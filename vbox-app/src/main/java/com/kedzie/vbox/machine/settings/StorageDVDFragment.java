@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +18,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.google.common.base.Objects;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
@@ -29,14 +30,14 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class StorageDVDFragment extends RoboSherlockFragment {
+public class StorageDVDFragment extends RoboFragment {
 
 	/**
 	 * Fetch DVD/Medium details
@@ -44,7 +45,7 @@ public class StorageDVDFragment extends RoboSherlockFragment {
 	class LoadInfoTask extends ActionBarTask<Void, Void> {
 
 		public LoadInfoTask() { 
-			super(getSherlockActivity(), _machine.getAPI()); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override 
@@ -72,7 +73,7 @@ public class StorageDVDFragment extends RoboSherlockFragment {
 	class MoveTask extends ActionBarTask<Slot, Void> {
 
 		public MoveTask() { 
-			super(getSherlockActivity(), _machine.getAPI()); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override 
@@ -94,7 +95,7 @@ public class StorageDVDFragment extends RoboSherlockFragment {
 	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
 
 		public ListMediumsTask() { 
-			super(getSherlockActivity(),_machine.getAPI()); 
+			super((AppCompatActivity)getActivity(),_machine.getAPI());
 		}
 
 		@Override 
@@ -134,7 +135,7 @@ public class StorageDVDFragment extends RoboSherlockFragment {
 	class MountTask extends DialogTask<IMedium, Void> {
 
 		public MountTask() { 
-			super(getSherlockActivity(), _machine.getAPI(),R.string.progress_mounting_medium); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI(),R.string.progress_mounting_medium);
 		}
 
 		@Override 

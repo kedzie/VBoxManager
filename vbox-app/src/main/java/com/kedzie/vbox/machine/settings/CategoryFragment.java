@@ -12,16 +12,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.FragmentElementListAdapter;
+import roboguice.fragment.RoboFragment;
 
 /**
  * 
  * @author Marek Kędzierski
  */
-public class CategoryFragment extends SherlockFragment {
+public class CategoryFragment extends RoboFragment {
 
     /**
      * Listener which handles selection events

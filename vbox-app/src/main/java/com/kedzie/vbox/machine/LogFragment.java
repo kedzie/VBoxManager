@@ -1,21 +1,18 @@
 package com.kedzie.vbox.machine;
 
-import java.io.IOException;
-
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.LoggingFrameLayout;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 /**
@@ -23,13 +20,13 @@ import roboguice.inject.InjectView;
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class LogFragment extends RoboSherlockFragment {
+public class LogFragment extends RoboFragment {
     private static final String TAG = "LogFragment";
 	private static final int MAX_LOG_SIZE=409600; //400 Kbps
 	
 	class LoadLogTask extends ActionBarTask<IMachine, String> {
 		public LoadLogTask() {
-			super(getSherlockActivity(), null);
+			super((AppCompatActivity)getActivity(), null);
 		}
 
 		@Override 
@@ -82,7 +79,7 @@ public class LogFragment extends RoboSherlockFragment {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_refresh:
 		    Log.i(TAG, "Refreshing...");

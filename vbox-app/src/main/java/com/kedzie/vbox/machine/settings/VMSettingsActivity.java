@@ -9,13 +9,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
-import android.view.View;
-import android.widget.FrameLayout;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
@@ -138,7 +136,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 		_machine = BundleBuilder.getProxy(getIntent(), IMachine.BUNDLE, IMachine.class);
 
         getSupportActionBar().setDisplayOptions(
-                ActionBar.DISPLAY_SHOW_HOME|ActionBar.DISPLAY_HOME_AS_UP|ActionBar.DISPLAY_SHOW_TITLE);
+                ActionBar.DISPLAY_SHOW_HOME| ActionBar.DISPLAY_HOME_AS_UP|ActionBar.DISPLAY_SHOW_TITLE);
 		getSupportActionBar().setTitle(_machine.getName() + " Settings");
 		getSupportActionBar().setIcon(getApp().getOSDrawable(_machine.getOSTypeId()));
 
@@ -158,13 +156,18 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
         super.onConfigurationChanged(newConfig);
         if(Utils.getScreenSize(newConfig)==Configuration.SCREENLAYOUT_SIZE_LARGE) {
             Log.i(TAG, "Handling orientation change");
+
+            Fragment list = _mgr.findFragmentById(R.id.list);
+            _mgr.beginTransaction().detach(list).commit();
+
             Fragment details = _mgr.findFragmentById(R.id.details);
             if(details!=null) {
-                _mgr.beginTransaction().remove(details).commit();
+//                _mgr.beginTransaction().remove(details).commit();
             }
 
             setContentView(R.layout.fragment_list_layout);
             _dualPane = findViewById(R.id.details)!=null;
+            _mgr.beginTransaction().attach(list).commit();
         }
     }
 
@@ -198,7 +201,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.machine_settings, menu);
+        getMenuInflater().inflate(R.menu.machine_settings, menu);
         return true;
     }
 

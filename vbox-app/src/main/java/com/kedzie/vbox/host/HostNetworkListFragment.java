@@ -3,16 +3,15 @@ package com.kedzie.vbox.host;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.support.v7.app.AppCompatActivity;
+import android.view.*;
+import com.kedzie.vbox.soap.VBoxSvc;
 import org.ksoap2.SoapFault;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -20,10 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IHost;
@@ -35,8 +30,9 @@ import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
+import roboguice.fragment.RoboFragment;
 
-public class HostNetworkListFragment extends SherlockFragment {
+public class HostNetworkListFragment extends RoboFragment {
 
 	private View _view;
 	private ListView _listView;
@@ -44,7 +40,8 @@ public class HostNetworkListFragment extends SherlockFragment {
 	private TextView _hostInterfaceDHCPEnabledText;
 	private ArrayAdapter<IHostNetworkInterface> _listAdapter;
 //	private boolean _dualPane;
-	
+
+	private VBoxSvc _vmgr;
 	private IHost _host;
 	private ArrayList<IHostNetworkInterface> _interfaces;
 	private ArrayList<IDHCPServer> _dhcpServers;
@@ -56,7 +53,7 @@ public class HostNetworkListFragment extends SherlockFragment {
 	private class AddInterfaceTask extends DialogTask<IHost, IHostNetworkInterface> {
 		
 		public AddInterfaceTask() {
-			super(getSherlockActivity(), _host.getAPI(), R.string.progress_creating_network_interface);
+			super((AppCompatActivity)getActivity(), _host.getAPI(), R.string.progress_creating_network_interface);
 		}
 		
 		@Override
@@ -80,7 +77,7 @@ public class HostNetworkListFragment extends SherlockFragment {
 	private class DeleteInterfaceTask extends ActionBarTask<IHostNetworkInterface, IHostNetworkInterface> {
 		
 		public DeleteInterfaceTask() {
-			super(getSherlockActivity(), _host.getAPI());
+			super((AppCompatActivity)getActivity(), _host.getAPI());
 		}
 		
 		@Override
@@ -99,14 +96,15 @@ public class HostNetworkListFragment extends SherlockFragment {
 	/**
 	 * Load list of host network interfaces
 	 */
-	private class LoadDataTask extends ActionBarTask<IHost, ArrayList<IHostNetworkInterface>> {
+	private class LoadDataTask extends ActionBarTask<Void, ArrayList<IHostNetworkInterface>> {
 		
 		public LoadDataTask() {
-			super(getSherlockActivity(), _host.getAPI());
+			super((AppCompatActivity)getActivity(), HostNetworkListFragment.this._vmgr);
 		}
 		
 		@Override
-		protected ArrayList<IHostNetworkInterface> work(IHost... params) throws Exception {
+		protected ArrayList<IHostNetworkInterface> work(Void... params) throws Exception {
+			_host = _vmgr.getVBox().getHost();
 			ArrayList<IHostNetworkInterface> data = _host.findHostNetworkInterfacesOfType(HostNetworkInterfaceType.HOST_ONLY);
 			_dhcpServers = new ArrayList<IDHCPServer>(data.size());
 			for(IHostNetworkInterface net : data) {
@@ -162,8 +160,6 @@ public class HostNetworkListFragment extends SherlockFragment {
     }
 	
 	void showInterfaceDialog(IHostNetworkInterface hostInterface) {
-//		FragmentElement category = new FragmentElement(hostInterface.getName(), HostNetworkDialog2Fragment.class, new BundleBuilder().putParcelable(IHostNetworkInterface.BUNDLE, hostInterface).create());
-//		startActivity(new Intent(getActivity(), FragmentActivity.class).putExtra(FragmentElement.BUNDLE, category));
 		Utils.showDialog(getFragmentManager(), "dialog", HostNetworkDialog.getInstance(new BundleBuilder().putParcelable(IHostNetworkInterface.BUNDLE, hostInterface).create()));
 	}
 	
@@ -171,15 +167,18 @@ public class HostNetworkListFragment extends SherlockFragment {
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putParcelableArrayList("interfaces", _interfaces);
+		outState.putParcelable(IHost.BUNDLE, _host);
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		_host = (IHost)getArguments().getParcelable(IHost.BUNDLE);
-		if(savedInstanceState!=null)
+		_vmgr = BundleBuilder.getVBoxSvc(getArguments());
+		if(savedInstanceState!=null) {
+			_host = savedInstanceState.getParcelable(IHost.BUNDLE);
 			_interfaces = savedInstanceState.getParcelableArrayList("interfaces");
+		}
 	}
 	
 	@Override
@@ -211,11 +210,14 @@ public class HostNetworkListFragment extends SherlockFragment {
 		super.onStart();
 		new LoadDataTask().execute();
 	}
-	
+
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.host_interface_actions, menu);
 	}
+
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

@@ -3,11 +3,10 @@ package com.kedzie.vbox.app;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.SettingsActivity;
 
 /**
@@ -17,12 +16,12 @@ import com.kedzie.vbox.SettingsActivity;
  */
 public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabListener, ViewPager.OnPageChangeListener  {
 
-	private SherlockFragmentActivity mActivity;
+	private AppCompatActivity mActivity;
 	private ActionBar mActionBar;
     private ViewPager mViewPager;
     private FragPagerAdapter mAdapter;
     
-    public TabSupportActionBarViewPager(SherlockFragmentActivity activity, int container) {
+    public TabSupportActionBarViewPager(AppCompatActivity activity, int container) {
         mActivity=activity;
         mActionBar=activity.getSupportActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -50,7 +49,7 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
 
     @Override
     public void addTab(FragmentElement info)  {
-        Tab tab = mActionBar.newTab().setTag(info.name).setTabListener(this);
+        ActionBar.Tab tab = mActionBar.newTab().setTag(info.name).setTabListener(this);
         if(info.icon!=-1)
             tab.setIcon(info.icon);
         else
@@ -83,7 +82,7 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
     }
 	
 	@Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 //	    mViewPager.setCurrentItem(mAdapter.getTabs().indexOf(new FragmentElement((String)tab.getTag(), null, null)));
         for (int i=0; i<mAdapter.getTabs().size(); i++) 
             if (mAdapter.getTabs().get(i).name == tab.getTag()) 
@@ -92,6 +91,6 @@ public class TabSupportActionBarViewPager  implements TabSupport, ActionBar.TabL
 	
     @Override public void onPageScrollStateChanged(int state) {}
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-    @Override public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
-    @Override public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+    @Override public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {}
+    @Override public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {}
 }

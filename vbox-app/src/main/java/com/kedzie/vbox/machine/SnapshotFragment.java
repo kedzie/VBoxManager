@@ -1,6 +1,9 @@
 package com.kedzie.vbox.machine;
 
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.*;
 import com.google.common.base.Throwables;
 import com.kedzie.vbox.app.BundleBuilder;
 import pl.polidea.treeview.AbstractTreeViewAdapter;
@@ -15,19 +18,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.MenuInflater;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
@@ -43,13 +38,14 @@ import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
+import roboguice.inject.InjectView;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class SnapshotFragment extends RoboSherlockFragment {
+public class SnapshotFragment extends RoboFragment {
 
     /**
      *	Load complete snapshot tree.
@@ -57,7 +53,7 @@ public class SnapshotFragment extends RoboSherlockFragment {
     class LoadSnapshotsTask extends ActionBarTask<IMachine, ISnapshot>	{
 
         public LoadSnapshotsTask(VBoxSvc vmgr) { 
-            super(getSherlockActivity(), vmgr); 	
+            super((AppCompatActivity)getActivity(), vmgr);
         }
 
         @Override
@@ -99,7 +95,7 @@ public class SnapshotFragment extends RoboSherlockFragment {
     class HandleDeletedEventTask extends ActionBarTask<ISnapshotDeletedEvent, ISnapshot> {
 
         public HandleDeletedEventTask(VBoxSvc vmgr) { 
-            super(getSherlockActivity(), vmgr);     
+            super((AppCompatActivity)getActivity(), vmgr);
         }
 
         @Override
@@ -124,7 +120,7 @@ public class SnapshotFragment extends RoboSherlockFragment {
     class HandleAddedEventTask extends ActionBarTask<ISnapshotTakenEvent, ISnapshot> {
 
         public HandleAddedEventTask(VBoxSvc vmgr) { 
-            super(getSherlockActivity(), vmgr);     
+            super((AppCompatActivity)getActivity(), vmgr);
         }
 
         @Override
@@ -184,7 +180,10 @@ public class SnapshotFragment extends RoboSherlockFragment {
 
     protected VBoxSvc _vmgr;
     protected IMachine _machine;
+    @InjectView(R.id.mainTreeView)
     protected TreeViewList _treeView;
+    @InjectView(R.id.addButton)
+    private FloatingActionButton _addButton;
     private ISnapshot _root;
     protected TreeStateManager<ISnapshot> _stateManager;
     protected TreeBuilder<ISnapshot> _treeBuilder;
@@ -266,17 +265,20 @@ public class SnapshotFragment extends RoboSherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        try {
-            View view = inflater.inflate(R.layout.snapshot_tree, container, false);
+        return inflater.inflate(R.layout.snapshot_tree, container, false);
+    }
 
-        _treeView = (TreeViewList)view.findViewById(R.id.mainTreeView);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         _treeView.setChoiceMode(ListView.CHOICE_MODE_NONE);
         registerForContextMenu(_treeView);
-        return view;
-        }catch (Exception e) {
-            Log.e("SnapshotFragment", "Snapshot layout exception ", Throwables.getRootCause(e));
-            throw new RuntimeException(e);
-        }
+        _addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(_vmgr, _machine, null) );
+            }
+        });
     }
 
     @Override
@@ -306,16 +308,8 @@ public class SnapshotFragment extends RoboSherlockFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.snapshot_actions, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.option_menu_add:
-                Utils.showDialog(getFragmentManager(), "snapshotDialog", TakeSnapshotFragment.getInstance(_vmgr, _machine, null) );
-                return true;
             case R.id.option_menu_refresh:
                 refresh();
                 return false;
@@ -345,7 +339,7 @@ public class SnapshotFragment extends RoboSherlockFragment {
                 return true;
             case R.id.context_menu_delete_snapshot:  
                 nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-                new MachineTask<ISnapshot, Void>(getSherlockActivity(), _vmgr, R.string.progress_deleting_snapshot, false, _machine) { 
+                new MachineTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_deleting_snapshot, false, _machine) {
                     protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
                         return console.deleteSnapshot(s[0].getId());
                     }
@@ -353,7 +347,7 @@ public class SnapshotFragment extends RoboSherlockFragment {
                 return true;
             case R.id.context_menu_restore_snapshot:
                 nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-                new MachineTask<ISnapshot, Void>(getSherlockActivity(), _vmgr, R.string.progress_restore_snapshot, false, _machine) { 
+                new MachineTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_restore_snapshot, false, _machine) {
                     protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
                         return console.restoreSnapshot(s[0]);
                     }

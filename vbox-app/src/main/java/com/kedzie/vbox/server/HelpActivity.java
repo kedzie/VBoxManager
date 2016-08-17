@@ -1,23 +1,18 @@
 package com.kedzie.vbox.server;
 
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
+import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
-import roboguice.activity.RoboSherlockActivity;
 import roboguice.inject.InjectView;
 
 /**
  * Detailed help information for launching <em>vboxwebsrv</em>
  */
-public class HelpActivity extends RoboSherlockActivity {
+public class HelpActivity extends BaseActivity {
 
     @InjectView(R.id.main_text)
     private TextView mainText;

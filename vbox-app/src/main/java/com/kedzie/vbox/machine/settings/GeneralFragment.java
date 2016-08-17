@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
+import roboguice.fragment.RoboFragment;
 
-public class GeneralFragment extends SherlockFragment {
+public class GeneralFragment extends RoboFragment {
     private PagerTabHost mTabHost;
 
     @Override

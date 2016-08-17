@@ -281,8 +281,8 @@ public class Utils {
 	 * @return the transaction
 	 */
 	public static FragmentTransaction setCustomAnimations(FragmentTransaction tx) {
-		return tx.setCustomAnimations(com.kedzie.vbox.R.animator.flip_left_in, com.kedzie.vbox.R.animator.flip_left_out,
-				com.kedzie.vbox.R.animator.flip_right_in, com.kedzie.vbox.R.animator.flip_right_out);
+		return tx.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+				android.R.anim.fade_in, android.R.anim.fade_out);
 	}
 
 	/**

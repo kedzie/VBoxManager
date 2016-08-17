@@ -5,34 +5,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.SettingsActivity;
-import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventNotificationReceiver;
-import com.kedzie.vbox.host.HostSettingsActivity;
-import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
 
 /**
  * Machine list with option menu and event handler
  * @apiviz.stereotype fragment
  */
 public class MachineGroupListFragment extends MachineGroupListBaseFragment {
-	private static final int REQUEST_CODE_PREFERENCES = 6;
-	
+
 	private LocalBroadcastManager lbm;
 	private EventNotificationReceiver _notificationReceiver = new EventNotificationReceiver();
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
@@ -49,7 +41,7 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 	private class HandleEventTask extends ActionBarTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
-			super(getSherlockActivity(), vmgr);
+			super((AppCompatActivity)getActivity(), vmgr);
 		}
 
 		@Override
@@ -94,30 +86,17 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 
 	
 	@Override
-	public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, com.actionbarsherlock.view.MenuInflater inflater) {
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.machine_list_actions, menu);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected( com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected( MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_refresh:
 			new LoadGroupsTask(_vmgr).execute();
 			return false;
-		case R.id.option_menu_preferences:
-			Utils.startActivityForResult(getActivity(), new Intent(getActivity(), SettingsActivity.class),REQUEST_CODE_PREFERENCES);
-			return true;
 		}
 		return false;
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode==REQUEST_CODE_PREFERENCES) {
-			new ConfigureMetricsTask(getSherlockActivity(), _vmgr).execute(
-					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_PERIOD),	
-					Utils.getIntPreference(getActivity(), SettingsActivity.PREF_COUNT) );
-		}
 	}
 }

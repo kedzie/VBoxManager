@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/server_list_option_menu_save" 
         android:icon="@drawable/ic_menu_save" 
         android:title="@string/save"
-        android:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>
     
     <item android:id="@+id/server_list_option_menu_delete" 
         android:icon="@drawable/ic_menu_delete" 
         android:title="@string/delete"
-        android:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>

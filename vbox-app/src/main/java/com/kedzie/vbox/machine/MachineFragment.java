@@ -1,27 +1,21 @@
 package com.kedzie.vbox.machine;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
-import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
+import roboguice.fragment.RoboFragment;
 
-public class MachineFragment extends SherlockFragment {
-    private static final int REQUEST_CODE_PREFERENCES = 6;
+public class MachineFragment extends RoboFragment {
 
     private VBoxSvc mVmgr;
     private PagerTabHost mTabHost;
@@ -56,30 +50,14 @@ public class MachineFragment extends SherlockFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-//		if(!mDualPane)
-        	inflater.inflate(R.menu.machine_actions, menu);
+        inflater.inflate(R.menu.machine_actions, menu);
         if(mTabHost.getCurrentFragment()!=null)
-		    ((SherlockFragment)mTabHost.getCurrentFragment()).onCreateOptionsMenu(menu, inflater);
+            (mTabHost.getCurrentFragment()).onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.option_menu_preferences:
-                Utils.startActivityForResult(getActivity(), new Intent(getActivity(), SettingsActivity.class), REQUEST_CODE_PREFERENCES);
-                return true;
-        }
-		return ((SherlockFragment)mTabHost.getCurrentFragment()).onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==REQUEST_CODE_PREFERENCES) {
-            new ConfigureMetricsTask(getSherlockActivity(), mVmgr).execute(
-                    Utils.getIntPreference(getActivity(), SettingsActivity.PREF_PERIOD),
-                    Utils.getIntPreference(getActivity(), SettingsActivity.PREF_COUNT) );
-        }
+        return (mTabHost.getCurrentFragment()).onOptionsItemSelected(item);
     }
 
     @Override

@@ -9,14 +9,9 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.app.BaseActivity;
@@ -99,7 +94,7 @@ public class MetricActivity extends BaseActivity  {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.metric_actions, menu);
+		getMenuInflater().inflate(R.menu.metric_actions, menu);
 		return true;
 	}
 

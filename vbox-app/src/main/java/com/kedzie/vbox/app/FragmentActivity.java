@@ -1,17 +1,13 @@
 package com.kedzie.vbox.app;
 
-import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.FrameLayout;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.MenuItem;
-
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 
 
 public class FragmentActivity extends BaseActivity {
@@ -21,19 +17,25 @@ public class FragmentActivity extends BaseActivity {
     public static final String KEY_PARENT_ACTIVITY = "parent";
 
 	private FragmentElement mFragment;
+    private String mParent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mParent = getIntent().getStringExtra(KEY_PARENT_ACTIVITY);
+        mFragment = getIntent().getParcelableExtra(FragmentElement.BUNDLE);
+        TAG = mFragment.name;
+
         if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE 
                 && Utils.getScreenSize(getResources().getConfiguration())>=Configuration.SCREENLAYOUT_SIZE_LARGE) {
-            finish();
+            if(mParent!=null) {
+                Utils.overrideBackTransition(this);
+                NavUtils.navigateUpTo(this, new Intent().setComponent(new ComponentName(this, mParent)).putExtras(mFragment.args));
+            } else
+                finish();
         }
-        
-        mFragment = getIntent().getParcelableExtra(FragmentElement.BUNDLE);
-		TAG = mFragment.name;
 
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP|ActionBar.DISPLAY_SHOW_TITLE|ActionBar.DISPLAY_SHOW_HOME);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP|ActionBar.DISPLAY_SHOW_TITLE| ActionBar.DISPLAY_SHOW_HOME);
         getSupportActionBar().setTitle(mFragment.name);
         if(mFragment.icon!=-1)
         	getSupportActionBar().setIcon(mFragment.icon);
@@ -47,8 +49,11 @@ public class FragmentActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 			case android.R.id.home:
-//                NavUtils.shouldUpRecreateTask(this, NavUtils.getParentActivityIntent(this));
-				finish();
+                if(mParent!=null) {
+                    Utils.overrideBackTransition(this);
+                    NavUtils.navigateUpTo(this, new Intent().setComponent(new ComponentName(this, mParent)).putExtras(getIntent()));
+                } else
+                    finish();
 				return true;
 		}
 		return false;

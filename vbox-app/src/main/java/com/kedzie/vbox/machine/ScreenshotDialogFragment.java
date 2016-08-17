@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,17 +21,18 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboDialogFragment;
 
 /**
  * Take a screenshot and save to filesystem
  * 
  * @apiviz.stereotype fragment
  */
-public class ScreenshotDialogFragment extends SherlockDialogFragment {
+public class ScreenshotDialogFragment extends RoboDialogFragment {
 	public static final String BUNDLE_BYTES = "bytes";
 	
 	class SaveScreenshotTask extends ActionBarTask<Bitmap, Void> {
@@ -38,7 +40,7 @@ public class ScreenshotDialogFragment extends SherlockDialogFragment {
 	    private String filename;
 	    
 		public SaveScreenshotTask() {
-			super(getSherlockActivity(), null);
+			super((AppCompatActivity)getActivity(), null);
 			filename =  "screenshot_"+DateFormat.format("yyyyMMdd_hmmssaa", new Date())+".jpg";
 		}
 		

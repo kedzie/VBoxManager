@@ -22,6 +22,8 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineFragment;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roboguice.inject.InjectExtra;
 import roboguice.service.RoboIntentService;
 
@@ -29,8 +31,8 @@ import roboguice.service.RoboIntentService;
  * Listen for VirtualBox events and publish notifications
  */
 public class EventNotificationService extends RoboIntentService {
+	private static final Logger log = LoggerFactory.getLogger(EventNotificationService.class);
 
-	private static final String TAG = "EventNotificationService";
 	private static final int NOTIFICATION_ID=1;
 
     @Inject
@@ -42,7 +44,7 @@ public class EventNotificationService extends RoboIntentService {
 	
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		Log.i(TAG, "Sending notification");
+		log.debug("Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
         FragmentElement fragment = new FragmentElement(eventMachine.getName(), MachineFragment.class,
                 new BundleBuilder().putVBoxSvc(eventMachine.getAPI()).putProxy(IMachine.BUNDLE, eventMachine).create());

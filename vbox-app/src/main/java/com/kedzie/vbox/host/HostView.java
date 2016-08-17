@@ -27,10 +27,10 @@ public class HostView extends FrameLayout {
         setFocusable(true);
 	}
 	
-	public void update(IHost h) {
+	public void update(IHost h, String version) {
 			_host=h;
 			ipText.setText("("+h.getAPI().getServer().getHost()+")");
-			versionText.setText(h.getAPI().getVBox().getVersion());
+			versionText.setText(version); //h.getAPI().getVBox().getVersion()
 	}
 
 	public IHost getHost() {

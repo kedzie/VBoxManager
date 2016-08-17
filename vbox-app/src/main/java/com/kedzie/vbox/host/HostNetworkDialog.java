@@ -3,6 +3,7 @@ package com.kedzie.vbox.host;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,14 +15,15 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TabHost;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IHostNetworkInterface;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboDialogFragment;
 
-public class HostNetworkDialog extends SherlockDialogFragment {
+public class HostNetworkDialog extends RoboDialogFragment {
 
 	/**
 	 * Load Data
@@ -29,7 +31,7 @@ public class HostNetworkDialog extends SherlockDialogFragment {
 	private class LoadDataTask extends ActionBarTask<IHostNetworkInterface , Tuple<IHostNetworkInterface, IDHCPServer>> {
 
 		public LoadDataTask() {
-			super(getSherlockActivity(), _interface.getAPI());
+			super((AppCompatActivity)getActivity(), _interface.getAPI());
 		}
 
 		@Override
@@ -56,7 +58,7 @@ public class HostNetworkDialog extends SherlockDialogFragment {
 	private class SaveTask extends ActionBarTask<Void, Void> {
 
 		public SaveTask() {
-			super(getSherlockActivity(), null);
+			super((AppCompatActivity)getActivity(), null);
 		}
 
 		@Override

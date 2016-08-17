@@ -153,7 +153,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
             transport.call(request, envelope);
         } catch (Throwable e) {
             Log.e(TAG, "Exception", e);
-            Throwables.propagateIfInstanceOf(e, IOException.class);
+            Throwables.propagateIfPossible(e, IOException.class);
         } finally {
             if(transport!=null)
                 _transportPool.returnObj(transport);

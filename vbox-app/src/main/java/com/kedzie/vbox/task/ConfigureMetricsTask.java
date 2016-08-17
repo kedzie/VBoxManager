@@ -1,8 +1,7 @@
 package com.kedzie.vbox.task;
 
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IManagedObjectRef;
 import com.kedzie.vbox.app.Utils;
@@ -10,7 +9,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 
 public class ConfigureMetricsTask extends BaseTask<Integer, Void> {
 	
-	public ConfigureMetricsTask(SherlockFragmentActivity ctx, VBoxSvc vmgr) {
+	public ConfigureMetricsTask(AppCompatActivity ctx, VBoxSvc vmgr) {
 		super("ConfigureMetricsTask", ctx, vmgr);
 	}
 

@@ -1,7 +1,6 @@
 package com.kedzie.vbox.app;
 
 import android.app.Dialog;
-import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -11,18 +10,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboSherlockDialogFragment;
+import roboguice.fragment.RoboDialogFragment;
 import roboguice.inject.InjectView;
 
 /**
  * Dialog with two separate progress bars for primary/secondary operations.  Also an optional cancel button.
  */
-public class VBoxProgressDialog extends RoboSherlockDialogFragment {
+public class VBoxProgressDialog extends RoboDialogFragment {
 	
 	/** Ongoing operation */
 	private IProgress _progress;

@@ -7,16 +7,15 @@ import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
-import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.MachineGroupListBaseFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
+import com.kedzie.vbox.server.LoginSupport;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.server.ServerListFragment.OnSelectServerListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -30,26 +29,6 @@ import com.kedzie.vbox.task.DialogTask;
  */
 public class ServerListPickActivity extends BaseActivity implements OnSelectServerListener, OnTreeNodeSelectListener {
 
-	/**
-	 * Log on to VirtualBox webservice, load machine list
-	 */
-	class LogonTask extends DialogTask<Server, IVirtualBox> {
-
-		public LogonTask() {
-			super(ServerListPickActivity.this, null, R.string.progress_connecting);
-		}
-
-		@Override
-		protected IVirtualBox work(Server... params) throws Exception {
-			_vmgr = new VBoxSvc(params[0]);
-			return _vmgr.logon();
-		}
-
-		@Override 
-		protected void onSuccess(IVirtualBox vbox) {
-			launchMachineList(_vmgr);
-		}
-	}
 
 	/**
 	 * Disconnect from VirtualBox webservice
@@ -76,11 +55,19 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 	/** Currently selected logged on api */
 	private VBoxSvc _vmgr;
 
+	private LoginSupport loginSupport;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setResult(RESULT_CANCELED);
 		mAppWidgetId = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+		loginSupport = new LoginSupport(this, new LoginSupport.LoginCallback() {
+			@Override
+			public void onLogin(VBoxSvc vmgr) {
+				launchMachineList(vmgr);
+			}
+		});
 		getSupportActionBar().setTitle(R.string.widget_server_list);
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		setContentView(R.layout.widget_server_list);
@@ -123,11 +110,11 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 		if(_vmgr!=null) {
 			new LogoffTask(_vmgr) {
 				protected void onPostExecute(Void result) {
-					new LogonTask().execute(server);
+					loginSupport.onSelectServer(server);
 				};
 			}.execute();
 		} else {
-			new LogonTask().execute(server);
+			loginSupport.onSelectServer(server);
 		}
 	}
 }

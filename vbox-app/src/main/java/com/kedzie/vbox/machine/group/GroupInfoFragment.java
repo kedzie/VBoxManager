@@ -14,8 +14,10 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -24,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.Screenshot;
@@ -37,13 +39,14 @@ import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineCallable;
+import roboguice.fragment.RoboFragment;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class GroupInfoFragment extends SherlockFragment {
+public class GroupInfoFragment extends RoboFragment {
     private static final String TAG = "GroupInfoFragment";
     
     static final ClassLoader LOADER = GroupInfoFragment.class.getClassLoader();
@@ -85,7 +88,7 @@ public class GroupInfoFragment extends SherlockFragment {
 	class LoadInfoTask extends ActionBarTask<VMGroup, ArrayList<MachineInfo>> {
 
 		public LoadInfoTask() { 
-			super(getSherlockActivity(), null); 
+			super((AppCompatActivity)getActivity(), null);
 		}
 
 		@Override 
@@ -175,7 +178,6 @@ public class GroupInfoFragment extends SherlockFragment {
         super.onConfigurationChanged(newConfig);
         if(Utils.getScreenSize(newConfig)==Configuration.SCREENLAYOUT_SIZE_XLARGE) {
             Log.i(TAG, "Handling orientation change");
-            _view.removeAllViews();
             populateViews(_info);
         }
     }
@@ -212,6 +214,7 @@ public class GroupInfoFragment extends SherlockFragment {
 	}
 
 	private void populateViews(List<MachineInfo> m) {
+        _view.removeAllViews();
 	    LayoutInflater inflater = LayoutInflater.from(getActivity());
 	    for(MachineInfo node : m) {
 	        View view = inflater.inflate(R.layout.group_info, _view, false);
@@ -251,11 +254,11 @@ public class GroupInfoFragment extends SherlockFragment {
 	}
 	
 	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.option_menu_refresh:
 			new LoadInfoTask().execute(_group);
-			return true;
+			return false;
 		}
 		return false;
 	}

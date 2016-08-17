@@ -1,6 +1,7 @@
 package com.kedzie.vbox.task;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+import android.support.v7.app.AppCompatActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IMachine;
@@ -10,7 +11,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 
 public class LaunchVMProcessTask extends DialogTask<IMachine, IMachine> {
 	
-	public LaunchVMProcessTask(SherlockFragmentActivity activity, VBoxSvc vmgr) {
+	public LaunchVMProcessTask(AppCompatActivity activity, VBoxSvc vmgr) {
 		super(activity, vmgr, R.string.progress_starting);
 	}
 	

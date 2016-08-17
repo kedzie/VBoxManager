@@ -9,13 +9,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.ContextMenu;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -26,10 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.kedzie.vbox.R;
@@ -45,7 +39,7 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 /**
@@ -53,7 +47,7 @@ import roboguice.inject.InjectView;
  * 
  * @apiviz.stereotype Fragment
  */
-public class StorageListFragment extends RoboSherlockFragment {
+public class StorageListFragment extends RoboFragment {
 
 	/**
 	 * Listener for Storage Controller clicks
@@ -97,7 +91,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 	private class LoadDataTask extends DialogTask<IMachine, Void> {
 
 		public LoadDataTask() {
-			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_load_storage_controllers);
+			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_load_storage_controllers);
 		}
 
 		@Override
@@ -131,7 +125,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 		@Override
 		protected void onSuccess(Void result) {
 			super.onSuccess(result);
-			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers, _data);
+			_listAdapter = new ItemAdapter((AppCompatActivity)getActivity(), _controllers, _data);
 			_listView.setAdapter(_listAdapter);
 			for(int i=0; i<_controllers.size(); i++)
 			    _listView.expandGroup(i);
@@ -144,7 +138,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 	private class AddControllerTask extends ActionBarTask<StorageBus, IStorageController> {
 
 		public AddControllerTask() {
-			super(getSherlockActivity(), _machine.getAPI());
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -169,7 +163,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 	private class DeleteControllerTask extends ActionBarTask<IStorageController, IStorageController> {
 
 		public DeleteControllerTask() {
-			super(getSherlockActivity(), _machine.getAPI());
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -194,7 +188,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 	private class DetachMediumTask extends ActionBarTask<IMediumAttachment, IMediumAttachment> {
 
 		public DetachMediumTask() {
-			super(getSherlockActivity(), _machine.getAPI());
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -225,7 +219,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 		private DeviceType deviceType;
 		
 		public ListMediumsTask(IStorageController controller, DeviceType type) { 
-			super(getSherlockActivity(), _machine.getAPI()); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 			this.controller = controller;
 			this.deviceType = type;
 		}
@@ -265,7 +259,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 		private IStorageController controller;
 		
 		public ListDVDMediumsTask(IStorageController controller) { 
-			super(getSherlockActivity(),_machine.getAPI()); 
+			super((AppCompatActivity)getActivity(),_machine.getAPI());
 			this.controller=controller;
 		}
 
@@ -308,7 +302,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 		private DeviceType deviceType;
 		
 		public MountTask(IStorageController controller, DeviceType type) { 
-			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_mounting_medium); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_mounting_medium);
 			this.controller = controller;
 			this.deviceType = type;
 		}
@@ -430,7 +424,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 				ImageButton button = new ImageButton(getActivity());
 				button.setFocusable(false);
 				if(type.equals(DeviceType.HARD_DISK)) {
-					button.setImageResource(VBoxApplication.getInstance().getDrawable(R.drawable.ic_menu_hdd_add));
+					button.setImageResource(VBoxApplication.getInstance().getVDrawable(R.drawable.ic_menu_hdd_add));
 					button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -443,7 +437,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 						}
 					});
 				} else if(type.equals(DeviceType.DVD)) {
-					button.setImageResource(VBoxApplication.getInstance().getDrawable(R.drawable.ic_menu_dvd_add));
+					button.setImageResource(VBoxApplication.getInstance().getVDrawable(R.drawable.ic_menu_dvd_add));
 					button.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -467,9 +461,9 @@ public class StorageListFragment extends RoboSherlockFragment {
 			TextView text1 = (TextView)convertView.getTag();
 			text1.setText(attachment.getMedium()!=null ? attachment.getMedium().getBase().getName() : "Empty");
 			if(attachment.getType().equals(DeviceType.HARD_DISK))
-				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getDrawable(R.drawable.ic_button_hdd), 0, 0, 0);
+				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getVDrawable(R.drawable.ic_button_hdd), 0, 0, 0);
 			if(attachment.getType().equals(DeviceType.DVD))
-				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getDrawable(R.drawable.ic_button_dvd), 0, 0, 0);
+				text1.setCompoundDrawablesWithIntrinsicBounds(VBoxApplication.getInstance().getVDrawable(R.drawable.ic_button_dvd), 0, 0, 0);
 			return convertView;
 		}
 
@@ -531,7 +525,7 @@ public class StorageListFragment extends RoboSherlockFragment {
 		if(_dataListMap==null && _data==null)
 			new LoadDataTask().execute(_machine);
 		else {
-			_listAdapter = new ItemAdapter(getSherlockActivity(), _controllers, _data);
+			_listAdapter = new ItemAdapter((AppCompatActivity)getActivity(), _controllers, _data);
 			_listView.setAdapter(_listAdapter);
 			for(int i=0; i<_dataListMap.keySet().size(); i++)
 				_listView.expandGroup(i);

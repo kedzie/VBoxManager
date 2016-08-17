@@ -4,8 +4,9 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+
+
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
@@ -33,7 +34,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 * @param vmgr VirtualBox API service
 	 * @param msg  operation description string resource
 	 */
-	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, int msg) {
+	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, int msg) {
 		this(context, vmgr, context.getResources().getString(msg));
 	}
 	
@@ -43,7 +44,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 * @param vmgr VirtualBox API service
 	 * @param msg  operation description
 	 */
-	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, String msg) {
+	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, String msg) {
 		this(context, vmgr, msg, false);
 	}
 	
@@ -54,7 +55,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 * @param msg  				operation description string resource
 	 * @param cancelable		whether the dialog is cancelable with the <em>Back</em> button
 	 */
-	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, int msg, boolean cancelable) {
+	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, int msg, boolean cancelable) {
 		this(context, vmgr, context.getResources().getString(msg), cancelable);
 	}
 	
@@ -65,11 +66,11 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 	 * @param msg  				operation description
 	 * @param cancelable		whether the dialog is cancelable with the <em>Back</em> button
 	 */
-	public DialogTask(SherlockFragmentActivity context, VBoxSvc vmgr, String msg, boolean cancelable) {
+	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, String msg, boolean cancelable) {
 		super(context, vmgr);
         this.message=msg;
         this.cancelable=cancelable;
-        taskFragment = new TaskFragment(this);
+        taskFragment = new TaskFragment().setTask(this);
         getContext().getSupportFragmentManager().beginTransaction().add(taskFragment, "work").commit();
 	}
 	
@@ -109,7 +110,7 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
         return pDialog;
     }
 
-    public void setActivity(SherlockFragmentActivity activity) {
-        this._context = new WeakReference<SherlockFragmentActivity>(activity);
+    public void setActivity(AppCompatActivity activity) {
+        this._context = new WeakReference<AppCompatActivity>(activity);
     }
 }

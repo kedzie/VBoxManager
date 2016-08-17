@@ -1,6 +1,6 @@
 package com.kedzie.vbox.app;
 
-import com.actionbarsherlock.app.ActionBar;
+
 
 /**
  * Actionbar tab navigation interface for different possible implementations

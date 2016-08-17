@@ -1,5 +1,23 @@
 package com.kedzie.vbox.task;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import com.kedzie.vbox.R;
+import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
+import com.kedzie.vbox.app.BundleBuilder;
+import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.soap.VBoxSvc;
+import org.ksoap2.SoapFault;
+import org.kxml2.kdom.Node;
+import roboguice.activity.RoboFragmentActivity;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -7,25 +25,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import org.ksoap2.SoapFault;
-import org.kxml2.kdom.Node;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.kedzie.vbox.R;
-import com.kedzie.vbox.api.IProgress;
-import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
-import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.soap.VBoxSvc;
 
 /**
  * VirtualBox® API Asynchronous task with progress & error handling.  
@@ -37,7 +36,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
-	protected WeakReference<SherlockFragmentActivity> _context;
+	protected WeakReference<AppCompatActivity> _context;
 	protected String TAG;
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
@@ -66,7 +65,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	/**
 	 * @param vmgr VirtualBox API service
 	 */
-	protected BaseTask(SherlockFragmentActivity context, VBoxSvc vmgr) {
+	protected BaseTask(AppCompatActivity context, VBoxSvc vmgr) {
         this("", context, vmgr);
 		TAG = getClass().getSimpleName();
 	}
@@ -75,10 +74,10 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param TAG LogCat tag
 	 * @param vmgr VirtualBox API service
 	 */
-	protected BaseTask(String TAG, SherlockFragmentActivity context, VBoxSvc vmgr) {
+	protected BaseTask(String TAG, AppCompatActivity context, VBoxSvc vmgr) {
 		this.TAG = TAG;
 		_vmgr=vmgr;
-		_context=new WeakReference<SherlockFragmentActivity>(context);
+		_context=new WeakReference<AppCompatActivity>(context);
         _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
     }
 
@@ -104,7 +103,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	        future.get();
 	}
 	
-	protected SherlockFragmentActivity getContext() {
+	protected AppCompatActivity getContext() {
 		return _context.get();
 	}
 

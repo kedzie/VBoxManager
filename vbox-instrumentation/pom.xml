@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.3.2-SNAPSHOT</version>
+		<version>4.0.0</version>
 	</parent>
     
 	<artifactId>vbox-instrumentation</artifactId>
@@ -35,9 +35,16 @@
 			<version>${android.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.android.support</groupId>
+			<artifactId>multidex-instrumentation</artifactId>
+			<version>1.0.1</version>
+			<type>aar</type>
+		</dependency>
+		<dependency>
 			<groupId>virtualbox</groupId>
 			<artifactId>vbox-app</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 			<type>apk</type>
 		</dependency>
 		<dependency>
@@ -63,13 +70,16 @@
 	<build>	
 		<plugins>
 			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<groupId>com.simpligility.maven.plugins</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
 					<test>
 						<createReport>true</createReport>
-                        <instrumentationPackage>com.kedzie.vbox</instrumentationPackage>
+						<instrumentationRunner>com.android.test.runner.MultiDexTestRunner</instrumentationRunner>
+						<packages>
+							<package>com.kedzie.vbox</package>
+						</packages>
 					</test>
                     <uiautomator>
                         <skip>false</skip>

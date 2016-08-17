@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.app.*;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
@@ -44,12 +45,12 @@ public class EventIntentService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.onStart(intent, startId);
-        return START_STICKY | START_REDELIVER_INTENT;
+        return 0;
     }
 
     @Override
     public void onStart(Intent intent, int startId) {
-        _vmgr = intent.getParcelableExtra(VBoxSvc.BUNDLE);
+        _vmgr = BundleBuilder.getVBoxSvc(intent);
         _interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
         _lbm = LocalBroadcastManager.getInstance(this);
         String title = getResources().getString(R.string.event_handler_notification_title);
@@ -72,6 +73,7 @@ public class EventIntentService extends Service {
 	
 	@Override
 	public void onDestroy() {
+        Log.d(TAG, "Event Service being destroyed");
         eventThread.quit();
 		stopForeground(true);
 		super.onDestroy();
@@ -112,6 +114,8 @@ public class EventIntentService extends Service {
                     Thread.sleep(_interval);
             } catch (Throwable e) {
                 Log.e(TAG, "Error", e);
+                _running = false;
+                stopSelf();
             }
         }
 
@@ -120,7 +124,7 @@ public class EventIntentService extends Service {
             try {
                 if(mSource !=null)
                     mSource.unregisterListener(mListener);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Error unregistering mListener", e);
             }
         }

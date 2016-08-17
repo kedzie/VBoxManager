@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/navigation_home"
+            android:checked="true"
+            android:icon="@drawable/ic_list_vbox"
+            android:title="Home"/>
+
+    <item
+            android:id="@+id/navigation_prefs"
+            android:icon="@drawable/ic_menu_preferences"
+            android:title="Preferences"/>
+
+    <item
+            android:id="@+id/navigation_host_network"
+            android:icon="@drawable/ic_settings_network"
+            android:title="Host Networking"/>
+
+    <item
+            android:id="@+id/navigation_logoff"
+            android:icon="@drawable/ic_list_abort"
+            android:title="Logoff"/>
+</menu>

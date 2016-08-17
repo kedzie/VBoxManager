@@ -1,24 +1,27 @@
 package com.kedzie.vbox.task;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.kedzie.vbox.app.VBoxProgressDialog;
+import roboguice.fragment.RoboFragment;
 
 /**
  * Created by kedzie on 3/1/14.
  */
-public class TaskFragment extends SherlockFragment {
-    private static final String TAG = "TaskFragment";
+public class TaskFragment extends RoboFragment {
 
     private DialogTask task;
 
-    public TaskFragment(DialogTask task) {
-        this.task=task;
+    public TaskFragment() {
+    }
+
+    public DialogTask getTask() {
+        return task;
+    }
+
+    public TaskFragment setTask(DialogTask task) {
+        this.task = task;
+        return this;
     }
 
     @Override
@@ -32,8 +35,7 @@ public class TaskFragment extends SherlockFragment {
         super.onActivityCreated(savedInstanceState);
 
         if(task.getProgressDialog()==null) {
-            task.setActivity((SherlockFragmentActivity) getActivity());
-            Log.v(TAG, "Creating new progress dialog");
+            task.setActivity((AppCompatActivity) getActivity());
             task.onPreExecute();
         }
     }

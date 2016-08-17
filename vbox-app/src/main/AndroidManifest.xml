@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3003002" android:versionName="3.3.2-SNAPSHOT" package="com.kedzie.vbox">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="4000000" android:versionName="4.0.0" package="com.kedzie.vbox">
 
-    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="19"/>
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="23"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <application android:allowBackup="false" android:debuggable="true" android:hardwareAccelerated="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name=".VBoxApplication" android:theme="@style/Theme.Sherlock.Light">
+    <application android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:name=".VBoxApplication"
+        android:theme="@style/AppTheme">
 
-        <activity android:configChanges="orientation" android:label="@string/app_name" android:name=".server.ServerListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
+        <activity android:configChanges="orientation|screenSize" android:label="@string/app_name" android:name=".server.ServerListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -17,31 +22,44 @@
 
         <activity android:label="Test Harness" android:name=".harness.HarnessActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 
-        <activity android:configChanges="orientation" android:label="@string/edit_virtualbox_server" android:name=".server.EditServerActivity" android:parentActivityName=".server.ServerListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:label="@string/edit_virtualbox_server"
+            android:name=".server.EditServerActivity"
+            android:parentActivityName=".server.ServerListFragmentActivity"
+            android:uiOptions="splitActionBarWhenNarrow">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
         </activity>
 
-        <activity android:configChanges="orientation" android:label="@string/help" android:name=".server.HelpActivity" android:parentActivityName=".server.ServerListFragmentActivity" android:uiOptions="splitActionBarWhenNarrow">
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:label="@string/help"
+            android:name=".server.HelpActivity"
+            android:parentActivityName=".server.ServerListFragmentActivity"
+            android:uiOptions="splitActionBarWhenNarrow">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
         </activity>
 
-        <activity android:configChanges="orientation" android:label="Virtual Machines" android:name=".machine.MachineListActivity" android:parentActivityName=".server.ServerListFragmentActivity">
+        <activity
+            android:configChanges="orientation|screenSize"
+                  android:label="@string/app_name"
+                  android:name=".machine.MachineListActivity"
+                  android:parentActivityName=".server.ServerListFragmentActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".server.ServerListFragmentActivity"/>
         </activity>
 
-        <activity android:name=".host.HostSettingsActivity" android:uiOptions="splitActionBarWhenNarrow"/>
-
-        <activity android:name=".machine.settings.VMSettingsActivity" android:uiOptions="splitActionBarWhenNarrow"/>
+        <activity android:configChanges="orientation|screenSize" android:name=".machine.settings.VMSettingsActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 
         <activity android:name=".app.FragmentActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 
-        <activity android:configChanges="orientation" android:label="Metrics" android:name=".metrics.MetricActivity" android:uiOptions="splitActionBarWhenNarrow"/>
+        <activity android:configChanges="orientation|screenSize" android:label="Metrics" android:name=".metrics.MetricActivity" android:uiOptions="splitActionBarWhenNarrow"/>
 
         <activity android:label="Preferences" android:name=".SettingsActivity"/>
 
         <service android:name=".event.EventIntentService"/>
         <service android:name=".event.EventNotificationService"/>
-        <service android:name=".task.ProgressService"/>
+        <service android:name=".task.ProgressService" />
 
         <!-- App Widget Declarations -->
         <receiver android:label="Virtual Machine (1x3)" android:name=".widget.Provider">
@@ -59,7 +77,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:configChanges="orientation" android:name=".widget.MachineListPickActivity"/>
+        <activity android:configChanges="orientation|screenSize" android:name=".widget.MachineListPickActivity"/>
 
     </application>
 </manifest>

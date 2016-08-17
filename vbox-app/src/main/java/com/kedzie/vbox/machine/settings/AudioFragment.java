@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +17,19 @@ import com.kedzie.vbox.api.jaxb.AudioDriverType;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
 import roboguice.inject.InjectView;
 
 /**
  * Edit remote desktop server
  * @apiviz.stereotype fragment
  */
-public class AudioFragment extends RoboSherlockFragment {
+public class AudioFragment extends RoboFragment {
 	
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<IAudioAdapter, AudioDriverType[]>> {
 		
 		public LoadInfoTask() { 
-			super(getSherlockActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); 
+			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_loading_data_generic);
 		}
 
 		@Override 

@@ -131,7 +131,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
             mTitle = a.hasValue(R.styleable.Panel_name) ? a.getString(R.styleable.Panel_name) : "";
             mIcon = a.getDrawable(R.styleable.Panel_headerIcon);
             mCollapseRotation = a.getInt(R.styleable.Panel_collapseRotation, DEFAULT_COLLAPSE_ROTATION);
-            mExpanded = a.getBoolean(R.styleable.Panel_expanded, true);
+            mExpanded = a.getBoolean(R.styleable.Panel_panel_expanded, true);
         } finally {
             a.recycle();
         }

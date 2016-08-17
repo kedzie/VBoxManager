@@ -1,6 +1,7 @@
 package com.kedzie.vbox.task;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.soap.VBoxSvc;
 
@@ -19,7 +20,7 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 	 * @param context calling Activity
 	 * @param vmgr VirtualBox API service
 	 */
-	public ActionBarTask(SherlockFragmentActivity context, VBoxSvc vmgr) {
+	public ActionBarTask(AppCompatActivity context, VBoxSvc vmgr) {
 		super(context, vmgr);
 	}
 	
@@ -46,6 +47,5 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 			getContext().setSupportProgressBarVisibility(true);
 		}
 		getContext().setSupportProgress(p[0].getPercent());
-		getContext().setSupportSecondaryProgress(p[0].getOperationPercent());
 	}
 }

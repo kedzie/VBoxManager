@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>virtualbox</groupId>
 		<artifactId>vbox-android-parent</artifactId>
-		<version>3.3.2-SNAPSHOT</version>
+		<version>4.0.0</version>
 	</parent>
 
 	<artifactId>vbox-key</artifactId>
@@ -35,7 +35,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<groupId>com.simpligility.maven.plugins</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
@@ -73,7 +73,7 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+						<groupId>com.simpligility.maven.plugins</groupId>
 						<artifactId>android-maven-plugin</artifactId>
 						<inherited>true</inherited>
 						<configuration>

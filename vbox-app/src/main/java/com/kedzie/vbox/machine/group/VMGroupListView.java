@@ -90,6 +90,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private IMachine mDraggedMachine;
     
     private IHost mHost;
+    private String mVersion;
 
     private VBoxSvc _vmgr;
 
@@ -100,8 +101,9 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             mDragger = new Dragger();
     }
 
-    public void setRoot(VMGroup group, IHost host) {
+    public void setRoot(VMGroup group, IHost host, String version) {
         mHost = host;
+        mVersion = version;
         mGroupCache.put(group.getName(), group);
         addView(new GroupSection(getContext(), group));
     }
@@ -171,7 +173,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             mContents = new LinearLayout(getContext());
             mContents.setOrientation(LinearLayout.VERTICAL);
             LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            if(!mGroup.getName().equals("")) {
+            if(!mGroup.getName().equals("/")) {
                 LinearLayout header = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.vmgroup_list_header, null);
                 ((ImageView)header.findViewById(R.id.group_back)).setOnClickListener(new OnClickListener() {
                     @Override
@@ -187,7 +189,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             } else {
                 //add mHostViewost view
                 mHostView = new HostView(getContext());
-                mHostView.update(mHost);
+                mHostView.update(mHost, mVersion);
                 mHostView.setBackgroundResource(R.drawable.list_selector_color);
                 mHostView.setClickable(true);
                 mHostView.setOnClickListener(VMGroupListView.this);
@@ -544,7 +546,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         private void moveGroup(ISession session, VMGroup parent, VMGroup group) throws IOException {
             Log.v(TAG, "Processing group: " + group);
             String oldName = group.getName();
-            group.setName(parent.getName() + "/" + group.getSimpleGroupName()  );
+            group.setName(parent.getName() + (parent.getName().endsWith("/") ? "" : "/") + group.getSimpleGroupName()  );
             //update the group cache
             mGroupCache.remove(oldName);
             mGroupCache.put(group.getName(), group);

@@ -4,15 +4,12 @@ package com.kedzie.vbox.harness;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
-import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.app.VBoxProgressDialog;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.machine.settings.VMSettingsActivity;
 import com.kedzie.vbox.server.Server;
@@ -109,7 +106,7 @@ public class HarnessActivity extends BaseActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.harness_actions, menu);
+		getMenuInflater().inflate(R.menu.harness_actions, menu);
 		return true;
 	}
 

@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
+import roboguice.fragment.RoboFragment;
 
-public class SystemFragment extends SherlockFragment {
+public class SystemFragment extends RoboFragment {
     private PagerTabHost mTabHost;
 
     @Override
@@ -21,15 +22,15 @@ public class SystemFragment extends SherlockFragment {
         mTabHost.addTab(new FragmentElement("Motherboard", SystemMotherboardFragment.class, getArguments()));
         mTabHost.addTab(new FragmentElement("Processors", SystemProcessorsFragment.class, getArguments()));
         mTabHost.addTab(new FragmentElement("Acceleration", SystemAccelerationFragment.class, getArguments()));
-        if(savedInstanceState!=null)
-            mTabHost.setCurrentTab(savedInstanceState.getInt("tab", 0));
+//        if(savedInstanceState!=null)
+//            mTabHost.setCurrentTab(savedInstanceState.getInt("tab", 0));
         return mTabHost;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("tab", mTabHost.getCurrentTab());
+//        outState.putInt("tab", mTabHost.getCurrentTab());
     }
 
     @Override

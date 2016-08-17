@@ -11,6 +11,9 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
@@ -18,12 +21,12 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboSherlockFragment;
+import roboguice.fragment.RoboFragment;
+import roboguice.fragment.RoboFragment;
+import roboguice.inject.InjectView;
 
 import java.util.List;
 
@@ -31,17 +34,13 @@ import java.util.List;
  * Show list of VirtualBox servers
  * @apiviz.stereotype fragment
  */
-public class ServerListFragment extends RoboSherlockFragment {
-    static final int REQUEST_CODE_ADD = 0xF000;
-    static final int REQUEST_CODE_EDIT = 0x0F00;
-    static final int RESULT_CODE_SAVE = 0x00F0;
-    static final int RESULT_CODE_DELETE = 0x000F;
+public class ServerListFragment extends RoboFragment {
     private static final String FIRST_RUN_PREFERENCE = "first_run";
     
     /**
      * Handle Server selection
      */
-    public static interface OnSelectServerListener {
+    public interface OnSelectServerListener {
     	
         /**
          * @param server	the selected {@link Server}
@@ -55,7 +54,7 @@ public class ServerListFragment extends RoboSherlockFragment {
     class LoadServersTask extends ActionBarTask<Void, List<Server>> {
 
         public LoadServersTask() {
-            super(getSherlockActivity(),  null); 
+            super((AppCompatActivity)getActivity(),  null);
         }
         @Override 
         protected List<Server> work(Void... params) throws Exception { 
@@ -63,7 +62,7 @@ public class ServerListFragment extends RoboSherlockFragment {
         }
         @Override 
         protected void onSuccess(List<Server> result)    {
-            _listView.setAdapter(new ServerListAdapter(getSherlockActivity(), result));
+            _listView.setAdapter(new ServerListAdapter((AppCompatActivity)getActivity(), result));
             if(result.isEmpty())
             	showAddNewServerPrompt();
             else 
@@ -108,7 +107,11 @@ public class ServerListFragment extends RoboSherlockFragment {
     
     private OnSelectServerListener _listener;
     private ServerSQlite _db;
+
+    @InjectView(R.id.list)
     private ListView _listView;
+    @InjectView(R.id.addButton)
+    private FloatingActionButton _addButton;
     private boolean _dualPane;
 
     @Override
@@ -120,22 +123,32 @@ public class ServerListFragment extends RoboSherlockFragment {
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        _listView = (ListView)inflater.inflate(R.layout.list, container, false);
-        _dualPane = getActivity().findViewById(R.id.details)!=null;
-        _listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            	if(_dualPane)
-            		_listView.setSelection(position);
-                _listener.onSelectServer(getAdapter().getItem(position));
-            }
-        });
-        registerForContextMenu(_listView);
-        return _listView;
+        return inflater.inflate(R.layout.server_list, container, false);
     }
 
-    @Override
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    _dualPane = getActivity().findViewById(R.id.details)!=null;
+    _listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
+    _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(_dualPane)
+          _listView.setSelection(position);
+        _listener.onSelectServer(getAdapter().getItem(position));
+      }
+    });
+    registerForContextMenu(_listView);
+    _addButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        addServer();
+      }
+    });
+  }
+
+  @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
@@ -194,7 +207,7 @@ public class ServerListFragment extends RoboSherlockFragment {
     }
     
     @Override
-    public void onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     	if(!_dualPane)
     		inflater.inflate(R.menu.server_list_actions, menu);
     }
@@ -202,9 +215,6 @@ public class ServerListFragment extends RoboSherlockFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_add:
-                addServer();
-                return true;
             case R.id.menu_help:
                 Utils.startActivity(getActivity(), new Intent(getActivity(), HelpActivity.class));
                 return true;

@@ -8,9 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.kedzie.vbox.R;
+import android.view.MenuItem;
+import com.kedzie.vbox.app.AppCompatPreferenceActivity;
 import com.kedzie.vbox.app.Utils;
 
 /**
@@ -19,7 +18,7 @@ import com.kedzie.vbox.app.Utils;
  * @apiviz.stereotype activity
  */
 @SuppressWarnings("deprecation")
-public class SettingsActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener {
 
     public static final String PREF_ICON_COLORS="colored_icons";
     public static final String PREF_TAB_TRANSITION="tab_transition";
@@ -107,7 +106,12 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         super.finish();
         Utils.overrideBackTransition(this);
     }
-    
+
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        return true;
+    }
+
     public static class GeneralFragment extends SummaryPreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {

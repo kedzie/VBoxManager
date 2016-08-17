@@ -1,5 +1,8 @@
 package com.kedzie.vbox.processor;
 
+
+import com.google.auto.service.AutoService;
+
 import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.KSOAPMethodStrategy;
@@ -7,6 +10,7 @@ import com.kedzie.vbox.soap.KSoapObject;
 import com.squareup.javawriter.JavaWriter;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -33,6 +37,8 @@ import static com.squareup.javawriter.JavaWriter.*;
  *
  * @author kedzie
  */
+
+@AutoService(Processor.class)
 @SupportedAnnotationTypes("com.kedzie.vbox.soap.KSOAP")
 public final class ProxyProcessor extends AbstractProcessor {
     private final Set<String> remainingTypeNames = new LinkedHashSet<String>();
@@ -40,6 +46,12 @@ public final class ProxyProcessor extends AbstractProcessor {
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
+    }
+
+    @Override public Set<String> getSupportedAnnotationTypes() {
+        Set<String> annotataions = new LinkedHashSet<String>();
+        annotataions.add(KSOAP.class.getCanonicalName());
+        return annotataions;
     }
 
     @Override
@@ -362,7 +374,7 @@ public final class ProxyProcessor extends AbstractProcessor {
 
                 if (!throwsIOException) {
                     writer.endControlFlow();
-                    writer.beginControlFlow("catch(Exception e)");
+                    writer.beginControlFlow("catch(java.io.IOException e)");
                     writer.emitStatement("throw new RuntimeException(e)");
                     writer.endControlFlow();
                 }

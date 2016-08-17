@@ -6,11 +6,12 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IHost;
@@ -22,17 +23,19 @@ import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 import com.kedzie.vbox.task.MachineRunnable;
+import roboguice.fragment.RoboFragment;
 
 /**
  * New machine list based on groups
  * @apiviz.stereotype fragment
  */
-public class MachineGroupListBaseFragment extends SherlockFragment {
+public class MachineGroupListBaseFragment extends RoboFragment {
 	protected static final String TAG = MachineGroupListBaseFragment.class.getSimpleName();
 	
 	protected VBoxSvc _vmgr;
 	protected VMGroup _root;
 	protected IHost _host;
+	protected String _version;
 	protected VMGroupListView _listView;
 	protected OnTreeNodeSelectListener _selectListener;
 	
@@ -44,7 +47,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	        private Map<String, VMGroup> groupCache = new HashMap<String, VMGroup>();
 
 	        public LoadGroupsTask(VBoxSvc vboxApi) { 
-	            super(getSherlockActivity(), vboxApi, R.string.progress_loading_machines); 
+	            super((AppCompatActivity)getActivity(), vboxApi, R.string.progress_loading_machines);
 	        }
 
 	        private VMGroup get(String name) {
@@ -58,7 +61,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	            _vmgr.getVBox().getVersion();
 	            _host = _vmgr.getVBox().getHost();
                 _host.getMemorySize();
-                _host.getAPI().getVBox().getVersion();
+                _version = _host.getAPI().getVBox().getVersion();
 	            List<String> vGroups = _vmgr.getVBox().getMachineGroups();
 	            for(String tmp : vGroups) {
 	                if(tmp.equals("/")) continue;
@@ -70,7 +73,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                    current.addChild(previous);
 	                    previous=current;
 	                }
-	                get("").addChild(get(tmp));
+	                get("/").addChild(get(tmp));
 	            }
 	            for(IMachine machine : _vmgr.getVBox().getMachines()) {
 	                fork(new MachineRunnable(machine) {
@@ -86,12 +89,12 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_PERIOD), 
 	                    Utils.getIntPreference(getActivity().getApplicationContext(), SettingsActivity.PREF_COUNT), 
 	                    (IManagedObjectRef)null);
-	            return get("");
+	            return get("/");
 	        }
 	        
 	        @Override
 	        protected void onSuccess(VMGroup root) {
-	            _listView.setRoot(root, _host);
+	            _listView.setRoot(root, _host, _version);
 	            _root = root;
 	        }
 	    }
@@ -109,12 +112,18 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _vmgr = BundleBuilder.getVBoxSvc(getActivity().getIntent());
+
+        if(getArguments()!=null && getArguments().containsKey(VBoxSvc.BUNDLE)) {
+            _vmgr = BundleBuilder.getVBoxSvc(getArguments());
+        } else {
+            _vmgr = BundleBuilder.getVBoxSvc(getActivity().getIntent());
+        }
 
         if(savedInstanceState!=null)  {
             _root = savedInstanceState.getParcelable(VMGroup.BUNDLE);
             _vmgr = BundleBuilder.getVBoxSvc(savedInstanceState);
             _host = _vmgr.getVBox().getHost();
+			_version = savedInstanceState.getString("version");
         }
     }
 
@@ -133,7 +142,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		if(_root==null)
     		new LoadGroupsTask(_vmgr).execute();
 		else
-			_listView.setRoot(_root, _host);
+			_listView.setRoot(_root, _host, _version);
 	}
 	
 	@Override
@@ -141,7 +150,7 @@ public class MachineGroupListBaseFragment extends SherlockFragment {
 		super.onSaveInstanceState(outState);
         BundleBuilder.putVBoxSvc(outState, _vmgr);
 		outState.putParcelable(VMGroup.BUNDLE, _root);
-
+		outState.putString("version", _version);
         //save current machine
 		outState.putParcelable("checkedItem", _listView.getSelectedObject());
 	}

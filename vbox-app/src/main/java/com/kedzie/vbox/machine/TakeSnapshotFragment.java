@@ -2,6 +2,7 @@ package com.kedzie.vbox.machine;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
@@ -21,13 +22,14 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
+import roboguice.fragment.RoboDialogFragment;
 
 /**
  * Create a new snapshot
  * 
  * @apiviz.stereotype fragment
  */
-public class TakeSnapshotFragment extends SherlockDialogFragment {
+public class TakeSnapshotFragment extends RoboDialogFragment {
     
 	private VBoxSvc _vmgr;
 	private IMachine _machine;
@@ -84,7 +86,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 			public void onClick(View arg0) {
 				dismiss();
 				if(_snapshot!=null) {
-    				new ActionBarTask<ISnapshot, Void>(getSherlockActivity(), _vmgr) { 
+    				new ActionBarTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr) {
                         protected Void work(ISnapshot...s) throws Exception {     
                             s[0].setName(_nameText.getText().toString());
                             s[0].setDescription(_descriptionText.getText().toString());
@@ -105,7 +107,7 @@ public class TakeSnapshotFragment extends SherlockDialogFragment {
 	}
 	
 	private void takeSnapshot() {
-		new MachineTask<Void, Void>(getSherlockActivity(), _vmgr, R.string.progress_taking_snapshot, false, _machine) {	
+		new MachineTask<Void, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_taking_snapshot, false, _machine) {
 			protected IProgress workWithProgress(IMachine m, IConsole console, Void...i) throws Exception { 	
 				return console.takeSnapshot( _nameText.getText().toString(),  _descriptionText.getText().toString()); 
 			}

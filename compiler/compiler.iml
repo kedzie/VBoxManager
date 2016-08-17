@@ -6,12 +6,13 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Oracle 1.6" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: android:android:4.4_r1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: android:android:6.0_r1" level="project" />
     <orderEntry type="library" name="Maven: com.squareup:javawriter:2.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup:javapoet:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.auto.service:auto-service:1.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:16.0" level="project" />
   </component>
 </module>
-

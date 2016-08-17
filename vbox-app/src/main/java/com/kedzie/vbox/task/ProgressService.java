@@ -4,32 +4,34 @@ import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.os.IBinder;
+import android.os.*;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.app.Utils;
+import roboguice.service.RoboIntentService;
 
+import javax.inject.Inject;
+import java.io.FileDescriptor;
 import java.io.IOException;
 
 /**
  * Created by kedzie on 3/1/14.
  */
-public class ProgressService extends IntentService {
+public class ProgressService extends RoboIntentService {
     private static final String TAG = "ProgressService";
 
     /** interval used to update progress bar for longing-running operation*/
     protected final static int PROGRESS_INTERVAL = 500;
 
-    public static final String INTENT_ID = "id";
     public static final String INTENT_ICON = "icon";
-
 
     private IProgress mProgress;
     private int id;
     private int icon;
+    @Inject
     private NotificationManager mNotificationManager;
 
     public ProgressService() {
@@ -42,11 +44,9 @@ public class ProgressService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         mProgress = intent.getParcelableExtra(IProgress.BUNDLE);
-        id = intent.getIntExtra(INTENT_ID, id);
         icon = intent.getIntExtra(INTENT_ICON, icon);
-
+        ++id;
         try {
             Log.d(TAG, "Handling progress");
             while(!mProgress.getCompleted()) {

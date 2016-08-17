@@ -3,6 +3,7 @@ package com.kedzie.vbox.machine.settings;
 import java.util.ArrayList;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -10,25 +11,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.IGuestOSType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.ActionBarTask;
+import roboguice.fragment.RoboFragment;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class GeneralBasicFragment extends SherlockFragment {
+public class GeneralBasicFragment extends RoboFragment {
 
     class LoadInfoTask extends ActionBarTask<IMachine, Tuple<IMachine, IGuestOSType>> {
     	
         public LoadInfoTask() { 
-        	super(getSherlockActivity(), _machine.getAPI()); 
+        	super((AppCompatActivity)getActivity(), _machine.getAPI());
         }
         
         @Override 

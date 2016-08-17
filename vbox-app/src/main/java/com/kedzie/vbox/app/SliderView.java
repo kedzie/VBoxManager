@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -59,14 +60,9 @@ public class SliderView extends LinearLayout {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if(fromUser) {
-                        _valueEditText.setText(progress + _minValue + "");
-                        if (_onSliderChangeListener != null) {
+//                        _valueEditText.setText(progress + _minValue + "");
                             int value = progress + _minValue;
-                            if (value >= _minValidValue && value <= _maxValidValue)
-                                _onSliderChangeListener.onSliderValidValueChanged(value);
-                            else
-                                _onSliderChangeListener.onSliderInvalidValueChanged(value);
-                        }
+                            setValue(value);
                     }
                 }
             });
@@ -182,19 +178,19 @@ public class SliderView extends LinearLayout {
         _valueEditText.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         _valueEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         _valueEditText.setLines(1);
-        _valueEditText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    setValue(Integer.parseInt(s.toString()));
-                } catch (NumberFormatException e) {
-                    Log.e(TAG, "Format exception: " + e.getMessage());
-                }
-            }
-        });
+//        _valueEditText.addTextChangedListener(new TextWatcher() {
+//            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                try {
+//                    setValue(Integer.parseInt(s.toString()));
+//                } catch (NumberFormatException e) {
+//                    Log.e(TAG, "Format exception: " + e.getMessage());
+//                }
+//            }
+//        });
 //        _valueEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -237,6 +233,12 @@ public class SliderView extends LinearLayout {
     public void setValue(int value) {
         _sliderBar.setProgress(value-_minValue);
         _valueEditText.setText(value + "");
+        if (_onSliderChangeListener != null) {
+            if (value >= _minValidValue && value <= _maxValidValue)
+                _onSliderChangeListener.onSliderValidValueChanged(value);
+            else
+                _onSliderChangeListener.onSliderInvalidValueChanged(value);
+        }
     }
 
     public int getMaxValue() {
