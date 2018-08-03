@@ -3,3 +3,4 @@ gen
 gen-external-apklibs
 out
 target/
+.idea

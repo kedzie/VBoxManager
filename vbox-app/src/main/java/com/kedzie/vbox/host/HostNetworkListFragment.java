@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import com.google.common.base.Throwables;
 import com.kedzie.vbox.soap.VBoxSvc;
 import org.ksoap2.SoapFault;
 
@@ -114,11 +115,16 @@ public class HostNetworkListFragment extends RoboFragment {
 				net.getDHCPEnabled();
 				try {
 				IDHCPServer dhcp = _vmgr.getVBox().findDHCPServerByNetworkName(net.getNetworkName());
-				if(dhcp!=null)
+				if(dhcp!=null) {
 					dhcp.getEnabled();
-				_dhcpServers.add(dhcp);
-				} catch(SoapFault e) {
-					Log.e(TAG, "SoapFault finding DHCP Server", e);
+					_dhcpServers.add(dhcp);
+				}
+				} catch(Throwable e) {
+					Throwable cause = Throwables.getRootCause(e);
+					if(cause instanceof SoapFault) {
+						SoapFault sf = (SoapFault) cause;
+						Log.e(TAG, "SoapFault finding DHCP Server " + sf.detail.getText(0), e);
+					}
 					_dhcpServers.add(null);
 				}
 			}

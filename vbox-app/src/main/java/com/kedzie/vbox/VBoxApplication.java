@@ -203,7 +203,7 @@ public class VBoxApplication extends MultiDexApplication {
 	 * @return <code>true</code> if premium user, <code>false</code> otherwise
 	 */
 	public boolean isPremiumVersion() {
-		return getPackageManager().checkSignatures(APPLICATION_PACKAGE, APPLICATION_PRO_KEY_PACKAGE)==PackageManager.SIGNATURE_MATCH;
+		return true; //getPackageManager().checkSignatures(APPLICATION_PACKAGE, APPLICATION_PRO_KEY_PACKAGE)==PackageManager.SIGNATURE_MATCH;
 	}
 	
 	/**
