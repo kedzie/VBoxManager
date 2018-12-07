@@ -1,15 +1,13 @@
 package com.kedzie.vbox.machine.settings;
 
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
@@ -18,16 +16,17 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboFragment;
 
-public class NetworkFragment extends RoboFragment {
+import java.util.ArrayList;
+
+public class NetworkFragment extends Fragment {
     private PagerTabHost mTabHost;
     
     private IMachine _machine;
     private ArrayList<INetworkAdapter> _adapters;
     private int mSavedTab;
 
-    public static class DummyFragment extends RoboFragment {
+    public static class DummyFragment extends Fragment {
     	public DummyFragment() {
     		super();
     	}

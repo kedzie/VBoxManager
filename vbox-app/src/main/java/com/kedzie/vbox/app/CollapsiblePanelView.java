@@ -20,13 +20,12 @@ import android.widget.LinearLayout;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils.AnimationAdapter;
-import com.nineoldandroids.view.ViewHelper;
-import com.nineoldandroids.view.animation.AnimatorProxy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.ViewGroup.LayoutParams.*;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * Animated collapsible Panel
@@ -67,7 +66,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
                 @Override
                 public void onAnimationStart(Animation animation) {
                     if(isCollapsing()) {
-                        ViewHelper.setAlpha(mContents, 0f);
+						mContents.setAlpha(0f);
                     } else {
 						setExpanded(true);
                     }
@@ -79,7 +78,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
 						setExpanded(false);
                         mFrame.setVisibility(View.GONE);
                     } else {
-                        ViewHelper.setAlpha(mContents, 1f);
+						mContents.setAlpha(1f);
                     }
                 }
             });
@@ -90,7 +89,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
             ViewGroup.LayoutParams lp = mFrame.getLayoutParams();
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             mFrame.setLayoutParams(lp);
-            AnimatorProxy.wrap(mCollapseButton).setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
+			mCollapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
         }
 
         @Override
@@ -246,7 +245,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
 			ViewGroup.LayoutParams lp = mFrame.getLayoutParams();
 			lp.height = mContentHeight;
 			mFrame.setLayoutParams(lp);
-			ViewHelper.setRotation(mCollapseButton, 0);
+			mCollapseButton.setRotation(0);
 			setExpanded(true);
 		}
 	}
@@ -266,7 +265,7 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
 			ViewGroup.LayoutParams lp = mFrame.getLayoutParams();
 			lp.height = 0;
 			mFrame.setLayoutParams(lp);
-			ViewHelper.setRotation(mCollapseButton, mCollapseRotation);
+			mCollapseButton.setRotation(mCollapseRotation);
 			setExpanded(false);
 		}
 	}

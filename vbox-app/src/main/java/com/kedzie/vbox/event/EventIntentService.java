@@ -6,6 +6,7 @@ import android.app.*;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
@@ -21,8 +22,13 @@ import com.kedzie.vbox.api.IMachineEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.LoopingThread;
+import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
+
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 /**
  * Polls VirtualBox for events and publishes them in local broadcasts.
@@ -38,21 +44,30 @@ public class EventIntentService extends Service {
 	
 	VBoxSvc _vmgr;
 	int _interval;
+	@Inject
 	LocalBroadcastManager _lbm;
 
     private EventThread eventThread;
+
+    @Inject
+    NotificationManager mNotificationManager;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        AndroidInjection.inject(this);
+        if(Utils.isVersion(Build.VERSION_CODES.O)) {
+            if(mNotificationManager.getNotificationChannel("vbox") != null) {
+                NotificationChannel vboxChannel = new NotificationChannel("vbox", "VboxManager", NotificationManager.IMPORTANCE_DEFAULT);
+                mNotificationManager.createNotificationChannel(vboxChannel);
+            }
+        }
+    }
 	
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.onStart(intent, startId);
-        return 0;
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId) {
         _vmgr = BundleBuilder.getVBoxSvc(intent);
         _interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
-        _lbm = LocalBroadcastManager.getInstance(this);
         String title = getResources().getString(R.string.event_handler_notification_title);
         String content = getResources().getString(R.string.event_handler_notification_content, _vmgr.getServer().toString());
         Notification notification = new NotificationCompat.Builder(this)
@@ -69,6 +84,7 @@ public class EventIntentService extends Service {
         startForeground(NOTIFICATION_ID, notification);
         eventThread = new EventThread();
         eventThread.start();
+        return START_STICKY;
     }
 	
 	@Override

@@ -27,14 +27,29 @@ import com.kedzie.vbox.machine.settings.CategoryFragment.OnSelectCategoryListene
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasFragmentInjector;
+import dagger.android.support.HasSupportFragmentInjector;
+
 /**
  * Obtain a write-lock and then edit virtual machine settings
  * 
  * @apiviz.stereotype activity
  */
-public class VMSettingsActivity extends BaseActivity implements OnSelectCategoryListener {
+public class VMSettingsActivity extends BaseActivity implements OnSelectCategoryListener, HasSupportFragmentInjector {
     private static final String TAG = "VMSettingsActivity";
     public static final String MUTABLE_KEY = "mutable";
+
+    @Inject
+    DispatchingAndroidInjector<Fragment> dispatchingFragmentInjector;
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingFragmentInjector;
+    }
 
     /**
      * Get Write Lock on machine 

@@ -2,17 +2,16 @@ package com.kedzie.vbox.machine.settings;
 
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
-import roboguice.fragment.RoboFragment;
 
-public class GeneralFragment extends RoboFragment {
+public class GeneralFragment extends Fragment {
     private PagerTabHost mTabHost;
 
     @Override

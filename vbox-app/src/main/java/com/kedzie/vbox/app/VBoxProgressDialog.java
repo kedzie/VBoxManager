@@ -2,6 +2,7 @@ package com.kedzie.vbox.app;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,36 +11,38 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboDialogFragment;
-import roboguice.inject.InjectView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Dialog with two separate progress bars for primary/secondary operations.  Also an optional cancel button.
  */
-public class VBoxProgressDialog extends RoboDialogFragment {
+public class VBoxProgressDialog extends DialogFragment {
 	
 	/** Ongoing operation */
 	private IProgress _progress;
     private DialogTask _task;
 	private boolean _cancelable;
 
-    @InjectView(R.id.primary_progress)
-	private ProgressBar _primaryProgress;
-    @InjectView(R.id.secondary_progress)
-	private ProgressBar _secondaryProgress;
-    @InjectView(R.id.message)
-	private TextView _primaryText;
-    @InjectView(R.id.operation_description)
-	private TextView _operationText;
-    @InjectView(R.id.operation_number)
-	private TextView _operationCountText;
-    @InjectView(R.id.time_remaining)
-	private TextView _timeRemainingText;
-    @InjectView(R.id.cancel_button)
-	private Button _cancelButton;
+    @BindView(R.id.primary_progress)
+	 ProgressBar _primaryProgress;
+    @BindView(R.id.secondary_progress)
+	 ProgressBar _secondaryProgress;
+    @BindView(R.id.message)
+	 TextView _primaryText;
+    @BindView(R.id.operation_description)
+	 TextView _operationText;
+    @BindView(R.id.operation_number)
+	 TextView _operationCountText;
+    @BindView(R.id.time_remaining)
+	 TextView _timeRemainingText;
+    @BindView(R.id.cancel_button)
+	 Button _cancelButton;
 
     public void showAllowingStateLoss(FragmentTransaction transaction, String tag) {
 //            mDismissed = false;
@@ -63,12 +66,13 @@ public class VBoxProgressDialog extends RoboDialogFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return getLayoutInflater(savedInstanceState).inflate(R.layout.progress_dialog, container, false);
+		return inflater.inflate(R.layout.progress_dialog, container, false);
 	}
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         _primaryText.setText(getArguments().getString("msg"));
         _cancelButton.setEnabled(_cancelable);
         _cancelButton.setOnClickListener(new OnClickListener() {

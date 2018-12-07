@@ -4,14 +4,10 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
-import com.google.inject.Inject;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
@@ -21,27 +17,36 @@ import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineFragment;
 import com.kedzie.vbox.machine.MachineListActivity;
-import com.kedzie.vbox.soap.VBoxSvc;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import roboguice.inject.InjectExtra;
-import roboguice.service.RoboIntentService;
+
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 /**
  * Listen for VirtualBox events and publish notifications
  */
-public class EventNotificationService extends RoboIntentService {
+public class EventNotificationService extends IntentService {
 	private static final Logger log = LoggerFactory.getLogger(EventNotificationService.class);
 
 	private static final int NOTIFICATION_ID=1;
 
     @Inject
-    private NotificationManager mNotificationManager;
+     NotificationManager mNotificationManager;
 	
 	public EventNotificationService() {
 		super("Event Notification Service");
 	}
-	
+
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		AndroidInjection.inject(this);
+	}
+
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		log.debug("Sending notification");
@@ -64,6 +69,6 @@ public class EventNotificationService extends RoboIntentService {
 				.setTicker(title)
 				.setAutoCancel(true)
 				.build();
-		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, n);
+		mNotificationManager.notify(NOTIFICATION_ID, n);
 	}
 }

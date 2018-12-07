@@ -1,13 +1,19 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Spinner;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IAudioAdapter;
 import com.kedzie.vbox.api.IMachine;
@@ -17,14 +23,15 @@ import com.kedzie.vbox.api.jaxb.AudioDriverType;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Edit remote desktop server
  * @apiviz.stereotype fragment
  */
-public class AudioFragment extends RoboFragment {
+public class AudioFragment extends Fragment {
 	
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<IAudioAdapter, AudioDriverType[]>> {
 		
@@ -56,13 +63,13 @@ public class AudioFragment extends RoboFragment {
 	private IAudioAdapter _adapter;
 	private AudioDriverType[] _types;
 	
-    @InjectView(R.id.enabled)
-	private CheckBox _enabledCheckBox;
-    @InjectView(R.id.audio_driver)
-	private Spinner _audioDriverSpinner;
+    @BindView(R.id.enabled)
+	 CheckBox _enabledCheckBox;
+    @BindView(R.id.audio_driver)
+	 Spinner _audioDriverSpinner;
 	private ArrayAdapter<AudioDriverType> _audioDriverAdapter;
-    @InjectView(R.id.audio_controller)
-	private Spinner _audioControllerSpinner;
+    @BindView(R.id.audio_controller)
+	 Spinner _audioControllerSpinner;
 	private ArrayAdapter<AudioControllerType> _audioControllerAdapter;
 	
 	@Override
@@ -90,6 +97,7 @@ public class AudioFragment extends RoboFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         _audioControllerAdapter = new ArrayAdapter<AudioControllerType>(getActivity(), android.R.layout.simple_spinner_item, AudioControllerType.values());
         _audioControllerSpinner.setAdapter(_audioControllerAdapter);
     }

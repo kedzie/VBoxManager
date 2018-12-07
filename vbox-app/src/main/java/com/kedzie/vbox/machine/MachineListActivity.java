@@ -1,26 +1,23 @@
 package com.kedzie.vbox.machine;
 
 import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IHost;
@@ -42,20 +39,26 @@ import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.server.ServerSQlite;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
-import com.kedzie.vbox.task.DialogTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import roboguice.inject.InjectView;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 
 /**
  *
  * @author Marek Kędzierski
  * @apiviz.stereotype activity
  */
-public class MachineListActivity extends BaseActivity implements OnTreeNodeSelectListener {
+public class MachineListActivity extends BaseActivity implements OnTreeNodeSelectListener, HasSupportFragmentInjector {
 	private static final Logger log = LoggerFactory.getLogger(MachineListActivity.class);
 
 	private static final int REQUEST_CODE_PREFERENCES = 6;
@@ -65,13 +68,21 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 	/** VirtualBox API */
 	private VBoxSvc _vmgr;
 
-	@InjectView(R.id.drawer_layout)
-	private DrawerLayout mDrawerLayout;
-	@InjectView(R.id.nav)
-	private NavigationView navView;
-	@InjectView(R.id.toolbar)
-	private Toolbar toolbar;
+	@BindView(R.id.drawer_layout)
+	 DrawerLayout mDrawerLayout;
+	@BindView(R.id.nav)
+	 NavigationView navView;
+	@BindView(R.id.toolbar)
+	 Toolbar toolbar;
 	private ActionBarDrawerToggle mDrawerToggle;
+
+	@Inject
+	DispatchingAndroidInjector<Fragment> dispatchingFragmentInjector;
+
+	@Override
+	public AndroidInjector<Fragment> supportFragmentInjector() {
+		return dispatchingFragmentInjector;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +98,8 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 	private void initUI() {
 		setContentView(R.layout.machine_list);
 		_dualPane = findViewById(R.id.details)!=null;
+
+		ButterKnife.bind(this);
 
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE |ActionBar.DISPLAY_SHOW_HOME|ActionBar.DISPLAY_HOME_AS_UP);

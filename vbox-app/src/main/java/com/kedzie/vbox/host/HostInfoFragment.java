@@ -4,13 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.kedzie.vbox.R;
-import com.kedzie.vbox.SettingsActivity;
-import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IHostNetworkInterface;
 import com.kedzie.vbox.api.IMedium;
@@ -21,17 +28,17 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
-import com.kedzie.vbox.task.ConfigureMetricsTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  *
  * @apiviz.stereotype fragment
  */
-public class HostInfoFragment extends RoboFragment {
+public class HostInfoFragment extends Fragment {
     private static final String TAG = "InfoFragment";
 
     private static final int REQUEST_CODE_PREFERENCES = 6;
@@ -91,18 +98,18 @@ public class HostInfoFragment extends RoboFragment {
     private IHost _host;
     private VBoxSvc _vmgr;
 
-    @InjectView(R.id.ostype)
-    private TextView _ostypeText;
-    @InjectView(R.id.vbox)
-    private TextView _vboxText;
-    @InjectView(R.id.memory)
-    private TextView _memoryText;
-    @InjectView(R.id.processors)
-    private TextView _processorsText;
-    @InjectView(R.id.networks)
-    private TextView _networksText;
-    @InjectView(R.id.dvds)
-    private TextView _dvdsText;
+    @BindView(R.id.ostype)
+     TextView _ostypeText;
+    @BindView(R.id.vbox)
+     TextView _vboxText;
+    @BindView(R.id.memory)
+     TextView _memoryText;
+    @BindView(R.id.processors)
+     TextView _processorsText;
+    @BindView(R.id.networks)
+     TextView _networksText;
+    @BindView(R.id.dvds)
+     TextView _dvdsText;
 
     private boolean mDualPane;
 
@@ -118,6 +125,12 @@ public class HostInfoFragment extends RoboFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.host_info, null);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
     }
 
     @Override

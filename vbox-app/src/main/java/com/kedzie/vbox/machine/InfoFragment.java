@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,30 +19,38 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.INetworkAdapter;
 import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.IVRDEServer;
-import com.kedzie.vbox.api.jaxb.*;
+import com.kedzie.vbox.api.jaxb.CPUPropertyType;
+import com.kedzie.vbox.api.jaxb.DeviceType;
+import com.kedzie.vbox.api.jaxb.HWVirtExPropertyType;
+import com.kedzie.vbox.api.jaxb.IMediumAttachment;
+import com.kedzie.vbox.api.jaxb.MachineState;
+import com.kedzie.vbox.api.jaxb.NetworkAttachmentType;
+import com.kedzie.vbox.api.jaxb.StorageBus;
+import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineRunnable;
-import roboguice.RoboGuice;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 import java.io.IOException;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class InfoFragment extends RoboFragment {
+public class InfoFragment extends Fragment {
     private static final String TAG = "InfoFragment";
 
 	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
@@ -140,40 +149,40 @@ public class InfoFragment extends RoboFragment {
 	private IMachine _machine;
 	private MachineInfo _machineInfo;
 
-    @InjectView(R.id.name)
-	private TextView _nameText;
-    @InjectView(R.id.description)
-	private TextView _descriptionText;
-    @InjectView(R.id.groups)
-	private TextView _groupText;
-    @InjectView(R.id.ostype)
-	private TextView _osTypeText;
-    @InjectView(R.id.baseMemory)
-	private TextView _baseMemoryText;
-    @InjectView(R.id.processors)
-	private TextView _processorsText;
-    @InjectView(R.id.bootOrder)
-	private TextView _bootOrderText;
-    @InjectView(R.id.acceleration)
-	private TextView _accelerationText;
-    @InjectView(R.id.videoMemory)
-	private TextView _videoMemoryText;
-    @InjectView(R.id.accelerationVideo)
-	private TextView _accelerationVideoText;
-    @InjectView(R.id.rdpPort)
-	private TextView _rdpPortText;
-    @InjectView(R.id.storage)
-	private TextView _storageText;
-    @InjectView(R.id.network)
-	private TextView _networkText;
-    @InjectView(R.id.audio_driver)
-	private TextView _audioDriver;
-    @InjectView(R.id.audio_controller)
-	private TextView _audioController;
-    @InjectView(R.id.previewPanel)
-	private CollapsiblePanelView _previewPanel;
-    @InjectView(R.id.preview)
-	private ImageView _preview;
+    @BindView(R.id.name)
+	 TextView _nameText;
+    @BindView(R.id.description)
+	 TextView _descriptionText;
+    @BindView(R.id.groups)
+	 TextView _groupText;
+    @BindView(R.id.ostype)
+	 TextView _osTypeText;
+    @BindView(R.id.baseMemory)
+	 TextView _baseMemoryText;
+    @BindView(R.id.processors)
+	 TextView _processorsText;
+    @BindView(R.id.bootOrder)
+	 TextView _bootOrderText;
+    @BindView(R.id.acceleration)
+	 TextView _accelerationText;
+    @BindView(R.id.videoMemory)
+	 TextView _videoMemoryText;
+    @BindView(R.id.accelerationVideo)
+	 TextView _accelerationVideoText;
+    @BindView(R.id.rdpPort)
+	 TextView _rdpPortText;
+    @BindView(R.id.storage)
+	 TextView _storageText;
+    @BindView(R.id.network)
+	 TextView _networkText;
+    @BindView(R.id.audio_driver)
+	 TextView _audioDriver;
+    @BindView(R.id.audio_controller)
+	 TextView _audioController;
+    @BindView(R.id.previewPanel)
+	 CollapsiblePanelView _previewPanel;
+    @BindView(R.id.preview)
+	 ImageView _preview;
 
 	private LocalBroadcastManager lbm;
 	/** Event-handling local broadcasts */
@@ -195,7 +204,7 @@ public class InfoFragment extends RoboFragment {
             FrameLayout view = (FrameLayout) getView();
             view.removeAllViews();
             LayoutInflater.from(getActivity()).inflate(R.layout.machine_info, view, true);
-            RoboGuice.getInjector(getActivity()).injectViewMembers(this);
+            ButterKnife.bind(this, view);
             populateViews();
         }
     }
@@ -214,6 +223,7 @@ public class InfoFragment extends RoboFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FrameLayout view = new FrameLayout(getActivity());
 		inflater.inflate(R.layout.machine_info, view, true);
+		ButterKnife.bind(this, view);
         return view;
 	}
 	

@@ -1,14 +1,13 @@
 package com.kedzie.vbox.task;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import roboguice.fragment.RoboFragment;
 
 /**
  * Created by kedzie on 3/1/14.
  */
-public class TaskFragment extends RoboFragment {
+public class TaskFragment extends Fragment {
 
     private DialogTask task;
 

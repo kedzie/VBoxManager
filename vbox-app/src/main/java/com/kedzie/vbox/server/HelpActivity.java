@@ -4,25 +4,29 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
-import roboguice.inject.InjectView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Detailed help information for launching <em>vboxwebsrv</em>
  */
 public class HelpActivity extends BaseActivity {
 
-    @InjectView(R.id.main_text)
-    private TextView mainText;
-    @InjectView(R.id.ssl_text)
-    private TextView sslText;
+    @BindView(R.id.main_text)
+     TextView mainText;
+    @BindView(R.id.ssl_text)
+     TextView sslText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.help);
+        ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

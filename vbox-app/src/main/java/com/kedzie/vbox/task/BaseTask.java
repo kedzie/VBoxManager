@@ -8,15 +8,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
+
 import org.ksoap2.SoapFault;
 import org.kxml2.kdom.Node;
-import roboguice.activity.RoboFragmentActivity;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;

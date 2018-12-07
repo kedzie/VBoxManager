@@ -3,20 +3,18 @@ package com.kedzie.vbox.app;
 import android.support.v4.view.ViewPager.PageTransformer;
 import android.view.View;
 
-import com.nineoldandroids.view.ViewHelper;
-
 public class FlipPageTransformer implements PageTransformer {
 
     @Override
     public void transformPage(View view, float position) {
-		ViewHelper.setTranslationX(view, -1*view.getWidth()*position);
+		view.setTranslationX(-1*view.getWidth()*position);
         if(position >= -.5 && position <= .5) {
-            ViewHelper.setAlpha(view, 1);
-			ViewHelper.setScaleX(view, 1);
+            view.setAlpha(1);
+            view.setScaleX(1);
 		} else {
-            ViewHelper.setAlpha(view, 0);
-			ViewHelper.setScaleX(view, 0);
+            view.setAlpha(0);
+            view.setScaleX(0);
 		}
-        ViewHelper.setRotationY(view, position*180);
+        view.setRotationY( position*180);
     }
 }

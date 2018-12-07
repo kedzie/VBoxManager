@@ -1,7 +1,5 @@
 package com.kedzie.vbox.app;
 
-import com.nineoldandroids.view.ViewHelper;
-
 import android.support.v4.view.ViewPager.PageTransformer;
 import android.view.View;
 
@@ -12,11 +10,11 @@ public class AccordianPageTransformer implements PageTransformer {
 
     @Override
     public void transformPage(View view, float position) {
-        ViewHelper.setTranslationX(view, -1*view.getWidth()*position);
+        view.setTranslationX(-1*view.getWidth()*position);
         if(position < 0)
-            ViewHelper.setPivotX(view, 0f);
+            view.setPivotX(0f);
         else if(position > 0)
-            ViewHelper.setPivotX(view, view.getWidth());
-        ViewHelper.setScaleX(view, 1-Math.abs(position));
+            view.setPivotX(view.getWidth());
+        view.setScaleX(1-Math.abs(position));
     }
 }

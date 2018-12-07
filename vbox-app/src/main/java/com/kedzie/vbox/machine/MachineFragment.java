@@ -2,20 +2,21 @@ package com.kedzie.vbox.machine;
 
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
 import com.kedzie.vbox.soap.VBoxSvc;
-import roboguice.fragment.RoboFragment;
 
-public class MachineFragment extends RoboFragment {
+public class MachineFragment extends Fragment {
 
     private VBoxSvc mVmgr;
     private PagerTabHost mTabHost;

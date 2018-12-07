@@ -6,7 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.kedzie.vbox.R;
@@ -20,10 +25,8 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnMediumAttachmentClickedListener;
 import com.kedzie.vbox.machine.settings.StorageListFragment.OnStorageControllerClickedListener;
 
-import roboguice.fragment.RoboFragment;
 
-
-public class StorageFragment extends RoboFragment implements OnStorageControllerClickedListener, OnMediumAttachmentClickedListener {
+public class StorageFragment extends Fragment implements OnStorageControllerClickedListener, OnMediumAttachmentClickedListener {
     private static final String TAG = "StorageFragment";
     private boolean _dualPane;
     private StorageListFragment _listFragment;

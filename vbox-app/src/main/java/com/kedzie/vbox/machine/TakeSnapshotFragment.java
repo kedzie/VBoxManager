@@ -2,6 +2,7 @@ package com.kedzie.vbox.machine;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -12,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
@@ -22,21 +22,25 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
-import roboguice.fragment.RoboDialogFragment;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Create a new snapshot
  * 
  * @apiviz.stereotype fragment
  */
-public class TakeSnapshotFragment extends RoboDialogFragment {
+public class TakeSnapshotFragment extends DialogFragment {
     
 	private VBoxSvc _vmgr;
 	private IMachine _machine;
 	private ISnapshot _snapshot;
-	
-	private TextView _nameText;
-	private TextView _descriptionText;
+
+	@BindView(R.id.snapshot_name)
+	 TextView _nameText;
+	@BindView(R.id.snapshot_description)
+	 TextView _descriptionText;
 	
 	public static TakeSnapshotFragment getInstance(VBoxSvc vmgr, IMachine machine,ISnapshot snapshot) {
 	    BundleBuilder b = new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vmgr).putProxy(IMachine.BUNDLE, machine);
@@ -66,8 +70,7 @@ public class TakeSnapshotFragment extends RoboDialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.snapshot_dialog, null);
-		_nameText = (TextView)view.findViewById(R.id.snapshot_name);
-		_descriptionText = (TextView)view.findViewById(R.id.snapshot_description);
+		ButterKnife.bind(this, view);
 		_descriptionText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

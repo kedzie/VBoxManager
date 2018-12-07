@@ -1,13 +1,12 @@
 package com.kedzie.vbox.machine;
 
-import java.util.Map;
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
@@ -43,14 +41,15 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
-import roboguice.fragment.RoboFragment;
+
+import java.util.Map;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class ActionsFragment extends RoboFragment implements OnItemClickListener {
+public class ActionsFragment extends Fragment implements OnItemClickListener {
 	protected static final String TAG = ActionsFragment.class.getSimpleName();
 	
 	private MachineView _headerView;
@@ -274,17 +273,15 @@ public class ActionsFragment extends RoboFragment implements OnItemClickListener
 				}
 			}.execute();
 		} else if(action.equals(VMAction.EDIT_SETTINGS)) {
-			if(getApp().isPremiumVersion()) {
-				if(!_machine.getSessionState().equals(SessionState.UNLOCKED)) {
-					new AlertDialog.Builder(getActivity())
+			if(!_machine.getSessionState().equals(SessionState.UNLOCKED)) {
+				new AlertDialog.Builder(getActivity())
 						.setTitle("Cannot edit machine")
 						.setIcon(android.R.drawable.ic_dialog_alert)
 						.setMessage("Session state is " + _machine.getSessionState())
 						.show();
-				} else
-					Utils.startActivity(getActivity(), new Intent(getActivity(), VMSettingsActivity.class).putExtras(getArguments()));
 			} else
-				getApp().showPremiumOffer(getActivity());
+				Utils.startActivity(getActivity(), new Intent(getActivity(), VMSettingsActivity.class).putExtras(getArguments()));
+
 		}
 	}
 	

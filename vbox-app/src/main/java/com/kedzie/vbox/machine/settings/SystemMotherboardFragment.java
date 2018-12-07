@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
@@ -24,12 +24,11 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboFragment;
 
 /**
  * @apiviz.stereotype fragment
  */
-public class SystemMotherboardFragment extends RoboFragment {
+public class SystemMotherboardFragment extends Fragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IHost> {
 		public LoadInfoTask() { super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); }

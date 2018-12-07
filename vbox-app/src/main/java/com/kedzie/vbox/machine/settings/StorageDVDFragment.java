@@ -1,11 +1,9 @@
 package com.kedzie.vbox.machine.settings;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 import com.google.common.base.Objects;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
@@ -30,14 +27,18 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class StorageDVDFragment extends RoboFragment {
+public class StorageDVDFragment extends Fragment {
 
 	/**
 	 * Fetch DVD/Medium details
@@ -167,19 +168,19 @@ public class StorageDVDFragment extends RoboFragment {
 	private IStorageController _controller;
 	private ArrayList<IMediumAttachment> _attachments;
 
-	@InjectView(R.id.storage_port)
-	private Spinner _slotSpinner;
+	@BindView(R.id.storage_port)
+	 Spinner _slotSpinner;
 	private ArrayList<Slot> _slots;
 	private ArrayAdapter<Slot> _slotAdapter;
 
-	@InjectView(R.id.storage_mount)
-	private ImageButton _mountButton;
-	@InjectView(R.id.storage_type)
-	private TextView _storageTypeText;
-	@InjectView(R.id.storage_size)
-	private TextView _sizeText;
-	@InjectView(R.id.storage_location)
-	private TextView _locationText;
+	@BindView(R.id.storage_mount)
+	 ImageButton _mountButton;
+	@BindView(R.id.storage_type)
+	 TextView _storageTypeText;
+	@BindView(R.id.storage_size)
+	 TextView _sizeText;
+	@BindView(R.id.storage_location)
+	 TextView _locationText;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -196,6 +197,7 @@ public class StorageDVDFragment extends RoboFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		ButterKnife.bind(this, view);
 		_mountButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

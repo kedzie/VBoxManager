@@ -1,16 +1,16 @@
 package com.kedzie.vbox;
 
-import java.util.List;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-
+import android.preference.PreferenceActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import com.kedzie.vbox.app.AppCompatPreferenceActivity;
+
 import com.kedzie.vbox.app.Utils;
+
+import java.util.List;
 
 /**
  * Backwards compatible preferences with headers.  Also updates summary of current preference values.
@@ -18,7 +18,7 @@ import com.kedzie.vbox.app.Utils;
  * @apiviz.stereotype activity
  */
 @SuppressWarnings("deprecation")
-public class SettingsActivity extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
     public static final String PREF_ICON_COLORS="colored_icons";
     public static final String PREF_TAB_TRANSITION="tab_transition";
@@ -34,8 +34,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements OnS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowHomeEnabled(true);
 
         String action = getIntent().getAction();
         if (action != null && action.equals(ACTION_PREFS_GENERAL)) {
@@ -66,9 +66,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements OnS
     	return false;
     }
 
+//    @Override
+//    public void onBuildHeaders(List<Header> target) {
+//        loadHeadersFromResource(R.xml.preference_headers, target);
+//    }
+
+
     @Override
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.preference_headers, target);
+    public void onBuildHeaders(List<PreferenceActivity.Header> target) {
+        super.onBuildHeaders(target);
     }
 
     @Override
@@ -134,7 +140,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements OnS
         }
     }
 
-    public static class SummaryPreferenceFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
+    public static class SummaryPreferenceFragment extends PreferenceFragmentCompat implements OnSharedPreferenceChangeListener {
 
         @Override
         public void onResume() {

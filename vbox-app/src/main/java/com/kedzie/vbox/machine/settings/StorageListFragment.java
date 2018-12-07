@@ -1,19 +1,21 @@
 package com.kedzie.vbox.machine.settings;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -39,15 +41,21 @@ import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Expandable list of storage controllers and associated attachments
  * 
  * @apiviz.stereotype Fragment
  */
-public class StorageListFragment extends RoboFragment {
+public class StorageListFragment extends Fragment {
 
 	/**
 	 * Listener for Storage Controller clicks
@@ -72,8 +80,8 @@ public class StorageListFragment extends RoboFragment {
 		public void onMediumAttachmentClicked(IMediumAttachment element);
 	}
 
-	@InjectView(R.id.storage_tree)
-	private ExpandableListView _listView;
+	@BindView(R.id.storage_tree)
+	 ExpandableListView _listView;
 	private ItemAdapter _listAdapter;
 
 	private OnStorageControllerClickedListener _controllerListener;
@@ -488,6 +496,7 @@ public class StorageListFragment extends RoboFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		ButterKnife.bind(this, view);
 		_listView.setOnGroupClickListener(new OnGroupClickListener() {
 			@Override
 			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {

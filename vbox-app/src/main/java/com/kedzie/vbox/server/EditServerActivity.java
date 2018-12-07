@@ -12,12 +12,13 @@ import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.ErrorSupport;
-import roboguice.inject.InjectView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class EditServerActivity extends BaseActivity {
 	public static final String INTENT_SERVER = "server";
@@ -26,16 +27,16 @@ public class EditServerActivity extends BaseActivity {
 
 	private ServerSQlite mDb;
 
-	@InjectView(R.id.server_name)
-	private TextView nameText;
-	@InjectView(R.id.server_host)
-	private TextView hostText;
-	@InjectView(R.id.server_port)
-	private TextView portText;
-	@InjectView(R.id.server_username)
-	private TextView userText;
-	@InjectView(R.id.server_password)
-	private TextView passText;
+	@BindView(R.id.server_name)
+	TextView nameText;
+	@BindView(R.id.server_host)
+	 TextView hostText;
+	@BindView(R.id.server_port)
+	 TextView portText;
+	@BindView(R.id.server_username)
+	 TextView userText;
+	@BindView(R.id.server_password)
+	 TextView passText;
 
 	private Switch sslSwitch;
 	private CheckBox sslBox;
@@ -47,6 +48,7 @@ public class EditServerActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.server);
+		ButterKnife.bind(this);
 		mDb = new ServerSQlite(this);
 		mServer = getIntent().getParcelableExtra(INTENT_SERVER);
 

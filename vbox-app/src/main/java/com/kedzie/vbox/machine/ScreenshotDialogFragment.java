@@ -1,17 +1,12 @@
 package com.kedzie.vbox.machine;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.Date;
-
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -21,18 +16,22 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboDialogFragment;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Date;
 
 /**
  * Take a screenshot and save to filesystem
  * 
  * @apiviz.stereotype fragment
  */
-public class ScreenshotDialogFragment extends RoboDialogFragment {
+public class ScreenshotDialogFragment extends DialogFragment {
 	public static final String BUNDLE_BYTES = "bytes";
 	
 	class SaveScreenshotTask extends ActionBarTask<Bitmap, Void> {

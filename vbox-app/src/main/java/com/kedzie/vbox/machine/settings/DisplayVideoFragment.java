@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
@@ -17,12 +19,11 @@ import com.kedzie.vbox.app.SliderView;
 import com.kedzie.vbox.app.SliderView.OnSliderViewChangeListener;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboFragment;
 
 /**
  * @apiviz.stereotype fragment
  */
-public class DisplayVideoFragment extends RoboFragment {
+public class DisplayVideoFragment extends Fragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<ISystemProperties, IHost>> {
 		

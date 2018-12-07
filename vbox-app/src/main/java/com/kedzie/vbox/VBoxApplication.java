@@ -1,33 +1,44 @@
 package com.kedzie.vbox;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
+import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDexApplication;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.SparseArray;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.dagger.AndroidServicesModule;
+import com.kedzie.vbox.dagger.AppComponent;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import dagger.android.HasServiceInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 
 /**
  * Stores a resource map storing Operating System, VMAction, and MachineState Icons.
  * @author Marek Kedzierski
  * @apiviz.stereotype application
  */
-public class VBoxApplication extends MultiDexApplication {
+public class VBoxApplication extends MultiDexApplication implements HasServiceInjector, HasActivityInjector {
 	private static final String TAG = "VBoxApplication";
 	private static final String APPLICATION_PRO_KEY_PACKAGE = "com.kedzie.vbox.pro";
 	private static final String APPLICATION_PACKAGE = "com.kedzie.vbox";
@@ -37,17 +48,51 @@ public class VBoxApplication extends MultiDexApplication {
 	private SparseArray<Integer> generalResources = new SparseArray<Integer>();
 	private SparseArray<Integer> generalResources_color = new SparseArray<Integer>();
 	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
-	
+
+	@Inject
+	DispatchingAndroidInjector<Service> dispatchingServiceInjector;
+
+	@Inject
+	DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
+
+
+
+	@Override
+	public AndroidInjector<Activity> activityInjector() {
+		return dispatchingActivityInjector;
+	}
+
+	@Override
+	public AndroidInjector<Service> serviceInjector() {
+		return dispatchingServiceInjector;
+	}
+
 	private static VBoxApplication _instance;
 	
 	public static VBoxApplication getInstance() {
 	    return _instance;
 	}
-	
+
+	private AppComponent appComponent;
+
+	public AppComponent getAppComponent() { return appComponent; }
+
+	public void setAppComponent(AppComponent ap) {
+		appComponent = ap;
+		appComponent.inject(this);
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		_instance=this;
+
+		if(appComponent == null) {
+			setAppComponent(com.kedzie.vbox.dagger.DaggerAppComponent.builder()
+					.androidServicesModule(new AndroidServicesModule(this))
+					.build());
+		}
+
 		PreferenceManager.setDefaultValues(this, R.xml.general_preferences, true);
 		PreferenceManager.setDefaultValues(this, R.xml.metric_preferences, true);
 		Log.i(TAG, "Period: " + Utils.getIntPreference(this, SettingsActivity.PREF_PERIOD));
@@ -234,4 +279,6 @@ public class VBoxApplication extends MultiDexApplication {
 			})
 			.show();
 	}
+
+
 }

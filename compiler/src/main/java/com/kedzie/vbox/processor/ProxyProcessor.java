@@ -2,20 +2,33 @@ package com.kedzie.vbox.processor;
 
 
 import com.google.auto.service.AutoService;
-
 import com.kedzie.vbox.soap.Asyncronous;
 import com.kedzie.vbox.soap.KSOAP;
 import com.kedzie.vbox.soap.KSOAPMethodStrategy;
 import com.kedzie.vbox.soap.KSoapObject;
 import com.squareup.javawriter.JavaWriter;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -24,12 +37,18 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import java.io.IOException;
-import java.util.*;
 
-import static com.kedzie.vbox.processor.Util.*;
-import static javax.lang.model.element.Modifier.*;
-import static com.squareup.javawriter.JavaWriter.*;
+import static com.kedzie.vbox.processor.Util.adapterName;
+import static com.kedzie.vbox.processor.Util.elementToString;
+import static com.kedzie.vbox.processor.Util.getAnnotation;
+import static com.kedzie.vbox.processor.Util.getPackage;
+import static com.kedzie.vbox.processor.Util.rawTypeToString;
+import static com.kedzie.vbox.processor.Util.typeToString;
+import static com.squareup.javawriter.JavaWriter.stringLiteral;
+import static com.squareup.javawriter.JavaWriter.type;
+import static javax.lang.model.element.Modifier.FINAL;
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static javax.lang.model.element.Modifier.STATIC;
 
 
 /**

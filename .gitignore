@@ -4,3 +4,6 @@ gen-external-apklibs
 out
 target/
 .idea
+build
+**/*.iml
+.gradle

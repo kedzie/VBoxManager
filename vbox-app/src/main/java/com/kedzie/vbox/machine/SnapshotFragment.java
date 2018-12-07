@@ -1,24 +1,21 @@
 package com.kedzie.vbox.machine;
 
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.*;
-import com.google.common.base.Throwables;
-import com.kedzie.vbox.app.BundleBuilder;
-import pl.polidea.treeview.AbstractTreeViewAdapter;
-import pl.polidea.treeview.InMemoryTreeStateManager;
-import pl.polidea.treeview.TreeBuilder;
-import pl.polidea.treeview.TreeNodeInfo;
-import pl.polidea.treeview.TreeStateManager;
-import pl.polidea.treeview.TreeViewList;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,19 +30,27 @@ import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.api.ISnapshotDeletedEvent;
 import com.kedzie.vbox.api.ISnapshotTakenEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.MachineTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import pl.polidea.treeview.AbstractTreeViewAdapter;
+import pl.polidea.treeview.InMemoryTreeStateManager;
+import pl.polidea.treeview.TreeBuilder;
+import pl.polidea.treeview.TreeNodeInfo;
+import pl.polidea.treeview.TreeStateManager;
+import pl.polidea.treeview.TreeViewList;
 
 /**
  * 
  * @apiviz.stereotype fragment
  */
-public class SnapshotFragment extends RoboFragment {
+public class SnapshotFragment extends Fragment {
 
     /**
      *	Load complete snapshot tree.
@@ -180,10 +185,10 @@ public class SnapshotFragment extends RoboFragment {
 
     protected VBoxSvc _vmgr;
     protected IMachine _machine;
-    @InjectView(R.id.mainTreeView)
-    protected TreeViewList _treeView;
-    @InjectView(R.id.addButton)
-    private FloatingActionButton _addButton;
+    @BindView(R.id.mainTreeView)
+     TreeViewList _treeView;
+    @BindView(R.id.addButton)
+     FloatingActionButton _addButton;
     private ISnapshot _root;
     protected TreeStateManager<ISnapshot> _stateManager;
     protected TreeBuilder<ISnapshot> _treeBuilder;
@@ -271,6 +276,7 @@ public class SnapshotFragment extends RoboFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         _treeView.setChoiceMode(ListView.CHOICE_MODE_NONE);
         registerForContextMenu(_treeView);
         _addButton.setOnClickListener(new View.OnClickListener() {

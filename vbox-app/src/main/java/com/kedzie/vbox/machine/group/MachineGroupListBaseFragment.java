@@ -1,16 +1,12 @@
 package com.kedzie.vbox.machine.group;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
@@ -23,13 +19,16 @@ import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.DialogTask;
 import com.kedzie.vbox.task.MachineRunnable;
-import roboguice.fragment.RoboFragment;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * New machine list based on groups
  * @apiviz.stereotype fragment
  */
-public class MachineGroupListBaseFragment extends RoboFragment {
+public class MachineGroupListBaseFragment extends Fragment {
 	protected static final String TAG = MachineGroupListBaseFragment.class.getSimpleName();
 	
 	protected VBoxSvc _vmgr;

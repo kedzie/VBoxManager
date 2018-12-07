@@ -1,12 +1,10 @@
 package com.kedzie.vbox.app;
 
-import android.support.v4.app.Fragment;
-import com.kedzie.vbox.SettingsActivity;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
@@ -17,7 +15,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
-import com.nineoldandroids.view.ViewHelper;
+
+import com.kedzie.vbox.SettingsActivity;
 
 /**
  *  Special {@link FragmentTabHost} which allows side-swiping.  

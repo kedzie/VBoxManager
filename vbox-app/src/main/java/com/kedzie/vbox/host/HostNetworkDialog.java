@@ -3,6 +3,7 @@ package com.kedzie.vbox.host;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +16,13 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TabHost;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IHostNetworkInterface;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboDialogFragment;
 
-public class HostNetworkDialog extends RoboDialogFragment {
+public class HostNetworkDialog extends DialogFragment {
 
 	/**
 	 * Load Data

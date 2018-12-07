@@ -1,6 +1,9 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,21 +13,21 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.jaxb.StorageControllerType;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 
  * @author Marek Kędzierski
  * @apiviz.stereotype fragment
  */
-public class StorageControllerFragment extends RoboFragment {
+public class StorageControllerFragment extends Fragment {
 
     private class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
     	
@@ -48,12 +51,12 @@ public class StorageControllerFragment extends RoboFragment {
 
     private IStorageController _controller;
 
-	@InjectView(R.id.controller_host_io_cache)
-    private CheckBox _hostIOCheckbox;
-	@InjectView(R.id.controller_name)
-    private TextView _nameText;
-	@InjectView(R.id.controller_type)
-	private Spinner _typeSpinner;
+	@BindView(R.id.controller_host_io_cache)
+     CheckBox _hostIOCheckbox;
+	@BindView(R.id.controller_name)
+     TextView _nameText;
+	@BindView(R.id.controller_type)
+	 Spinner _typeSpinner;
 	private StorageControllerType[] _types;
 	private ArrayAdapter<StorageControllerType> _typeAdapter;
     
@@ -67,7 +70,13 @@ public class StorageControllerFragment extends RoboFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.settings_storage_controller, null);
 	}
-	
+
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		ButterKnife.bind(this, view);
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();

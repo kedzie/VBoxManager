@@ -11,30 +11,37 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboFragment;
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Show list of VirtualBox servers
  * @apiviz.stereotype fragment
  */
-public class ServerListFragment extends RoboFragment {
+public class ServerListFragment extends Fragment {
     private static final String FIRST_RUN_PREFERENCE = "first_run";
     
     /**
@@ -45,7 +52,7 @@ public class ServerListFragment extends RoboFragment {
         /**
          * @param server	the selected {@link Server}
          */
-        public void onSelectServer(Server server);
+        void onSelectServer(Server server);
     }
     
     /**
@@ -108,14 +115,14 @@ public class ServerListFragment extends RoboFragment {
     private OnSelectServerListener _listener;
     private ServerSQlite _db;
 
-    @InjectView(R.id.list)
-    private ListView _listView;
-    @InjectView(R.id.addButton)
-    private FloatingActionButton _addButton;
+    @BindView(R.id.list)
+     ListView _listView;
+    @BindView(R.id.addButton)
+     FloatingActionButton _addButton;
     private boolean _dualPane;
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof OnSelectServerListener) 
             _listener = (OnSelectServerListener)activity;
@@ -129,6 +136,7 @@ public class ServerListFragment extends RoboFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    ButterKnife.bind(this, view);
     _dualPane = getActivity().findViewById(R.id.details)!=null;
     _listView.setChoiceMode(_dualPane ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
     _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -1,8 +1,7 @@
 package com.kedzie.vbox.machine.settings;
 
-import java.util.Arrays;
-
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,7 +18,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IVRDEServer;
@@ -27,13 +25,14 @@ import com.kedzie.vbox.api.jaxb.AuthType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.ActionBarTask;
-import roboguice.fragment.RoboFragment;
+
+import java.util.Arrays;
 
 /**
  * Edit remote desktop server
  * @apiviz.stereotype fragment
  */
-public class DisplayRemoteFragment extends RoboFragment {
+public class DisplayRemoteFragment extends Fragment {
 	
 	/**
 	 * load Remote Desktop Server info

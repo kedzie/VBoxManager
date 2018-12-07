@@ -1,18 +1,18 @@
 package com.kedzie.vbox.host;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.support.v7.app.AppCompatActivity;
-import android.view.*;
-import com.google.common.base.Throwables;
-import com.kedzie.vbox.soap.VBoxSvc;
-import org.ksoap2.SoapFault;
-
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.common.base.Throwables;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IHost;
@@ -29,11 +30,16 @@ import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
+import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ActionBarTask;
 import com.kedzie.vbox.task.DialogTask;
-import roboguice.fragment.RoboFragment;
 
-public class HostNetworkListFragment extends RoboFragment {
+import org.ksoap2.SoapFault;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class HostNetworkListFragment extends Fragment {
 
 	private View _view;
 	private ListView _listView;

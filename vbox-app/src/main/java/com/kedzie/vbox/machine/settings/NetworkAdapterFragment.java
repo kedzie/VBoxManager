@@ -2,6 +2,7 @@ package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,9 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHostNetworkInterface;
@@ -24,16 +30,16 @@ import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.task.DialogTask;
 
-import roboguice.fragment.RoboFragment;
-import roboguice.inject.InjectView;
-
 import java.util.Arrays;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * @apiviz.stereotype fragment
  */
-public class NetworkAdapterFragment extends RoboFragment {
+public class NetworkAdapterFragment extends Fragment {
     private static final String TAG = "NetworkAdapterFragment";
 
 	class LoadInfoTask extends DialogTask<INetworkAdapter, Tuple<INetworkAdapter, String[]>> {
@@ -90,31 +96,31 @@ public class NetworkAdapterFragment extends RoboFragment {
 	private INetworkAdapter _adapter;
 	private String[] _hostInterfaces;
 	
-    @InjectView(R.id.network_enabled)
-	private CheckBox _enabledCheckBox;
-    @InjectView(R.id.network_name_text)
-    private EditText _nameText;
-    @InjectView(R.id.network_mac)
-    private EditText _macText;
-    @InjectView(R.id.network_cable_connected)
-	private CheckBox _cableConnectedCheckBox;
+    @BindView(R.id.network_enabled)
+	 CheckBox _enabledCheckBox;
+    @BindView(R.id.network_name_text)
+     EditText _nameText;
+    @BindView(R.id.network_mac)
+     EditText _macText;
+    @BindView(R.id.network_cable_connected)
+	 CheckBox _cableConnectedCheckBox;
 
-	@InjectView(R.id.network_attached)
-	private Spinner _attachmentTypeSpinner;
+	@BindView(R.id.network_attached)
+	 Spinner _attachmentTypeSpinner;
 	private ArrayAdapter<NetworkAttachmentType> _attachmentTypeAdapter;
 	private NetworkAttachmentType[] _attachmentTypes = Utils.removeNull(NetworkAttachmentType.values());
 
-	@InjectView(R.id.network_name_spinner)
-	private Spinner _nameSpinner;
+	@BindView(R.id.network_name_spinner)
+	 Spinner _nameSpinner;
 	private ArrayAdapter<String> _nameAdapter;
 
-    @InjectView(R.id.network_adapter_type)
-	private Spinner _adapterTypeSpinner;
+    @BindView(R.id.network_adapter_type)
+	 Spinner _adapterTypeSpinner;
 	private ArrayAdapter<NetworkAdapterType> _adapterTypeAdapter;
 	private NetworkAdapterType[] _adapterTypes = Utils.removeNull(NetworkAdapterType.values());
 
-	@InjectView(R.id.network_promiscuous)
-	private Spinner _promiscuousModeSpinner;
+	@BindView(R.id.network_promiscuous)
+	 Spinner _promiscuousModeSpinner;
 	private ArrayAdapter<NetworkAdapterPromiscModePolicy> _promiscuousModeAdapter;
 
 	@Override
@@ -141,6 +147,7 @@ public class NetworkAdapterFragment extends RoboFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         _adapterTypeAdapter = new ArrayAdapter<NetworkAdapterType>(getActivity(), android.R.layout.simple_spinner_item, _adapterTypes);
         _adapterTypeSpinner.setAdapter(_adapterTypeAdapter);
         _attachmentTypeAdapter = new ArrayAdapter<NetworkAttachmentType>(getActivity(), android.R.layout.simple_spinner_item, _attachmentTypes);
