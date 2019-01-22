@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -47,8 +44,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Expandable list of storage controllers and associated attachments
@@ -335,7 +335,7 @@ public class StorageListFragment extends Fragment {
 					}
 				}
 			}
-			Log.d(TAG, "Attaching to slot: " + attachment.getSlot());
+			Timber.d( "Attaching to slot: %d", attachment.getSlot());
 			_machine.attachDevice(controller.getName(), attachment.getPort(), attachment.getDevice(), deviceType, medium);
 			attachment.setMedium(medium);
 			attachment.setType(deviceType);

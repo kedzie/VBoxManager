@@ -6,10 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import androidx.fragment.app.DialogFragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +22,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import timber.log.Timber;
 
 /**
  * Take a screenshot and save to filesystem
@@ -53,7 +54,7 @@ public class ScreenshotDialogFragment extends DialogFragment {
 			try {
                 MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
             } catch (Exception e) {
-                Log.e(TAG, "Exception storing in MediaStore", e);
+                Timber.e( "Exception storing in MediaStore", e);
             }
 			return null;
 		}

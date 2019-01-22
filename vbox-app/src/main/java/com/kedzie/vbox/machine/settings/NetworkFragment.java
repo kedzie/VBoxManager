@@ -2,9 +2,6 @@ package com.kedzie.vbox.machine.settings;
 
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +15,10 @@ import com.kedzie.vbox.app.PagerTabHost;
 import com.kedzie.vbox.task.ActionBarTask;
 
 import java.util.ArrayList;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import timber.log.Timber;
 
 public class NetworkFragment extends Fragment {
     private PagerTabHost mTabHost;
@@ -47,7 +48,7 @@ public class NetworkFragment extends Fragment {
     		ArrayList<INetworkAdapter> adapters = new ArrayList<INetworkAdapter>(maxNumAdapters);
     		for(int i=0; i<maxNumAdapters; i++) 
     			adapters.add(params[0].getNetworkAdapter(i));
-    		Log.d(TAG, "Loaded " + adapters.size() + " network adapters");
+    		Timber.d( "Loaded " + adapters.size() + " network adapters");
     		return adapters;
     	}
     	

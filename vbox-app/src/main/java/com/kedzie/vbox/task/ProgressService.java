@@ -5,8 +5,6 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import androidx.core.app.NotificationCompat;
-import android.util.Log;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
@@ -17,14 +15,14 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import androidx.core.app.NotificationCompat;
 import dagger.android.AndroidInjection;
+import timber.log.Timber;
 
 /**
  * Created by kedzie on 3/1/14.
  */
 public class ProgressService extends IntentService {
-    private static final String TAG = "ProgressService";
-
     /** interval used to update progress bar for longing-running operation*/
     protected final static int PROGRESS_INTERVAL = 500;
 
@@ -58,7 +56,7 @@ public class ProgressService extends IntentService {
         icon = intent.getIntExtra(INTENT_ICON, icon);
         ++id;
         try {
-            Log.d(TAG, "Handling progress");
+            Timber.d( "Handling progress");
             while(!mProgress.getCompleted()) {
                 cacheProgress(mProgress);
                 mNotificationManager.notify(id, new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
@@ -73,7 +71,7 @@ public class ProgressService extends IntentService {
                         .build());
                 Utils.sleep(PROGRESS_INTERVAL);
             }
-            Log.d(TAG, "Operation Completed. result code: " + mProgress.getResultCode());
+            Timber.d("Operation Completed. result code: %d", mProgress.getResultCode());
             int result = mProgress.getResultCode();
             if(result==0) {
                 mNotificationManager.notify(id, new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)

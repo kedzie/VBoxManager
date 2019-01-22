@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -43,6 +40,12 @@ import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
 import java.util.Map;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 
@@ -126,6 +129,11 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 	 */
 	class MachineActionAdapter extends ArrayAdapter<VMAction> {
 		private final LayoutInflater _layoutInflater;
+
+		@BindView(R.id.action_item_text)
+		TextView textView;
+		@BindView(R.id.action_item_icon)
+		ImageView imageView;
 		
 		public MachineActionAdapter(VMAction []actions) {
 			super(getActivity(), 0, actions);
@@ -135,8 +143,9 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null) 
 				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-			((TextView)view.findViewById(R.id.action_item_text)).setText(getItem(position).toString());
-			((ImageView)view.findViewById(R.id.action_item_icon)).setImageResource( getApp().getDrawable(getItem(position)));
+			ButterKnife.bind(view);
+			textView.setText(getItem(position).toString());
+			imageView.setImageResource( getApp().getDrawable(getItem(position)));
 			return view;                                                                                                                                                                                                                                                          
 		}
 	}
@@ -202,47 +211,47 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 		if(action.equals(VMAction.START))	
 			new LaunchVMProcessTask((AppCompatActivity)getActivity(), _vmgr).execute(_machine);
 		else if(action.equals(VMAction.POWER_OFF))	
-			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_powering_off, false, _machine) {
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr,getApp().getDrawable(VMAction.POWER_OFF), false, _machine) {
 			  protected IProgress workWithProgress(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  return console.powerDown();
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.RESET))
-			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_restarting, true, _machine) {
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.RESET), true, _machine) {
 			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.reset(); 
 				  return null;
 			  }
 			  }.execute(_machine);
 		else if(action.equals(VMAction.PAUSE)) 	
-			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_pausing, true, _machine) {
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.PAUSE), true, _machine) {
 			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception {  
 				  console.pause();	
 				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.RESUME)) 
-			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_resuming, true, _machine) {
+			new MachineTask<IMachine, Void>((AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.RESUME), true, _machine) {
 			  protected Void work(IMachine m,  IConsole console, IMachine...i) throws Exception { 	
 				  console.resume();
 				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.POWER_BUTTON)) 	
-			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, R.string.progress_acpi_down, true, _machine) {
+			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.POWER_BUTTON), true, _machine) {
 			  protected Void work(IMachine m,  IConsole console,IMachine...i) throws Exception {	
 				  console.powerButton(); 	
 				  return null;
 			  }
 		  }.execute(_machine);
 		else if(action.equals(VMAction.SAVE_STATE)) 	
-			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, R.string.progress_saving_state, false, _machine) {
+			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.SAVE_STATE), false, _machine) {
 				protected IProgress workWithProgress(IMachine m, IConsole console, IMachine...i) throws Exception { 	
 					return console.saveState(); 
 				}
 			}.execute(_machine);
 		else if(action.equals(VMAction.DISCARD_STATE)) 	
-			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, R.string.progress_discarding_state, true, _machine) {
+			new MachineTask<IMachine, Void>( (AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.DISCARD_STATE), true, _machine) {
 				protected Void work(IMachine m, IConsole console, IMachine...i) throws Exception { 	
 					console.discardSavedState(true); 
 					return null;
@@ -260,7 +269,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 					.putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User",  "CPU/Load/Kernel"  } )
 					.putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" } ));
 		} else if(action.equals(VMAction.TAKE_SCREENSHOT)) 	{
-			new MachineTask<Void, byte []>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_taking_snapshot, true, _machine) {
+			new MachineTask<Void, byte []>((AppCompatActivity)getActivity(), _vmgr, getApp().getDrawable(VMAction.TAKE_SCREENSHOT), true, _machine) {
 				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
 					IDisplay display = console.getDisplay();
 					Map<String, String> res = display.getScreenResolution(0);
@@ -269,7 +278,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 				@Override
 				protected void onSuccess(byte[] result) {
 					super.onSuccess(result);
-					Utils.showDialog(((AppCompatActivity)getActivity()).getSupportFragmentManager(), "screenshotDialog", ScreenshotDialogFragment.getInstance(result) );
+					Utils.showDialog(getActivity().getSupportFragmentManager(), "screenshotDialog", ScreenshotDialogFragment.getInstance(result) );
 				}
 			}.execute();
 		} else if(action.equals(VMAction.EDIT_SETTINGS)) {

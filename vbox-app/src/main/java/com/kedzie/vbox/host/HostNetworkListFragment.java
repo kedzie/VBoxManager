@@ -2,9 +2,6 @@ package com.kedzie.vbox.host;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -38,6 +35,10 @@ import org.ksoap2.SoapFault;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import timber.log.Timber;
 
 public class HostNetworkListFragment extends Fragment {
 
@@ -129,7 +130,7 @@ public class HostNetworkListFragment extends Fragment {
 					Throwable cause = Throwables.getRootCause(e);
 					if(cause instanceof SoapFault) {
 						SoapFault sf = (SoapFault) cause;
-						Log.e(TAG, "SoapFault finding DHCP Server " + sf.detail.getText(0), e);
+						Timber.e( "SoapFault finding DHCP Server " + sf.detail.getText(0), e);
 					}
 					_dhcpServers.add(null);
 				}
@@ -141,7 +142,7 @@ public class HostNetworkListFragment extends Fragment {
 		protected void onSuccess(ArrayList<IHostNetworkInterface> result) {
 			super.onSuccess(result);
 			_interfaces = result;
-			Log.d(TAG, "# of interfaces: " + _interfaces.size());
+			Timber.d( "# of interfaces: %d", _interfaces.size());
 			_listAdapter = new ItemAdapter(getActivity(), _interfaces);
 			_listView.setAdapter(_listAdapter);
 		}

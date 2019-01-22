@@ -1,6 +1,10 @@
 package com.kedzie.vbox.task;
 
+import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
+import timber.log.Timber;
+
 import com.kedzie.vbox.api.IConsole;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
@@ -9,23 +13,21 @@ import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.soap.VBoxSvc;
 
+import java.io.IOException;
+
 /**
- * Operation on {@link IMachine} with progress handling
+ * Operation on {@link IMachine} with progress handling by service notification
  *
  * @apiviz.stereotype Task
  */
-public abstract class MachineTask<Input, Output> extends DialogTask<Input, Output> {
+public abstract class MachineTask<Input, Output> extends BaseTask<Input, Output> {
 
 		protected IMachine _machine;
-		
-		public MachineTask(AppCompatActivity context, VBoxSvc vmgr, int msg, boolean indeterminate, IMachine m) {
-			super(context, vmgr, msg);
-			_indeterminate=indeterminate;
-			_machine=m;
-		}
-		
-		public MachineTask(AppCompatActivity context, VBoxSvc vmgr, String msg, boolean indeterminate, IMachine m) {
-			super(context, vmgr, msg);
+		private int _icon;
+
+		public MachineTask(AppCompatActivity context, VBoxSvc vmgr, int icon, boolean indeterminate, IMachine m) {
+			super(context, vmgr);
+			_icon = icon;
 			_indeterminate=indeterminate;
 			_machine=m;
 		}
@@ -46,6 +48,15 @@ public abstract class MachineTask<Input, Output> extends DialogTask<Input, Outpu
 					session.unlockMachine();
 			}
 		}
+
+	@Override
+	protected void handleProgress(IProgress p) throws IOException {
+		Timber.d("Operation Completed. result code: " + p.getResultCode());
+		getContext().startService(new Intent(getContext(), ProgressService.class)
+				.putExtra(IProgress.BUNDLE, p)
+				.putExtra(ProgressService.INTENT_ICON, _icon));
+		return;
+	}
 
 		protected Output work(IMachine m, IConsole console, Input...inputs) throws Exception {return null;};
 		

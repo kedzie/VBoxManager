@@ -5,12 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
-import com.google.android.material.navigation.NavigationView;
-import androidx.fragment.app.Fragment;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.material.navigation.NavigationView;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IHost;
@@ -40,18 +35,21 @@ import com.kedzie.vbox.server.ServerSQlite;
 import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.task.ConfigureMetricsTask;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+import timber.log.Timber;
 
 /**
  *
@@ -59,8 +57,6 @@ import dagger.android.support.HasSupportFragmentInjector;
  * @apiviz.stereotype activity
  */
 public class MachineListActivity extends BaseActivity implements OnTreeNodeSelectListener, HasSupportFragmentInjector {
-	private static final Logger log = LoggerFactory.getLogger(MachineListActivity.class);
-
 	private static final int REQUEST_CODE_PREFERENCES = 6;
 
 	/** Is the dual Fragment Layout active? */
@@ -172,7 +168,7 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
 				ArrayAdapter<Server> serverAdapter = (ArrayAdapter<Server>) adapterView.getAdapter();
 				Server server = serverAdapter.getItem(position);
-				log.info("Server selected from navigation drawer {}", server);
+				Timber.i("Server selected from navigation drawer {}", server);
 				if(!server.equals(_vmgr.getServer())) {
 					setResult(5, new Intent().putExtra("server", (Parcelable) server));
 					logoff();
@@ -208,7 +204,7 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 		super.onConfigurationChanged(newConfig);
 		mDrawerToggle.onConfigurationChanged(newConfig);
 		if(Utils.getScreenSize(newConfig)==Configuration.SCREENLAYOUT_SIZE_LARGE) {
-			log.info("Handling orientation change");
+			Timber.i("Handling orientation change");
 //            FragmentManager mgr = getSupportFragmentManager();
 //            FragmentTransaction tx = mgr.beginTransaction();
 //            for(Fragment fragment : mgr.getFragments()) {

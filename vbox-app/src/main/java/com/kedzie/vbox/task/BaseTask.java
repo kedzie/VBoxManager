@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+import timber.log.Timber;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IProgress;
@@ -38,7 +38,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	protected final static int PROGRESS_INTERVAL = 200;
 		
 	protected WeakReference<AppCompatActivity> _context;
-	protected String TAG;
+
 	/** VirtualBox web service API */
 	 protected VBoxSvc _vmgr;
 	 protected boolean _indeterminate=true;
@@ -62,21 +62,12 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 					.show();
 		}
 	};
-	
+
 	/**
 	 * @param vmgr VirtualBox API service
 	 */
 	protected BaseTask(AppCompatActivity context, VBoxSvc vmgr) {
-        this("", context, vmgr);
-		TAG = getClass().getSimpleName();
-	}
-	
-	/**
-	 * @param TAG LogCat tag
-	 * @param vmgr VirtualBox API service
-	 */
-	protected BaseTask(String TAG, AppCompatActivity context, VBoxSvc vmgr) {
-		this.TAG = TAG;
+
 		_vmgr=vmgr;
 		_context=new WeakReference<AppCompatActivity>(context);
         _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
@@ -111,7 +102,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	@Override
 	protected Output doInBackground(Input... params)	{
 		try	{
-			Log.d(TAG, "Performing work...");
+			Timber.d("Performing work...");
 			return work(params);
 		} catch(SoapFault e) {
 			if(!_cancelled)
@@ -154,7 +145,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	
 	@Override
     protected void onCancelled() {
-	    Log.w(TAG, "Task Cancelled");
+	    Timber.w("Task Cancelled");
         _cancelled=true;
         super.onCancelled();
     }
@@ -164,7 +155,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param e <code>Throwable</code> which caused the error
 	 */
 	protected void showAlert(Throwable e) {
-		Log.e(TAG, "caught throwable", e);
+		Timber.e("caught throwable", e);
 		while(Utils.isEmpty(e.getMessage()) && e.getCause()!=null)
 			e = e.getCause();
 		new BundleBuilder().putString("title", e.getClass().getSimpleName()).putString("msg", e.getMessage()).sendMessage(_alertHandler, 0);
@@ -175,14 +166,14 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param e <code>Throwable</code> which caused the error
 	 */
 	protected void showAlert(SoapFault e) {
-		Log.e(TAG, "SoapFault", e);
+		Timber.e("SoapFault", e);
 		Node detail = e.detail;
 		while(detail.getChildCount()>0) {
 		    Object child = detail.getChild(0);
 		    if(child instanceof Node)
 		        detail = (Node) detail.getChild(0);
 		    else {
-		        Log.i(TAG, "String detail: " + detail);
+		        Timber.i("String detail: " + detail);
 		        break;
 		    }
 		}
@@ -197,7 +188,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param msg error text
 	 */
 	protected void showAlert(int code, String msg) {
-		Log.e(TAG, "Alert error: " + msg);
+		Timber.e("Alert error: " + msg);
 		new BundleBuilder()
 				.putString("title", getContext().getString(R.string.virtualbox_error_dialog_title))
 				.putString("msg", "Result Code: " + code + " - " + msg)
@@ -211,13 +202,13 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @throws IOException
 	 */
 	protected void handleProgress(IProgress p)  throws IOException {
-		Log.d(TAG, "Handling progress");
+		Timber.d("Handling progress");
 		while(!p.getCompleted()) {
 			cacheProgress(p);
 			publishProgress(p);
 			Utils.sleep(PROGRESS_INTERVAL);
 		}
-		Log.d(TAG, "Operation Completed. result code: " + p.getResultCode());
+		Timber.d("Operation Completed. result code: " + p.getResultCode());
 		if(p.getResultCode()!=0) {
 			IVirtualBoxErrorInfo info = p.getErrorInfo();
 			showAlert(p.getResultCode(), info != null ? info.getText() : "No Message");

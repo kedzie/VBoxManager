@@ -1,11 +1,8 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +25,10 @@ import com.kedzie.vbox.task.ActionBarTask;
 
 import java.util.Arrays;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import timber.log.Timber;
+
 /**
  * Edit remote desktop server
  * @apiviz.stereotype fragment
@@ -46,8 +47,8 @@ public class DisplayRemoteFragment extends Fragment {
 		@Override 
 		protected IVRDEServer work(IMachine... m) throws Exception {
 			IVRDEServer server = m[0].getVRDEServer();
-			Log.i(TAG, "VRDE Properties: " + Arrays.toString(server.getVRDEProperties()));
-			Log.i(TAG, "TCP/Ports: " + server.getVRDEProperty(IVRDEServer.PROPERTY_PORT));
+			Timber.i( "VRDE Properties: " + Arrays.toString(server.getVRDEProperties()));
+			Timber.i( "TCP/Ports: " + server.getVRDEProperty(IVRDEServer.PROPERTY_PORT));
 			server.getEnabled();
 			server.getAuthTimeout();
 			server.getAuthType();

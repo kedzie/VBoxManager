@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import androidx.core.app.NotificationCompat;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
@@ -18,19 +17,16 @@ import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.MachineFragment;
 import com.kedzie.vbox.machine.MachineListActivity;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 
+import androidx.core.app.NotificationCompat;
 import dagger.android.AndroidInjection;
+import timber.log.Timber;
 
 /**
  * Listen for VirtualBox events and publish notifications
  */
 public class EventNotificationService extends IntentService {
-	private static final Logger log = LoggerFactory.getLogger(EventNotificationService.class);
-
 	private static final int NOTIFICATION_ID=1;
 
     @Inject
@@ -49,7 +45,7 @@ public class EventNotificationService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		log.debug("Sending notification");
+		Timber.d("Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
         FragmentElement fragment = new FragmentElement(eventMachine.getName(), MachineFragment.class,
                 new BundleBuilder().putVBoxSvc(eventMachine.getAPI()).putProxy(IMachine.BUNDLE, eventMachine).create());
