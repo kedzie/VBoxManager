@@ -1,6 +1,6 @@
 package com.kedzie.vbox.task;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.soap.VBoxSvc;

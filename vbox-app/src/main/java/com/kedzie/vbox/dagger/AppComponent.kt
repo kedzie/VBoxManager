@@ -2,7 +2,7 @@ package com.kedzie.vbox.dagger
 
 import android.app.NotificationManager
 import android.content.Context
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.kedzie.vbox.VBoxApplication
 import com.kedzie.vbox.event.EventIntentService
 import com.kedzie.vbox.event.EventNotificationService
@@ -38,7 +38,7 @@ class AndroidServicesModule(val context: Context) {
 
     @Provides
     @Singleton
-    fun provideLocalBroadcastManager() = LocalBroadcastManager.getInstance(context);
+    fun provideLocalBroadcastManager() = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context);
 }
 
 /**

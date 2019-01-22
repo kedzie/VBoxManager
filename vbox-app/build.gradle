@@ -14,7 +14,7 @@ android {
         targetSdkVersion rootProject.targetSDKInt
         versionCode 5000000
         versionName '5.0.0'
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
     }
@@ -41,9 +41,6 @@ android {
         sourceCompatibility rootProject.JavaVersionInt
         targetCompatibility rootProject.JavaVersionInt
     }
-    packagingOptions {
-        exclude 'META-INF/rxjava.properties'
-    }
 
     lintOptions {
         abortOnError false
@@ -60,9 +57,10 @@ dependencies {
     api project(path: ":tree-view-list-android")
     kapt project(path: ":compiler")
 
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibVersion"
-    implementation "com.android.support:gridlayout-v7:$rootProject.supportLibVersion"
-    implementation "com.android.support:design:$rootProject.supportLibVersion"
+    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "androidx.preference:preference:1.0.0"
+    implementation "androidx.gridlayout:gridlayout:1.0.0"
+    implementation "com.google.android.material:material:1.0.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlin_version"
 
@@ -70,7 +68,7 @@ dependencies {
 
     implementation "nf.fr.eraasoft:objectpool:1.1.2"
 
-    implementation "com.google.guava:guava:18.0"
+    implementation "com.google.guava:guava:24.1-jre"
     implementation "org.slf4j:slf4j-api:1.7.7"
     implementation "com.github.tony19:logback-android-core:1.1.1-3"
     implementation ("com.github.tony19:logback-android-classic:1.1.1-3", {
@@ -79,8 +77,8 @@ dependencies {
         exclude group: 'xpp3', module: 'xpp3'
         })
 
-    implementation 'com.jakewharton:butterknife:8.4.0'
-    kapt 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    kapt 'com.jakewharton:butterknife-compiler:10.0.0'
 
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     implementation "com.google.dagger:dagger-android:$rootProject.daggerVersion"
@@ -93,10 +91,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'junit:junit:4.12'
-    androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion";
-    androidTestImplementation "com.android.support.test:rules:$rootProject.rulesVersion";
+    androidTestImplementation "androidx.test:runner:1.1.1";
+    androidTestImplementation "androidx.test:rules:1.1.1";
         
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion", {
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.0", {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     })

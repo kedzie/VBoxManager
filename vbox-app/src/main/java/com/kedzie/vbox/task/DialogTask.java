@@ -1,15 +1,10 @@
 package com.kedzie.vbox.task;
 
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.app.VBoxProgressDialog;
 import com.kedzie.vbox.soap.VBoxSvc;
 

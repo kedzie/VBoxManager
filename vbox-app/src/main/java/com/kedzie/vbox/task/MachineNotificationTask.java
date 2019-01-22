@@ -1,12 +1,10 @@
 package com.kedzie.vbox.task;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.content.Intent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
-import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
-import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 import java.io.IOException;

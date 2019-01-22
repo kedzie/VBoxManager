@@ -1,6 +1,6 @@
 package com.kedzie.vbox.task;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IManagedObjectRef;

@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto" >
     
-        <PreferenceCategory  android:title="@string/pref_category_metrics">
-        	<ListPreference  
-            		android:key="metric_count"
-            		android:title="@string/pref_metric_count_title"
-            		android:summary="@string/pref_metric_count_summary"
-            		android:defaultValue="30"
-            		android:entries="@array/metric_count_entries"
-                	android:entryValues="@array/metric_count_entryValues"
-                	android:dialogTitle="@string/pref_metric_count_title"/>
+        <PreferenceCategory  app:title="@string/pref_category_metrics">
+        	<ListPreference
+				app:key="metric_count"
+				app:title="@string/pref_metric_count_title"
+				app:summary="@string/pref_metric_count_summary"
+				app:defaultValue="30"
+				app:entries="@array/metric_count_entries"
+				app:entryValues="@array/metric_count_entryValues"
+				app:dialogTitle="@string/pref_metric_count_title"/>
         	
-        	<ListPreference 
-                	android:key="metric_period"
-                	android:title="@string/pref_metric_period_title"
-                	android:summary="@string/pref_metric_period_summary"
-                	android:defaultValue="2"
-                	android:entries="@array/metric_period_entries"
-                	android:entryValues="@array/metric_period_entryValues"    
-                	android:dialogTitle="@string/pref_metric_period_title" />
+        	<ListPreference
+				app:key="metric_period"
+				app:title="@string/pref_metric_period_title"
+				app:summary="@string/pref_metric_period_summary"
+				app:defaultValue="2"
+				app:entries="@array/metric_period_entries"
+				app:entryValues="@array/metric_period_entryValues"
+				app:dialogTitle="@string/pref_metric_period_title" />
         	
     </PreferenceCategory>
     
-</PreferenceScreen>  
+</androidx.preference.PreferenceScreen>

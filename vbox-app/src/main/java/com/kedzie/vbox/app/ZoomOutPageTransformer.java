@@ -1,6 +1,6 @@
 package com.kedzie.vbox.app;
 
-import android.support.v4.view.ViewPager.PageTransformer;
+import androidx.viewpager.widget.ViewPager.PageTransformer;
 import android.view.View;
 
 public class ZoomOutPageTransformer implements PageTransformer {

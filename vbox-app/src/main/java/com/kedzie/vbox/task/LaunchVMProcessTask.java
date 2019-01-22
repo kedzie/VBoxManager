@@ -1,7 +1,7 @@
 package com.kedzie.vbox.task;
 
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.IMachine;

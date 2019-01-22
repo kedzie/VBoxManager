@@ -12,8 +12,8 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.multidex.MultiDexApplication;
-import android.support.v4.app.Fragment;
+import androidx.multidex.MultiDexApplication;
+
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -31,7 +31,6 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
-import dagger.android.support.HasSupportFragmentInjector;
 
 /**
  * Stores a resource map storing Operating System, VMAction, and MachineState Icons.

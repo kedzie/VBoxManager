@@ -9,7 +9,7 @@
         android:orientation="vertical" >
 
         <com.kedzie.vbox.app.CollapsiblePanelView vbox:name="General" android:layout_width="match_parent" android:layout_height="wrap_content" vbox:headerIcon="@drawable/ic_settings_general" >
-            <android.support.v7.widget.GridLayout
+            <androidx.gridlayout.widget.GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 vbox:columnCount="2"
@@ -67,7 +67,7 @@
                     android:layout_row="3"
                     android:layout_column="1"
                     android:layout_weight="1"/>
-            </android.support.v7.widget.GridLayout>
+            </androidx.gridlayout.widget.GridLayout>
         </com.kedzie.vbox.app.CollapsiblePanelView>
         
         <com.kedzie.vbox.app.CollapsiblePanelView vbox:name="Network" android:layout_width="match_parent" android:layout_height="wrap_content" vbox:headerIcon="@drawable/ic_settings_network" >

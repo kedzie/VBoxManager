@@ -4,9 +4,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.core.app.NavUtils;
+import androidx.appcompat.app.ActionBar;
 import android.view.MenuItem;
 
 
