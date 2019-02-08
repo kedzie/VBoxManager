@@ -345,7 +345,7 @@ public class SnapshotFragment extends Fragment {
                 return true;
             case R.id.context_menu_delete_snapshot:  
                 nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-                new MachineTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_deleting_snapshot, false, _machine) {
+                new MachineTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr, R.drawable.ic_list_snapshot_del, false, _machine) {
                     protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
                         return console.deleteSnapshot(s[0].getId());
                     }
@@ -353,7 +353,7 @@ public class SnapshotFragment extends Fragment {
                 return true;
             case R.id.context_menu_restore_snapshot:
                 nodeinfo = getTreeAdapter().getTreeNodeInfo(info.position);
-                new MachineTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_restore_snapshot, false, _machine) {
+                new MachineTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr, R.drawable.ic_list_snapshot, false, _machine) {
                     protected IProgress workWithProgress(IMachine m, IConsole console, ISnapshot...s) throws Exception { 	
                         return console.restoreSnapshot(s[0]);
                     }

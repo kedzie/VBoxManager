@@ -26,6 +26,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
+import timber.log.Timber;
 
 /**
  * Polls VirtualBox for events and publishes them in local broadcasts.
@@ -78,6 +79,7 @@ public class EventIntentService extends Service {
                 .setTicker(title)
                 .setAutoCancel(false)
                 .build();
+        Timber.i("Starting foreground event service");
         startForeground(NOTIFICATION_ID, notification);
         eventThread = new EventThread();
         eventThread.start();
@@ -86,7 +88,7 @@ public class EventIntentService extends Service {
 	
 	@Override
 	public void onDestroy() {
-        Log.d(TAG, "Event Service being destroyed");
+        Timber.d("Event Service being destroyed");
         eventThread.quit();
 		stopForeground(true);
 		super.onDestroy();

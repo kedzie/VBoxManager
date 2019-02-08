@@ -11,7 +11,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+
 import androidx.multidex.MultiDexApplication;
 
 import android.util.Log;
@@ -27,10 +27,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import androidx.preference.PreferenceManager;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
+import timber.log.Timber;
 
 /**
  * Stores a resource map storing Operating System, VMAction, and MachineState Icons.
@@ -85,6 +87,10 @@ public class VBoxApplication extends MultiDexApplication implements HasServiceIn
 	public void onCreate() {
 		super.onCreate();
 		_instance=this;
+
+		if(BuildConfig.DEBUG) {
+			Timber.plant(new Timber.DebugTree());
+		}
 
 		if(appComponent == null) {
 			setAppComponent(com.kedzie.vbox.dagger.DaggerAppComponent.builder()

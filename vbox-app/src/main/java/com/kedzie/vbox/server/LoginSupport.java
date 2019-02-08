@@ -15,6 +15,8 @@ import com.kedzie.vbox.soap.VBoxSvc;
 import com.kedzie.vbox.soap.ssl.SSLUtil;
 import com.kedzie.vbox.task.DialogTask;
 
+import org.ksoap2.SoapFault;
+
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
@@ -107,7 +109,12 @@ public class LoginSupport implements ServerListFragment.OnSelectServerListener {
     @Override
     protected IVirtualBox work(Server... params) throws Exception {
       _vmgr = new VBoxSvc(params[0]);
-      _vmgr.logon();
+      try {
+        _vmgr.logon();
+      } catch(SoapFault e) {
+        //login error
+        throw new IllegalAccessException("Authorization error.  try 'VBoxManage setproperty websrvauthlibrary null' if you cannot login");
+      }
       _vmgr.getVBox().getVersion();
       return _vmgr.getVBox();
     }

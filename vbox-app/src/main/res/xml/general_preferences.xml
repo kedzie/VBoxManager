@@ -15,7 +15,8 @@
             app:entryValues="@array/tab_transition_entryValues"
             app:key="tab_transition"
             app:summary="@string/pref_tab_transition_summary"
-            app:title="@string/pref_tab_transition_title" />
+            app:title="@string/pref_tab_transition_title"
+            app:useSimpleSummaryProvider="true"/>
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
@@ -30,7 +31,8 @@
             app:entryValues="@array/widget_interval_entryValues"
             app:key="widget_interval"
             app:summary="@string/pref_widget_interval_summary"
-            app:title="@string/pref_widget_interval_title" />
+            app:title="@string/pref_widget_interval_title"
+            app:useSimpleSummaryProvider="true"/>
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

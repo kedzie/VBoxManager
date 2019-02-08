@@ -10,7 +10,8 @@
 				app:defaultValue="30"
 				app:entries="@array/metric_count_entries"
 				app:entryValues="@array/metric_count_entryValues"
-				app:dialogTitle="@string/pref_metric_count_title"/>
+				app:dialogTitle="@string/pref_metric_count_title"
+				app:useSimpleSummaryProvider="true"/>
         	
         	<ListPreference
 				app:key="metric_period"
@@ -19,7 +20,8 @@
 				app:defaultValue="2"
 				app:entries="@array/metric_period_entries"
 				app:entryValues="@array/metric_period_entryValues"
-				app:dialogTitle="@string/pref_metric_period_title" />
+				app:dialogTitle="@string/pref_metric_period_title"
+				app:useSimpleSummaryProvider="true"/>
         	
     </PreferenceCategory>
     

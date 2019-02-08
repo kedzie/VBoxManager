@@ -1,14 +1,13 @@
 package com.kedzie.vbox.task;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.VBoxProgressDialog;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 import java.lang.ref.WeakReference;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Shows progress in a modal dialog
@@ -19,7 +18,6 @@ import java.lang.ref.WeakReference;
 public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> {
 
 	private VBoxProgressDialog pDialog;
-    private TaskFragment taskFragment;
     private String message;
     private boolean cancelable;
 	
@@ -65,8 +63,6 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
 		super(context, vmgr);
         this.message=msg;
         this.cancelable=cancelable;
-        taskFragment = new TaskFragment().setTask(this);
-        getContext().getSupportFragmentManager().beginTransaction().add(taskFragment, "work").commit();
 	}
 	
 	@Override
@@ -75,14 +71,12 @@ public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> 
         pDialog.setArguments(new BundleBuilder().putString("msg", message).putBoolean("cancelable", cancelable).create());
         pDialog.setTask(this);
         pDialog.showAllowingStateLoss(getContext().getSupportFragmentManager().beginTransaction(), "progress");
-//        Utils.showDialog(getContext().getSupportFragmentManager(), "progress", pDialog);
 	}
 	
 	@Override
     protected void onPostExecute(Output result)	{
         if(pDialog!=null)
             pDialog.dismiss();
-        getContext().getSupportFragmentManager().beginTransaction().remove(taskFragment).commit();
         super.onPostExecute(result);
     }
 

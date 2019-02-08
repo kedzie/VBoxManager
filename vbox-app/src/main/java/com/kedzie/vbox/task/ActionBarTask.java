@@ -1,9 +1,8 @@
 package com.kedzie.vbox.task;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.soap.VBoxSvc;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Shows progress on the {@link ActionBar}
@@ -12,9 +11,7 @@ import com.kedzie.vbox.soap.VBoxSvc;
  * @author Marek Kędzierski
  */
 public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Output> {
-	
-	/** # of active tasks, use to enable/disable indeterminate progress  */
-	private static int _numActiveTasks;
+
 	
 	/**
 	 * @param context calling Activity
@@ -22,30 +19,5 @@ public abstract class ActionBarTask<Input, Output> extends BaseTask<Input, Outpu
 	 */
 	public ActionBarTask(AppCompatActivity context, VBoxSvc vmgr) {
 		super(context, vmgr);
-	}
-	
-	@Override
-	protected void onPreExecute()		{
-		_numActiveTasks++;
-		getContext().setSupportProgressBarIndeterminateVisibility(true);
-	}
-	
-	@Override
-	protected final void onPostExecute(Output result)	{
-		if(--_numActiveTasks==0)
-			getContext().setSupportProgressBarIndeterminateVisibility(false);
-		getContext().setSupportProgressBarVisibility(false);
-		super.onPostExecute(result);
-	}
-
-	@Override
-	protected void onProgressUpdate(IProgress... p) {
-		if(_indeterminate) {
-			_indeterminate=false;
-			getContext().setSupportProgressBarIndeterminateVisibility(false);
-			getContext().setSupportProgressBarIndeterminate(false);
-			getContext().setSupportProgressBarVisibility(true);
-		}
-		getContext().setSupportProgress(p[0].getPercent());
 	}
 }

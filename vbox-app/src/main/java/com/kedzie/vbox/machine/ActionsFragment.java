@@ -46,6 +46,7 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * 
@@ -68,7 +69,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 	private BroadcastReceiver _receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i(TAG, "Recieved Broadcast: " + intent.getAction());
+			Timber.i("Received Broadcast: " + intent.getAction());
 			if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())) {
 				IMachine m = BundleBuilder.getProxy(intent.getExtras(), IMachine.BUNDLE, IMachine.class);
 				new UpdateMachineViewTask(_vmgr).execute(m);
@@ -143,7 +144,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 		public View getView(int position, View view, ViewGroup parent) {
 			if (view == null) 
 				view = _layoutInflater.inflate(R.layout.machine_action_item, parent, false);
-			ButterKnife.bind(view);
+			ButterKnife.bind(this, view);
 			textView.setText(getItem(position).toString());
 			imageView.setImageResource( getApp().getDrawable(getItem(position)));
 			return view;                                                                                                                                                                                                                                                          

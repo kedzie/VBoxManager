@@ -110,7 +110,7 @@ public class TakeSnapshotFragment extends DialogFragment {
 	}
 	
 	private void takeSnapshot() {
-		new MachineTask<Void, Void>((AppCompatActivity)getActivity(), _vmgr, R.string.progress_taking_snapshot, false, _machine) {
+		new MachineTask<Void, Void>((AppCompatActivity)getActivity(), _vmgr, R.drawable.ic_list_snapshot_add, false, _machine) {
 			protected IProgress workWithProgress(IMachine m, IConsole console, Void...i) throws Exception { 	
 				return console.takeSnapshot( _nameText.getText().toString(),  _descriptionText.getText().toString()); 
 			}

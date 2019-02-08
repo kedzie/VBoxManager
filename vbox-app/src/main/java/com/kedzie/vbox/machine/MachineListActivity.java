@@ -3,6 +3,7 @@ package com.kedzie.vbox.machine;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -86,7 +87,11 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 
 		_vmgr = BundleBuilder.getVBoxSvc(getIntent());
 
-		startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
+		if(Utils.isVersion(Build.VERSION_CODES.O)) {
+			startForegroundService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
+		} else {
+			startService(new Intent(this, EventIntentService.class).putExtras(getIntent()));
+		}
 
 		initUI();
 	}

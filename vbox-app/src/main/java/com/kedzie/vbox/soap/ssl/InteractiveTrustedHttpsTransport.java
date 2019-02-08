@@ -16,6 +16,8 @@ import android.util.Log;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.server.Server;
 
+import timber.log.Timber;
+
 /**
  * Uses {@link TrustManager} which sends certificates to handler for user response
  */
@@ -38,11 +40,11 @@ public class InteractiveTrustedHttpsTransport extends HttpTransportSE{
 
 				@Override
 				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException{
-					Log.i(TAG, String.format("checkServerTrusted(%1$d, %2$s)", chain.length, authType));
+					Timber.i("checkServerTrusted(%1$d, %2$s)", chain.length, authType);
 					try {
 						_keystoreTM.checkServerTrusted(chain, authType);
 					} catch(CertificateException e) {
-						Log.w(TAG, "Untrusted Server " +  e.getMessage());
+						Timber.w( "Untrusted Server %s",  e.getMessage());
 						new BundleBuilder()
 							.putParcelable(Server.BUNDLE, server)
 							.putBoolean("isTrusted", false)
