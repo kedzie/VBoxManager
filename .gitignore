@@ -1,9 +1,4 @@
-bin
-gen
-gen-external-apklibs
-out
-target/
 .idea
 build
-**/*.iml
+*.iml
 .gradle

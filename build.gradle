@@ -2,11 +2,11 @@ project.ext.set("compileSDKInt", 28)
 project.ext.set("buildToolVersionString", "28.0.3")
 project.ext.set("targetSDKInt", 28)
 project.ext.set("minSDKInt", 19)
-project.ext.set("daggerVersion", '2.15')
+project.ext.set("daggerVersion", '2.21')
 project.ext.set("runnerVersion", '1.0.2')
 project.ext.set("rulesVersion", '1.0.2')
 project.ext.set("espressoVersion", '3.0.1')
-project.ext.set("kotlin_version", '1.3.11')
+project.ext.set("kotlin_version", '1.3.21')
 project.ext.set("supportLibVersion", '28.0.0')
 project.ext.set("JavaVersionInt", JavaVersion.VERSION_1_8)
 
@@ -20,9 +20,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0'
+        classpath 'com.android.tools.build:gradle:3.3.1'
 
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21"
     }
 }
 
