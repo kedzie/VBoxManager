@@ -10,6 +10,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.kedzie.vbox.BuildConfig;
 import com.kedzie.vbox.api.*;
+import com.kedzie.vbox.api.jaxb.BitmapFormat;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
@@ -296,7 +297,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				Map<String, String> res = display.getScreenResolution(0);
 				int width =  Integer.valueOf(res.get("width"));
 				int height = Integer.valueOf(res.get("height"));
-				return new Screenshot(width, height, display.takeScreenShotPNGToArray(0, width, height));
+				return new Screenshot(width, height, display.takeScreenShotToArray(0, width, height, BitmapFormat.PNG));
 			} finally {
 				session.unlockMachine();
 			}
@@ -319,19 +320,21 @@ public class VBoxSvc implements Parcelable, Externalizable {
 				float aspect = screenW/screenH;
 				width =(int) (aspect*height);
 			}
-			return new Screenshot(width, height, session.getConsole().getDisplay().takeScreenShotPNGToArray(0, width, height));
+			return new Screenshot(width, height, session.getConsole().getDisplay().takeScreenShotToArray(0, width, height, BitmapFormat.PNG));
 		} finally {
 			session.unlockMachine();
 		}
 	}
 
 	public Screenshot readSavedScreenshot(IMachine machine, int screenId) throws IOException {
-		Map<String, String> val = machine.readSavedScreenshotPNGToArray(screenId);
-		return new Screenshot(Integer.valueOf(val.get("width")), Integer.valueOf(val.get("height")), Base64.decode(val.get("returnval"), 0));
-	}
-
-	public Screenshot readSavedThumbnail(IMachine machine, int screenId) throws IOException {
-		Map<String, String> val = machine.readSavedThumbnailPNGToArray(screenId);
+		Map<String, List<String>> info = machine.querySavedScreenshotInfo(screenId);
+		List<BitmapFormat> formats = new ArrayList<>();
+		for(String val : info.get("returnval")) {
+			formats.add( BitmapFormat.fromValue(val) );
+		}
+		//prefer jpeg, otherwise pick first available screenshot
+		BitmapFormat format = formats.contains(BitmapFormat.JPEG) ? BitmapFormat.JPEG : formats.get(0);
+		Map<String, String> val = machine.readSavedScreenshotToArray(screenId, format);
 		return new Screenshot(Integer.valueOf(val.get("width")), Integer.valueOf(val.get("height")), Base64.decode(val.get("returnval"), 0));
 	}
 

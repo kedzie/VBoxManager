@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for MachineState.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="MachineState">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -30,9 +31,11 @@ package com.kedzie.vbox.api.jaxb;
  *     &lt;enumeration value="FaultTolerantSyncing"/>
  *     &lt;enumeration value="DeletingSnapshotOnline"/>
  *     &lt;enumeration value="DeletingSnapshotPaused"/>
+ *     &lt;enumeration value="OnlineSnapshotting"/>
  *     &lt;enumeration value="RestoringSnapshot"/>
  *     &lt;enumeration value="DeletingSnapshot"/>
  *     &lt;enumeration value="SettingUp"/>
+ *     &lt;enumeration value="Snapshotting"/>
  *     &lt;enumeration value="FirstOnline"/>
  *     &lt;enumeration value="LastOnline"/>
  *     &lt;enumeration value="FirstTransient"/>
@@ -40,52 +43,55 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum MachineState {
 
-	NULL("Null"),
-	POWERED_OFF("PoweredOff"),
-	SAVED("Saved"),
-	TELEPORTED("Teleported"),
-	ABORTED("Aborted"),
-	RUNNING("Running"),
-	PAUSED("Paused"),
-	STUCK("Stuck"),
-	TELEPORTING("Teleporting"),
-	LIVE_SNAPSHOTTING("LiveSnapshotting"),
-	STARTING("Starting"),
-	STOPPING("Stopping"),
-	SAVING("Saving"),
-	RESTORING("Restoring"),
-	TELEPORTING_PAUSED_VM("TeleportingPausedVM"),
-	TELEPORTING_IN("TeleportingIn"),
-	FAULT_TOLERANT_SYNCING("FaultTolerantSyncing"),
-	DELETING_SNAPSHOT_ONLINE("DeletingSnapshotOnline"),
-	DELETING_SNAPSHOT_PAUSED("DeletingSnapshotPaused"),
-	RESTORING_SNAPSHOT("RestoringSnapshot"),
-	DELETING_SNAPSHOT("DeletingSnapshot"),
-	SETTING_UP("SettingUp"),
-	FIRST_ONLINE("FirstOnline"),
-	LAST_ONLINE("LastOnline"),
-	FIRST_TRANSIENT("FirstTransient"),
-	LAST_TRANSIENT("LastTransient");
-	private final String value;
+    NULL("Null"),
+    POWERED_OFF("PoweredOff"),
+    SAVED("Saved"),
+    TELEPORTED("Teleported"),
+    ABORTED("Aborted"),
+    RUNNING("Running"),
+    PAUSED("Paused"),
+    STUCK("Stuck"),
+    TELEPORTING("Teleporting"),
+    LIVE_SNAPSHOTTING("LiveSnapshotting"),
+    STARTING("Starting"),
+    STOPPING("Stopping"),
+    SAVING("Saving"),
+    RESTORING("Restoring"),
+    TELEPORTING_PAUSED_VM("TeleportingPausedVM"),
+    TELEPORTING_IN("TeleportingIn"),
+    FAULT_TOLERANT_SYNCING("FaultTolerantSyncing"),
+    DELETING_SNAPSHOT_ONLINE("DeletingSnapshotOnline"),
+    DELETING_SNAPSHOT_PAUSED("DeletingSnapshotPaused"),
+    ONLINE_SNAPSHOTTING("OnlineSnapshotting"),
+    RESTORING_SNAPSHOT("RestoringSnapshot"),
+    DELETING_SNAPSHOT("DeletingSnapshot"),
+    SETTING_UP("SettingUp"),
+    SNAPSHOTTING("Snapshotting"),
+    FIRST_ONLINE("FirstOnline"),
+    LAST_ONLINE("LastOnline"),
+    FIRST_TRANSIENT("FirstTransient"),
+    LAST_TRANSIENT("LastTransient");
+    private final String value;
 
-	MachineState(String v) {
-		value = v;
-	}
+    MachineState(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static MachineState fromValue(String v) {
-		for (MachineState c : MachineState.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static MachineState fromValue(String v) {
+        for (MachineState c: MachineState.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

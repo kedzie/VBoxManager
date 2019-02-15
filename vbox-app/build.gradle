@@ -12,8 +12,8 @@ android {
         applicationId "com.kedzie.vbox"
         minSdkVersion rootProject.minSDKInt
         targetSdkVersion rootProject.targetSDKInt
-        versionCode 5000000
-        versionName '5.0.0'
+        versionCode 6000100
+        versionName '6.0.1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -21,7 +21,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("/Users/marek.kedzierski/Dropbox/ssh/virtualbox.keystore")
+            storeFile file("/Users/kedzie/Dropbox/ssh/virtualbox.keystore")
             storePassword "android"
             keyAlias "kedzieandroid"
             keyPassword "android"
@@ -32,7 +32,9 @@ android {
         debug {
         }
         release {
+            debuggable false
             minifyEnabled false
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
             signingConfig signingConfigs.release
         }

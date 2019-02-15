@@ -15,7 +15,7 @@ import android.widget.ImageView;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,7 +35,7 @@ import timber.log.Timber;
 public class ScreenshotDialogFragment extends DialogFragment {
 	public static final String BUNDLE_BYTES = "bytes";
 	
-	class SaveScreenshotTask extends ActionBarTask<Bitmap, Void> {
+	class SaveScreenshotTask extends BaseTask<Bitmap, Void> {
 
 	    private String filename;
 	    

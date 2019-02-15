@@ -1,10 +1,6 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +13,12 @@ import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IStorageController;
 import com.kedzie.vbox.api.jaxb.StorageControllerType;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
  */
 public class StorageControllerFragment extends Fragment {
 
-    private class LoadInfoTask extends ActionBarTask<IStorageController, IStorageController> {
+    private class LoadInfoTask extends BaseTask<IStorageController, IStorageController> {
     	
         public LoadInfoTask() { 
         	super((AppCompatActivity)getActivity(), null);

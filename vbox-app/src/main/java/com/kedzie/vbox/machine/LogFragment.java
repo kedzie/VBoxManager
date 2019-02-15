@@ -1,10 +1,6 @@
 package com.kedzie.vbox.machine;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,8 +11,12 @@ import android.widget.TextView;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -29,7 +29,7 @@ public class LogFragment extends Fragment {
     private static final String TAG = "LogFragment";
 	private static final int MAX_LOG_SIZE=409600; //400 Kbps
 	
-	class LoadLogTask extends ActionBarTask<IMachine, String> {
+	class LoadLogTask extends BaseTask<IMachine, String> {
 		public LoadLogTask() {
 			super((AppCompatActivity)getActivity(), null);
 		}

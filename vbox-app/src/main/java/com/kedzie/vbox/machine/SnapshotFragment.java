@@ -5,10 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -20,6 +16,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.VMAction;
@@ -34,9 +31,12 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.MachineTask;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.polidea.treeview.AbstractTreeViewAdapter;
@@ -55,7 +55,7 @@ public class SnapshotFragment extends Fragment {
     /**
      *	Load complete snapshot tree.
      */
-    class LoadSnapshotsTask extends ActionBarTask<IMachine, ISnapshot>	{
+    class LoadSnapshotsTask extends BaseTask<IMachine, ISnapshot> {
 
         public LoadSnapshotsTask(VBoxSvc vmgr) { 
             super((AppCompatActivity)getActivity(), vmgr);
@@ -97,7 +97,7 @@ public class SnapshotFragment extends Fragment {
         }
     }
 
-    class HandleDeletedEventTask extends ActionBarTask<ISnapshotDeletedEvent, ISnapshot> {
+    class HandleDeletedEventTask extends BaseTask<ISnapshotDeletedEvent, ISnapshot> {
 
         public HandleDeletedEventTask(VBoxSvc vmgr) { 
             super((AppCompatActivity)getActivity(), vmgr);
@@ -122,7 +122,7 @@ public class SnapshotFragment extends Fragment {
         }
     }
 
-    class HandleAddedEventTask extends ActionBarTask<ISnapshotTakenEvent, ISnapshot> {
+    class HandleAddedEventTask extends BaseTask<ISnapshotTakenEvent, ISnapshot> {
 
         public HandleAddedEventTask(VBoxSvc vmgr) { 
             super((AppCompatActivity)getActivity(), vmgr);

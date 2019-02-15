@@ -25,7 +25,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemAccelerationFragment extends Fragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IMachine> {
-		public LoadInfoTask() { super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); }
+		public LoadInfoTask() { super((AppCompatActivity)getActivity(), _machine.getAPI()); }
 
 		@Override 
 		protected IMachine work(IMachine... m) throws Exception {

@@ -40,7 +40,7 @@ public class SSLUtil {
 		private Server server;
 
 		public AddCertificateToKeystoreTask(AppCompatActivity context, Server server) {
-			super(context, null, R.string.progress_updating_keystore);
+			super(context, null);
 			this.server = server;
 		}
 

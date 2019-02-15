@@ -13,7 +13,7 @@ import com.kedzie.vbox.machine.group.MachineGroupListBaseFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.DialogTask;
+import com.kedzie.vbox.task.BaseTask;
 
 /**
  * 
@@ -25,10 +25,10 @@ public class MachineListPickActivity extends BaseActivity implements OnTreeNodeS
 	/**
 	 * Disconnect from VirtualBox webservice
 	 */
-	private class LogoffTask extends DialogTask<Void, Void>	{
+	private class LogoffTask extends BaseTask<Void, Void> {
 		
 		public LogoffTask(VBoxSvc vmgr) { 
-			super(MachineListPickActivity.this, vmgr, R.string.progress_logging_off);
+			super(MachineListPickActivity.this, vmgr);
 		}
 		
 		@Override

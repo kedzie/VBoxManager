@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,10 +23,14 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -43,7 +43,7 @@ public class HostInfoFragment extends Fragment {
 
     private static final int REQUEST_CODE_PREFERENCES = 6;
 
-    class LoadInfoTask extends ActionBarTask<IHost, IHost> {
+    class LoadInfoTask extends BaseTask<IHost, IHost> {
 
         private boolean clearCache;
 

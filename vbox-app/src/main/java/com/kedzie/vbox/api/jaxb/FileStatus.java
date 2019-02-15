@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for FileStatus.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="FileStatus">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -21,33 +22,34 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum FileStatus {
 
-	UNDEFINED("Undefined"),
-	OPENING("Opening"),
-	OPEN("Open"),
-	CLOSING("Closing"),
-	CLOSED("Closed"),
-	DOWN("Down"),
-	ERROR("Error");
-	private final String value;
+    UNDEFINED("Undefined"),
+    OPENING("Opening"),
+    OPEN("Open"),
+    CLOSING("Closing"),
+    CLOSED("Closed"),
+    DOWN("Down"),
+    ERROR("Error");
+    private final String value;
 
-	FileStatus(String v) {
-		value = v;
-	}
+    FileStatus(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static FileStatus fromValue(String v) {
-		for (FileStatus c : FileStatus.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static FileStatus fromValue(String v) {
+        for (FileStatus c: FileStatus.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

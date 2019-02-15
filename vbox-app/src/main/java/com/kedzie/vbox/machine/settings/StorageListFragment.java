@@ -36,7 +36,7 @@ import com.kedzie.vbox.api.jaxb.DeviceType;
 import com.kedzie.vbox.api.jaxb.IMediumAttachment;
 import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.DialogTask;
 
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class StorageListFragment extends Fragment {
 	private class LoadDataTask extends DialogTask<IMachine, Void> {
 
 		public LoadDataTask() {
-			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_load_storage_controllers);
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override
@@ -143,7 +143,7 @@ public class StorageListFragment extends Fragment {
 	/**
 	 * Add Controller
 	 */
-	private class AddControllerTask extends ActionBarTask<StorageBus, IStorageController> {
+	private class AddControllerTask extends BaseTask<StorageBus, IStorageController> {
 
 		public AddControllerTask() {
 			super((AppCompatActivity)getActivity(), _machine.getAPI());
@@ -168,7 +168,7 @@ public class StorageListFragment extends Fragment {
 	/**
 	 * Delete Controller
 	 */
-	private class DeleteControllerTask extends ActionBarTask<IStorageController, IStorageController> {
+	private class DeleteControllerTask extends BaseTask<IStorageController, IStorageController> {
 
 		public DeleteControllerTask() {
 			super((AppCompatActivity)getActivity(), _machine.getAPI());
@@ -193,7 +193,7 @@ public class StorageListFragment extends Fragment {
 	/**
 	 * Detach Medium
 	 */
-	private class DetachMediumTask extends ActionBarTask<IMediumAttachment, IMediumAttachment> {
+	private class DetachMediumTask extends BaseTask<IMediumAttachment, IMediumAttachment> {
 
 		public DetachMediumTask() {
 			super((AppCompatActivity)getActivity(), _machine.getAPI());
@@ -221,7 +221,7 @@ public class StorageListFragment extends Fragment {
 	/**
 	 * List mountable mediums
 	 */
-	abstract class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
+	abstract class ListMediumsTask extends BaseTask<Void, List<IMedium>> {
 
 		private IStorageController controller;
 		private DeviceType deviceType;
@@ -262,7 +262,7 @@ public class StorageListFragment extends Fragment {
 	/**
 	 * List mountable mediums
 	 */
-	class ListDVDMediumsTask extends ActionBarTask<Void, List<IMedium>> {
+	class ListDVDMediumsTask extends BaseTask<Void, List<IMedium>> {
 
 		private IStorageController controller;
 		
@@ -310,7 +310,7 @@ public class StorageListFragment extends Fragment {
 		private DeviceType deviceType;
 		
 		public MountTask(IStorageController controller, DeviceType type) { 
-			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_mounting_medium);
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 			this.controller = controller;
 			this.deviceType = type;
 		}

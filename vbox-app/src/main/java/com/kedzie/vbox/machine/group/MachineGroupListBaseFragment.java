@@ -46,7 +46,7 @@ public class MachineGroupListBaseFragment extends Fragment {
 	        private Map<String, VMGroup> groupCache = new HashMap<String, VMGroup>();
 
 	        public LoadGroupsTask(VBoxSvc vboxApi) { 
-	            super((AppCompatActivity)getActivity(), vboxApi, R.string.progress_loading_machines);
+	            super((AppCompatActivity)getActivity(), vboxApi);
 	        }
 
 	        private VMGroup get(String name) {

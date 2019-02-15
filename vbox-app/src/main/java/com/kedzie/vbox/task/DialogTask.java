@@ -18,57 +18,32 @@ import androidx.appcompat.app.AppCompatActivity;
 public abstract class DialogTask<Input, Output> extends BaseTask<Input, Output> {
 
 	private VBoxProgressDialog pDialog;
-    private String message;
     private boolean cancelable;
 	
 	/**
 	 * Constructor in <em>Indeterminate</em> operation
 	 * @param context Android <code>Context</code>
 	 * @param vmgr VirtualBox API service
-	 * @param msg  operation description string resource
 	 */
-	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, int msg) {
-		this(context, vmgr, context.getResources().getString(msg));
-	}
-	
-	/**
-	 * Constructor in <em>Determinate</em> operation
-	 * @param context Android <code>Context</code>
-	 * @param vmgr VirtualBox API service
-	 * @param msg  operation description
-	 */
-	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, String msg) {
-		this(context, vmgr, msg, false);
+	public DialogTask(AppCompatActivity context, VBoxSvc vmgr) {
+		this(context, vmgr, false);
 	}
 	
 	/**
 	 * Constructor in <em>Determinate</em> operation
 	 * @param context 			Android <code>Context</code>
 	 * @param vmgr 				VirtualBox API service
-	 * @param msg  				operation description string resource
 	 * @param cancelable		whether the dialog is cancelable with the <em>Back</em> button
 	 */
-	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, int msg, boolean cancelable) {
-		this(context, vmgr, context.getResources().getString(msg), cancelable);
-	}
-	
-	/**
-	 * Constructor in <em>Determinate</em> operation
-	 * @param context 			Android <code>Context</code>
-	 * @param vmgr 				VirtualBox API service
-	 * @param msg  				operation description
-	 * @param cancelable		whether the dialog is cancelable with the <em>Back</em> button
-	 */
-	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, String msg, boolean cancelable) {
+	public DialogTask(AppCompatActivity context, VBoxSvc vmgr, boolean cancelable) {
 		super(context, vmgr);
-        this.message=msg;
         this.cancelable=cancelable;
 	}
 	
 	@Override
 	protected void onPreExecute() {
         pDialog = new VBoxProgressDialog();
-        pDialog.setArguments(new BundleBuilder().putString("msg", message).putBoolean("cancelable", cancelable).create());
+        pDialog.setArguments(new BundleBuilder().putBoolean("cancelable", cancelable).create());
         pDialog.setTask(this);
         pDialog.showAllowingStateLoss(getContext().getSupportFragmentManager().beginTransaction(), "progress");
 	}

@@ -10,9 +10,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -27,12 +24,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -57,7 +57,7 @@ public class ServerListFragment extends Fragment {
     /**
      * Load Servers from DB
      */
-    class LoadServersTask extends ActionBarTask<Void, List<Server>> {
+    class LoadServersTask extends BaseTask<Void, List<Server>> {
 
         public LoadServersTask() {
             super((AppCompatActivity)getActivity(),  null);

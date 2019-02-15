@@ -31,7 +31,7 @@ import com.kedzie.vbox.task.DialogTask;
 public class SystemMotherboardFragment extends Fragment {
 
 	class LoadInfoTask extends DialogTask<IMachine, IHost> {
-		public LoadInfoTask() { super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_loading_data_generic); }
+		public LoadInfoTask() { super((AppCompatActivity)getActivity(), _machine.getAPI()); }
 
 		@Override 
 		protected IHost work(IMachine... m) throws Exception {

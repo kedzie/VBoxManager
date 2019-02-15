@@ -1,6 +1,6 @@
 package com.kedzie.vbox.api;
 
-import com.kedzie.vbox.api.jaxb.FileSeekType;
+import com.kedzie.vbox.api.jaxb.FileSeekOrigin;
 import com.kedzie.vbox.soap.KSOAP;
 
 @KSOAP(prefix="IFile")
@@ -26,7 +26,7 @@ public interface IFile extends IManagedObjectRef {
 
 	public String readAt(@KSOAP(type="long", value="offset") long offset, @KSOAP(type="unsignedInt", value="toRead") int toRead, @KSOAP(type="unsignedInt", value="timeoutMS") int timeoutMS);
 
-	public void seek(@KSOAP(type="unsignedInt", value="offset") long offset, @KSOAP("whence") FileSeekType whence);
+	public void seek(@KSOAP(type="unsignedInt", value="offset") long offset, @KSOAP("whence") FileSeekOrigin whence);
     
 	public void setACL(@KSOAP("acl") String acl);
 	

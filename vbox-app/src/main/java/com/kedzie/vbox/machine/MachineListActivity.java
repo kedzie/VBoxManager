@@ -96,6 +96,12 @@ public class MachineListActivity extends BaseActivity implements OnTreeNodeSelec
 		initUI();
 	}
 
+	@Override
+	protected void onDestroy() {
+		stopService(new Intent(this, EventIntentService.class));
+		super.onDestroy();
+	}
+
 	private void initUI() {
 		setContentView(R.layout.machine_list);
 		_dualPane = findViewById(R.id.details)!=null;

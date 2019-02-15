@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -37,12 +34,15 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.group.GroupInfoFragment.MachineInfo;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.MachineRunnable;
 
 import java.io.IOException;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -53,7 +53,7 @@ import butterknife.ButterKnife;
 public class InfoFragment extends Fragment {
     private static final String TAG = "InfoFragment";
 
-	class LoadInfoTask extends ActionBarTask<IMachine, MachineInfo> {
+	class LoadInfoTask extends BaseTask<IMachine, MachineInfo> {
 
         private boolean clearCache = false;
 

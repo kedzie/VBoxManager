@@ -33,13 +33,15 @@ import timber.log.Timber;
  */
 public class EventIntentService extends Service {
 	private static final String TAG = EventIntentService.class.getSimpleName();
-	
+
+	public static final String NOTIFICATION_CHANNEL = "vbox";
+
 	private static final int NOTIFICATION_ID = 749;
 	private static final int DEFAULT_INTERVAL = 500;
 
 	public static final String BUNDLE_EVENT = "evt";
 	public static final String INTENT_INTERVAL="interval";
-	
+
 	VBoxSvc _vmgr;
 	int _interval;
 	@Inject
@@ -55,34 +57,37 @@ public class EventIntentService extends Service {
         super.onCreate();
         AndroidInjection.inject(this);
         if(Utils.isVersion(Build.VERSION_CODES.O)) {
-            if(mNotificationManager.getNotificationChannel("vbox") != null) {
-                NotificationChannel vboxChannel = new NotificationChannel("vbox", "VboxManager", NotificationManager.IMPORTANCE_DEFAULT);
-                mNotificationManager.createNotificationChannel(vboxChannel);
+            if(mNotificationManager.getNotificationChannel(NOTIFICATION_CHANNEL)==null) {
+                mNotificationManager.createNotificationChannel(new NotificationChannel(NOTIFICATION_CHANNEL, "VboxManager", NotificationManager.IMPORTANCE_DEFAULT));
             }
         }
+    }
+
+    NotificationCompat.Builder getNotifactionBuilder() {
+        return Utils.isVersion(Build.VERSION_CODES.O) ?
+                new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL) :
+                new NotificationCompat.Builder(this);
     }
 	
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        _vmgr = BundleBuilder.getVBoxSvc(intent);
-        _interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
-        String title = getResources().getString(R.string.event_handler_notification_title);
-        String content = getResources().getString(R.string.event_handler_notification_content, _vmgr.getServer().toString());
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_notif_vbox)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this,
-                        MachineListActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr), 0))
-                .setTicker(title)
-                .setAutoCancel(false)
-                .build();
-        Timber.i("Starting foreground event service");
-        startForeground(NOTIFICATION_ID, notification);
-        eventThread = new EventThread();
-        eventThread.start();
+        if(intent != null) {
+            _vmgr = BundleBuilder.getVBoxSvc(intent);
+            _interval = intent.getIntExtra(INTENT_INTERVAL, DEFAULT_INTERVAL);
+            String title = getResources().getString(R.string.event_handler_notification_title);
+            String content = getResources().getString(R.string.event_handler_notification_content, _vmgr.getServer().toString());
+
+            Timber.i("Starting foreground event service");
+            startForeground(NOTIFICATION_ID, getNotifactionBuilder().setContentTitle(title)
+                    .setContentText(content)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_notif_vbox)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                    .setTicker(title)
+                    .setAutoCancel(false).build());
+            eventThread = new EventThread();
+            eventThread.start();
+        }
         return START_STICKY;
     }
 	

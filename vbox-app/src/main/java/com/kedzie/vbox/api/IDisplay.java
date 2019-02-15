@@ -1,8 +1,9 @@
 package com.kedzie.vbox.api;
 
-import java.util.Map;
-
+import com.kedzie.vbox.api.jaxb.BitmapFormat;
 import com.kedzie.vbox.soap.KSOAP;
+
+import java.util.Map;
 
 /**
  * The {@link IDisplay} interface represents the virtual machine's display. 
@@ -12,10 +13,7 @@ import com.kedzie.vbox.soap.KSOAP;
 @KSOAP
 public interface IDisplay extends IManagedObjectRef {
 
-    @KSOAP public Map<String, String> getScreenResolution(@KSOAP(type="unsignedInt", value="screenId") int screenId);
+    @KSOAP Map<String, String> getScreenResolution(@KSOAP(type="unsignedInt", value="screenId") int screenId);
 
-    @KSOAP public byte[] takeScreenShotToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId, @KSOAP(type="unsignedInt", value="width") int width, @KSOAP(type="unsignedInt", value="height") int height);
-
-    @KSOAP public byte[] takeScreenShotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId, @KSOAP(type="unsignedInt", value="width") int width, @KSOAP(type="unsignedInt", value="height") int height);
-	
+    @KSOAP byte[] takeScreenShotToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId, @KSOAP(type="unsignedInt", value="width") int width, @KSOAP(type="unsignedInt", value="height") int height, @KSOAP("bitmapFormat") BitmapFormat bitmapFormat);
 }

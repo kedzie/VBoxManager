@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.IBinder;
 
 import com.kedzie.vbox.R;
@@ -19,6 +20,8 @@ import androidx.core.app.NotificationCompat;
 import dagger.android.AndroidInjection;
 import timber.log.Timber;
 
+import static com.kedzie.vbox.event.EventIntentService.NOTIFICATION_CHANNEL;
+
 /**
  * Created by kedzie on 3/1/14.
  */
@@ -26,13 +29,12 @@ public class ProgressService extends IntentService {
     /** interval used to update progress bar for longing-running operation*/
     protected final static int PROGRESS_INTERVAL = 500;
 
-    private static final String NOTIFICATION_CHANNEL = "vbox";
-
     public static final String INTENT_ICON = "icon";
 
     private IProgress mProgress;
     private int id;
     private int icon;
+
     @Inject
     NotificationManager mNotificationManager;
 
@@ -50,6 +52,12 @@ public class ProgressService extends IntentService {
         AndroidInjection.inject(this);
     }
 
+    NotificationCompat.Builder getNotifactionBuilder() {
+        return Utils.isVersion(Build.VERSION_CODES.O) ?
+                new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL) :
+                new NotificationCompat.Builder(this);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         mProgress = intent.getParcelableExtra(IProgress.BUNDLE);
@@ -59,7 +67,7 @@ public class ProgressService extends IntentService {
             Timber.d( "Handling progress");
             while(!mProgress.getCompleted()) {
                 cacheProgress(mProgress);
-                mNotificationManager.notify(id, new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+                NotificationCompat.Builder builder = getNotifactionBuilder()
                         .setContentTitle(mProgress.getDescription())
                         .setContentText(getString(R.string.progress_notification_text, mProgress.getOperation(), mProgress.getOperationCount(), mProgress.getOperationDescription()))
                         .setWhen(System.currentTimeMillis())
@@ -67,14 +75,17 @@ public class ProgressService extends IntentService {
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), icon))
                         .setTicker(mProgress.getDescription())
                         .setProgress(100, mProgress.getPercent(), false)
-                        .setAutoCancel(true)
-                        .build());
+                        .setAutoCancel(true);
+//                if(mProgress.getCancelable()) {
+//                    builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Cancel", )
+//                }
+                mNotificationManager.notify(id, builder.build());
                 Utils.sleep(PROGRESS_INTERVAL);
             }
             Timber.d("Operation Completed. result code: %d", mProgress.getResultCode());
             int result = mProgress.getResultCode();
             if(result==0) {
-                mNotificationManager.notify(id, new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+                mNotificationManager.notify(id, getNotifactionBuilder()
                         .setContentTitle(mProgress.getDescription() + " Success")
                         .setContentText(getString(R.string.progress_notification_success, mProgress.getDescription()))
                         .setWhen(System.currentTimeMillis())
@@ -86,7 +97,7 @@ public class ProgressService extends IntentService {
                         .build());
             } else {
                 IVirtualBoxErrorInfo errorInfo = mProgress.getErrorInfo();
-                mNotificationManager.notify(id, new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+                mNotificationManager.notify(id, getNotifactionBuilder()
                         .setContentTitle(mProgress.getDescription() + " Failed")
                         .setContentText(getString(R.string.progress_notification_failure, mProgress.getDescription(), errorInfo.getText()))
                         .setWhen(System.currentTimeMillis())
@@ -98,7 +109,7 @@ public class ProgressService extends IntentService {
                         .build());
             }
         } catch (IOException e) {
-            mNotificationManager.notify(id, new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+            mNotificationManager.notify(id, getNotifactionBuilder()
                     .setContentTitle(mProgress.getDescription() + " Failed")
                     .setContentText(getString(R.string.progress_notification_failure, mProgress.getDescription(), e.getMessage()))
                     .setWhen(System.currentTimeMillis())

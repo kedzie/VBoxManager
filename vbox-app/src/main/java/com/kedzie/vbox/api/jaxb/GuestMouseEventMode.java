@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for GuestMouseEventMode.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="GuestMouseEventMode">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -16,28 +17,29 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum GuestMouseEventMode {
 
-	RELATIVE("Relative"),
-	ABSOLUTE("Absolute");
-	private final String value;
+    RELATIVE("Relative"),
+    ABSOLUTE("Absolute");
+    private final String value;
 
-	GuestMouseEventMode(String v) {
-		value = v;
-	}
+    GuestMouseEventMode(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static GuestMouseEventMode fromValue(String v) {
-		for (GuestMouseEventMode c : GuestMouseEventMode.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static GuestMouseEventMode fromValue(String v) {
+        for (GuestMouseEventMode c: GuestMouseEventMode.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

@@ -21,7 +21,7 @@ import com.kedzie.vbox.api.IVRDEServer;
 import com.kedzie.vbox.api.jaxb.AuthType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
 import java.util.Arrays;
 
@@ -38,7 +38,7 @@ public class DisplayRemoteFragment extends Fragment {
 	/**
 	 * load Remote Desktop Server info
 	 */
-	class LoadDataTask extends ActionBarTask<IMachine, IVRDEServer> {
+	class LoadDataTask extends BaseTask<IMachine, IVRDEServer> {
 		
 		public LoadDataTask() { 
 			super((AppCompatActivity)getActivity(), _machine.getAPI());

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:ff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">VirtualBox® Manager</string>
+    <string name="app_name">VirtualBox Manager</string>
     <string name="server_name">Display Name:</string>
     <string name="server_host">Host/IP Address:</string>
     <string name="server_ssl">Use SSL?</string>

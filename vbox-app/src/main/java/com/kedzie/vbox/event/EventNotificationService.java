@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
@@ -23,11 +24,14 @@ import androidx.core.app.NotificationCompat;
 import dagger.android.AndroidInjection;
 import timber.log.Timber;
 
+import static com.kedzie.vbox.event.EventIntentService.NOTIFICATION_CHANNEL;
+
 /**
  * Listen for VirtualBox events and publish notifications
  */
 public class EventNotificationService extends IntentService {
-	private static final int NOTIFICATION_ID=1;
+
+	private int id = 1000;
 
     @Inject
      NotificationManager mNotificationManager;
@@ -36,6 +40,11 @@ public class EventNotificationService extends IntentService {
 		super("Event Notification Service");
 	}
 
+	NotificationCompat.Builder getNotifactionBuilder() {
+		return Utils.isVersion(Build.VERSION_CODES.O) ?
+				new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL) :
+				new NotificationCompat.Builder(this);
+	}
 
 	@Override
 	public void onCreate() {
@@ -55,7 +64,7 @@ public class EventNotificationService extends IntentService {
 		Utils.cacheProperties(eventMachine);
 		BundleBuilder.addProxy(i, IMachine.BUNDLE, eventMachine);
 		String title = getString(R.string.notification_title, eventMachine.getName(), eventMachine.getState());
-		Notification n =  new NotificationCompat.Builder(EventNotificationService.this)
+		Notification n =  getNotifactionBuilder()
 				.setContentTitle(title)
 				.setContentText(getString(R.string.notification_text, eventMachine.getName(), eventMachine.getState()))
 				.setWhen(System.currentTimeMillis())
@@ -65,6 +74,6 @@ public class EventNotificationService extends IntentService {
 				.setTicker(title)
 				.setAutoCancel(true)
 				.build();
-		mNotificationManager.notify(NOTIFICATION_ID, n);
+		mNotificationManager.notify(++id, n);
 	}
 }

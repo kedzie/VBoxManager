@@ -12,7 +12,7 @@ import com.kedzie.vbox.api.INetworkAdapter;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.PagerTabHost;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class NetworkFragment extends Fragment {
     /**
      * Load all the network adapters and create a tab for each one
      */
-    class LoadDataTask extends ActionBarTask<IMachine, ArrayList<INetworkAdapter>> {
+    class LoadDataTask extends BaseTask<IMachine, ArrayList<INetworkAdapter>> {
     	
     	public LoadDataTask() {
     		super((AppCompatActivity)getActivity(), _machine.getAPI());

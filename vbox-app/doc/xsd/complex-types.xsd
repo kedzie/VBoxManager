@@ -4,1890 +4,2334 @@
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vbox="http://www.virtualbox.org/" targetNamespace="http://www.virtualbox.org/">
 
-        <!--
-      ******************************************************
-      * enumerations
-      ******************************************************
+    <!--
+         ******************************************************
+         * enumerations
+         ******************************************************
+   -->
+    <!-- enum: SettingsVersion -
+          Null: 0 -
+          v1_0: 1 -
+          v1_1: 2 -
+          v1_2: 3 -
+          v1_3pre: 4 -
+          v1_3: 5 -
+          v1_4: 6 -
+          v1_5: 7 -
+          v1_6: 8 -
+          v1_7: 9 -
+          v1_8: 10 -
+          v1_9: 11 -
+          v1_10: 12 -
+          v1_11: 13 -
+          v1_12: 14 -
+          v1_13: 15 -
+          v1_14: 16 -
+          v1_15: 17 -
+          v1_16: 18 -
+          v1_17: 19 -
+          Future: 99999 -
+          -->
+    <xsd:simpleType name="SettingsVersion">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="v1_0"/>
+            <xsd:enumeration value="v1_1"/>
+            <xsd:enumeration value="v1_2"/>
+            <xsd:enumeration value="v1_3pre"/>
+            <xsd:enumeration value="v1_3"/>
+            <xsd:enumeration value="v1_4"/>
+            <xsd:enumeration value="v1_5"/>
+            <xsd:enumeration value="v1_6"/>
+            <xsd:enumeration value="v1_7"/>
+            <xsd:enumeration value="v1_8"/>
+            <xsd:enumeration value="v1_9"/>
+            <xsd:enumeration value="v1_10"/>
+            <xsd:enumeration value="v1_11"/>
+            <xsd:enumeration value="v1_12"/>
+            <xsd:enumeration value="v1_13"/>
+            <xsd:enumeration value="v1_14"/>
+            <xsd:enumeration value="v1_15"/>
+            <xsd:enumeration value="v1_16"/>
+            <xsd:enumeration value="v1_17"/>
+            <xsd:enumeration value="Future"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AccessMode -
+          ReadOnly: 1 -
+          ReadWrite: 2 -
+          -->
+    <xsd:simpleType name="AccessMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ReadOnly"/>
+            <xsd:enumeration value="ReadWrite"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: MachineState -
+          Null: 0 -
+          PoweredOff: 1 -
+          Saved: 2 -
+          Teleported: 3 -
+          Aborted: 4 -
+          Running: 5 -
+          Paused: 6 -
+          Stuck: 7 -
+          Teleporting: 8 -
+          LiveSnapshotting: 9 -
+          Starting: 10 -
+          Stopping: 11 -
+          Saving: 12 -
+          Restoring: 13 -
+          TeleportingPausedVM: 14 -
+          TeleportingIn: 15 -
+          FaultTolerantSyncing: 16 -
+          DeletingSnapshotOnline: 17 -
+          DeletingSnapshotPaused: 18 -
+          OnlineSnapshotting: 19 -
+          RestoringSnapshot: 20 -
+          DeletingSnapshot: 21 -
+          SettingUp: 22 -
+          Snapshotting: 23 -
+          FirstOnline: 5 -
+          LastOnline: 19 -
+          FirstTransient: 8 -
+          LastTransient: 23 -
+          -->
+    <xsd:simpleType name="MachineState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="PoweredOff"/>
+            <xsd:enumeration value="Saved"/>
+            <xsd:enumeration value="Teleported"/>
+            <xsd:enumeration value="Aborted"/>
+            <xsd:enumeration value="Running"/>
+            <xsd:enumeration value="Paused"/>
+            <xsd:enumeration value="Stuck"/>
+            <xsd:enumeration value="Teleporting"/>
+            <xsd:enumeration value="LiveSnapshotting"/>
+            <xsd:enumeration value="Starting"/>
+            <xsd:enumeration value="Stopping"/>
+            <xsd:enumeration value="Saving"/>
+            <xsd:enumeration value="Restoring"/>
+            <xsd:enumeration value="TeleportingPausedVM"/>
+            <xsd:enumeration value="TeleportingIn"/>
+            <xsd:enumeration value="FaultTolerantSyncing"/>
+            <xsd:enumeration value="DeletingSnapshotOnline"/>
+            <xsd:enumeration value="DeletingSnapshotPaused"/>
+            <xsd:enumeration value="OnlineSnapshotting"/>
+            <xsd:enumeration value="RestoringSnapshot"/>
+            <xsd:enumeration value="DeletingSnapshot"/>
+            <xsd:enumeration value="SettingUp"/>
+            <xsd:enumeration value="Snapshotting"/>
+            <xsd:enumeration value="FirstOnline"/>
+            <xsd:enumeration value="LastOnline"/>
+            <xsd:enumeration value="FirstTransient"/>
+            <xsd:enumeration value="LastTransient"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: SessionState -
+          Null: 0 -
+          Unlocked: 1 -
+          Locked: 2 -
+          Spawning: 3 -
+          Unlocking: 4 -
+          -->
+    <xsd:simpleType name="SessionState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Unlocked"/>
+            <xsd:enumeration value="Locked"/>
+            <xsd:enumeration value="Spawning"/>
+            <xsd:enumeration value="Unlocking"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: CPUPropertyType -
+          Null: 0 -
+          PAE: 1 -
+          LongMode: 2 -
+          TripleFaultReset: 3 -
+          APIC: 4 -
+          X2APIC: 5 -
+          IBPBOnVMExit: 6 -
+          IBPBOnVMEntry: 7 -
+          HWVirt: 8 -
+          SpecCtrl: 9 -
+          SpecCtrlByHost: 10 -
+          L1DFlushOnEMTScheduling: 11 -
+          L1DFlushOnVMEntry: 12 -
+          -->
+    <xsd:simpleType name="CPUPropertyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="PAE"/>
+            <xsd:enumeration value="LongMode"/>
+            <xsd:enumeration value="TripleFaultReset"/>
+            <xsd:enumeration value="APIC"/>
+            <xsd:enumeration value="X2APIC"/>
+            <xsd:enumeration value="IBPBOnVMExit"/>
+            <xsd:enumeration value="IBPBOnVMEntry"/>
+            <xsd:enumeration value="HWVirt"/>
+            <xsd:enumeration value="SpecCtrl"/>
+            <xsd:enumeration value="SpecCtrlByHost"/>
+            <xsd:enumeration value="L1DFlushOnEMTScheduling"/>
+            <xsd:enumeration value="L1DFlushOnVMEntry"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: HWVirtExPropertyType -
+          Null: 0 -
+          Enabled: 1 -
+          VPID: 2 -
+          NestedPaging: 3 -
+          UnrestrictedExecution: 4 -
+          LargePages: 5 -
+          Force: 6 -
+          UseNativeApi: 7 -
+          -->
+    <xsd:simpleType name="HWVirtExPropertyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Enabled"/>
+            <xsd:enumeration value="VPID"/>
+            <xsd:enumeration value="NestedPaging"/>
+            <xsd:enumeration value="UnrestrictedExecution"/>
+            <xsd:enumeration value="LargePages"/>
+            <xsd:enumeration value="Force"/>
+            <xsd:enumeration value="UseNativeApi"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ParavirtProvider -
+          None: 0 -
+          Default: 1 -
+          Legacy: 2 -
+          Minimal: 3 -
+          HyperV: 4 -
+          KVM: 5 -
+          -->
+    <xsd:simpleType name="ParavirtProvider">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Default"/>
+            <xsd:enumeration value="Legacy"/>
+            <xsd:enumeration value="Minimal"/>
+            <xsd:enumeration value="HyperV"/>
+            <xsd:enumeration value="KVM"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FaultToleranceState -
+          Inactive: 1 -
+          Master: 2 -
+          Standby: 3 -
+          -->
+    <xsd:simpleType name="FaultToleranceState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Inactive"/>
+            <xsd:enumeration value="Master"/>
+            <xsd:enumeration value="Standby"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: LockType -
+          Null: 0 -
+          Shared: 1 -
+          Write: 2 -
+          VM: 3 -
+          -->
+    <xsd:simpleType name="LockType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Shared"/>
+            <xsd:enumeration value="Write"/>
+            <xsd:enumeration value="VM"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: SessionType -
+          Null: 0 -
+          WriteLock: 1 -
+          Remote: 2 -
+          Shared: 3 -
+          -->
+    <xsd:simpleType name="SessionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="WriteLock"/>
+            <xsd:enumeration value="Remote"/>
+            <xsd:enumeration value="Shared"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DeviceType -
+          Null: 0 -
+          Floppy: 1 -
+          DVD: 2 -
+          HardDisk: 3 -
+          Network: 4 -
+          USB: 5 -
+          SharedFolder: 6 -
+          Graphics3D: 7 -
+          -->
+    <xsd:simpleType name="DeviceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Floppy"/>
+            <xsd:enumeration value="DVD"/>
+            <xsd:enumeration value="HardDisk"/>
+            <xsd:enumeration value="Network"/>
+            <xsd:enumeration value="USB"/>
+            <xsd:enumeration value="SharedFolder"/>
+            <xsd:enumeration value="Graphics3D"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DeviceActivity -
+          Null: 0 -
+          Idle: 1 -
+          Reading: 2 -
+          Writing: 3 -
+          -->
+    <xsd:simpleType name="DeviceActivity">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Idle"/>
+            <xsd:enumeration value="Reading"/>
+            <xsd:enumeration value="Writing"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ClipboardMode -
+          Disabled: 0 -
+          HostToGuest: 1 -
+          GuestToHost: 2 -
+          Bidirectional: 3 -
+          -->
+    <xsd:simpleType name="ClipboardMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="HostToGuest"/>
+            <xsd:enumeration value="GuestToHost"/>
+            <xsd:enumeration value="Bidirectional"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DnDMode -
+          Disabled: 0 -
+          HostToGuest: 1 -
+          GuestToHost: 2 -
+          Bidirectional: 3 -
+          -->
+    <xsd:simpleType name="DnDMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="HostToGuest"/>
+            <xsd:enumeration value="GuestToHost"/>
+            <xsd:enumeration value="Bidirectional"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: Scope -
+          Global: 0 -
+          Machine: 1 -
+          Session: 2 -
+          -->
+    <xsd:simpleType name="Scope">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Global"/>
+            <xsd:enumeration value="Machine"/>
+            <xsd:enumeration value="Session"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: BIOSBootMenuMode -
+          Disabled: 0 -
+          MenuOnly: 1 -
+          MessageAndMenu: 2 -
+          -->
+    <xsd:simpleType name="BIOSBootMenuMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="MenuOnly"/>
+            <xsd:enumeration value="MessageAndMenu"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: APICMode -
+          Disabled: 0 -
+          APIC: 1 -
+          X2APIC: 2 -
+          -->
+    <xsd:simpleType name="APICMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="APIC"/>
+            <xsd:enumeration value="X2APIC"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessorFeature -
+          HWVirtEx: 0 -
+          PAE: 1 -
+          LongMode: 2 -
+          NestedPaging: 3 -
+          UnrestrictedGuest: 4 -
+          NestedHWVirt: 5 -
+          -->
+    <xsd:simpleType name="ProcessorFeature">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="HWVirtEx"/>
+            <xsd:enumeration value="PAE"/>
+            <xsd:enumeration value="LongMode"/>
+            <xsd:enumeration value="NestedPaging"/>
+            <xsd:enumeration value="UnrestrictedGuest"/>
+            <xsd:enumeration value="NestedHWVirt"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FirmwareType -
+          BIOS: 1 -
+          EFI: 2 -
+          EFI32: 3 -
+          EFI64: 4 -
+          EFIDUAL: 5 -
+          -->
+    <xsd:simpleType name="FirmwareType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="BIOS"/>
+            <xsd:enumeration value="EFI"/>
+            <xsd:enumeration value="EFI32"/>
+            <xsd:enumeration value="EFI64"/>
+            <xsd:enumeration value="EFIDUAL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: PointingHIDType -
+          None: 1 -
+          PS2Mouse: 2 -
+          USBMouse: 3 -
+          USBTablet: 4 -
+          ComboMouse: 5 -
+          USBMultiTouch: 6 -
+          -->
+    <xsd:simpleType name="PointingHIDType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="PS2Mouse"/>
+            <xsd:enumeration value="USBMouse"/>
+            <xsd:enumeration value="USBTablet"/>
+            <xsd:enumeration value="ComboMouse"/>
+            <xsd:enumeration value="USBMultiTouch"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: KeyboardHIDType -
+          None: 1 -
+          PS2Keyboard: 2 -
+          USBKeyboard: 3 -
+          ComboKeyboard: 4 -
+          -->
+    <xsd:simpleType name="KeyboardHIDType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="PS2Keyboard"/>
+            <xsd:enumeration value="USBKeyboard"/>
+            <xsd:enumeration value="ComboKeyboard"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: BitmapFormat -
+          Opaque: 0 -
+          BGR: 0x20524742 -
+          BGR0: 0x30524742 -
+          BGRA: 0x41524742 -
+          RGBA: 0x41424752 -
+          PNG: 0x20474E50 -
+          JPEG: 0x4745504A -
+          -->
+    <xsd:simpleType name="BitmapFormat">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Opaque"/>
+            <xsd:enumeration value="BGR"/>
+            <xsd:enumeration value="BGR0"/>
+            <xsd:enumeration value="BGRA"/>
+            <xsd:enumeration value="RGBA"/>
+            <xsd:enumeration value="PNG"/>
+            <xsd:enumeration value="JPEG"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DhcpOpt -
+          SubnetMask: 1 -
+          TimeOffset: 2 -
+          Router: 3 -
+          TimeServer: 4 -
+          NameServer: 5 -
+          DomainNameServer: 6 -
+          LogServer: 7 -
+          Cookie: 8 -
+          LPRServer: 9 -
+          ImpressServer: 10 -
+          ResourseLocationServer: 11 -
+          HostName: 12 -
+          BootFileSize: 13 -
+          MeritDumpFile: 14 -
+          DomainName: 15 -
+          SwapServer: 16 -
+          RootPath: 17 -
+          ExtensionPath: 18 -
+          IPForwardingEnableDisable: 19 -
+          NonLocalSourceRoutingEnableDisable: 20 -
+          PolicyFilter: 21 -
+          MaximumDatagramReassemblySize: 22 -
+          DefaultIPTime2Live: 23 -
+          PathMTUAgingTimeout: 24 -
+          IPLayerParametersPerInterface: 25 -
+          InterfaceMTU: 26 -
+          AllSubnetsAreLocal: 27 -
+          BroadcastAddress: 28 -
+          PerformMaskDiscovery: 29 -
+          MaskSupplier: 30 -
+          PerformRouteDiscovery: 31 -
+          RouterSolicitationAddress: 32 -
+          StaticRoute: 33 -
+          TrailerEncapsulation: 34 -
+          ARPCacheTimeout: 35 -
+          EthernetEncapsulation: 36 -
+          TCPDefaultTTL: 37 -
+          TCPKeepAliveInterval: 38 -
+          TCPKeepAliveGarbage: 39 -
+          NetworkInformationServiceDomain: 40 -
+          NetworkInformationServiceServers: 41 -
+          NetworkTimeProtocolServers: 42 -
+          VendorSpecificInformation: 43 -
+          Option_44: 44 -
+          Option_45: 45 -
+          Option_46: 46 -
+          Option_47: 47 -
+          Option_48: 48 -
+          Option_49: 49 -
+          IPAddressLeaseTime: 51 -
+          Option_64: 64 -
+          Option_65: 65 -
+          TFTPServerName: 66 -
+          BootfileName: 67 -
+          Option_68: 68 -
+          Option_69: 69 -
+          Option_70: 70 -
+          Option_71: 71 -
+          Option_72: 72 -
+          Option_73: 73 -
+          Option_74: 74 -
+          Option_75: 75 -
+          Option_119: 119 -
+          -->
+    <xsd:simpleType name="DhcpOpt">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SubnetMask"/>
+            <xsd:enumeration value="TimeOffset"/>
+            <xsd:enumeration value="Router"/>
+            <xsd:enumeration value="TimeServer"/>
+            <xsd:enumeration value="NameServer"/>
+            <xsd:enumeration value="DomainNameServer"/>
+            <xsd:enumeration value="LogServer"/>
+            <xsd:enumeration value="Cookie"/>
+            <xsd:enumeration value="LPRServer"/>
+            <xsd:enumeration value="ImpressServer"/>
+            <xsd:enumeration value="ResourseLocationServer"/>
+            <xsd:enumeration value="HostName"/>
+            <xsd:enumeration value="BootFileSize"/>
+            <xsd:enumeration value="MeritDumpFile"/>
+            <xsd:enumeration value="DomainName"/>
+            <xsd:enumeration value="SwapServer"/>
+            <xsd:enumeration value="RootPath"/>
+            <xsd:enumeration value="ExtensionPath"/>
+            <xsd:enumeration value="IPForwardingEnableDisable"/>
+            <xsd:enumeration value="NonLocalSourceRoutingEnableDisable"/>
+            <xsd:enumeration value="PolicyFilter"/>
+            <xsd:enumeration value="MaximumDatagramReassemblySize"/>
+            <xsd:enumeration value="DefaultIPTime2Live"/>
+            <xsd:enumeration value="PathMTUAgingTimeout"/>
+            <xsd:enumeration value="IPLayerParametersPerInterface"/>
+            <xsd:enumeration value="InterfaceMTU"/>
+            <xsd:enumeration value="AllSubnetsAreLocal"/>
+            <xsd:enumeration value="BroadcastAddress"/>
+            <xsd:enumeration value="PerformMaskDiscovery"/>
+            <xsd:enumeration value="MaskSupplier"/>
+            <xsd:enumeration value="PerformRouteDiscovery"/>
+            <xsd:enumeration value="RouterSolicitationAddress"/>
+            <xsd:enumeration value="StaticRoute"/>
+            <xsd:enumeration value="TrailerEncapsulation"/>
+            <xsd:enumeration value="ARPCacheTimeout"/>
+            <xsd:enumeration value="EthernetEncapsulation"/>
+            <xsd:enumeration value="TCPDefaultTTL"/>
+            <xsd:enumeration value="TCPKeepAliveInterval"/>
+            <xsd:enumeration value="TCPKeepAliveGarbage"/>
+            <xsd:enumeration value="NetworkInformationServiceDomain"/>
+            <xsd:enumeration value="NetworkInformationServiceServers"/>
+            <xsd:enumeration value="NetworkTimeProtocolServers"/>
+            <xsd:enumeration value="VendorSpecificInformation"/>
+            <xsd:enumeration value="Option_44"/>
+            <xsd:enumeration value="Option_45"/>
+            <xsd:enumeration value="Option_46"/>
+            <xsd:enumeration value="Option_47"/>
+            <xsd:enumeration value="Option_48"/>
+            <xsd:enumeration value="Option_49"/>
+            <xsd:enumeration value="IPAddressLeaseTime"/>
+            <xsd:enumeration value="Option_64"/>
+            <xsd:enumeration value="Option_65"/>
+            <xsd:enumeration value="TFTPServerName"/>
+            <xsd:enumeration value="BootfileName"/>
+            <xsd:enumeration value="Option_68"/>
+            <xsd:enumeration value="Option_69"/>
+            <xsd:enumeration value="Option_70"/>
+            <xsd:enumeration value="Option_71"/>
+            <xsd:enumeration value="Option_72"/>
+            <xsd:enumeration value="Option_73"/>
+            <xsd:enumeration value="Option_74"/>
+            <xsd:enumeration value="Option_75"/>
+            <xsd:enumeration value="Option_119"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DhcpOptEncoding -
+          Legacy: 0 -
+          Hex: 1 -
+          -->
+    <xsd:simpleType name="DhcpOptEncoding">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Legacy"/>
+            <xsd:enumeration value="Hex"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: VFSType -
+          File: 1 -
+          Cloud: 2 -
+          S3: 3 -
+          WebDav: 4 -
+          OCI: 5 -
+          -->
+    <xsd:simpleType name="VFSType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="File"/>
+            <xsd:enumeration value="Cloud"/>
+            <xsd:enumeration value="S3"/>
+            <xsd:enumeration value="WebDav"/>
+            <xsd:enumeration value="OCI"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ImportOptions -
+          KeepAllMACs: 1 -
+          KeepNATMACs: 2 -
+          ImportToVDI: 3 -
+          -->
+    <xsd:simpleType name="ImportOptions">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="KeepAllMACs"/>
+            <xsd:enumeration value="KeepNATMACs"/>
+            <xsd:enumeration value="ImportToVDI"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ExportOptions -
+          CreateManifest: 1 -
+          ExportDVDImages: 2 -
+          StripAllMACs: 3 -
+          StripAllNonNATMACs: 4 -
+          -->
+    <xsd:simpleType name="ExportOptions">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CreateManifest"/>
+            <xsd:enumeration value="ExportDVDImages"/>
+            <xsd:enumeration value="StripAllMACs"/>
+            <xsd:enumeration value="StripAllNonNATMACs"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: CertificateVersion -
+          V1: 1 -
+          V2: 2 -
+          V3: 3 -
+          Unknown: 99 -
+          -->
+    <xsd:simpleType name="CertificateVersion">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="V1"/>
+            <xsd:enumeration value="V2"/>
+            <xsd:enumeration value="V3"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: VirtualSystemDescriptionType -
+          Ignore: 1 -
+          OS: 2 -
+          Name: 3 -
+          Product: 4 -
+          Vendor: 5 -
+          Version: 6 -
+          ProductUrl: 7 -
+          VendorUrl: 8 -
+          Description: 9 -
+          License: 10 -
+          Miscellaneous: 11 -
+          CPU: 12 -
+          Memory: 13 -
+          HardDiskControllerIDE: 14 -
+          HardDiskControllerSATA: 15 -
+          HardDiskControllerSCSI: 16 -
+          HardDiskControllerSAS: 17 -
+          HardDiskImage: 18 -
+          Floppy: 19 -
+          CDROM: 20 -
+          NetworkAdapter: 21 -
+          USBController: 22 -
+          SoundCard: 23 -
+          SettingsFile: 24 -
+          BaseFolder: 25 -
+          PrimaryGroup: 26 -
+          CloudInstanceShape: 27 -
+          CloudDomain: 28 -
+          CloudBootDiskSize: 29 -
+          CloudBucket: 30 -
+          CloudOCIVCN: 31 -
+          CloudPublicIP: 32 -
+          CloudProfileName: 33 -
+          CloudOCISubnet: 34 -
+          CloudKeepObject: 35 -
+          CloudLaunchInstance: 36 -
+          -->
+    <xsd:simpleType name="VirtualSystemDescriptionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Ignore"/>
+            <xsd:enumeration value="OS"/>
+            <xsd:enumeration value="Name"/>
+            <xsd:enumeration value="Product"/>
+            <xsd:enumeration value="Vendor"/>
+            <xsd:enumeration value="Version"/>
+            <xsd:enumeration value="ProductUrl"/>
+            <xsd:enumeration value="VendorUrl"/>
+            <xsd:enumeration value="Description"/>
+            <xsd:enumeration value="License"/>
+            <xsd:enumeration value="Miscellaneous"/>
+            <xsd:enumeration value="CPU"/>
+            <xsd:enumeration value="Memory"/>
+            <xsd:enumeration value="HardDiskControllerIDE"/>
+            <xsd:enumeration value="HardDiskControllerSATA"/>
+            <xsd:enumeration value="HardDiskControllerSCSI"/>
+            <xsd:enumeration value="HardDiskControllerSAS"/>
+            <xsd:enumeration value="HardDiskImage"/>
+            <xsd:enumeration value="Floppy"/>
+            <xsd:enumeration value="CDROM"/>
+            <xsd:enumeration value="NetworkAdapter"/>
+            <xsd:enumeration value="USBController"/>
+            <xsd:enumeration value="SoundCard"/>
+            <xsd:enumeration value="SettingsFile"/>
+            <xsd:enumeration value="BaseFolder"/>
+            <xsd:enumeration value="PrimaryGroup"/>
+            <xsd:enumeration value="CloudInstanceShape"/>
+            <xsd:enumeration value="CloudDomain"/>
+            <xsd:enumeration value="CloudBootDiskSize"/>
+            <xsd:enumeration value="CloudBucket"/>
+            <xsd:enumeration value="CloudOCIVCN"/>
+            <xsd:enumeration value="CloudPublicIP"/>
+            <xsd:enumeration value="CloudProfileName"/>
+            <xsd:enumeration value="CloudOCISubnet"/>
+            <xsd:enumeration value="CloudKeepObject"/>
+            <xsd:enumeration value="CloudLaunchInstance"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: VirtualSystemDescriptionValueType -
+          Reference: 1 -
+          Original: 2 -
+          Auto: 3 -
+          ExtraConfig: 4 -
+          -->
+    <xsd:simpleType name="VirtualSystemDescriptionValueType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Reference"/>
+            <xsd:enumeration value="Original"/>
+            <xsd:enumeration value="Auto"/>
+            <xsd:enumeration value="ExtraConfig"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: RecordingDestination -
+          None: 0 -
+          File: 1 -
+          -->
+    <xsd:simpleType name="RecordingDestination">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="File"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: RecordingFeature -
+          None: 0 -
+          Video: 1 -
+          Audio: 2 -
+          -->
+    <xsd:simpleType name="RecordingFeature">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Video"/>
+            <xsd:enumeration value="Audio"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: RecordingAudioCodec -
+          None: 0 -
+          WavPCM: 1 -
+          Opus: 2 -
+          -->
+    <xsd:simpleType name="RecordingAudioCodec">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="WavPCM"/>
+            <xsd:enumeration value="Opus"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: RecordingVideoCodec -
+          None: 0 -
+          VP8: 1 -
+          VP9: 2 -
+          AV1: 3 -
+          -->
+    <xsd:simpleType name="RecordingVideoCodec">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="VP8"/>
+            <xsd:enumeration value="VP9"/>
+            <xsd:enumeration value="AV1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: RecordingVideoScalingMethod -
+          None: 0 -
+          NearestNeighbor: 1 -
+          Bilinear: 2 -
+          Bicubic: 3 -
+          -->
+    <xsd:simpleType name="RecordingVideoScalingMethod">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="NearestNeighbor"/>
+            <xsd:enumeration value="Bilinear"/>
+            <xsd:enumeration value="Bicubic"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: RecordingVideoRateControlMode -
+          CBR: 0 -
+          VBR: 1 -
+          -->
+    <xsd:simpleType name="RecordingVideoRateControlMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CBR"/>
+            <xsd:enumeration value="VBR"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GraphicsControllerType -
+          Null: 0 -
+          VBoxVGA: 1 -
+          VMSVGA: 2 -
+          VBoxSVGA: 3 -
+          -->
+    <xsd:simpleType name="GraphicsControllerType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="VBoxVGA"/>
+            <xsd:enumeration value="VMSVGA"/>
+            <xsd:enumeration value="VBoxSVGA"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: CleanupMode -
+          UnregisterOnly: 1 -
+          DetachAllReturnNone: 2 -
+          DetachAllReturnHardDisksOnly: 3 -
+          Full: 4 -
+          -->
+    <xsd:simpleType name="CleanupMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="UnregisterOnly"/>
+            <xsd:enumeration value="DetachAllReturnNone"/>
+            <xsd:enumeration value="DetachAllReturnHardDisksOnly"/>
+            <xsd:enumeration value="Full"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: CloneMode -
+          MachineState: 1 -
+          MachineAndChildStates: 2 -
+          AllStates: 3 -
+          -->
+    <xsd:simpleType name="CloneMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="MachineState"/>
+            <xsd:enumeration value="MachineAndChildStates"/>
+            <xsd:enumeration value="AllStates"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: CloneOptions -
+          Link: 1 -
+          KeepAllMACs: 2 -
+          KeepNATMACs: 3 -
+          KeepDiskNames: 4 -
+          KeepHwUUIDs: 5 -
+          -->
+    <xsd:simpleType name="CloneOptions">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Link"/>
+            <xsd:enumeration value="KeepAllMACs"/>
+            <xsd:enumeration value="KeepNATMACs"/>
+            <xsd:enumeration value="KeepDiskNames"/>
+            <xsd:enumeration value="KeepHwUUIDs"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AutostopType -
+          Disabled: 1 -
+          SaveState: 2 -
+          PowerOff: 3 -
+          AcpiShutdown: 4 -
+          -->
+    <xsd:simpleType name="AutostopType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="SaveState"/>
+            <xsd:enumeration value="PowerOff"/>
+            <xsd:enumeration value="AcpiShutdown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: HostNetworkInterfaceMediumType -
+          Unknown: 0 -
+          Ethernet: 1 -
+          PPP: 2 -
+          SLIP: 3 -
+          -->
+    <xsd:simpleType name="HostNetworkInterfaceMediumType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Unknown"/>
+            <xsd:enumeration value="Ethernet"/>
+            <xsd:enumeration value="PPP"/>
+            <xsd:enumeration value="SLIP"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: HostNetworkInterfaceStatus -
+          Unknown: 0 -
+          Up: 1 -
+          Down: 2 -
+          -->
+    <xsd:simpleType name="HostNetworkInterfaceStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Unknown"/>
+            <xsd:enumeration value="Up"/>
+            <xsd:enumeration value="Down"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: HostNetworkInterfaceType -
+          Bridged: 1 -
+          HostOnly: 2 -
+          -->
+    <xsd:simpleType name="HostNetworkInterfaceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Bridged"/>
+            <xsd:enumeration value="HostOnly"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProxyMode -
+          System: 0 -
+          NoProxy: 1 -
+          Manual: 2 -
+          -->
+    <xsd:simpleType name="ProxyMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="System"/>
+            <xsd:enumeration value="NoProxy"/>
+            <xsd:enumeration value="Manual"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AdditionsFacilityType -
+          None: 0 -
+          VBoxGuestDriver: 20 -
+          AutoLogon: 90 -
+          VBoxService: 100 -
+          VBoxTrayClient: 101 -
+          Seamless: 1000 -
+          Graphics: 1100 -
+          MonitorAttach: 1101 -
+          All: 2147483646 -
+          -->
+    <xsd:simpleType name="AdditionsFacilityType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="VBoxGuestDriver"/>
+            <xsd:enumeration value="AutoLogon"/>
+            <xsd:enumeration value="VBoxService"/>
+            <xsd:enumeration value="VBoxTrayClient"/>
+            <xsd:enumeration value="Seamless"/>
+            <xsd:enumeration value="Graphics"/>
+            <xsd:enumeration value="MonitorAttach"/>
+            <xsd:enumeration value="All"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AdditionsFacilityClass -
+          None: 0 -
+          Driver: 10 -
+          Service: 30 -
+          Program: 50 -
+          Feature: 100 -
+          ThirdParty: 999 -
+          All: 2147483646 -
+          -->
+    <xsd:simpleType name="AdditionsFacilityClass">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Driver"/>
+            <xsd:enumeration value="Service"/>
+            <xsd:enumeration value="Program"/>
+            <xsd:enumeration value="Feature"/>
+            <xsd:enumeration value="ThirdParty"/>
+            <xsd:enumeration value="All"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AdditionsFacilityStatus -
+          Inactive: 0 -
+          Paused: 1 -
+          PreInit: 20 -
+          Init: 30 -
+          Active: 50 -
+          Terminating: 100 -
+          Terminated: 101 -
+          Failed: 800 -
+          Unknown: 999 -
+          -->
+    <xsd:simpleType name="AdditionsFacilityStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Inactive"/>
+            <xsd:enumeration value="Paused"/>
+            <xsd:enumeration value="PreInit"/>
+            <xsd:enumeration value="Init"/>
+            <xsd:enumeration value="Active"/>
+            <xsd:enumeration value="Terminating"/>
+            <xsd:enumeration value="Terminated"/>
+            <xsd:enumeration value="Failed"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AdditionsRunLevelType -
+          None: 0 -
+          System: 1 -
+          Userland: 2 -
+          Desktop: 3 -
+          -->
+    <xsd:simpleType name="AdditionsRunLevelType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="System"/>
+            <xsd:enumeration value="Userland"/>
+            <xsd:enumeration value="Desktop"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AdditionsUpdateFlag -
+          None: 0 -
+          WaitForUpdateStartOnly: 1 -
+          -->
+    <xsd:simpleType name="AdditionsUpdateFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="WaitForUpdateStartOnly"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestSessionStatus -
+          Undefined: 0 -
+          Starting: 10 -
+          Started: 100 -
+          Terminating: 480 -
+          Terminated: 500 -
+          TimedOutKilled: 512 -
+          TimedOutAbnormally: 513 -
+          Down: 600 -
+          Error: 800 -
+          -->
+    <xsd:simpleType name="GuestSessionStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Undefined"/>
+            <xsd:enumeration value="Starting"/>
+            <xsd:enumeration value="Started"/>
+            <xsd:enumeration value="Terminating"/>
+            <xsd:enumeration value="Terminated"/>
+            <xsd:enumeration value="TimedOutKilled"/>
+            <xsd:enumeration value="TimedOutAbnormally"/>
+            <xsd:enumeration value="Down"/>
+            <xsd:enumeration value="Error"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestSessionWaitForFlag -
+          None: 0 -
+          Start: 1 -
+          Terminate: 2 -
+          Status: 4 -
+          -->
+    <xsd:simpleType name="GuestSessionWaitForFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Start"/>
+            <xsd:enumeration value="Terminate"/>
+            <xsd:enumeration value="Status"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestSessionWaitResult -
+          None: 0 -
+          Start: 1 -
+          Terminate: 2 -
+          Status: 3 -
+          Error: 4 -
+          Timeout: 5 -
+          WaitFlagNotSupported: 6 -
+          -->
+    <xsd:simpleType name="GuestSessionWaitResult">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Start"/>
+            <xsd:enumeration value="Terminate"/>
+            <xsd:enumeration value="Status"/>
+            <xsd:enumeration value="Error"/>
+            <xsd:enumeration value="Timeout"/>
+            <xsd:enumeration value="WaitFlagNotSupported"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestUserState -
+          Unknown: 0 -
+          LoggedIn: 1 -
+          LoggedOut: 2 -
+          Locked: 3 -
+          Unlocked: 4 -
+          Disabled: 5 -
+          Idle: 6 -
+          InUse: 7 -
+          Created: 8 -
+          Deleted: 9 -
+          SessionChanged: 10 -
+          CredentialsChanged: 11 -
+          RoleChanged: 12 -
+          GroupAdded: 13 -
+          GroupRemoved: 14 -
+          Elevated: 15 -
+          -->
+    <xsd:simpleType name="GuestUserState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Unknown"/>
+            <xsd:enumeration value="LoggedIn"/>
+            <xsd:enumeration value="LoggedOut"/>
+            <xsd:enumeration value="Locked"/>
+            <xsd:enumeration value="Unlocked"/>
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="Idle"/>
+            <xsd:enumeration value="InUse"/>
+            <xsd:enumeration value="Created"/>
+            <xsd:enumeration value="Deleted"/>
+            <xsd:enumeration value="SessionChanged"/>
+            <xsd:enumeration value="CredentialsChanged"/>
+            <xsd:enumeration value="RoleChanged"/>
+            <xsd:enumeration value="GroupAdded"/>
+            <xsd:enumeration value="GroupRemoved"/>
+            <xsd:enumeration value="Elevated"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileSeekOrigin -
+          Begin: 0 -
+          Current: 1 -
+          End: 2 -
+          -->
+    <xsd:simpleType name="FileSeekOrigin">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Begin"/>
+            <xsd:enumeration value="Current"/>
+            <xsd:enumeration value="End"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessInputFlag -
+          None: 0 -
+          EndOfFile: 1 -
+          -->
+    <xsd:simpleType name="ProcessInputFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="EndOfFile"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessOutputFlag -
+          None: 0 -
+          StdErr: 1 -
+          -->
+    <xsd:simpleType name="ProcessOutputFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="StdErr"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessWaitForFlag -
+          None: 0 -
+          Start: 1 -
+          Terminate: 2 -
+          StdIn: 4 -
+          StdOut: 8 -
+          StdErr: 16 -
+          -->
+    <xsd:simpleType name="ProcessWaitForFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Start"/>
+            <xsd:enumeration value="Terminate"/>
+            <xsd:enumeration value="StdIn"/>
+            <xsd:enumeration value="StdOut"/>
+            <xsd:enumeration value="StdErr"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessWaitResult -
+          None: 0 -
+          Start: 1 -
+          Terminate: 2 -
+          Status: 3 -
+          Error: 4 -
+          Timeout: 5 -
+          StdIn: 6 -
+          StdOut: 7 -
+          StdErr: 8 -
+          WaitFlagNotSupported: 9 -
+          -->
+    <xsd:simpleType name="ProcessWaitResult">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Start"/>
+            <xsd:enumeration value="Terminate"/>
+            <xsd:enumeration value="Status"/>
+            <xsd:enumeration value="Error"/>
+            <xsd:enumeration value="Timeout"/>
+            <xsd:enumeration value="StdIn"/>
+            <xsd:enumeration value="StdOut"/>
+            <xsd:enumeration value="StdErr"/>
+            <xsd:enumeration value="WaitFlagNotSupported"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileCopyFlag -
+          None: 0 -
+          NoReplace: 1 -
+          FollowLinks: 2 -
+          Update: 4 -
+          -->
+    <xsd:simpleType name="FileCopyFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="NoReplace"/>
+            <xsd:enumeration value="FollowLinks"/>
+            <xsd:enumeration value="Update"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FsObjMoveFlag -
+          None: 0 -
+          Replace: 1 -
+          FollowLinks: 2 -
+          AllowDirectoryMoves: 4 -
+          -->
+    <xsd:simpleType name="FsObjMoveFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Replace"/>
+            <xsd:enumeration value="FollowLinks"/>
+            <xsd:enumeration value="AllowDirectoryMoves"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DirectoryCreateFlag -
+          None: 0 -
+          Parents: 1 -
+          -->
+    <xsd:simpleType name="DirectoryCreateFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Parents"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DirectoryCopyFlag -
+          None: 0 -
+          CopyIntoExisting: 1 -
+          -->
+    <xsd:simpleType name="DirectoryCopyFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="CopyIntoExisting"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DirectoryRemoveRecFlag -
+          None: 0 -
+          ContentAndDir: 1 -
+          ContentOnly: 2 -
+          -->
+    <xsd:simpleType name="DirectoryRemoveRecFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="ContentAndDir"/>
+            <xsd:enumeration value="ContentOnly"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FsObjRenameFlag -
+          NoReplace: 0 -
+          Replace: 1 -
+          -->
+    <xsd:simpleType name="FsObjRenameFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NoReplace"/>
+            <xsd:enumeration value="Replace"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessCreateFlag -
+          None: 0 -
+          WaitForProcessStartOnly: 1 -
+          IgnoreOrphanedProcesses: 2 -
+          Hidden: 4 -
+          Profile: 8 -
+          WaitForStdOut: 16 -
+          WaitForStdErr: 32 -
+          ExpandArguments: 64 -
+          UnquotedArguments: 128 -
+          -->
+    <xsd:simpleType name="ProcessCreateFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="WaitForProcessStartOnly"/>
+            <xsd:enumeration value="IgnoreOrphanedProcesses"/>
+            <xsd:enumeration value="Hidden"/>
+            <xsd:enumeration value="Profile"/>
+            <xsd:enumeration value="WaitForStdOut"/>
+            <xsd:enumeration value="WaitForStdErr"/>
+            <xsd:enumeration value="ExpandArguments"/>
+            <xsd:enumeration value="UnquotedArguments"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessPriority -
+          Invalid: 0 -
+          Default: 1 -
+          -->
+    <xsd:simpleType name="ProcessPriority">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Invalid"/>
+            <xsd:enumeration value="Default"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: SymlinkType -
+          Unknown: 0 -
+          Directory: 1 -
+          File: 2 -
+          -->
+    <xsd:simpleType name="SymlinkType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Unknown"/>
+            <xsd:enumeration value="Directory"/>
+            <xsd:enumeration value="File"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: SymlinkReadFlag -
+          None: 0 -
+          NoSymlinks: 1 -
+          -->
+    <xsd:simpleType name="SymlinkReadFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="NoSymlinks"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessStatus -
+          Undefined: 0 -
+          Starting: 10 -
+          Started: 100 -
+          Paused: 110 -
+          Terminating: 480 -
+          TerminatedNormally: 500 -
+          TerminatedSignal: 510 -
+          TerminatedAbnormally: 511 -
+          TimedOutKilled: 512 -
+          TimedOutAbnormally: 513 -
+          Down: 600 -
+          Error: 800 -
+          -->
+    <xsd:simpleType name="ProcessStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Undefined"/>
+            <xsd:enumeration value="Starting"/>
+            <xsd:enumeration value="Started"/>
+            <xsd:enumeration value="Paused"/>
+            <xsd:enumeration value="Terminating"/>
+            <xsd:enumeration value="TerminatedNormally"/>
+            <xsd:enumeration value="TerminatedSignal"/>
+            <xsd:enumeration value="TerminatedAbnormally"/>
+            <xsd:enumeration value="TimedOutKilled"/>
+            <xsd:enumeration value="TimedOutAbnormally"/>
+            <xsd:enumeration value="Down"/>
+            <xsd:enumeration value="Error"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ProcessInputStatus -
+          Undefined: 0 -
+          Broken: 1 -
+          Available: 10 -
+          Written: 50 -
+          Overflow: 100 -
+          -->
+    <xsd:simpleType name="ProcessInputStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Undefined"/>
+            <xsd:enumeration value="Broken"/>
+            <xsd:enumeration value="Available"/>
+            <xsd:enumeration value="Written"/>
+            <xsd:enumeration value="Overflow"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: PathStyle -
+          DOS: 1 -
+          UNIX: 2 -
+          Unknown: 8 -
+          -->
+    <xsd:simpleType name="PathStyle">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="DOS"/>
+            <xsd:enumeration value="UNIX"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileAccessMode -
+          ReadOnly: 1 -
+          WriteOnly: 2 -
+          ReadWrite: 3 -
+          AppendOnly: 4 -
+          AppendRead: 5 -
+          -->
+    <xsd:simpleType name="FileAccessMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ReadOnly"/>
+            <xsd:enumeration value="WriteOnly"/>
+            <xsd:enumeration value="ReadWrite"/>
+            <xsd:enumeration value="AppendOnly"/>
+            <xsd:enumeration value="AppendRead"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileOpenAction -
+          OpenExisting: 1 -
+          OpenOrCreate: 2 -
+          CreateNew: 3 -
+          CreateOrReplace: 4 -
+          OpenExistingTruncated: 5 -
+          AppendOrCreate: 99 -
+          -->
+    <xsd:simpleType name="FileOpenAction">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OpenExisting"/>
+            <xsd:enumeration value="OpenOrCreate"/>
+            <xsd:enumeration value="CreateNew"/>
+            <xsd:enumeration value="CreateOrReplace"/>
+            <xsd:enumeration value="OpenExistingTruncated"/>
+            <xsd:enumeration value="AppendOrCreate"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileSharingMode -
+          Read: 1 -
+          Write: 2 -
+          ReadWrite: 3 -
+          Delete: 4 -
+          ReadDelete: 5 -
+          WriteDelete: 6 -
+          All: 7 -
+          -->
+    <xsd:simpleType name="FileSharingMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Read"/>
+            <xsd:enumeration value="Write"/>
+            <xsd:enumeration value="ReadWrite"/>
+            <xsd:enumeration value="Delete"/>
+            <xsd:enumeration value="ReadDelete"/>
+            <xsd:enumeration value="WriteDelete"/>
+            <xsd:enumeration value="All"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileOpenExFlag -
+          None: 0 -
+          -->
+    <xsd:simpleType name="FileOpenExFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FileStatus -
+          Undefined: 0 -
+          Opening: 10 -
+          Open: 100 -
+          Closing: 150 -
+          Closed: 200 -
+          Down: 600 -
+          Error: 800 -
+          -->
+    <xsd:simpleType name="FileStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Undefined"/>
+            <xsd:enumeration value="Opening"/>
+            <xsd:enumeration value="Open"/>
+            <xsd:enumeration value="Closing"/>
+            <xsd:enumeration value="Closed"/>
+            <xsd:enumeration value="Down"/>
+            <xsd:enumeration value="Error"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FsObjType -
+          Unknown: 1 -
+          Fifo: 2 -
+          DevChar: 3 -
+          Directory: 4 -
+          DevBlock: 5 -
+          File: 6 -
+          Symlink: 7 -
+          Socket: 8 -
+          WhiteOut: 9 -
+          -->
+    <xsd:simpleType name="FsObjType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Unknown"/>
+            <xsd:enumeration value="Fifo"/>
+            <xsd:enumeration value="DevChar"/>
+            <xsd:enumeration value="Directory"/>
+            <xsd:enumeration value="DevBlock"/>
+            <xsd:enumeration value="File"/>
+            <xsd:enumeration value="Symlink"/>
+            <xsd:enumeration value="Socket"/>
+            <xsd:enumeration value="WhiteOut"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DnDAction -
+          Ignore: 0 -
+          Copy: 1 -
+          Move: 2 -
+          Link: 3 -
+          -->
+    <xsd:simpleType name="DnDAction">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Ignore"/>
+            <xsd:enumeration value="Copy"/>
+            <xsd:enumeration value="Move"/>
+            <xsd:enumeration value="Link"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DirectoryOpenFlag -
+          None: 0 -
+          NoSymlinks: 1 -
+          -->
+    <xsd:simpleType name="DirectoryOpenFlag">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="NoSymlinks"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: MediumState -
+          NotCreated: 0 -
+          Created: 1 -
+          LockedRead: 2 -
+          LockedWrite: 3 -
+          Inaccessible: 4 -
+          Creating: 5 -
+          Deleting: 6 -
+          -->
+    <xsd:simpleType name="MediumState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NotCreated"/>
+            <xsd:enumeration value="Created"/>
+            <xsd:enumeration value="LockedRead"/>
+            <xsd:enumeration value="LockedWrite"/>
+            <xsd:enumeration value="Inaccessible"/>
+            <xsd:enumeration value="Creating"/>
+            <xsd:enumeration value="Deleting"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: MediumType -
+          Normal: 0 -
+          Immutable: 1 -
+          Writethrough: 2 -
+          Shareable: 3 -
+          Readonly: 4 -
+          MultiAttach: 5 -
+          -->
+    <xsd:simpleType name="MediumType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Normal"/>
+            <xsd:enumeration value="Immutable"/>
+            <xsd:enumeration value="Writethrough"/>
+            <xsd:enumeration value="Shareable"/>
+            <xsd:enumeration value="Readonly"/>
+            <xsd:enumeration value="MultiAttach"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: MediumVariant -
+          Standard: 0 -
+          VmdkSplit2G: 0x01 -
+          VmdkRawDisk: 0x02 -
+          VmdkStreamOptimized: 0x04 -
+          VmdkESX: 0x08 -
+          VdiZeroExpand: 0x100 -
+          Fixed: 0x10000 -
+          Diff: 0x20000 -
+          Formatted: 0x20000000 -
+          NoCreateDir: 0x40000000 -
+          -->
+    <xsd:simpleType name="MediumVariant">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Standard"/>
+            <xsd:enumeration value="VmdkSplit2G"/>
+            <xsd:enumeration value="VmdkRawDisk"/>
+            <xsd:enumeration value="VmdkStreamOptimized"/>
+            <xsd:enumeration value="VmdkESX"/>
+            <xsd:enumeration value="VdiZeroExpand"/>
+            <xsd:enumeration value="Fixed"/>
+            <xsd:enumeration value="Diff"/>
+            <xsd:enumeration value="Formatted"/>
+            <xsd:enumeration value="NoCreateDir"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DataType -
+          Int32: 0 -
+          Int8: 1 -
+          String: 2 -
+          -->
+    <xsd:simpleType name="DataType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Int32"/>
+            <xsd:enumeration value="Int8"/>
+            <xsd:enumeration value="String"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: DataFlags -
+          None: 0x00 -
+          Mandatory: 0x01 -
+          Expert: 0x02 -
+          Array: 0x04 -
+          FlagMask: 0x07 -
+          -->
+    <xsd:simpleType name="DataFlags">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Mandatory"/>
+            <xsd:enumeration value="Expert"/>
+            <xsd:enumeration value="Array"/>
+            <xsd:enumeration value="FlagMask"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: MediumFormatCapabilities -
+          Uuid: 0x01 -
+          CreateFixed: 0x02 -
+          CreateDynamic: 0x04 -
+          CreateSplit2G: 0x08 -
+          Differencing: 0x10 -
+          Asynchronous: 0x20 -
+          File: 0x40 -
+          Properties: 0x80 -
+          TcpNetworking: 0x100 -
+          VFS: 0x200 -
+          Discard: 0x400 -
+          Preferred: 0x800 -
+          CapabilityMask: 0xFFF -
+          -->
+    <xsd:simpleType name="MediumFormatCapabilities">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Uuid"/>
+            <xsd:enumeration value="CreateFixed"/>
+            <xsd:enumeration value="CreateDynamic"/>
+            <xsd:enumeration value="CreateSplit2G"/>
+            <xsd:enumeration value="Differencing"/>
+            <xsd:enumeration value="Asynchronous"/>
+            <xsd:enumeration value="File"/>
+            <xsd:enumeration value="Properties"/>
+            <xsd:enumeration value="TcpNetworking"/>
+            <xsd:enumeration value="VFS"/>
+            <xsd:enumeration value="Discard"/>
+            <xsd:enumeration value="Preferred"/>
+            <xsd:enumeration value="CapabilityMask"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: PartitionTableType -
+          MBR: 1 -
+          GPT: 2 -
+          -->
+    <xsd:simpleType name="PartitionTableType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="MBR"/>
+            <xsd:enumeration value="GPT"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: KeyboardLED -
+          NumLock: 0x01 -
+          CapsLock: 0x02 -
+          ScrollLock: 0x04 -
+          -->
+    <xsd:simpleType name="KeyboardLED">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NumLock"/>
+            <xsd:enumeration value="CapsLock"/>
+            <xsd:enumeration value="ScrollLock"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: MouseButtonState -
+          LeftButton: 0x01 -
+          RightButton: 0x02 -
+          MiddleButton: 0x04 -
+          WheelUp: 0x08 -
+          WheelDown: 0x10 -
+          XButton1: 0x20 -
+          XButton2: 0x40 -
+          MouseStateMask: 0x7F -
+          -->
+    <xsd:simpleType name="MouseButtonState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="LeftButton"/>
+            <xsd:enumeration value="RightButton"/>
+            <xsd:enumeration value="MiddleButton"/>
+            <xsd:enumeration value="WheelUp"/>
+            <xsd:enumeration value="WheelDown"/>
+            <xsd:enumeration value="XButton1"/>
+            <xsd:enumeration value="XButton2"/>
+            <xsd:enumeration value="MouseStateMask"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: TouchContactState -
+          None: 0x00 -
+          InContact: 0x01 -
+          InRange: 0x02 -
+          ContactStateMask: 0x03 -
+          -->
+    <xsd:simpleType name="TouchContactState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="InContact"/>
+            <xsd:enumeration value="InRange"/>
+            <xsd:enumeration value="ContactStateMask"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: FramebufferCapabilities -
+          UpdateImage: 0x01 -
+          VHWA: 0x02 -
+          VisibleRegion: 0x04 -
+          -->
+    <xsd:simpleType name="FramebufferCapabilities">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="UpdateImage"/>
+            <xsd:enumeration value="VHWA"/>
+            <xsd:enumeration value="VisibleRegion"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestMonitorStatus -
+          Disabled: 0 -
+          Enabled: 1 -
+          Blank: 2 -
+          -->
+    <xsd:simpleType name="GuestMonitorStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="Enabled"/>
+            <xsd:enumeration value="Blank"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ScreenLayoutMode -
+          Apply: 0 -
+          Reset: 1 -
+          Attach: 2 -
+          -->
+    <xsd:simpleType name="ScreenLayoutMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Apply"/>
+            <xsd:enumeration value="Reset"/>
+            <xsd:enumeration value="Attach"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: NetworkAttachmentType -
+          Null: 0 -
+          NAT: 1 -
+          Bridged: 2 -
+          Internal: 3 -
+          HostOnly: 4 -
+          Generic: 5 -
+          NATNetwork: 6 -
+          -->
+    <xsd:simpleType name="NetworkAttachmentType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="NAT"/>
+            <xsd:enumeration value="Bridged"/>
+            <xsd:enumeration value="Internal"/>
+            <xsd:enumeration value="HostOnly"/>
+            <xsd:enumeration value="Generic"/>
+            <xsd:enumeration value="NATNetwork"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: NetworkAdapterType -
+          Null: 0 -
+          Am79C970A: 1 -
+          Am79C973: 2 -
+          I82540EM: 3 -
+          I82543GC: 4 -
+          I82545EM: 5 -
+          Virtio: 6 -
+          -->
+    <xsd:simpleType name="NetworkAdapterType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Am79C970A"/>
+            <xsd:enumeration value="Am79C973"/>
+            <xsd:enumeration value="I82540EM"/>
+            <xsd:enumeration value="I82543GC"/>
+            <xsd:enumeration value="I82545EM"/>
+            <xsd:enumeration value="Virtio"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: NetworkAdapterPromiscModePolicy -
+          Deny: 1 -
+          AllowNetwork: 2 -
+          AllowAll: 3 -
+          -->
+    <xsd:simpleType name="NetworkAdapterPromiscModePolicy">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Deny"/>
+            <xsd:enumeration value="AllowNetwork"/>
+            <xsd:enumeration value="AllowAll"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: PortMode -
+          Disconnected: 0 -
+          HostPipe: 1 -
+          HostDevice: 2 -
+          RawFile: 3 -
+          TCP: 4 -
+          -->
+    <xsd:simpleType name="PortMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Disconnected"/>
+            <xsd:enumeration value="HostPipe"/>
+            <xsd:enumeration value="HostDevice"/>
+            <xsd:enumeration value="RawFile"/>
+            <xsd:enumeration value="TCP"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: UartType -
+          U16450: 0 -
+          U16550A: 1 -
+          U16750: 2 -
+          -->
+    <xsd:simpleType name="UartType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="U16450"/>
+            <xsd:enumeration value="U16550A"/>
+            <xsd:enumeration value="U16750"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: VMExecutionEngine -
+          NotSet: 0 -
+          RawMode: 1 -
+          HwVirt: 2 -
+          NativeApi: 3 -
+          -->
+    <xsd:simpleType name="VMExecutionEngine">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NotSet"/>
+            <xsd:enumeration value="RawMode"/>
+            <xsd:enumeration value="HwVirt"/>
+            <xsd:enumeration value="NativeApi"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: USBControllerType -
+          Null: 0 -
+          OHCI: 1 -
+          EHCI: 2 -
+          XHCI: 3 -
+          Last: 4 -
+          -->
+    <xsd:simpleType name="USBControllerType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="OHCI"/>
+            <xsd:enumeration value="EHCI"/>
+            <xsd:enumeration value="XHCI"/>
+            <xsd:enumeration value="Last"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: USBConnectionSpeed -
+          Null: 0 -
+          Low: 1 -
+          Full: 2 -
+          High: 3 -
+          Super: 4 -
+          SuperPlus: 5 -
+          -->
+    <xsd:simpleType name="USBConnectionSpeed">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Low"/>
+            <xsd:enumeration value="Full"/>
+            <xsd:enumeration value="High"/>
+            <xsd:enumeration value="Super"/>
+            <xsd:enumeration value="SuperPlus"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: USBDeviceState -
+          NotSupported: 0 -
+          Unavailable: 1 -
+          Busy: 2 -
+          Available: 3 -
+          Held: 4 -
+          Captured: 5 -
+          -->
+    <xsd:simpleType name="USBDeviceState">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NotSupported"/>
+            <xsd:enumeration value="Unavailable"/>
+            <xsd:enumeration value="Busy"/>
+            <xsd:enumeration value="Available"/>
+            <xsd:enumeration value="Held"/>
+            <xsd:enumeration value="Captured"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: USBDeviceFilterAction -
+          Null: 0 -
+          Ignore: 1 -
+          Hold: 2 -
+          -->
+    <xsd:simpleType name="USBDeviceFilterAction">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Ignore"/>
+            <xsd:enumeration value="Hold"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AudioDriverType -
+          Null: 0 -
+          WinMM: 1 -
+          OSS: 2 -
+          ALSA: 3 -
+          DirectSound: 4 -
+          CoreAudio: 5 -
+          MMPM: 6 -
+          Pulse: 7 -
+          SolAudio: 8 -
+          -->
+    <xsd:simpleType name="AudioDriverType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="WinMM"/>
+            <xsd:enumeration value="OSS"/>
+            <xsd:enumeration value="ALSA"/>
+            <xsd:enumeration value="DirectSound"/>
+            <xsd:enumeration value="CoreAudio"/>
+            <xsd:enumeration value="MMPM"/>
+            <xsd:enumeration value="Pulse"/>
+            <xsd:enumeration value="SolAudio"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AudioControllerType -
+          AC97: 0 -
+          SB16: 1 -
+          HDA: 2 -
+          -->
+    <xsd:simpleType name="AudioControllerType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AC97"/>
+            <xsd:enumeration value="SB16"/>
+            <xsd:enumeration value="HDA"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AudioCodecType -
+          Null: 0 -
+          SB16: 1 -
+          STAC9700: 2 -
+          AD1980: 3 -
+          STAC9221: 4 -
+          -->
+    <xsd:simpleType name="AudioCodecType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="SB16"/>
+            <xsd:enumeration value="STAC9700"/>
+            <xsd:enumeration value="AD1980"/>
+            <xsd:enumeration value="STAC9221"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: AuthType -
+          Null: 0 -
+          External: 1 -
+          Guest: 2 -
+          -->
+    <xsd:simpleType name="AuthType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="External"/>
+            <xsd:enumeration value="Guest"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: Reason -
+          Unspecified: 0 -
+          HostSuspend: 1 -
+          HostResume: 2 -
+          HostBatteryLow: 3 -
+          Snapshot: 4 -
+          -->
+    <xsd:simpleType name="Reason">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Unspecified"/>
+            <xsd:enumeration value="HostSuspend"/>
+            <xsd:enumeration value="HostResume"/>
+            <xsd:enumeration value="HostBatteryLow"/>
+            <xsd:enumeration value="Snapshot"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: StorageBus -
+          Null: 0 -
+          IDE: 1 -
+          SATA: 2 -
+          SCSI: 3 -
+          Floppy: 4 -
+          SAS: 5 -
+          USB: 6 -
+          PCIe: 7 -
+          -->
+    <xsd:simpleType name="StorageBus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="IDE"/>
+            <xsd:enumeration value="SATA"/>
+            <xsd:enumeration value="SCSI"/>
+            <xsd:enumeration value="Floppy"/>
+            <xsd:enumeration value="SAS"/>
+            <xsd:enumeration value="USB"/>
+            <xsd:enumeration value="PCIe"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: StorageControllerType -
+          Null: 0 -
+          LsiLogic: 1 -
+          BusLogic: 2 -
+          IntelAhci: 3 -
+          PIIX3: 4 -
+          PIIX4: 5 -
+          ICH6: 6 -
+          I82078: 7 -
+          LsiLogicSas: 8 -
+          USB: 9 -
+          NVMe: 10 -
+          -->
+    <xsd:simpleType name="StorageControllerType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="LsiLogic"/>
+            <xsd:enumeration value="BusLogic"/>
+            <xsd:enumeration value="IntelAhci"/>
+            <xsd:enumeration value="PIIX3"/>
+            <xsd:enumeration value="PIIX4"/>
+            <xsd:enumeration value="ICH6"/>
+            <xsd:enumeration value="I82078"/>
+            <xsd:enumeration value="LsiLogicSas"/>
+            <xsd:enumeration value="USB"/>
+            <xsd:enumeration value="NVMe"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: ChipsetType -
+          Null: 0 -
+          PIIX3: 1 -
+          ICH9: 2 -
+          -->
+    <xsd:simpleType name="ChipsetType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="PIIX3"/>
+            <xsd:enumeration value="ICH9"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: NATAliasMode -
+          AliasLog: 0x1 -
+          AliasProxyOnly: 0x02 -
+          AliasUseSamePorts: 0x04 -
+          -->
+    <xsd:simpleType name="NATAliasMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AliasLog"/>
+            <xsd:enumeration value="AliasProxyOnly"/>
+            <xsd:enumeration value="AliasUseSamePorts"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: NATProtocol -
+          UDP: 0 -
+          TCP: 1 -
+          -->
+    <xsd:simpleType name="NATProtocol">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="UDP"/>
+            <xsd:enumeration value="TCP"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: BandwidthGroupType -
+          Null: 0 -
+          Disk: 1 -
+          Network: 2 -
+          -->
+    <xsd:simpleType name="BandwidthGroupType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null"/>
+            <xsd:enumeration value="Disk"/>
+            <xsd:enumeration value="Network"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: VBoxEventType -
+          Invalid: 0 -
+          Any: 1 -
+          Vetoable: 2 -
+          MachineEvent: 3 -
+          SnapshotEvent: 4 -
+          InputEvent: 5 -
+          LastWildcard: 31 -
+          OnMachineStateChanged: 32 -
+          OnMachineDataChanged: 33 -
+          OnExtraDataChanged: 34 -
+          OnExtraDataCanChange: 35 -
+          OnMediumRegistered: 36 -
+          OnMachineRegistered: 37 -
+          OnSessionStateChanged: 38 -
+          OnSnapshotTaken: 39 -
+          OnSnapshotDeleted: 40 -
+          OnSnapshotChanged: 41 -
+          OnGuestPropertyChanged: 42 -
+          OnMousePointerShapeChanged: 43 -
+          OnMouseCapabilityChanged: 44 -
+          OnKeyboardLedsChanged: 45 -
+          OnStateChanged: 46 -
+          OnAdditionsStateChanged: 47 -
+          OnNetworkAdapterChanged: 48 -
+          OnSerialPortChanged: 49 -
+          OnParallelPortChanged: 50 -
+          OnStorageControllerChanged: 51 -
+          OnMediumChanged: 52 -
+          OnVRDEServerChanged: 53 -
+          OnUSBControllerChanged: 54 -
+          OnUSBDeviceStateChanged: 55 -
+          OnSharedFolderChanged: 56 -
+          OnRuntimeError: 57 -
+          OnCanShowWindow: 58 -
+          OnShowWindow: 59 -
+          OnCPUChanged: 60 -
+          OnVRDEServerInfoChanged: 61 -
+          OnEventSourceChanged: 62 -
+          OnCPUExecutionCapChanged: 63 -
+          OnGuestKeyboard: 64 -
+          OnGuestMouse: 65 -
+          OnNATRedirect: 66 -
+          OnHostPCIDevicePlug: 67 -
+          OnVBoxSVCAvailabilityChanged: 68 -
+          OnBandwidthGroupChanged: 69 -
+          OnGuestMonitorChanged: 70 -
+          OnStorageDeviceChanged: 71 -
+          OnClipboardModeChanged: 72 -
+          OnDnDModeChanged: 73 -
+          OnNATNetworkChanged: 74 -
+          OnNATNetworkStartStop: 75 -
+          OnNATNetworkAlter: 76 -
+          OnNATNetworkCreationDeletion: 77 -
+          OnNATNetworkSetting: 78 -
+          OnNATNetworkPortForward: 79 -
+          OnGuestSessionStateChanged: 80 -
+          OnGuestSessionRegistered: 81 -
+          OnGuestProcessRegistered: 82 -
+          OnGuestProcessStateChanged: 83 -
+          OnGuestProcessInputNotify: 84 -
+          OnGuestProcessOutput: 85 -
+          OnGuestFileRegistered: 86 -
+          OnGuestFileStateChanged: 87 -
+          OnGuestFileOffsetChanged: 88 -
+          OnGuestFileRead: 89 -
+          OnGuestFileWrite: 90 -
+          OnRecordingChanged: 91 -
+          OnGuestUserStateChanged: 92 -
+          OnGuestMultiTouch: 93 -
+          OnHostNameResolutionConfigurationChange: 94 -
+          OnSnapshotRestored: 95 -
+          OnMediumConfigChanged: 96 -
+          OnAudioAdapterChanged: 97 -
+          OnProgressPercentageChanged: 98 -
+          OnProgressTaskCompleted: 99 -
+          OnCursorPositionChanged: 100 -
+          Last: 101 -
+          -->
+    <xsd:simpleType name="VBoxEventType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Invalid"/>
+            <xsd:enumeration value="Any"/>
+            <xsd:enumeration value="Vetoable"/>
+            <xsd:enumeration value="MachineEvent"/>
+            <xsd:enumeration value="SnapshotEvent"/>
+            <xsd:enumeration value="InputEvent"/>
+            <xsd:enumeration value="LastWildcard"/>
+            <xsd:enumeration value="OnMachineStateChanged"/>
+            <xsd:enumeration value="OnMachineDataChanged"/>
+            <xsd:enumeration value="OnExtraDataChanged"/>
+            <xsd:enumeration value="OnExtraDataCanChange"/>
+            <xsd:enumeration value="OnMediumRegistered"/>
+            <xsd:enumeration value="OnMachineRegistered"/>
+            <xsd:enumeration value="OnSessionStateChanged"/>
+            <xsd:enumeration value="OnSnapshotTaken"/>
+            <xsd:enumeration value="OnSnapshotDeleted"/>
+            <xsd:enumeration value="OnSnapshotChanged"/>
+            <xsd:enumeration value="OnGuestPropertyChanged"/>
+            <xsd:enumeration value="OnMousePointerShapeChanged"/>
+            <xsd:enumeration value="OnMouseCapabilityChanged"/>
+            <xsd:enumeration value="OnKeyboardLedsChanged"/>
+            <xsd:enumeration value="OnStateChanged"/>
+            <xsd:enumeration value="OnAdditionsStateChanged"/>
+            <xsd:enumeration value="OnNetworkAdapterChanged"/>
+            <xsd:enumeration value="OnSerialPortChanged"/>
+            <xsd:enumeration value="OnParallelPortChanged"/>
+            <xsd:enumeration value="OnStorageControllerChanged"/>
+            <xsd:enumeration value="OnMediumChanged"/>
+            <xsd:enumeration value="OnVRDEServerChanged"/>
+            <xsd:enumeration value="OnUSBControllerChanged"/>
+            <xsd:enumeration value="OnUSBDeviceStateChanged"/>
+            <xsd:enumeration value="OnSharedFolderChanged"/>
+            <xsd:enumeration value="OnRuntimeError"/>
+            <xsd:enumeration value="OnCanShowWindow"/>
+            <xsd:enumeration value="OnShowWindow"/>
+            <xsd:enumeration value="OnCPUChanged"/>
+            <xsd:enumeration value="OnVRDEServerInfoChanged"/>
+            <xsd:enumeration value="OnEventSourceChanged"/>
+            <xsd:enumeration value="OnCPUExecutionCapChanged"/>
+            <xsd:enumeration value="OnGuestKeyboard"/>
+            <xsd:enumeration value="OnGuestMouse"/>
+            <xsd:enumeration value="OnNATRedirect"/>
+            <xsd:enumeration value="OnHostPCIDevicePlug"/>
+            <xsd:enumeration value="OnVBoxSVCAvailabilityChanged"/>
+            <xsd:enumeration value="OnBandwidthGroupChanged"/>
+            <xsd:enumeration value="OnGuestMonitorChanged"/>
+            <xsd:enumeration value="OnStorageDeviceChanged"/>
+            <xsd:enumeration value="OnClipboardModeChanged"/>
+            <xsd:enumeration value="OnDnDModeChanged"/>
+            <xsd:enumeration value="OnNATNetworkChanged"/>
+            <xsd:enumeration value="OnNATNetworkStartStop"/>
+            <xsd:enumeration value="OnNATNetworkAlter"/>
+            <xsd:enumeration value="OnNATNetworkCreationDeletion"/>
+            <xsd:enumeration value="OnNATNetworkSetting"/>
+            <xsd:enumeration value="OnNATNetworkPortForward"/>
+            <xsd:enumeration value="OnGuestSessionStateChanged"/>
+            <xsd:enumeration value="OnGuestSessionRegistered"/>
+            <xsd:enumeration value="OnGuestProcessRegistered"/>
+            <xsd:enumeration value="OnGuestProcessStateChanged"/>
+            <xsd:enumeration value="OnGuestProcessInputNotify"/>
+            <xsd:enumeration value="OnGuestProcessOutput"/>
+            <xsd:enumeration value="OnGuestFileRegistered"/>
+            <xsd:enumeration value="OnGuestFileStateChanged"/>
+            <xsd:enumeration value="OnGuestFileOffsetChanged"/>
+            <xsd:enumeration value="OnGuestFileRead"/>
+            <xsd:enumeration value="OnGuestFileWrite"/>
+            <xsd:enumeration value="OnRecordingChanged"/>
+            <xsd:enumeration value="OnGuestUserStateChanged"/>
+            <xsd:enumeration value="OnGuestMultiTouch"/>
+            <xsd:enumeration value="OnHostNameResolutionConfigurationChange"/>
+            <xsd:enumeration value="OnSnapshotRestored"/>
+            <xsd:enumeration value="OnMediumConfigChanged"/>
+            <xsd:enumeration value="OnAudioAdapterChanged"/>
+            <xsd:enumeration value="OnProgressPercentageChanged"/>
+            <xsd:enumeration value="OnProgressTaskCompleted"/>
+            <xsd:enumeration value="OnCursorPositionChanged"/>
+            <xsd:enumeration value="Last"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestMouseEventMode -
+          Relative: 0 -
+          Absolute: 1 -
+          -->
+    <xsd:simpleType name="GuestMouseEventMode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Relative"/>
+            <xsd:enumeration value="Absolute"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- enum: GuestMonitorChangedEventType -
+          Enabled: 0 -
+          Disabled: 1 -
+          NewOrigin: 2 -
+          -->
+    <xsd:simpleType name="GuestMonitorChangedEventType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Enabled"/>
+            <xsd:enumeration value="Disabled"/>
+            <xsd:enumeration value="NewOrigin"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!--
+    ******************************************************
+    * structs
+    ******************************************************
 -->
-        <!-- enum: SettingsVersion -
-            Null: 0 -
-            v1_0: 1 -
-            v1_1: 2 -
-            v1_2: 3 -
-            v1_3pre: 4 -
-            v1_3: 5 -
-            v1_4: 6 -
-            v1_5: 7 -
-            v1_6: 8 -
-            v1_7: 9 -
-            v1_8: 10 -
-            v1_9: 11 -
-            v1_10: 12 -
-            v1_11: 13 -
-            v1_12: 14 -
-            v1_13: 15 -
-            v1_14: 16 -
-            Future: 99999 -
-            -->
-        <xsd:simpleType name="SettingsVersion">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="v1_0"/>
-                <xsd:enumeration value="v1_1"/>
-                <xsd:enumeration value="v1_2"/>
-                <xsd:enumeration value="v1_3pre"/>
-                <xsd:enumeration value="v1_3"/>
-                <xsd:enumeration value="v1_4"/>
-                <xsd:enumeration value="v1_5"/>
-                <xsd:enumeration value="v1_6"/>
-                <xsd:enumeration value="v1_7"/>
-                <xsd:enumeration value="v1_8"/>
-                <xsd:enumeration value="v1_9"/>
-                <xsd:enumeration value="v1_10"/>
-                <xsd:enumeration value="v1_11"/>
-                <xsd:enumeration value="v1_12"/>
-                <xsd:enumeration value="v1_13"/>
-                <xsd:enumeration value="v1_14"/>
-                <xsd:enumeration value="Future"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AccessMode -
-            ReadOnly: 1 -
-            ReadWrite: 2 -
-            -->
-        <xsd:simpleType name="AccessMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="ReadOnly"/>
-                <xsd:enumeration value="ReadWrite"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: MachineState -
-            Null: 0 -
-            PoweredOff: 1 -
-            Saved: 2 -
-            Teleported: 3 -
-            Aborted: 4 -
-            Running: 5 -
-            Paused: 6 -
-            Stuck: 7 -
-            Teleporting: 8 -
-            LiveSnapshotting: 9 -
-            Starting: 10 -
-            Stopping: 11 -
-            Saving: 12 -
-            Restoring: 13 -
-            TeleportingPausedVM: 14 -
-            TeleportingIn: 15 -
-            FaultTolerantSyncing: 16 -
-            DeletingSnapshotOnline: 17 -
-            DeletingSnapshotPaused: 18 -
-            RestoringSnapshot: 19 -
-            DeletingSnapshot: 20 -
-            SettingUp: 21 -
-            FirstOnline: 5 -
-            LastOnline: 18 -
-            FirstTransient: 8 -
-            LastTransient: 21 -
-            -->
-        <xsd:simpleType name="MachineState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="PoweredOff"/>
-                <xsd:enumeration value="Saved"/>
-                <xsd:enumeration value="Teleported"/>
-                <xsd:enumeration value="Aborted"/>
-                <xsd:enumeration value="Running"/>
-                <xsd:enumeration value="Paused"/>
-                <xsd:enumeration value="Stuck"/>
-                <xsd:enumeration value="Teleporting"/>
-                <xsd:enumeration value="LiveSnapshotting"/>
-                <xsd:enumeration value="Starting"/>
-                <xsd:enumeration value="Stopping"/>
-                <xsd:enumeration value="Saving"/>
-                <xsd:enumeration value="Restoring"/>
-                <xsd:enumeration value="TeleportingPausedVM"/>
-                <xsd:enumeration value="TeleportingIn"/>
-                <xsd:enumeration value="FaultTolerantSyncing"/>
-                <xsd:enumeration value="DeletingSnapshotOnline"/>
-                <xsd:enumeration value="DeletingSnapshotPaused"/>
-                <xsd:enumeration value="RestoringSnapshot"/>
-                <xsd:enumeration value="DeletingSnapshot"/>
-                <xsd:enumeration value="SettingUp"/>
-                <xsd:enumeration value="FirstOnline"/>
-                <xsd:enumeration value="LastOnline"/>
-                <xsd:enumeration value="FirstTransient"/>
-                <xsd:enumeration value="LastTransient"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: SessionState -
-            Null: 0 -
-            Unlocked: 1 -
-            Locked: 2 -
-            Spawning: 3 -
-            Unlocking: 4 -
-            -->
-        <xsd:simpleType name="SessionState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Unlocked"/>
-                <xsd:enumeration value="Locked"/>
-                <xsd:enumeration value="Spawning"/>
-                <xsd:enumeration value="Unlocking"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: CPUPropertyType -
-            Null: 0 -
-            PAE: 1 -
-            Synthetic: 2 -
-            LongMode: 3 -
-            TripleFaultReset: 4 -
-            -->
-        <xsd:simpleType name="CPUPropertyType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="PAE"/>
-                <xsd:enumeration value="Synthetic"/>
-                <xsd:enumeration value="LongMode"/>
-                <xsd:enumeration value="TripleFaultReset"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: HWVirtExPropertyType -
-            Null: 0 -
-            Enabled: 1 -
-            VPID: 2 -
-            NestedPaging: 3 -
-            UnrestrictedExecution: 4 -
-            LargePages: 5 -
-            Force: 6 -
-            -->
-        <xsd:simpleType name="HWVirtExPropertyType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Enabled"/>
-                <xsd:enumeration value="VPID"/>
-                <xsd:enumeration value="NestedPaging"/>
-                <xsd:enumeration value="UnrestrictedExecution"/>
-                <xsd:enumeration value="LargePages"/>
-                <xsd:enumeration value="Force"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: FaultToleranceState -
-            Inactive: 1 -
-            Master: 2 -
-            Standby: 3 -
-            -->
-        <xsd:simpleType name="FaultToleranceState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Inactive"/>
-                <xsd:enumeration value="Master"/>
-                <xsd:enumeration value="Standby"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: LockType -
-            Write: 2 -
-            Shared: 1 -
-            VM: 3 -
-            -->
-        <xsd:simpleType name="LockType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Write"/>
-                <xsd:enumeration value="Shared"/>
-                <xsd:enumeration value="VM"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: SessionType -
-            Null: 0 -
-            WriteLock: 1 -
-            Remote: 2 -
-            Shared: 3 -
-            -->
-        <xsd:simpleType name="SessionType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="WriteLock"/>
-                <xsd:enumeration value="Remote"/>
-                <xsd:enumeration value="Shared"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DeviceType -
-            Null: 0 -
-            Floppy: 1 -
-            DVD: 2 -
-            HardDisk: 3 -
-            Network: 4 -
-            USB: 5 -
-            SharedFolder: 6 -
-            -->
-        <xsd:simpleType name="DeviceType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Floppy"/>
-                <xsd:enumeration value="DVD"/>
-                <xsd:enumeration value="HardDisk"/>
-                <xsd:enumeration value="Network"/>
-                <xsd:enumeration value="USB"/>
-                <xsd:enumeration value="SharedFolder"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DeviceActivity -
-            Null: 0 -
-            Idle: 1 -
-            Reading: 2 -
-            Writing: 3 -
-            -->
-        <xsd:simpleType name="DeviceActivity">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Idle"/>
-                <xsd:enumeration value="Reading"/>
-                <xsd:enumeration value="Writing"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ClipboardMode -
-            Disabled: 0 -
-            HostToGuest: 1 -
-            GuestToHost: 2 -
-            Bidirectional: 3 -
-            -->
-        <xsd:simpleType name="ClipboardMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Disabled"/>
-                <xsd:enumeration value="HostToGuest"/>
-                <xsd:enumeration value="GuestToHost"/>
-                <xsd:enumeration value="Bidirectional"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DragAndDropMode -
-            Disabled: 0 -
-            HostToGuest: 1 -
-            GuestToHost: 2 -
-            Bidirectional: 3 -
-            -->
-        <xsd:simpleType name="DragAndDropMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Disabled"/>
-                <xsd:enumeration value="HostToGuest"/>
-                <xsd:enumeration value="GuestToHost"/>
-                <xsd:enumeration value="Bidirectional"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: Scope -
-            Global: 0 -
-            Machine: 1 -
-            Session: 2 -
-            -->
-        <xsd:simpleType name="Scope">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Global"/>
-                <xsd:enumeration value="Machine"/>
-                <xsd:enumeration value="Session"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: BIOSBootMenuMode -
-            Disabled: 0 -
-            MenuOnly: 1 -
-            MessageAndMenu: 2 -
-            -->
-        <xsd:simpleType name="BIOSBootMenuMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Disabled"/>
-                <xsd:enumeration value="MenuOnly"/>
-                <xsd:enumeration value="MessageAndMenu"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessorFeature -
-            HWVirtEx: 0 -
-            PAE: 1 -
-            LongMode: 2 -
-            NestedPaging: 3 -
-            -->
-        <xsd:simpleType name="ProcessorFeature">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="HWVirtEx"/>
-                <xsd:enumeration value="PAE"/>
-                <xsd:enumeration value="LongMode"/>
-                <xsd:enumeration value="NestedPaging"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: FirmwareType -
-            BIOS: 1 -
-            EFI: 2 -
-            EFI32: 3 -
-            EFI64: 4 -
-            EFIDUAL: 5 -
-            -->
-        <xsd:simpleType name="FirmwareType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="BIOS"/>
-                <xsd:enumeration value="EFI"/>
-                <xsd:enumeration value="EFI32"/>
-                <xsd:enumeration value="EFI64"/>
-                <xsd:enumeration value="EFIDUAL"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: PointingHIDType -
-            None: 1 -
-            PS2Mouse: 2 -
-            USBMouse: 3 -
-            USBTablet: 4 -
-            ComboMouse: 5 -
-            USBMultiTouch: 6 -
-            -->
-        <xsd:simpleType name="PointingHIDType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="PS2Mouse"/>
-                <xsd:enumeration value="USBMouse"/>
-                <xsd:enumeration value="USBTablet"/>
-                <xsd:enumeration value="ComboMouse"/>
-                <xsd:enumeration value="USBMultiTouch"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: KeyboardHIDType -
-            None: 1 -
-            PS2Keyboard: 2 -
-            USBKeyboard: 3 -
-            ComboKeyboard: 4 -
-            -->
-        <xsd:simpleType name="KeyboardHIDType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="PS2Keyboard"/>
-                <xsd:enumeration value="USBKeyboard"/>
-                <xsd:enumeration value="ComboKeyboard"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DhcpOpt -
-            SubnetMask: 1 -
-            TimeOffset: 2 -
-            Router: 3 -
-            TimeServer: 4 -
-            NameServer: 5 -
-            DomainNameServer: 6 -
-            LogServer: 7 -
-            Cookie: 8 -
-            LPRServer: 9 -
-            ImpressServer: 10 -
-            ResourseLocationServer: 11 -
-            HostName: 12 -
-            BootFileSize: 13 -
-            MeritDumpFile: 14 -
-            DomainName: 15 -
-            SwapServer: 16 -
-            RootPath: 17 -
-            ExtensionPath: 18 -
-            IPForwardingEnableDisable: 19 -
-            NonLocalSourceRoutingEnableDisable: 20 -
-            PolicyFilter: 21 -
-            MaximumDatagramReassemblySize: 22 -
-            DefaultIPTime2Live: 23 -
-            PathMTUAgingTimeout: 24 -
-            IPLayerParametersPerInterface: 25 -
-            InterfaceMTU: 26 -
-            AllSubnetsAreLocal: 27 -
-            BroadcastAddress: 28 -
-            PerformMaskDiscovery: 29 -
-            MaskSupplier: 30 -
-            PerformRouteDiscovery: 31 -
-            RouterSolicitationAddress: 32 -
-            StaticRoute: 33 -
-            TrailerEncapsulation: 34 -
-            ARPCacheTimeout: 35 -
-            EthernetEncapsulation: 36 -
-            TCPDefaultTTL: 37 -
-            TCPKeepAliveInterval: 38 -
-            TCPKeepAliveGarbage: 39 -
-            NetworkInformationServiceDomain: 40 -
-            NetworkInformationServiceServers: 41 -
-            NetworkTimeProtocolServers: 42 -
-            VendorSpecificInformation: 43 -
-            Option_44: 44 -
-            Option_45: 45 -
-            Option_46: 46 -
-            Option_47: 47 -
-            Option_48: 48 -
-            Option_49: 49 -
-            IPAddressLeaseTime: 51 -
-            Option_64: 64 -
-            Option_65: 65 -
-            TFTPServerName: 66 -
-            BootfileName: 67 -
-            Option_68: 68 -
-            Option_69: 69 -
-            Option_70: 70 -
-            Option_71: 71 -
-            Option_72: 72 -
-            Option_73: 73 -
-            Option_74: 74 -
-            Option_75: 75 -
-            Option_119: 119 -
-            -->
-        <xsd:simpleType name="DhcpOpt">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="SubnetMask"/>
-                <xsd:enumeration value="TimeOffset"/>
-                <xsd:enumeration value="Router"/>
-                <xsd:enumeration value="TimeServer"/>
-                <xsd:enumeration value="NameServer"/>
-                <xsd:enumeration value="DomainNameServer"/>
-                <xsd:enumeration value="LogServer"/>
-                <xsd:enumeration value="Cookie"/>
-                <xsd:enumeration value="LPRServer"/>
-                <xsd:enumeration value="ImpressServer"/>
-                <xsd:enumeration value="ResourseLocationServer"/>
-                <xsd:enumeration value="HostName"/>
-                <xsd:enumeration value="BootFileSize"/>
-                <xsd:enumeration value="MeritDumpFile"/>
-                <xsd:enumeration value="DomainName"/>
-                <xsd:enumeration value="SwapServer"/>
-                <xsd:enumeration value="RootPath"/>
-                <xsd:enumeration value="ExtensionPath"/>
-                <xsd:enumeration value="IPForwardingEnableDisable"/>
-                <xsd:enumeration value="NonLocalSourceRoutingEnableDisable"/>
-                <xsd:enumeration value="PolicyFilter"/>
-                <xsd:enumeration value="MaximumDatagramReassemblySize"/>
-                <xsd:enumeration value="DefaultIPTime2Live"/>
-                <xsd:enumeration value="PathMTUAgingTimeout"/>
-                <xsd:enumeration value="IPLayerParametersPerInterface"/>
-                <xsd:enumeration value="InterfaceMTU"/>
-                <xsd:enumeration value="AllSubnetsAreLocal"/>
-                <xsd:enumeration value="BroadcastAddress"/>
-                <xsd:enumeration value="PerformMaskDiscovery"/>
-                <xsd:enumeration value="MaskSupplier"/>
-                <xsd:enumeration value="PerformRouteDiscovery"/>
-                <xsd:enumeration value="RouterSolicitationAddress"/>
-                <xsd:enumeration value="StaticRoute"/>
-                <xsd:enumeration value="TrailerEncapsulation"/>
-                <xsd:enumeration value="ARPCacheTimeout"/>
-                <xsd:enumeration value="EthernetEncapsulation"/>
-                <xsd:enumeration value="TCPDefaultTTL"/>
-                <xsd:enumeration value="TCPKeepAliveInterval"/>
-                <xsd:enumeration value="TCPKeepAliveGarbage"/>
-                <xsd:enumeration value="NetworkInformationServiceDomain"/>
-                <xsd:enumeration value="NetworkInformationServiceServers"/>
-                <xsd:enumeration value="NetworkTimeProtocolServers"/>
-                <xsd:enumeration value="VendorSpecificInformation"/>
-                <xsd:enumeration value="Option_44"/>
-                <xsd:enumeration value="Option_45"/>
-                <xsd:enumeration value="Option_46"/>
-                <xsd:enumeration value="Option_47"/>
-                <xsd:enumeration value="Option_48"/>
-                <xsd:enumeration value="Option_49"/>
-                <xsd:enumeration value="IPAddressLeaseTime"/>
-                <xsd:enumeration value="Option_64"/>
-                <xsd:enumeration value="Option_65"/>
-                <xsd:enumeration value="TFTPServerName"/>
-                <xsd:enumeration value="BootfileName"/>
-                <xsd:enumeration value="Option_68"/>
-                <xsd:enumeration value="Option_69"/>
-                <xsd:enumeration value="Option_70"/>
-                <xsd:enumeration value="Option_71"/>
-                <xsd:enumeration value="Option_72"/>
-                <xsd:enumeration value="Option_73"/>
-                <xsd:enumeration value="Option_74"/>
-                <xsd:enumeration value="Option_75"/>
-                <xsd:enumeration value="Option_119"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: VFSType -
-            File: 1 -
-            Cloud: 2 -
-            S3: 3 -
-            WebDav: 4 -
-            -->
-        <xsd:simpleType name="VFSType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="File"/>
-                <xsd:enumeration value="Cloud"/>
-                <xsd:enumeration value="S3"/>
-                <xsd:enumeration value="WebDav"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: VFSFileType -
-            Unknown: 1 -
-            Fifo: 2 -
-            DevChar: 3 -
-            Directory: 4 -
-            DevBlock: 5 -
-            File: 6 -
-            SymLink: 7 -
-            Socket: 8 -
-            WhiteOut: 9 -
-            -->
-        <xsd:simpleType name="VFSFileType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Unknown"/>
-                <xsd:enumeration value="Fifo"/>
-                <xsd:enumeration value="DevChar"/>
-                <xsd:enumeration value="Directory"/>
-                <xsd:enumeration value="DevBlock"/>
-                <xsd:enumeration value="File"/>
-                <xsd:enumeration value="SymLink"/>
-                <xsd:enumeration value="Socket"/>
-                <xsd:enumeration value="WhiteOut"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ImportOptions -
-            KeepAllMACs: 1 -
-            KeepNATMACs: 2 -
-            -->
-        <xsd:simpleType name="ImportOptions">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="KeepAllMACs"/>
-                <xsd:enumeration value="KeepNATMACs"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ExportOptions -
-            CreateManifest: 1 -
-            ExportDVDImages: 2 -
-            -->
-        <xsd:simpleType name="ExportOptions">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="CreateManifest"/>
-                <xsd:enumeration value="ExportDVDImages"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: VirtualSystemDescriptionType -
-            Ignore: 1 -
-            OS: 2 -
-            Name: 3 -
-            Product: 4 -
-            Vendor: 5 -
-            Version: 6 -
-            ProductUrl: 7 -
-            VendorUrl: 8 -
-            Description: 9 -
-            License: 10 -
-            Miscellaneous: 11 -
-            CPU: 12 -
-            Memory: 13 -
-            HardDiskControllerIDE: 14 -
-            HardDiskControllerSATA: 15 -
-            HardDiskControllerSCSI: 16 -
-            HardDiskControllerSAS: 17 -
-            HardDiskImage: 18 -
-            Floppy: 19 -
-            CDROM: 20 -
-            NetworkAdapter: 21 -
-            USBController: 22 -
-            SoundCard: 23 -
-            SettingsFile: 24 -
-            -->
-        <xsd:simpleType name="VirtualSystemDescriptionType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Ignore"/>
-                <xsd:enumeration value="OS"/>
-                <xsd:enumeration value="Name"/>
-                <xsd:enumeration value="Product"/>
-                <xsd:enumeration value="Vendor"/>
-                <xsd:enumeration value="Version"/>
-                <xsd:enumeration value="ProductUrl"/>
-                <xsd:enumeration value="VendorUrl"/>
-                <xsd:enumeration value="Description"/>
-                <xsd:enumeration value="License"/>
-                <xsd:enumeration value="Miscellaneous"/>
-                <xsd:enumeration value="CPU"/>
-                <xsd:enumeration value="Memory"/>
-                <xsd:enumeration value="HardDiskControllerIDE"/>
-                <xsd:enumeration value="HardDiskControllerSATA"/>
-                <xsd:enumeration value="HardDiskControllerSCSI"/>
-                <xsd:enumeration value="HardDiskControllerSAS"/>
-                <xsd:enumeration value="HardDiskImage"/>
-                <xsd:enumeration value="Floppy"/>
-                <xsd:enumeration value="CDROM"/>
-                <xsd:enumeration value="NetworkAdapter"/>
-                <xsd:enumeration value="USBController"/>
-                <xsd:enumeration value="SoundCard"/>
-                <xsd:enumeration value="SettingsFile"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: VirtualSystemDescriptionValueType -
-            Reference: 1 -
-            Original: 2 -
-            Auto: 3 -
-            ExtraConfig: 4 -
-            -->
-        <xsd:simpleType name="VirtualSystemDescriptionValueType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Reference"/>
-                <xsd:enumeration value="Original"/>
-                <xsd:enumeration value="Auto"/>
-                <xsd:enumeration value="ExtraConfig"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GraphicsControllerType -
-            Null: 0 -
-            VBoxVGA: 1 -
-            -->
-        <xsd:simpleType name="GraphicsControllerType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="VBoxVGA"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: CleanupMode -
-            UnregisterOnly: 1 -
-            DetachAllReturnNone: 2 -
-            DetachAllReturnHardDisksOnly: 3 -
-            Full: 4 -
-            -->
-        <xsd:simpleType name="CleanupMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="UnregisterOnly"/>
-                <xsd:enumeration value="DetachAllReturnNone"/>
-                <xsd:enumeration value="DetachAllReturnHardDisksOnly"/>
-                <xsd:enumeration value="Full"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: CloneMode -
-            MachineState: 1 -
-            MachineAndChildStates: 2 -
-            AllStates: 3 -
-            -->
-        <xsd:simpleType name="CloneMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="MachineState"/>
-                <xsd:enumeration value="MachineAndChildStates"/>
-                <xsd:enumeration value="AllStates"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: CloneOptions -
-            Link: 1 -
-            KeepAllMACs: 2 -
-            KeepNATMACs: 3 -
-            KeepDiskNames: 4 -
-            -->
-        <xsd:simpleType name="CloneOptions">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Link"/>
-                <xsd:enumeration value="KeepAllMACs"/>
-                <xsd:enumeration value="KeepNATMACs"/>
-                <xsd:enumeration value="KeepDiskNames"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AutostopType -
-            Disabled: 1 -
-            SaveState: 2 -
-            PowerOff: 3 -
-            AcpiShutdown: 4 -
-            -->
-        <xsd:simpleType name="AutostopType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Disabled"/>
-                <xsd:enumeration value="SaveState"/>
-                <xsd:enumeration value="PowerOff"/>
-                <xsd:enumeration value="AcpiShutdown"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: HostNetworkInterfaceMediumType -
-            Unknown: 0 -
-            Ethernet: 1 -
-            PPP: 2 -
-            SLIP: 3 -
-            -->
-        <xsd:simpleType name="HostNetworkInterfaceMediumType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Unknown"/>
-                <xsd:enumeration value="Ethernet"/>
-                <xsd:enumeration value="PPP"/>
-                <xsd:enumeration value="SLIP"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: HostNetworkInterfaceStatus -
-            Unknown: 0 -
-            Up: 1 -
-            Down: 2 -
-            -->
-        <xsd:simpleType name="HostNetworkInterfaceStatus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Unknown"/>
-                <xsd:enumeration value="Up"/>
-                <xsd:enumeration value="Down"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: HostNetworkInterfaceType -
-            Bridged: 1 -
-            HostOnly: 2 -
-            -->
-        <xsd:simpleType name="HostNetworkInterfaceType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Bridged"/>
-                <xsd:enumeration value="HostOnly"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AdditionsFacilityType -
-            None: 0 -
-            VBoxGuestDriver: 20 -
-            AutoLogon: 90 -
-            VBoxService: 100 -
-            VBoxTrayClient: 101 -
-            Seamless: 1000 -
-            Graphics: 1100 -
-            All: 2147483646 -
-            -->
-        <xsd:simpleType name="AdditionsFacilityType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="VBoxGuestDriver"/>
-                <xsd:enumeration value="AutoLogon"/>
-                <xsd:enumeration value="VBoxService"/>
-                <xsd:enumeration value="VBoxTrayClient"/>
-                <xsd:enumeration value="Seamless"/>
-                <xsd:enumeration value="Graphics"/>
-                <xsd:enumeration value="All"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AdditionsFacilityClass -
-            None: 0 -
-            Driver: 10 -
-            Service: 30 -
-            Program: 50 -
-            Feature: 100 -
-            ThirdParty: 999 -
-            All: 2147483646 -
-            -->
-        <xsd:simpleType name="AdditionsFacilityClass">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Driver"/>
-                <xsd:enumeration value="Service"/>
-                <xsd:enumeration value="Program"/>
-                <xsd:enumeration value="Feature"/>
-                <xsd:enumeration value="ThirdParty"/>
-                <xsd:enumeration value="All"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AdditionsFacilityStatus -
-            Inactive: 0 -
-            Paused: 1 -
-            PreInit: 20 -
-            Init: 30 -
-            Active: 50 -
-            Terminating: 100 -
-            Terminated: 101 -
-            Failed: 800 -
-            Unknown: 999 -
-            -->
-        <xsd:simpleType name="AdditionsFacilityStatus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Inactive"/>
-                <xsd:enumeration value="Paused"/>
-                <xsd:enumeration value="PreInit"/>
-                <xsd:enumeration value="Init"/>
-                <xsd:enumeration value="Active"/>
-                <xsd:enumeration value="Terminating"/>
-                <xsd:enumeration value="Terminated"/>
-                <xsd:enumeration value="Failed"/>
-                <xsd:enumeration value="Unknown"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AdditionsRunLevelType -
-            None: 0 -
-            System: 1 -
-            Userland: 2 -
-            Desktop: 3 -
-            -->
-        <xsd:simpleType name="AdditionsRunLevelType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="System"/>
-                <xsd:enumeration value="Userland"/>
-                <xsd:enumeration value="Desktop"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AdditionsUpdateFlag -
-            None: 0 -
-            WaitForUpdateStartOnly: 1 -
-            -->
-        <xsd:simpleType name="AdditionsUpdateFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="WaitForUpdateStartOnly"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GuestSessionStatus -
-            Undefined: 0 -
-            Starting: 10 -
-            Started: 100 -
-            Terminating: 480 -
-            Terminated: 500 -
-            TimedOutKilled: 512 -
-            TimedOutAbnormally: 513 -
-            Down: 600 -
-            Error: 800 -
-            -->
-        <xsd:simpleType name="GuestSessionStatus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Undefined"/>
-                <xsd:enumeration value="Starting"/>
-                <xsd:enumeration value="Started"/>
-                <xsd:enumeration value="Terminating"/>
-                <xsd:enumeration value="Terminated"/>
-                <xsd:enumeration value="TimedOutKilled"/>
-                <xsd:enumeration value="TimedOutAbnormally"/>
-                <xsd:enumeration value="Down"/>
-                <xsd:enumeration value="Error"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GuestSessionWaitForFlag -
-            None: 0 -
-            Start: 1 -
-            Terminate: 2 -
-            Status: 4 -
-            -->
-        <xsd:simpleType name="GuestSessionWaitForFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Start"/>
-                <xsd:enumeration value="Terminate"/>
-                <xsd:enumeration value="Status"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GuestSessionWaitResult -
-            None: 0 -
-            Start: 1 -
-            Terminate: 2 -
-            Status: 3 -
-            Error: 4 -
-            Timeout: 5 -
-            WaitFlagNotSupported: 6 -
-            -->
-        <xsd:simpleType name="GuestSessionWaitResult">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Start"/>
-                <xsd:enumeration value="Terminate"/>
-                <xsd:enumeration value="Status"/>
-                <xsd:enumeration value="Error"/>
-                <xsd:enumeration value="Timeout"/>
-                <xsd:enumeration value="WaitFlagNotSupported"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GuestUserState -
-            Unknown: 0 -
-            LoggedIn: 1 -
-            LoggedOut: 2 -
-            Locked: 3 -
-            Unlocked: 4 -
-            Disabled: 5 -
-            Idle: 6 -
-            InUse: 7 -
-            Created: 8 -
-            Deleted: 9 -
-            SessionChanged: 10 -
-            CredentialsChanged: 11 -
-            RoleChanged: 12 -
-            GroupAdded: 13 -
-            GroupRemoved: 14 -
-            Elevated: 15 -
-            -->
-        <xsd:simpleType name="GuestUserState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Unknown"/>
-                <xsd:enumeration value="LoggedIn"/>
-                <xsd:enumeration value="LoggedOut"/>
-                <xsd:enumeration value="Locked"/>
-                <xsd:enumeration value="Unlocked"/>
-                <xsd:enumeration value="Disabled"/>
-                <xsd:enumeration value="Idle"/>
-                <xsd:enumeration value="InUse"/>
-                <xsd:enumeration value="Created"/>
-                <xsd:enumeration value="Deleted"/>
-                <xsd:enumeration value="SessionChanged"/>
-                <xsd:enumeration value="CredentialsChanged"/>
-                <xsd:enumeration value="RoleChanged"/>
-                <xsd:enumeration value="GroupAdded"/>
-                <xsd:enumeration value="GroupRemoved"/>
-                <xsd:enumeration value="Elevated"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: FileSeekType -
-            Set: 0 -
-            Current: 1 -
-            -->
-        <xsd:simpleType name="FileSeekType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Set"/>
-                <xsd:enumeration value="Current"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessInputFlag -
-            None: 0 -
-            EndOfFile: 1 -
-            -->
-        <xsd:simpleType name="ProcessInputFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="EndOfFile"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessOutputFlag -
-            None: 0 -
-            StdErr: 1 -
-            -->
-        <xsd:simpleType name="ProcessOutputFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="StdErr"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessWaitForFlag -
-            None: 0 -
-            Start: 1 -
-            Terminate: 2 -
-            StdIn: 4 -
-            StdOut: 8 -
-            StdErr: 16 -
-            -->
-        <xsd:simpleType name="ProcessWaitForFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Start"/>
-                <xsd:enumeration value="Terminate"/>
-                <xsd:enumeration value="StdIn"/>
-                <xsd:enumeration value="StdOut"/>
-                <xsd:enumeration value="StdErr"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessWaitResult -
-            None: 0 -
-            Start: 1 -
-            Terminate: 2 -
-            Status: 3 -
-            Error: 4 -
-            Timeout: 5 -
-            StdIn: 6 -
-            StdOut: 7 -
-            StdErr: 8 -
-            WaitFlagNotSupported: 9 -
-            -->
-        <xsd:simpleType name="ProcessWaitResult">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Start"/>
-                <xsd:enumeration value="Terminate"/>
-                <xsd:enumeration value="Status"/>
-                <xsd:enumeration value="Error"/>
-                <xsd:enumeration value="Timeout"/>
-                <xsd:enumeration value="StdIn"/>
-                <xsd:enumeration value="StdOut"/>
-                <xsd:enumeration value="StdErr"/>
-                <xsd:enumeration value="WaitFlagNotSupported"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: CopyFileFlag -
-            None: 0 -
-            Recursive: 1 -
-            Update: 2 -
-            FollowLinks: 4 -
-            -->
-        <xsd:simpleType name="CopyFileFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Recursive"/>
-                <xsd:enumeration value="Update"/>
-                <xsd:enumeration value="FollowLinks"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DirectoryCreateFlag -
-            None: 0 -
-            Parents: 1 -
-            -->
-        <xsd:simpleType name="DirectoryCreateFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Parents"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DirectoryRemoveRecFlag -
-            None: 0 -
-            ContentAndDir: 1 -
-            ContentOnly: 2 -
-            -->
-        <xsd:simpleType name="DirectoryRemoveRecFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="ContentAndDir"/>
-                <xsd:enumeration value="ContentOnly"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: PathRenameFlag -
-            None: 0 -
-            NoReplace: 1 -
-            Replace: 2 -
-            NoSymlinks: 4 -
-            -->
-        <xsd:simpleType name="PathRenameFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="NoReplace"/>
-                <xsd:enumeration value="Replace"/>
-                <xsd:enumeration value="NoSymlinks"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessCreateFlag -
-            None: 0 -
-            WaitForProcessStartOnly: 1 -
-            IgnoreOrphanedProcesses: 2 -
-            Hidden: 4 -
-            NoProfile: 8 -
-            WaitForStdOut: 16 -
-            WaitForStdErr: 32 -
-            ExpandArguments: 64 -
-            -->
-        <xsd:simpleType name="ProcessCreateFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="WaitForProcessStartOnly"/>
-                <xsd:enumeration value="IgnoreOrphanedProcesses"/>
-                <xsd:enumeration value="Hidden"/>
-                <xsd:enumeration value="NoProfile"/>
-                <xsd:enumeration value="WaitForStdOut"/>
-                <xsd:enumeration value="WaitForStdErr"/>
-                <xsd:enumeration value="ExpandArguments"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessPriority -
-            Invalid: 0 -
-            Default: 1 -
-            -->
-        <xsd:simpleType name="ProcessPriority">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Invalid"/>
-                <xsd:enumeration value="Default"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: SymlinkType -
-            Unknown: 0 -
-            Directory: 1 -
-            File: 2 -
-            -->
-        <xsd:simpleType name="SymlinkType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Unknown"/>
-                <xsd:enumeration value="Directory"/>
-                <xsd:enumeration value="File"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: SymlinkReadFlag -
-            None: 0 -
-            NoSymlinks: 1 -
-            -->
-        <xsd:simpleType name="SymlinkReadFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="NoSymlinks"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessStatus -
-            Undefined: 0 -
-            Starting: 10 -
-            Started: 100 -
-            Paused: 110 -
-            Terminating: 480 -
-            TerminatedNormally: 500 -
-            TerminatedSignal: 510 -
-            TerminatedAbnormally: 511 -
-            TimedOutKilled: 512 -
-            TimedOutAbnormally: 513 -
-            Down: 600 -
-            Error: 800 -
-            -->
-        <xsd:simpleType name="ProcessStatus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Undefined"/>
-                <xsd:enumeration value="Starting"/>
-                <xsd:enumeration value="Started"/>
-                <xsd:enumeration value="Paused"/>
-                <xsd:enumeration value="Terminating"/>
-                <xsd:enumeration value="TerminatedNormally"/>
-                <xsd:enumeration value="TerminatedSignal"/>
-                <xsd:enumeration value="TerminatedAbnormally"/>
-                <xsd:enumeration value="TimedOutKilled"/>
-                <xsd:enumeration value="TimedOutAbnormally"/>
-                <xsd:enumeration value="Down"/>
-                <xsd:enumeration value="Error"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ProcessInputStatus -
-            Undefined: 0 -
-            Broken: 1 -
-            Available: 10 -
-            Written: 50 -
-            Overflow: 100 -
-            -->
-        <xsd:simpleType name="ProcessInputStatus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Undefined"/>
-                <xsd:enumeration value="Broken"/>
-                <xsd:enumeration value="Available"/>
-                <xsd:enumeration value="Written"/>
-                <xsd:enumeration value="Overflow"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: FileStatus -
-            Undefined: 0 -
-            Opening: 10 -
-            Open: 100 -
-            Closing: 150 -
-            Closed: 200 -
-            Down: 600 -
-            Error: 800 -
-            -->
-        <xsd:simpleType name="FileStatus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Undefined"/>
-                <xsd:enumeration value="Opening"/>
-                <xsd:enumeration value="Open"/>
-                <xsd:enumeration value="Closing"/>
-                <xsd:enumeration value="Closed"/>
-                <xsd:enumeration value="Down"/>
-                <xsd:enumeration value="Error"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: FsObjType -
-            Undefined: 0 -
-            FIFO: 1 -
-            DevChar: 10 -
-            DevBlock: 11 -
-            Directory: 50 -
-            File: 80 -
-            Symlink: 100 -
-            Socket: 200 -
-            Whiteout: 400 -
-            -->
-        <xsd:simpleType name="FsObjType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Undefined"/>
-                <xsd:enumeration value="FIFO"/>
-                <xsd:enumeration value="DevChar"/>
-                <xsd:enumeration value="DevBlock"/>
-                <xsd:enumeration value="Directory"/>
-                <xsd:enumeration value="File"/>
-                <xsd:enumeration value="Symlink"/>
-                <xsd:enumeration value="Socket"/>
-                <xsd:enumeration value="Whiteout"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DragAndDropAction -
-            Ignore: 0 -
-            Copy: 1 -
-            Move: 2 -
-            Link: 3 -
-            -->
-        <xsd:simpleType name="DragAndDropAction">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Ignore"/>
-                <xsd:enumeration value="Copy"/>
-                <xsd:enumeration value="Move"/>
-                <xsd:enumeration value="Link"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DirectoryOpenFlag -
-            None: 0 -
-            NoSymlinks: 1 -
-            -->
-        <xsd:simpleType name="DirectoryOpenFlag">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="NoSymlinks"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: MediumState -
-            NotCreated: 0 -
-            Created: 1 -
-            LockedRead: 2 -
-            LockedWrite: 3 -
-            Inaccessible: 4 -
-            Creating: 5 -
-            Deleting: 6 -
-            -->
-        <xsd:simpleType name="MediumState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="NotCreated"/>
-                <xsd:enumeration value="Created"/>
-                <xsd:enumeration value="LockedRead"/>
-                <xsd:enumeration value="LockedWrite"/>
-                <xsd:enumeration value="Inaccessible"/>
-                <xsd:enumeration value="Creating"/>
-                <xsd:enumeration value="Deleting"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: MediumType -
-            Normal: 0 -
-            Immutable: 1 -
-            Writethrough: 2 -
-            Shareable: 3 -
-            Readonly: 4 -
-            MultiAttach: 5 -
-            -->
-        <xsd:simpleType name="MediumType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Normal"/>
-                <xsd:enumeration value="Immutable"/>
-                <xsd:enumeration value="Writethrough"/>
-                <xsd:enumeration value="Shareable"/>
-                <xsd:enumeration value="Readonly"/>
-                <xsd:enumeration value="MultiAttach"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: MediumVariant -
-            Standard: 0 -
-            VmdkSplit2G: 0x01 -
-            VmdkRawDisk: 0x02 -
-            VmdkStreamOptimized: 0x04 -
-            VmdkESX: 0x08 -
-            Fixed: 0x10000 -
-            Diff: 0x20000 -
-            NoCreateDir: 0x40000000 -
-            -->
-        <xsd:simpleType name="MediumVariant">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Standard"/>
-                <xsd:enumeration value="VmdkSplit2G"/>
-                <xsd:enumeration value="VmdkRawDisk"/>
-                <xsd:enumeration value="VmdkStreamOptimized"/>
-                <xsd:enumeration value="VmdkESX"/>
-                <xsd:enumeration value="Fixed"/>
-                <xsd:enumeration value="Diff"/>
-                <xsd:enumeration value="NoCreateDir"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DataType -
-            Int32: 0 -
-            Int8: 1 -
-            String: 2 -
-            -->
-        <xsd:simpleType name="DataType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Int32"/>
-                <xsd:enumeration value="Int8"/>
-                <xsd:enumeration value="String"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: DataFlags -
-            None: 0x00 -
-            Mandatory: 0x01 -
-            Expert: 0x02 -
-            Array: 0x04 -
-            FlagMask: 0x07 -
-            -->
-        <xsd:simpleType name="DataFlags">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="Mandatory"/>
-                <xsd:enumeration value="Expert"/>
-                <xsd:enumeration value="Array"/>
-                <xsd:enumeration value="FlagMask"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: MediumFormatCapabilities -
-            Uuid: 0x01 -
-            CreateFixed: 0x02 -
-            CreateDynamic: 0x04 -
-            CreateSplit2G: 0x08 -
-            Differencing: 0x10 -
-            Asynchronous: 0x20 -
-            File: 0x40 -
-            Properties: 0x80 -
-            TcpNetworking: 0x100 -
-            VFS: 0x200 -
-            CapabilityMask: 0x3FF -
-            -->
-        <xsd:simpleType name="MediumFormatCapabilities">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Uuid"/>
-                <xsd:enumeration value="CreateFixed"/>
-                <xsd:enumeration value="CreateDynamic"/>
-                <xsd:enumeration value="CreateSplit2G"/>
-                <xsd:enumeration value="Differencing"/>
-                <xsd:enumeration value="Asynchronous"/>
-                <xsd:enumeration value="File"/>
-                <xsd:enumeration value="Properties"/>
-                <xsd:enumeration value="TcpNetworking"/>
-                <xsd:enumeration value="VFS"/>
-                <xsd:enumeration value="CapabilityMask"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: MouseButtonState -
-            LeftButton: 0x01 -
-            RightButton: 0x02 -
-            MiddleButton: 0x04 -
-            WheelUp: 0x08 -
-            WheelDown: 0x10 -
-            XButton1: 0x20 -
-            XButton2: 0x40 -
-            MouseStateMask: 0x7F -
-            -->
-        <xsd:simpleType name="MouseButtonState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="LeftButton"/>
-                <xsd:enumeration value="RightButton"/>
-                <xsd:enumeration value="MiddleButton"/>
-                <xsd:enumeration value="WheelUp"/>
-                <xsd:enumeration value="WheelDown"/>
-                <xsd:enumeration value="XButton1"/>
-                <xsd:enumeration value="XButton2"/>
-                <xsd:enumeration value="MouseStateMask"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: TouchContactState -
-            None: 0x00 -
-            InContact: 0x01 -
-            InRange: 0x02 -
-            ContactStateMask: 0x03 -
-            -->
-        <xsd:simpleType name="TouchContactState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="None"/>
-                <xsd:enumeration value="InContact"/>
-                <xsd:enumeration value="InRange"/>
-                <xsd:enumeration value="ContactStateMask"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: FramebufferPixelFormat -
-            Opaque: 0 -
-            FOURCC_RGB: 0x32424752 -
-            -->
-        <xsd:simpleType name="FramebufferPixelFormat">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Opaque"/>
-                <xsd:enumeration value="FOURCC_RGB"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: NetworkAttachmentType -
-            Null: 0 -
-            NAT: 1 -
-            Bridged: 2 -
-            Internal: 3 -
-            HostOnly: 4 -
-            Generic: 5 -
-            NATNetwork: 6 -
-            -->
-        <xsd:simpleType name="NetworkAttachmentType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="NAT"/>
-                <xsd:enumeration value="Bridged"/>
-                <xsd:enumeration value="Internal"/>
-                <xsd:enumeration value="HostOnly"/>
-                <xsd:enumeration value="Generic"/>
-                <xsd:enumeration value="NATNetwork"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: NetworkAdapterType -
-            Null: 0 -
-            Am79C970A: 1 -
-            Am79C973: 2 -
-            I82540EM: 3 -
-            I82543GC: 4 -
-            I82545EM: 5 -
-            Virtio: 6 -
-            -->
-        <xsd:simpleType name="NetworkAdapterType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Am79C970A"/>
-                <xsd:enumeration value="Am79C973"/>
-                <xsd:enumeration value="I82540EM"/>
-                <xsd:enumeration value="I82543GC"/>
-                <xsd:enumeration value="I82545EM"/>
-                <xsd:enumeration value="Virtio"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: NetworkAdapterPromiscModePolicy -
-            Deny: 1 -
-            AllowNetwork: 2 -
-            AllowAll: 3 -
-            -->
-        <xsd:simpleType name="NetworkAdapterPromiscModePolicy">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Deny"/>
-                <xsd:enumeration value="AllowNetwork"/>
-                <xsd:enumeration value="AllowAll"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: PortMode -
-            Disconnected: 0 -
-            HostPipe: 1 -
-            HostDevice: 2 -
-            RawFile: 3 -
-            -->
-        <xsd:simpleType name="PortMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Disconnected"/>
-                <xsd:enumeration value="HostPipe"/>
-                <xsd:enumeration value="HostDevice"/>
-                <xsd:enumeration value="RawFile"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: USBControllerType -
-            Null: 0 -
-            OHCI: 1 -
-            EHCI: 2 -
-            Last: 3 -
-            -->
-        <xsd:simpleType name="USBControllerType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="OHCI"/>
-                <xsd:enumeration value="EHCI"/>
-                <xsd:enumeration value="Last"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: USBDeviceState -
-            NotSupported: 0 -
-            Unavailable: 1 -
-            Busy: 2 -
-            Available: 3 -
-            Held: 4 -
-            Captured: 5 -
-            -->
-        <xsd:simpleType name="USBDeviceState">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="NotSupported"/>
-                <xsd:enumeration value="Unavailable"/>
-                <xsd:enumeration value="Busy"/>
-                <xsd:enumeration value="Available"/>
-                <xsd:enumeration value="Held"/>
-                <xsd:enumeration value="Captured"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: USBDeviceFilterAction -
-            Null: 0 -
-            Ignore: 1 -
-            Hold: 2 -
-            -->
-        <xsd:simpleType name="USBDeviceFilterAction">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Ignore"/>
-                <xsd:enumeration value="Hold"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AudioDriverType -
-            Null: 0 -
-            WinMM: 1 -
-            OSS: 2 -
-            ALSA: 3 -
-            DirectSound: 4 -
-            CoreAudio: 5 -
-            MMPM: 6 -
-            Pulse: 7 -
-            SolAudio: 8 -
-            -->
-        <xsd:simpleType name="AudioDriverType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="WinMM"/>
-                <xsd:enumeration value="OSS"/>
-                <xsd:enumeration value="ALSA"/>
-                <xsd:enumeration value="DirectSound"/>
-                <xsd:enumeration value="CoreAudio"/>
-                <xsd:enumeration value="MMPM"/>
-                <xsd:enumeration value="Pulse"/>
-                <xsd:enumeration value="SolAudio"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AudioControllerType -
-            AC97: 0 -
-            SB16: 1 -
-            HDA: 2 -
-            -->
-        <xsd:simpleType name="AudioControllerType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="AC97"/>
-                <xsd:enumeration value="SB16"/>
-                <xsd:enumeration value="HDA"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: AuthType -
-            Null: 0 -
-            External: 1 -
-            Guest: 2 -
-            -->
-        <xsd:simpleType name="AuthType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="External"/>
-                <xsd:enumeration value="Guest"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: Reason -
-            Unspecified: 0 -
-            HostSuspend: 1 -
-            HostResume: 2 -
-            HostBatteryLow: 3 -
-            -->
-        <xsd:simpleType name="Reason">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Unspecified"/>
-                <xsd:enumeration value="HostSuspend"/>
-                <xsd:enumeration value="HostResume"/>
-                <xsd:enumeration value="HostBatteryLow"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: StorageBus -
-            Null: 0 -
-            IDE: 1 -
-            SATA: 2 -
-            SCSI: 3 -
-            Floppy: 4 -
-            SAS: 5 -
-            -->
-        <xsd:simpleType name="StorageBus">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="IDE"/>
-                <xsd:enumeration value="SATA"/>
-                <xsd:enumeration value="SCSI"/>
-                <xsd:enumeration value="Floppy"/>
-                <xsd:enumeration value="SAS"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: StorageControllerType -
-            Null: 0 -
-            LsiLogic: 1 -
-            BusLogic: 2 -
-            IntelAhci: 3 -
-            PIIX3: 4 -
-            PIIX4: 5 -
-            ICH6: 6 -
-            I82078: 7 -
-            LsiLogicSas: 8 -
-            -->
-        <xsd:simpleType name="StorageControllerType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="LsiLogic"/>
-                <xsd:enumeration value="BusLogic"/>
-                <xsd:enumeration value="IntelAhci"/>
-                <xsd:enumeration value="PIIX3"/>
-                <xsd:enumeration value="PIIX4"/>
-                <xsd:enumeration value="ICH6"/>
-                <xsd:enumeration value="I82078"/>
-                <xsd:enumeration value="LsiLogicSas"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: ChipsetType -
-            Null: 0 -
-            PIIX3: 1 -
-            ICH9: 2 -
-            -->
-        <xsd:simpleType name="ChipsetType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="PIIX3"/>
-                <xsd:enumeration value="ICH9"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: NATAliasMode -
-            AliasLog: 0x1 -
-            AliasProxyOnly: 0x02 -
-            AliasUseSamePorts: 0x04 -
-            -->
-        <xsd:simpleType name="NATAliasMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="AliasLog"/>
-                <xsd:enumeration value="AliasProxyOnly"/>
-                <xsd:enumeration value="AliasUseSamePorts"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: NATProtocol -
-            UDP: 0 -
-            TCP: 1 -
-            -->
-        <xsd:simpleType name="NATProtocol">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="UDP"/>
-                <xsd:enumeration value="TCP"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: BandwidthGroupType -
-            Null: 0 -
-            Disk: 1 -
-            Network: 2 -
-            -->
-        <xsd:simpleType name="BandwidthGroupType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Null"/>
-                <xsd:enumeration value="Disk"/>
-                <xsd:enumeration value="Network"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: VBoxEventType -
-            Invalid: 0 -
-            Any: 1 -
-            Vetoable: 2 -
-            MachineEvent: 3 -
-            SnapshotEvent: 4 -
-            InputEvent: 5 -
-            LastWildcard: 31 -
-            OnMachineStateChanged: 32 -
-            OnMachineDataChanged: 33 -
-            OnExtraDataChanged: 34 -
-            OnExtraDataCanChange: 35 -
-            OnMediumRegistered: 36 -
-            OnMachineRegistered: 37 -
-            OnSessionStateChanged: 38 -
-            OnSnapshotTaken: 39 -
-            OnSnapshotDeleted: 40 -
-            OnSnapshotChanged: 41 -
-            OnGuestPropertyChanged: 42 -
-            OnMousePointerShapeChanged: 43 -
-            OnMouseCapabilityChanged: 44 -
-            OnKeyboardLedsChanged: 45 -
-            OnStateChanged: 46 -
-            OnAdditionsStateChanged: 47 -
-            OnNetworkAdapterChanged: 48 -
-            OnSerialPortChanged: 49 -
-            OnParallelPortChanged: 50 -
-            OnStorageControllerChanged: 51 -
-            OnMediumChanged: 52 -
-            OnVRDEServerChanged: 53 -
-            OnUSBControllerChanged: 54 -
-            OnUSBDeviceStateChanged: 55 -
-            OnSharedFolderChanged: 56 -
-            OnRuntimeError: 57 -
-            OnCanShowWindow: 58 -
-            OnShowWindow: 59 -
-            OnCPUChanged: 60 -
-            OnVRDEServerInfoChanged: 61 -
-            OnEventSourceChanged: 62 -
-            OnCPUExecutionCapChanged: 63 -
-            OnGuestKeyboard: 64 -
-            OnGuestMouse: 65 -
-            OnNATRedirect: 66 -
-            OnHostPCIDevicePlug: 67 -
-            OnVBoxSVCAvailabilityChanged: 68 -
-            OnBandwidthGroupChanged: 69 -
-            OnGuestMonitorChanged: 70 -
-            OnStorageDeviceChanged: 71 -
-            OnClipboardModeChanged: 72 -
-            OnDragAndDropModeChanged: 73 -
-            OnNATNetworkChanged: 74 -
-            OnNATNetworkStartStop: 75 -
-            OnNATNetworkAlter: 76 -
-            OnNATNetworkCreationDeletion: 77 -
-            OnNATNetworkSetting: 78 -
-            OnNATNetworkPortForward: 79 -
-            OnGuestSessionStateChanged: 80 -
-            OnGuestSessionRegistered: 81 -
-            OnGuestProcessRegistered: 82 -
-            OnGuestProcessStateChanged: 83 -
-            OnGuestProcessInputNotify: 84 -
-            OnGuestProcessOutput: 85 -
-            OnGuestFileRegistered: 86 -
-            OnGuestFileStateChanged: 87 -
-            OnGuestFileOffsetChanged: 88 -
-            OnGuestFileRead: 89 -
-            OnGuestFileWrite: 90 -
-            OnVideoCaptureChanged: 91 -
-            OnGuestUserStateChanged: 92 -
-            OnGuestMultiTouch: 93 -
-            OnHostNameResolutionConfigurationChange: 94 -
-            Last: 95 -
-            -->
-        <xsd:simpleType name="VBoxEventType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Invalid"/>
-                <xsd:enumeration value="Any"/>
-                <xsd:enumeration value="Vetoable"/>
-                <xsd:enumeration value="MachineEvent"/>
-                <xsd:enumeration value="SnapshotEvent"/>
-                <xsd:enumeration value="InputEvent"/>
-                <xsd:enumeration value="LastWildcard"/>
-                <xsd:enumeration value="OnMachineStateChanged"/>
-                <xsd:enumeration value="OnMachineDataChanged"/>
-                <xsd:enumeration value="OnExtraDataChanged"/>
-                <xsd:enumeration value="OnExtraDataCanChange"/>
-                <xsd:enumeration value="OnMediumRegistered"/>
-                <xsd:enumeration value="OnMachineRegistered"/>
-                <xsd:enumeration value="OnSessionStateChanged"/>
-                <xsd:enumeration value="OnSnapshotTaken"/>
-                <xsd:enumeration value="OnSnapshotDeleted"/>
-                <xsd:enumeration value="OnSnapshotChanged"/>
-                <xsd:enumeration value="OnGuestPropertyChanged"/>
-                <xsd:enumeration value="OnMousePointerShapeChanged"/>
-                <xsd:enumeration value="OnMouseCapabilityChanged"/>
-                <xsd:enumeration value="OnKeyboardLedsChanged"/>
-                <xsd:enumeration value="OnStateChanged"/>
-                <xsd:enumeration value="OnAdditionsStateChanged"/>
-                <xsd:enumeration value="OnNetworkAdapterChanged"/>
-                <xsd:enumeration value="OnSerialPortChanged"/>
-                <xsd:enumeration value="OnParallelPortChanged"/>
-                <xsd:enumeration value="OnStorageControllerChanged"/>
-                <xsd:enumeration value="OnMediumChanged"/>
-                <xsd:enumeration value="OnVRDEServerChanged"/>
-                <xsd:enumeration value="OnUSBControllerChanged"/>
-                <xsd:enumeration value="OnUSBDeviceStateChanged"/>
-                <xsd:enumeration value="OnSharedFolderChanged"/>
-                <xsd:enumeration value="OnRuntimeError"/>
-                <xsd:enumeration value="OnCanShowWindow"/>
-                <xsd:enumeration value="OnShowWindow"/>
-                <xsd:enumeration value="OnCPUChanged"/>
-                <xsd:enumeration value="OnVRDEServerInfoChanged"/>
-                <xsd:enumeration value="OnEventSourceChanged"/>
-                <xsd:enumeration value="OnCPUExecutionCapChanged"/>
-                <xsd:enumeration value="OnGuestKeyboard"/>
-                <xsd:enumeration value="OnGuestMouse"/>
-                <xsd:enumeration value="OnNATRedirect"/>
-                <xsd:enumeration value="OnHostPCIDevicePlug"/>
-                <xsd:enumeration value="OnVBoxSVCAvailabilityChanged"/>
-                <xsd:enumeration value="OnBandwidthGroupChanged"/>
-                <xsd:enumeration value="OnGuestMonitorChanged"/>
-                <xsd:enumeration value="OnStorageDeviceChanged"/>
-                <xsd:enumeration value="OnClipboardModeChanged"/>
-                <xsd:enumeration value="OnDragAndDropModeChanged"/>
-                <xsd:enumeration value="OnNATNetworkChanged"/>
-                <xsd:enumeration value="OnNATNetworkStartStop"/>
-                <xsd:enumeration value="OnNATNetworkAlter"/>
-                <xsd:enumeration value="OnNATNetworkCreationDeletion"/>
-                <xsd:enumeration value="OnNATNetworkSetting"/>
-                <xsd:enumeration value="OnNATNetworkPortForward"/>
-                <xsd:enumeration value="OnGuestSessionStateChanged"/>
-                <xsd:enumeration value="OnGuestSessionRegistered"/>
-                <xsd:enumeration value="OnGuestProcessRegistered"/>
-                <xsd:enumeration value="OnGuestProcessStateChanged"/>
-                <xsd:enumeration value="OnGuestProcessInputNotify"/>
-                <xsd:enumeration value="OnGuestProcessOutput"/>
-                <xsd:enumeration value="OnGuestFileRegistered"/>
-                <xsd:enumeration value="OnGuestFileStateChanged"/>
-                <xsd:enumeration value="OnGuestFileOffsetChanged"/>
-                <xsd:enumeration value="OnGuestFileRead"/>
-                <xsd:enumeration value="OnGuestFileWrite"/>
-                <xsd:enumeration value="OnVideoCaptureChanged"/>
-                <xsd:enumeration value="OnGuestUserStateChanged"/>
-                <xsd:enumeration value="OnGuestMultiTouch"/>
-                <xsd:enumeration value="OnHostNameResolutionConfigurationChange"/>
-                <xsd:enumeration value="Last"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GuestMouseEventMode -
-            Relative: 0 -
-            Absolute: 1 -
-            -->
-        <xsd:simpleType name="GuestMouseEventMode">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Relative"/>
-                <xsd:enumeration value="Absolute"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!-- enum: GuestMonitorChangedEventType -
-            Enabled: 0 -
-            Disabled: 1 -
-            NewOrigin: 2 -
-            -->
-        <xsd:simpleType name="GuestMonitorChangedEventType">
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="Enabled"/>
-                <xsd:enumeration value="Disabled"/>
-                <xsd:enumeration value="NewOrigin"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-        <!--
-      ******************************************************
-      * structs
-      ******************************************************
--->
-        <!-- interface IPCIDeviceAttachment as struct: -->
-        <xsd:complexType name="IPCIDeviceAttachment">
-            <xsd:sequence>
-                <xsd:element name="name" type="xsd:string"/>
-                <xsd:element name="isPhysicalDevice" type="xsd:boolean"/>
-                <xsd:element name="hostAddress" type="xsd:int"/>
-                <xsd:element name="guestAddress" type="xsd:int"/>
-            </xsd:sequence>
-        </xsd:complexType>
-        <!-- interface IVRDEServerInfo as struct: -->
-        <xsd:complexType name="IVRDEServerInfo">
-            <xsd:sequence>
-                <xsd:element name="active" type="xsd:boolean"/>
-                <xsd:element name="port" type="xsd:int"/>
-                <xsd:element name="numberOfClients" type="xsd:unsignedInt"/>
-                <xsd:element name="beginTime" type="xsd:long"/>
-                <xsd:element name="endTime" type="xsd:long"/>
-                <xsd:element name="bytesSent" type="xsd:long"/>
-                <xsd:element name="bytesSentTotal" type="xsd:long"/>
-                <xsd:element name="bytesReceived" type="xsd:long"/>
-                <xsd:element name="bytesReceivedTotal" type="xsd:long"/>
-                <xsd:element name="user" type="xsd:string"/>
-                <xsd:element name="domain" type="xsd:string"/>
-                <xsd:element name="clientName" type="xsd:string"/>
-                <xsd:element name="clientIP" type="xsd:string"/>
-                <xsd:element name="clientVersion" type="xsd:unsignedInt"/>
-                <xsd:element name="encryptionStyle" type="xsd:unsignedInt"/>
-            </xsd:sequence>
-        </xsd:complexType>
-        <!-- interface IGuestOSType as struct: -->
-        <xsd:complexType name="IGuestOSType">
-            <xsd:sequence>
-                <xsd:element name="familyId" type="xsd:string"/>
-                <xsd:element name="familyDescription" type="xsd:string"/>
-                <xsd:element name="id" type="xsd:string"/>
-                <xsd:element name="description" type="xsd:string"/>
-                <xsd:element name="is64Bit" type="xsd:boolean"/>
-                <xsd:element name="recommendedIOAPIC" type="xsd:boolean"/>
-                <xsd:element name="recommendedVirtEx" type="xsd:boolean"/>
-                <xsd:element name="recommendedRAM" type="xsd:unsignedInt"/>
-                <xsd:element name="recommendedVRAM" type="xsd:unsignedInt"/>
-                <xsd:element name="recommended2DVideoAcceleration" type="xsd:boolean"/>
-                <xsd:element name="recommended3DAcceleration" type="xsd:boolean"/>
-                <xsd:element name="recommendedHDD" type="xsd:long"/>
-                <xsd:element name="adapterType" type="vbox:NetworkAdapterType"/>
-                <xsd:element name="recommendedPAE" type="xsd:boolean"/>
-                <xsd:element name="recommendedDVDStorageController" type="vbox:StorageControllerType"/>
-                <xsd:element name="recommendedDVDStorageBus" type="vbox:StorageBus"/>
-                <xsd:element name="recommendedHDStorageController" type="vbox:StorageControllerType"/>
-                <xsd:element name="recommendedHDStorageBus" type="vbox:StorageBus"/>
-                <xsd:element name="recommendedFirmware" type="vbox:FirmwareType"/>
-                <xsd:element name="recommendedUSBHID" type="xsd:boolean"/>
-                <xsd:element name="recommendedHPET" type="xsd:boolean"/>
-                <xsd:element name="recommendedUSBTablet" type="xsd:boolean"/>
-                <xsd:element name="recommendedRTCUseUTC" type="xsd:boolean"/>
-                <xsd:element name="recommendedChipset" type="vbox:ChipsetType"/>
-                <xsd:element name="recommendedAudioController" type="vbox:AudioControllerType"/>
-                <xsd:element name="recommendedFloppy" type="xsd:boolean"/>
-                <xsd:element name="recommendedUSB" type="xsd:boolean"/>
-            </xsd:sequence>
-        </xsd:complexType>
-        <!-- interface IAdditionsFacility as struct: -->
-        <xsd:complexType name="IAdditionsFacility">
-            <xsd:sequence>
-                <xsd:element name="classType" type="vbox:AdditionsFacilityClass"/>
-                <xsd:element name="lastUpdated" type="xsd:long"/>
-                <xsd:element name="name" type="xsd:string"/>
-                <xsd:element name="status" type="vbox:AdditionsFacilityStatus"/>
-                <xsd:element name="type" type="vbox:AdditionsFacilityType"/>
-            </xsd:sequence>
-        </xsd:complexType>
-        <!-- interface IMediumAttachment as struct: -->
-        <xsd:complexType name="IMediumAttachment">
-            <xsd:sequence>
-                <xsd:element name="medium" type="xsd:string"/>
-                <xsd:element name="controller" type="xsd:string"/>
-                <xsd:element name="port" type="xsd:int"/>
-                <xsd:element name="device" type="xsd:int"/>
-                <xsd:element name="type" type="vbox:DeviceType"/>
-                <xsd:element name="passthrough" type="xsd:boolean"/>
-                <xsd:element name="temporaryEject" type="xsd:boolean"/>
-                <xsd:element name="isEjected" type="xsd:boolean"/>
-                <xsd:element name="nonRotational" type="xsd:boolean"/>
-                <xsd:element name="discard" type="xsd:boolean"/>
-                <xsd:element name="hotPluggable" type="xsd:boolean"/>
-                <xsd:element name="bandwidthGroup" type="xsd:string"/>
-            </xsd:sequence>
-        </xsd:complexType>
-        <!-- interface ISharedFolder as struct: -->
-        <xsd:complexType name="ISharedFolder">
-            <xsd:sequence>
-                <xsd:element name="name" type="xsd:string"/>
-                <xsd:element name="hostPath" type="xsd:string"/>
-                <xsd:element name="accessible" type="xsd:boolean"/>
-                <xsd:element name="writable" type="xsd:boolean"/>
-                <xsd:element name="autoMount" type="xsd:boolean"/>
-                <xsd:element name="lastAccessError" type="xsd:string"/>
-            </xsd:sequence>
-        </xsd:complexType>
+    <!-- interface IPCIDeviceAttachment as struct: -->
+    <xsd:complexType name="IPCIDeviceAttachment">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="isPhysicalDevice" type="xsd:boolean"/>
+            <xsd:element name="hostAddress" type="xsd:int"/>
+            <xsd:element name="guestAddress" type="xsd:int"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- interface IVRDEServerInfo as struct: -->
+    <xsd:complexType name="IVRDEServerInfo">
+        <xsd:sequence>
+            <xsd:element name="active" type="xsd:boolean"/>
+            <xsd:element name="port" type="xsd:int"/>
+            <xsd:element name="numberOfClients" type="xsd:unsignedInt"/>
+            <xsd:element name="beginTime" type="xsd:long"/>
+            <xsd:element name="endTime" type="xsd:long"/>
+            <xsd:element name="bytesSent" type="xsd:long"/>
+            <xsd:element name="bytesSentTotal" type="xsd:long"/>
+            <xsd:element name="bytesReceived" type="xsd:long"/>
+            <xsd:element name="bytesReceivedTotal" type="xsd:long"/>
+            <xsd:element name="user" type="xsd:string"/>
+            <xsd:element name="domain" type="xsd:string"/>
+            <xsd:element name="clientName" type="xsd:string"/>
+            <xsd:element name="clientIP" type="xsd:string"/>
+            <xsd:element name="clientVersion" type="xsd:unsignedInt"/>
+            <xsd:element name="encryptionStyle" type="xsd:unsignedInt"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- interface IGuestOSType as struct: -->
+    <xsd:complexType name="IGuestOSType">
+        <xsd:sequence>
+            <xsd:element name="familyId" type="xsd:string"/>
+            <xsd:element name="familyDescription" type="xsd:string"/>
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="is64Bit" type="xsd:boolean"/>
+            <xsd:element name="recommendedIOAPIC" type="xsd:boolean"/>
+            <xsd:element name="recommendedVirtEx" type="xsd:boolean"/>
+            <xsd:element name="recommendedRAM" type="xsd:unsignedInt"/>
+            <xsd:element name="recommendedGraphicsController" type="vbox:GraphicsControllerType"/>
+            <xsd:element name="recommendedVRAM" type="xsd:unsignedInt"/>
+            <xsd:element name="recommended2DVideoAcceleration" type="xsd:boolean"/>
+            <xsd:element name="recommended3DAcceleration" type="xsd:boolean"/>
+            <xsd:element name="recommendedHDD" type="xsd:long"/>
+            <xsd:element name="adapterType" type="vbox:NetworkAdapterType"/>
+            <xsd:element name="recommendedPAE" type="xsd:boolean"/>
+            <xsd:element name="recommendedDVDStorageController" type="vbox:StorageControllerType"/>
+            <xsd:element name="recommendedDVDStorageBus" type="vbox:StorageBus"/>
+            <xsd:element name="recommendedHDStorageController" type="vbox:StorageControllerType"/>
+            <xsd:element name="recommendedHDStorageBus" type="vbox:StorageBus"/>
+            <xsd:element name="recommendedFirmware" type="vbox:FirmwareType"/>
+            <xsd:element name="recommendedUSBHID" type="xsd:boolean"/>
+            <xsd:element name="recommendedHPET" type="xsd:boolean"/>
+            <xsd:element name="recommendedUSBTablet" type="xsd:boolean"/>
+            <xsd:element name="recommendedRTCUseUTC" type="xsd:boolean"/>
+            <xsd:element name="recommendedChipset" type="vbox:ChipsetType"/>
+            <xsd:element name="recommendedAudioController" type="vbox:AudioControllerType"/>
+            <xsd:element name="recommendedAudioCodec" type="vbox:AudioCodecType"/>
+            <xsd:element name="recommendedFloppy" type="xsd:boolean"/>
+            <xsd:element name="recommendedUSB" type="xsd:boolean"/>
+            <xsd:element name="recommendedUSB3" type="xsd:boolean"/>
+            <xsd:element name="recommendedTFReset" type="xsd:boolean"/>
+            <xsd:element name="recommendedX2APIC" type="xsd:boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- interface IAdditionsFacility as struct: -->
+    <xsd:complexType name="IAdditionsFacility">
+        <xsd:sequence>
+            <xsd:element name="classType" type="vbox:AdditionsFacilityClass"/>
+            <xsd:element name="lastUpdated" type="xsd:long"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="status" type="vbox:AdditionsFacilityStatus"/>
+            <xsd:element name="type" type="vbox:AdditionsFacilityType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- interface IMediumAttachment as struct: -->
+    <xsd:complexType name="IMediumAttachment">
+        <xsd:sequence>
+            <xsd:element name="medium" type="xsd:string"/>
+            <xsd:element name="controller" type="xsd:string"/>
+            <xsd:element name="port" type="xsd:int"/>
+            <xsd:element name="device" type="xsd:int"/>
+            <xsd:element name="type" type="vbox:DeviceType"/>
+            <xsd:element name="passthrough" type="xsd:boolean"/>
+            <xsd:element name="temporaryEject" type="xsd:boolean"/>
+            <xsd:element name="isEjected" type="xsd:boolean"/>
+            <xsd:element name="nonRotational" type="xsd:boolean"/>
+            <xsd:element name="discard" type="xsd:boolean"/>
+            <xsd:element name="hotPluggable" type="xsd:boolean"/>
+            <xsd:element name="bandwidthGroup" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
 
 </xsd:schema>

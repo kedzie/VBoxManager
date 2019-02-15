@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for Reason.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="Reason">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -15,33 +16,36 @@ package com.kedzie.vbox.api.jaxb;
  *     &lt;enumeration value="HostSuspend"/>
  *     &lt;enumeration value="HostResume"/>
  *     &lt;enumeration value="HostBatteryLow"/>
+ *     &lt;enumeration value="Snapshot"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum Reason {
 
-	UNSPECIFIED("Unspecified"),
-	HOST_SUSPEND("HostSuspend"),
-	HOST_RESUME("HostResume"),
-	HOST_BATTERY_LOW("HostBatteryLow");
-	private final String value;
+    UNSPECIFIED("Unspecified"),
+    HOST_SUSPEND("HostSuspend"),
+    HOST_RESUME("HostResume"),
+    HOST_BATTERY_LOW("HostBatteryLow"),
+    SNAPSHOT("Snapshot");
+    private final String value;
 
-	Reason(String v) {
-		value = v;
-	}
+    Reason(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static Reason fromValue(String v) {
-		for (Reason c : Reason.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static Reason fromValue(String v) {
+        for (Reason c: Reason.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

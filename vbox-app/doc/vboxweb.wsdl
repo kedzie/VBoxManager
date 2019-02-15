@@ -14,12 +14,7 @@
 -->
   <wsdl:types>
     <xsd:schema targetNamespace="http://www.virtualbox.org/">
-      <!--
-      ******************************************************
-      * enumerations
-      ******************************************************
--->
-     
+
       <!--
       ******************************************************
       * elements for message arguments (parts); generated for WSDL 'document' style
@@ -657,6 +652,33 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- method IDHCPServer::removeGlobalOption-->
+      <xsd:element name="IDHCPServer_removeGlobalOption">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="option" type="vbox:DhcpOpt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDHCPServer_removeGlobalOptionResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IDHCPServer::removeGlobalOptions-->
+      <xsd:element name="IDHCPServer_removeGlobalOptions">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDHCPServer_removeGlobalOptionsResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
       <!-- method IDHCPServer::addVmSlotOption-->
       <xsd:element name="IDHCPServer_addVmSlotOption">
         <xsd:complexType>
@@ -670,6 +692,22 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IDHCPServer_addVmSlotOptionResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IDHCPServer::removeVmSlotOption-->
+      <xsd:element name="IDHCPServer_removeVmSlotOption">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="vmname" type="xsd:string"/>
+            <xsd:element name="slot" type="xsd:int"/>
+            <xsd:element name="option" type="vbox:DhcpOpt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDHCPServer_removeVmSlotOptionResponse">
         <xsd:complexType>
           <xsd:sequence/>
         </xsd:complexType>
@@ -764,6 +802,19 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IDHCPServer_stopResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IDHCPServer::restart-->
+      <xsd:element name="IDHCPServer_restart">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDHCPServer_restartResponse">
         <xsd:complexType>
           <xsd:sequence/>
         </xsd:complexType>
@@ -1035,7 +1086,7 @@
       <xsd:element name="IVirtualBox_getSharedFoldersResponse">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="vbox:ISharedFolder"/>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -1127,6 +1178,21 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IVirtualBox::cloudProviderManager-->
+      <xsd:element name="IVirtualBox_getCloudProviderManager">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IVirtualBox_getCloudProviderManagerResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -1340,6 +1406,7 @@
             <xsd:element name="hostPath" type="xsd:string"/>
             <xsd:element name="writable" type="xsd:boolean"/>
             <xsd:element name="automount" type="xsd:boolean"/>
+            <xsd:element name="autoMountPoint" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -2276,6 +2343,20 @@
             <xsd:element name="VBoxValues" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
             <xsd:element name="extraConfigValues" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
           </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IVirtualSystemDescription::removeDescriptionByType-->
+      <xsd:element name="IVirtualSystemDescription_removeDescriptionByType">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="type" type="vbox:VirtualSystemDescriptionType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IVirtualSystemDescription_removeDescriptionByTypeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
       <!-- method IVirtualSystemDescription::getValuesByType-->
@@ -3408,6 +3489,602 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <!--Interface IRecordingScreenSettings-->
+      <!-- readonly attribute IRecordingScreenSettings::id-->
+      <xsd:element name="IRecordingScreenSettings_getId">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::enabled-->
+      <xsd:element name="IRecordingScreenSettings_getEnabled">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getEnabledResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setEnabled">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="enabled" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setEnabledResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::features-->
+      <xsd:element name="IRecordingScreenSettings_getFeatures">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getFeaturesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setFeatures">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="features" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setFeaturesResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::destination-->
+      <xsd:element name="IRecordingScreenSettings_getDestination">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getDestinationResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:RecordingDestination"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setDestination">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="destination" type="vbox:RecordingDestination"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setDestinationResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::filename-->
+      <xsd:element name="IRecordingScreenSettings_getFilename">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getFilenameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setFilename">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="filename" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setFilenameResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::maxTime-->
+      <xsd:element name="IRecordingScreenSettings_getMaxTime">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getMaxTimeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setMaxTime">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="maxTime" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setMaxTimeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::maxFileSize-->
+      <xsd:element name="IRecordingScreenSettings_getMaxFileSize">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getMaxFileSizeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setMaxFileSize">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="maxFileSize" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setMaxFileSizeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::options-->
+      <xsd:element name="IRecordingScreenSettings_getOptions">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getOptionsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setOptions">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="options" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setOptionsResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::audioCodec-->
+      <xsd:element name="IRecordingScreenSettings_getAudioCodec">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getAudioCodecResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:RecordingAudioCodec"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioCodec">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="audioCodec" type="vbox:RecordingAudioCodec"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioCodecResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::audioHz-->
+      <xsd:element name="IRecordingScreenSettings_getAudioHz">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getAudioHzResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioHz">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="audioHz" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioHzResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::audioBits-->
+      <xsd:element name="IRecordingScreenSettings_getAudioBits">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getAudioBitsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioBits">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="audioBits" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioBitsResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::audioChannels-->
+      <xsd:element name="IRecordingScreenSettings_getAudioChannels">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getAudioChannelsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioChannels">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="audioChannels" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setAudioChannelsResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoCodec-->
+      <xsd:element name="IRecordingScreenSettings_getVideoCodec">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoCodecResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:RecordingVideoCodec"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoCodec">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoCodec" type="vbox:RecordingVideoCodec"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoCodecResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoWidth-->
+      <xsd:element name="IRecordingScreenSettings_getVideoWidth">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoWidthResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoWidth">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoWidth" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoWidthResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoHeight-->
+      <xsd:element name="IRecordingScreenSettings_getVideoHeight">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoHeightResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoHeight">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoHeight" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoHeightResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoRate-->
+      <xsd:element name="IRecordingScreenSettings_getVideoRate">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoRateResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoRate">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoRate" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoRateResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoRateControlMode-->
+      <xsd:element name="IRecordingScreenSettings_getVideoRateControlMode">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoRateControlModeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:RecordingVideoRateControlMode"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoRateControlMode">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoRateControlMode" type="vbox:RecordingVideoRateControlMode"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoRateControlModeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoFPS-->
+      <xsd:element name="IRecordingScreenSettings_getVideoFPS">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoFPSResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoFPS">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoFPS" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoFPSResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute IRecordingScreenSettings::videoScalingMethod-->
+      <xsd:element name="IRecordingScreenSettings_getVideoScalingMethod">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_getVideoScalingMethodResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:RecordingVideoScalingMethod"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoScalingMethod">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="videoScalingMethod" type="vbox:RecordingVideoScalingMethod"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_setVideoScalingMethodResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IRecordingScreenSettings::isFeatureEnabled-->
+      <xsd:element name="IRecordingScreenSettings_isFeatureEnabled">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="feature" type="vbox:RecordingFeature"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingScreenSettings_isFeatureEnabledResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface IRecordingSettings-->
+      <!-- read/write attribute IRecordingSettings::enabled-->
+      <xsd:element name="IRecordingSettings_getEnabled">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingSettings_getEnabledResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingSettings_setEnabled">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="enabled" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingSettings_setEnabledResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IRecordingSettings::screens-->
+      <xsd:element name="IRecordingSettings_getScreens">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingSettings_getScreensResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IRecordingSettings::getScreenSettings-->
+      <xsd:element name="IRecordingSettings_getScreenSettings">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="screenId" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IRecordingSettings_getScreenSettingsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!--Interface IPCIAddress-->
       <!-- read/write attribute IPCIAddress::bus-->
       <xsd:element name="IPCIAddress_getBus">
@@ -4115,286 +4792,6 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureEnabled-->
-      <xsd:element name="IMachine_getVideoCaptureEnabled">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureEnabledResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureEnabled">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureEnabled" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureEnabledResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureScreens-->
-      <xsd:element name="IMachine_getVideoCaptureScreens">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureScreensResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureScreens">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureScreens" minOccurs="0" maxOccurs="unbounded" type="xsd:boolean"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureScreensResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureFile-->
-      <xsd:element name="IMachine_getVideoCaptureFile">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureFileResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureFile">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureFile" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureFileResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureWidth-->
-      <xsd:element name="IMachine_getVideoCaptureWidth">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureWidthResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureWidth">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureWidth" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureWidthResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureHeight-->
-      <xsd:element name="IMachine_getVideoCaptureHeight">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureHeightResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureHeight">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureHeight" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureHeightResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureRate-->
-      <xsd:element name="IMachine_getVideoCaptureRate">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureRateResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureRate">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureRate" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureRateResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureFPS-->
-      <xsd:element name="IMachine_getVideoCaptureFPS">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureFPSResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureFPS">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureFPS" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureFPSResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureMaxTime-->
-      <xsd:element name="IMachine_getVideoCaptureMaxTime">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureMaxTimeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureMaxTime">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureMaxTime" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureMaxTimeResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureMaxFileSize-->
-      <xsd:element name="IMachine_getVideoCaptureMaxFileSize">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureMaxFileSizeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureMaxFileSize">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureMaxFileSize" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureMaxFileSizeResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- read/write attribute IMachine::videoCaptureOptions-->
-      <xsd:element name="IMachine_getVideoCaptureOptions">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_getVideoCaptureOptionsResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureOptions">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="videoCaptureOptions" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IMachine_setVideoCaptureOptionsResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
       <!-- readonly attribute IMachine::BIOSSettings-->
       <xsd:element name="IMachine_getBIOSSettings">
         <xsd:complexType>
@@ -4404,6 +4801,21 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IMachine_getBIOSSettingsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IMachine::recordingSettings-->
+      <xsd:element name="IMachine_getRecordingSettings">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMachine_getRecordingSettingsResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
@@ -4902,7 +5314,7 @@
       <xsd:element name="IMachine_getSharedFoldersResponse">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="vbox:ISharedFolder"/>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -6503,6 +6915,7 @@
             <xsd:element name="hostPath" type="xsd:string"/>
             <xsd:element name="writable" type="xsd:boolean"/>
             <xsd:element name="automount" type="xsd:boolean"/>
+            <xsd:element name="autoMountPoint" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -6856,6 +7269,23 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <!-- method IMachine::moveTo-->
+      <xsd:element name="IMachine_moveTo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="folder" type="xsd:string"/>
+            <xsd:element name="type" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMachine_moveToResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!-- method IMachine::saveState-->
       <xsd:element name="IMachine_saveState">
         <xsd:complexType>
@@ -7189,7 +7619,7 @@
       <xsd:element name="IConsole_getSharedFoldersResponse">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="vbox:ISharedFolder"/>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -7509,6 +7939,7 @@
             <xsd:element name="hostPath" type="xsd:string"/>
             <xsd:element name="writable" type="xsd:boolean"/>
             <xsd:element name="automount" type="xsd:boolean"/>
+            <xsd:element name="autoMountPoint" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -9174,6 +9605,62 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <!-- read/write attribute ISystemProperties::proxyMode-->
+      <xsd:element name="ISystemProperties_getProxyMode">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISystemProperties_getProxyModeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:ProxyMode"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISystemProperties_setProxyMode">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="proxyMode" type="vbox:ProxyMode"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISystemProperties_setProxyModeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute ISystemProperties::proxyURL-->
+      <xsd:element name="ISystemProperties_getProxyURL">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISystemProperties_getProxyURLResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISystemProperties_setProxyURL">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="proxyURL" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISystemProperties_setProxyURLResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
       <!-- method ISystemProperties::getMaxNetworkAdapters-->
       <xsd:element name="ISystemProperties_getMaxNetworkAdapters">
         <xsd:complexType>
@@ -9827,6 +10314,36 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- readonly attribute IGuestSession::userHome-->
+      <xsd:element name="IGuestSession_getUserHome">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_getUserHomeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IGuestSession::userDocuments-->
+      <xsd:element name="IGuestSession_getUserDocuments">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_getUserDocumentsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!-- readonly attribute IGuestSession::directories-->
       <xsd:element name="IGuestSession_getDirectories">
         <xsd:complexType>
@@ -9885,6 +10402,44 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- method IGuestSession::copyFromGuest-->
+      <xsd:element name="IGuestSession_copyFromGuest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="sources" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="filters" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="destination" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_copyFromGuestResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IGuestSession::copyToGuest-->
+      <xsd:element name="IGuestSession_copyToGuest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="sources" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="filters" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="destination" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_copyToGuestResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!-- method IGuestSession::directoryCopy-->
       <xsd:element name="IGuestSession_directoryCopy">
         <xsd:complexType>
@@ -9892,7 +10447,7 @@
             <xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="source" type="xsd:string"/>
             <xsd:element name="destination" type="xsd:string"/>
-            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:DirectoryCopyFlags"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:DirectoryCopyFlag"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -9910,7 +10465,7 @@
             <xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="source" type="xsd:string"/>
             <xsd:element name="destination" type="xsd:string"/>
-            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:DirectoryCopyFlags"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:DirectoryCopyFlag"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -9928,7 +10483,7 @@
             <xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="source" type="xsd:string"/>
             <xsd:element name="destination" type="xsd:string"/>
-            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:DirectoryCopyFlags"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:DirectoryCopyFlag"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -10220,7 +10775,7 @@
             <xsd:element name="openAction" type="vbox:FileOpenAction"/>
             <xsd:element name="sharingMode" type="vbox:FileSharingMode"/>
             <xsd:element name="creationMode" type="xsd:unsignedInt"/>
-            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:FileOpenExFlags"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:FileOpenExFlag"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -10296,6 +10851,22 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- method IGuestSession::fsObjRemoveArray-->
+      <xsd:element name="IGuestSession_fsObjRemoveArray">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="path" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_fsObjRemoveArrayResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!-- method IGuestSession::fsObjRename-->
       <xsd:element name="IGuestSession_fsObjRename">
         <xsd:complexType>
@@ -10319,11 +10890,47 @@
             <xsd:element name="_this" type="xsd:string"/>
             <xsd:element name="source" type="xsd:string"/>
             <xsd:element name="destination" type="xsd:string"/>
-            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:FsObjMoveFlags"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:FsObjMoveFlag"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IGuestSession_fsObjMoveResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IGuestSession::fsObjMoveArray-->
+      <xsd:element name="IGuestSession_fsObjMoveArray">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="source" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="destination" type="xsd:string"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:FsObjMoveFlag"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_fsObjMoveArrayResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IGuestSession::fsObjCopyArray-->
+      <xsd:element name="IGuestSession_fsObjCopyArray">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="source" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="destination" type="xsd:string"/>
+            <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:FileCopyFlag"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IGuestSession_fsObjCopyArrayResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
@@ -10879,15 +11486,15 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IFile::fileName-->
-      <xsd:element name="IFile_getFileName">
+      <!-- readonly attribute IFile::filename-->
+      <xsd:element name="IFile_getFilename">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IFile_getFileNameResponse">
+      <xsd:element name="IFile_getFilenameResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
@@ -11115,15 +11722,60 @@
         </xsd:complexType>
       </xsd:element>
       <!--Interface IFsObjInfo-->
-      <!-- readonly attribute IFsObjInfo::accessTime-->
-      <xsd:element name="IFsObjInfo_getAccessTime">
+      <!-- readonly attribute IFsObjInfo::name-->
+      <xsd:element name="IFsObjInfo_getName">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IFsObjInfo_getAccessTimeResponse">
+      <xsd:element name="IFsObjInfo_getNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::type-->
+      <xsd:element name="IFsObjInfo_getType">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getTypeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:FsObjType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::fileAttributes-->
+      <xsd:element name="IFsObjInfo_getFileAttributes">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getFileAttributesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::objectSize-->
+      <xsd:element name="IFsObjInfo_getObjectSize">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getObjectSizeResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:long"/>
@@ -11139,6 +11791,21 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IFsObjInfo_getAllocatedSizeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:long"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::accessTime-->
+      <xsd:element name="IFsObjInfo_getAccessTime">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getAccessTimeResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:long"/>
@@ -11175,96 +11842,6 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IFsObjInfo::deviceNumber-->
-      <xsd:element name="IFsObjInfo_getDeviceNumber">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getDeviceNumberResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::fileAttributes-->
-      <xsd:element name="IFsObjInfo_getFileAttributes">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getFileAttributesResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::generationId-->
-      <xsd:element name="IFsObjInfo_getGenerationId">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getGenerationIdResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::GID-->
-      <xsd:element name="IFsObjInfo_getGID">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getGIDResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::groupName-->
-      <xsd:element name="IFsObjInfo_getGroupName">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getGroupNameResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::hardLinks-->
-      <xsd:element name="IFsObjInfo_getHardLinks">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getHardLinksResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
       <!-- readonly attribute IFsObjInfo::modificationTime-->
       <xsd:element name="IFsObjInfo_getModificationTime">
         <xsd:complexType>
@@ -11280,15 +11857,60 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IFsObjInfo::name-->
-      <xsd:element name="IFsObjInfo_getName">
+      <!-- readonly attribute IFsObjInfo::UID-->
+      <xsd:element name="IFsObjInfo_getUID">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IFsObjInfo_getNameResponse">
+      <xsd:element name="IFsObjInfo_getUIDResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::userName-->
+      <xsd:element name="IFsObjInfo_getUserName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getUserNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::GID-->
+      <xsd:element name="IFsObjInfo_getGID">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getGIDResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::groupName-->
+      <xsd:element name="IFsObjInfo_getGroupName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getGroupNameResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
@@ -11325,45 +11947,45 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IFsObjInfo::objectSize-->
-      <xsd:element name="IFsObjInfo_getObjectSize">
+      <!-- readonly attribute IFsObjInfo::hardLinks-->
+      <xsd:element name="IFsObjInfo_getHardLinks">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IFsObjInfo_getObjectSizeResponse">
+      <xsd:element name="IFsObjInfo_getHardLinksResponse">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:long"/>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IFsObjInfo::type-->
-      <xsd:element name="IFsObjInfo_getType">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getTypeResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="vbox:FsObjType"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::UID-->
-      <xsd:element name="IFsObjInfo_getUID">
+      <!-- readonly attribute IFsObjInfo::deviceNumber-->
+      <xsd:element name="IFsObjInfo_getDeviceNumber">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IFsObjInfo_getUIDResponse">
+      <xsd:element name="IFsObjInfo_getDeviceNumberResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IFsObjInfo::generationId-->
+      <xsd:element name="IFsObjInfo_getGenerationId">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IFsObjInfo_getGenerationIdResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:unsignedInt"/>
@@ -11382,21 +12004,6 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- readonly attribute IFsObjInfo::userName-->
-      <xsd:element name="IFsObjInfo_getUserName">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IFsObjInfo_getUserNameResponse">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="returnval" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -12007,35 +12614,6 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- method IProgress::setCurrentOperationProgress-->
-      <xsd:element name="IProgress_setCurrentOperationProgress">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="percent" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IProgress_setCurrentOperationProgressResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IProgress::setNextOperation-->
-      <xsd:element name="IProgress_setNextOperation">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="nextOperationDescription" type="xsd:string"/>
-            <xsd:element name="nextOperationsWeight" type="xsd:unsignedInt"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IProgress_setNextOperationResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
       <!-- method IProgress::waitForCompletion-->
       <xsd:element name="IProgress_waitForCompletion">
         <xsd:complexType>
@@ -12061,20 +12639,6 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IProgress_waitForOperationCompletionResponse">
-        <xsd:complexType>
-          <xsd:sequence/>
-        </xsd:complexType>
-      </xsd:element>
-      <!-- method IProgress::waitForAsyncProgressCompletion-->
-      <xsd:element name="IProgress_waitForAsyncProgressCompletion">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="_this" type="xsd:string"/>
-            <xsd:element name="pProgressAsync" type="xsd:string"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
-      <xsd:element name="IProgress_waitForAsyncProgressCompletionResponse">
         <xsd:complexType>
           <xsd:sequence/>
         </xsd:complexType>
@@ -12239,7 +12803,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- method ISnapshot::getChildrenCount-->
+      <!-- readonly attribute ISnapshot::childrenCount-->
       <xsd:element name="ISnapshot_getChildrenCount">
         <xsd:complexType>
           <xsd:sequence>
@@ -12328,7 +12892,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- readonly attribute IMedium::location-->
+      <!-- read/write attribute IMedium::location-->
       <xsd:element name="IMedium_getLocation">
         <xsd:complexType>
           <xsd:sequence>
@@ -12341,6 +12905,19 @@
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
           </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMedium_setLocation">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="location" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMedium_setLocationResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
       <!-- readonly attribute IMedium::name-->
@@ -12863,8 +13440,8 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!-- method IMedium::setLocation-->
-      <xsd:element name="IMedium_setLocation">
+      <!-- method IMedium::moveTo-->
+      <xsd:element name="IMedium_moveTo">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
@@ -12872,7 +13449,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IMedium_setLocationResponse">
+      <xsd:element name="IMedium_moveToResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
@@ -12974,6 +13551,23 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- method IMedium::openForIO-->
+      <xsd:element name="IMedium_openForIO">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="writable" type="xsd:boolean"/>
+            <xsd:element name="password" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMedium_openForIOResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!--Interface IMediumFormat-->
       <!-- readonly attribute IMediumFormat::id-->
       <xsd:element name="IMediumFormat_getId">
@@ -13053,6 +13647,180 @@
             <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="xsd:unsignedInt"/>
             <xsd:element name="defaults" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
           </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface IDataStream-->
+      <!-- readonly attribute IDataStream::readSize-->
+      <xsd:element name="IDataStream_getReadSize">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDataStream_getReadSizeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IDataStream::read-->
+      <xsd:element name="IDataStream_read">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="size" type="xsd:unsignedInt"/>
+            <xsd:element name="timeoutMS" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDataStream_readResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface IMediumIO-->
+      <!-- readonly attribute IMediumIO::medium-->
+      <xsd:element name="IMediumIO_getMedium">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_getMediumResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IMediumIO::writable-->
+      <xsd:element name="IMediumIO_getWritable">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_getWritableResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IMediumIO::explorer-->
+      <xsd:element name="IMediumIO_getExplorer">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_getExplorerResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IMediumIO::read-->
+      <xsd:element name="IMediumIO_read">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="offset" type="xsd:long"/>
+            <xsd:element name="size" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_readResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IMediumIO::write-->
+      <xsd:element name="IMediumIO_write">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="offset" type="xsd:long"/>
+            <xsd:element name="data" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_writeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IMediumIO::formatFAT-->
+      <xsd:element name="IMediumIO_formatFAT">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="quick" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_formatFATResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IMediumIO::initializePartitionTable-->
+      <xsd:element name="IMediumIO_initializePartitionTable">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="format" type="vbox:PartitionTableType"/>
+            <xsd:element name="wholeDiskInOneEntry" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_initializePartitionTableResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IMediumIO::convertToStream-->
+      <xsd:element name="IMediumIO_convertToStream">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="format" type="xsd:string"/>
+            <xsd:element name="variant" minOccurs="0" maxOccurs="unbounded" type="vbox:MediumVariant"/>
+            <xsd:element name="bufferSize" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_convertToStreamResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="stream" type="xsd:string"/>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method IMediumIO::close-->
+      <xsd:element name="IMediumIO_close">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMediumIO_closeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
       <!--Interface IToken-->
@@ -14152,6 +14920,30 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- method IDisplay::createGuestScreenInfo-->
+      <xsd:element name="IDisplay_createGuestScreenInfo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="display" type="xsd:unsignedInt"/>
+            <xsd:element name="status" type="vbox:GuestMonitorStatus"/>
+            <xsd:element name="primary" type="xsd:boolean"/>
+            <xsd:element name="changeOrigin" type="xsd:boolean"/>
+            <xsd:element name="originX" type="xsd:int"/>
+            <xsd:element name="originY" type="xsd:int"/>
+            <xsd:element name="width" type="xsd:unsignedInt"/>
+            <xsd:element name="height" type="xsd:unsignedInt"/>
+            <xsd:element name="bitsPerPixel" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IDisplay_createGuestScreenInfoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!--Interface INetworkAdapter-->
       <!-- read/write attribute INetworkAdapter::adapterType-->
       <xsd:element name="INetworkAdapter_getAdapterType">
@@ -14863,6 +15655,34 @@
           <xsd:sequence/>
         </xsd:complexType>
       </xsd:element>
+      <!-- read/write attribute ISerialPort::uartType-->
+      <xsd:element name="ISerialPort_getUartType">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISerialPort_getUartTypeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:UartType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISerialPort_setUartType">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="uartType" type="vbox:UartType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISerialPort_setUartTypeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
       <!--Interface IParallelPort-->
       <!-- readonly attribute IParallelPort::slot-->
       <xsd:element name="IParallelPort_getSlot">
@@ -15275,6 +16095,21 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute IMachineDebugger::executionEngine-->
+      <xsd:element name="IMachineDebugger_getExecutionEngine">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="IMachineDebugger_getExecutionEngineResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="vbox:VMExecutionEngine"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
@@ -16983,6 +17818,151 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="IVRDEServer_getVRDEPropertyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface ISharedFolder-->
+      <!-- readonly attribute ISharedFolder::name-->
+      <xsd:element name="ISharedFolder_getName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ISharedFolder::hostPath-->
+      <xsd:element name="ISharedFolder_getHostPath">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getHostPathResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ISharedFolder::accessible-->
+      <xsd:element name="ISharedFolder_getAccessible">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getAccessibleResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute ISharedFolder::writable-->
+      <xsd:element name="ISharedFolder_getWritable">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getWritableResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_setWritable">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="writable" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_setWritableResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute ISharedFolder::autoMount-->
+      <xsd:element name="ISharedFolder_getAutoMount">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getAutoMountResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_setAutoMount">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="autoMount" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_setAutoMountResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- read/write attribute ISharedFolder::autoMountPoint-->
+      <xsd:element name="ISharedFolder_getAutoMountPoint">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getAutoMountPointResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_setAutoMountPoint">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="autoMountPoint" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_setAutoMountPointResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ISharedFolder::lastAccessError-->
+      <xsd:element name="ISharedFolder_getLastAccessError">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ISharedFolder_getLastAccessErrorResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:string"/>
@@ -19610,16 +20590,16 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <!--Interface IVideoCaptureChangedEvent-->
-      <!-- readonly attribute IVideoCaptureChangedEvent::midlDoesNotLikeEmptyInterfaces-->
-      <xsd:element name="IVideoCaptureChangedEvent_getMidlDoesNotLikeEmptyInterfaces">
+      <!--Interface IRecordingChangedEvent-->
+      <!-- readonly attribute IRecordingChangedEvent::midlDoesNotLikeEmptyInterfaces-->
+      <xsd:element name="IRecordingChangedEvent_getMidlDoesNotLikeEmptyInterfaces">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="_this" type="xsd:string"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-      <xsd:element name="IVideoCaptureChangedEvent_getMidlDoesNotLikeEmptyInterfacesResponse">
+      <xsd:element name="IRecordingChangedEvent_getMidlDoesNotLikeEmptyInterfacesResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="returnval" type="xsd:boolean"/>
@@ -20744,6 +21724,474 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <!--Interface ICursorPositionChangedEvent-->
+      <!-- readonly attribute ICursorPositionChangedEvent::hasData-->
+      <xsd:element name="ICursorPositionChangedEvent_getHasData">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICursorPositionChangedEvent_getHasDataResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:boolean"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICursorPositionChangedEvent::x-->
+      <xsd:element name="ICursorPositionChangedEvent_getX">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICursorPositionChangedEvent_getXResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICursorPositionChangedEvent::y-->
+      <xsd:element name="ICursorPositionChangedEvent_getY">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICursorPositionChangedEvent_getYResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:unsignedInt"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface ICloudClient-->
+      <!-- method ICloudClient::getExportLaunchParameters-->
+      <xsd:element name="ICloudClient_getExportLaunchParameters">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudClient_getExportLaunchParametersResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudClient::exportLaunchVM-->
+      <xsd:element name="ICloudClient_exportLaunchVM">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="description" type="xsd:string"/>
+            <xsd:element name="progress" type="xsd:string"/>
+            <xsd:element name="virtualBox" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudClient_exportLaunchVMResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface ICloudProfile-->
+      <!-- read/write attribute ICloudProfile::name-->
+      <xsd:element name="ICloudProfile_getName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_getNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_setName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_setNameResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICloudProfile::providerId-->
+      <xsd:element name="ICloudProfile_getProviderId">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_getProviderIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProfile::getProperty-->
+      <xsd:element name="ICloudProfile_getProperty">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_getPropertyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProfile::setProperty-->
+      <xsd:element name="ICloudProfile_setProperty">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="value" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_setPropertyResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProfile::getProperties-->
+      <xsd:element name="ICloudProfile_getProperties">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="names" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_getPropertiesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnNames" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProfile::setProperties-->
+      <xsd:element name="ICloudProfile_setProperties">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="names" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="values" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_setPropertiesResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProfile::remove-->
+      <xsd:element name="ICloudProfile_remove">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_removeResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProfile::createCloudClient-->
+      <xsd:element name="ICloudProfile_createCloudClient">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProfile_createCloudClientResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface ICloudProvider-->
+      <!-- readonly attribute ICloudProvider::name-->
+      <xsd:element name="ICloudProvider_getName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICloudProvider::shortName-->
+      <xsd:element name="ICloudProvider_getShortName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getShortNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICloudProvider::id-->
+      <xsd:element name="ICloudProvider_getId">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICloudProvider::profiles-->
+      <xsd:element name="ICloudProvider_getProfiles">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getProfilesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICloudProvider::profileNames-->
+      <xsd:element name="ICloudProvider_getProfileNames">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getProfileNamesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- readonly attribute ICloudProvider::supportedPropertyNames-->
+      <xsd:element name="ICloudProvider_getSupportedPropertyNames">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getSupportedPropertyNamesResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::getPropertyDescription-->
+      <xsd:element name="ICloudProvider_getPropertyDescription">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getPropertyDescriptionResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::createProfile-->
+      <xsd:element name="ICloudProvider_createProfile">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="profileName" type="xsd:string"/>
+            <xsd:element name="names" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="values" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_createProfileResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::importProfiles-->
+      <xsd:element name="ICloudProvider_importProfiles">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_importProfilesResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::restoreProfiles-->
+      <xsd:element name="ICloudProvider_restoreProfiles">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_restoreProfilesResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::saveProfiles-->
+      <xsd:element name="ICloudProvider_saveProfiles">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_saveProfilesResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::getProfileByName-->
+      <xsd:element name="ICloudProvider_getProfileByName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="profileName" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_getProfileByNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProvider::prepareUninstall-->
+      <xsd:element name="ICloudProvider_prepareUninstall">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProvider_prepareUninstallResponse">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+      <!--Interface ICloudProviderManager-->
+      <!-- readonly attribute ICloudProviderManager::providers-->
+      <xsd:element name="ICloudProviderManager_getProviders">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProviderManager_getProvidersResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProviderManager::getProviderById-->
+      <xsd:element name="ICloudProviderManager_getProviderById">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="providerId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProviderManager_getProviderByIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProviderManager::getProviderByShortName-->
+      <xsd:element name="ICloudProviderManager_getProviderByShortName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="providerName" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProviderManager_getProviderByShortNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <!-- method ICloudProviderManager::getProviderByName-->
+      <xsd:element name="ICloudProviderManager_getProviderByName">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="_this" type="xsd:string"/>
+            <xsd:element name="providerName" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ICloudProviderManager_getProviderByNameResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="returnval" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
       <!--
       ******************************************************
       * faults
@@ -20766,5 +22214,11 @@
       </xsd:element>
     </xsd:schema>
   </wsdl:types>
-  
+  <wsdl:message name="InvalidObjectFaultMsg">
+    <wsdl:part name="fault" element="vbox:InvalidObjectFault"/>
+  </wsdl:message>
+  <wsdl:message name="RuntimeFaultMsg">
+    <wsdl:part name="fault" element="vbox:RuntimeFault"/>
+  </wsdl:message>
+
 </wsdl:definitions>

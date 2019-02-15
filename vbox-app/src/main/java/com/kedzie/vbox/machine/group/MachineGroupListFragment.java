@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
@@ -17,7 +16,10 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.event.EventNotificationReceiver;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * Machine list with option menu and event handler
@@ -38,7 +40,7 @@ public class MachineGroupListFragment extends MachineGroupListBaseFragment {
 	/**
 	 * Handle MachineStateChanged event
 	 */
-	private class HandleEventTask extends ActionBarTask<Bundle, IMachine> {
+	private class HandleEventTask extends BaseTask<Bundle, IMachine> {
 		
 		public HandleEventTask(VBoxSvc vmgr) { 
 			super((AppCompatActivity)getActivity(), vmgr);

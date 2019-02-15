@@ -9,6 +9,7 @@ import java.util.Map;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.kedzie.vbox.api.jaxb.BitmapFormat;
 import com.kedzie.vbox.api.jaxb.CPUPropertyType;
 import com.kedzie.vbox.api.jaxb.ChipsetType;
 import com.kedzie.vbox.api.jaxb.CloneMode;
@@ -192,7 +193,7 @@ public interface IMachine extends IManagedObjectRef, TreeNode, Parcelable {
 	
 	@KSOAP(cacheable=true) public IAudioAdapter getAudioAdapter();
 	
-	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment>getMediumAttachments() throws IOException;
+	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment> getMediumAttachments() throws IOException;
 	@KSOAP(cacheable=true) public IMedium getMedium(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
 	@KSOAP(cacheable=true) public IMediumAttachment getMediumAttachment(@KSOAP("name") String name, @KSOAP(type="int", value="controllerPort") int controllerPort, @KSOAP(type="int", value="device") int device) throws IOException;
 	@KSOAP(cacheable=true) public ArrayList<IMediumAttachment> getMediumAttachmentsOfController(@KSOAP("name") String name);
@@ -364,18 +365,14 @@ operation should be explicitly performed by the caller after the medium is succe
 	 * <li>{@link LaunchMode#headless}: VBoxHeadless (VRDE Server) front-end </li>
 	 * <li>{@link LaunchMode#sdl}: VirtualBox SDL front-end </li>
 	 * <li>{@link LaunchMode#emergencystop}: reserved value, used for aborting the currently running VM or session owner. In this case the <em>session</em> parameter may be <code>NULL</code> (if it is non-null it isn't used in any way), and the <em>progress</em> return value will be always NULL. The operation completes immediately. </li>
-	 * </ul>	
-	 * @param environment	Environment to pass to the VM process. 
+	 * </ul>
 	 * @return		Progress object to track the operation completion.
 	 * @throws IOException
 	 */
 	public IProgress launchVMProcess(@KSOAP("session")ISession session, @KSOAP("type") LaunchMode type) throws IOException;
 	
-	public Map<String, String> querySavedThumbnailSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
-	public Map<String, String> readSavedThumbnailPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
-	
-	public Map<String, String> querySavedScreenshotPNGSize(@KSOAP(type="unsignedInt", value="screenId") int screenId);
-	public Map<String, String> readSavedScreenshotPNGToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId);
+	public Map<String, List<String>> querySavedScreenshotInfo(@KSOAP(type="unsignedInt", value="screenId") int screenId);
+	public Map<String, String> readSavedScreenshotToArray(@KSOAP(type="unsignedInt", value="screenId") int screenId, @KSOAP("format") BitmapFormat format);
 	
 	public String queryLogFilename(@KSOAP(type="unsignedInt", value="idx") int idx);
 	

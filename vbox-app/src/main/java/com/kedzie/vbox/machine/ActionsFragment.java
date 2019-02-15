@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +26,7 @@ import com.kedzie.vbox.api.IEvent;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISessionStateChangedEvent;
+import com.kedzie.vbox.api.jaxb.BitmapFormat;
 import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
@@ -35,7 +35,7 @@ import com.kedzie.vbox.event.EventIntentService;
 import com.kedzie.vbox.machine.settings.VMSettingsActivity;
 import com.kedzie.vbox.metrics.MetricActivity;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.LaunchVMProcessTask;
 import com.kedzie.vbox.task.MachineTask;
 
@@ -82,7 +82,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 	/**
 	 * Load Machine properties from web server
 	 */
-	class UpdateMachineViewTask extends ActionBarTask<IMachine, IMachine> {
+	class UpdateMachineViewTask extends BaseTask<IMachine, IMachine> {
 		
 		public UpdateMachineViewTask(VBoxSvc vmgr) {
 			super((AppCompatActivity)getActivity(), vmgr);
@@ -108,7 +108,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 	/**
 	 * Handle SessionStateChanged event
 	 */
-	class HandleSessionChangedEvent extends ActionBarTask<Bundle, SessionState> {
+	class HandleSessionChangedEvent extends BaseTask<Bundle, SessionState> {
 		
 		public HandleSessionChangedEvent(VBoxSvc vmgr) {  
 			super((AppCompatActivity)getActivity(), vmgr);
@@ -274,7 +274,7 @@ public class ActionsFragment extends Fragment implements OnItemClickListener {
 				protected byte[] work(IMachine m, IConsole console, Void...i) throws Exception { 	
 					IDisplay display = console.getDisplay();
 					Map<String, String> res = display.getScreenResolution(0);
-					return display.takeScreenShotPNGToArray(0, Integer.valueOf(res.get("width")), Integer.valueOf(res.get("height")));
+					return display.takeScreenShotToArray(0, Integer.valueOf(res.get("width")), Integer.valueOf(res.get("height")), BitmapFormat.PNG);
 				}
 				@Override
 				protected void onSuccess(byte[] result) {

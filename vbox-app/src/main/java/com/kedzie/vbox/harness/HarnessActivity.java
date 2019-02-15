@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
@@ -14,7 +15,7 @@ import com.kedzie.vbox.machine.MachineListActivity;
 import com.kedzie.vbox.machine.settings.VMSettingsActivity;
 import com.kedzie.vbox.server.Server;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.DialogTask;
 
 /**
@@ -24,7 +25,7 @@ import com.kedzie.vbox.task.DialogTask;
  */
 public class HarnessActivity extends BaseActivity {
 
-	private class LogonTask extends ActionBarTask<Server, Void> {
+	private class LogonTask extends BaseTask<Server, Void> {
 
 		public LogonTask(VBoxSvc vmgr) {
 			super(HarnessActivity.this, vmgr);
@@ -39,7 +40,7 @@ public class HarnessActivity extends BaseActivity {
 		}
 	}
 
-	private class LogoffTask extends ActionBarTask<Void, Void> {
+	private class LogoffTask extends BaseTask<Void, Void> {
 
 		public LogoffTask(VBoxSvc vmgr) {
 			super(HarnessActivity.this, vmgr);
@@ -52,7 +53,7 @@ public class HarnessActivity extends BaseActivity {
 		}
 	}
 
-	private class MachineSettingsTask extends ActionBarTask<String, IMachine> {
+	private class MachineSettingsTask extends BaseTask<String, IMachine> {
 
 		public MachineSettingsTask(VBoxSvc vmgr) {
 			super(HarnessActivity.this, vmgr);
@@ -75,7 +76,7 @@ public class HarnessActivity extends BaseActivity {
     private class MockProgressTask extends DialogTask<Void, String> {
 
         public MockProgressTask() {
-            super(HarnessActivity.this, null, "Mock Task");
+            super(HarnessActivity.this, null);
         }
 
         @Override

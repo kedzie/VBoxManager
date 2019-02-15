@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for FirmwareType.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="FirmwareType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -19,31 +20,32 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum FirmwareType {
 
-	BIOS("BIOS"),
-	EFI("EFI"),
-	EFI_32("EFI32"),
-	EFI_64("EFI64"),
-	EFIDUAL("EFIDUAL");
-	private final String value;
+    BIOS("BIOS"),
+    EFI("EFI"),
+    EFI_32("EFI32"),
+    EFI_64("EFI64"),
+    EFIDUAL("EFIDUAL");
+    private final String value;
 
-	FirmwareType(String v) {
-		value = v;
-	}
+    FirmwareType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static FirmwareType fromValue(String v) {
-		for (FirmwareType c : FirmwareType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static FirmwareType fromValue(String v) {
+        for (FirmwareType c: FirmwareType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

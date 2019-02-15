@@ -36,7 +36,7 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 	private class LogoffTask extends DialogTask<Void, Void> {
 
 		public LogoffTask(VBoxSvc vmgr) { 
-			super(ServerListPickActivity.this, vmgr, R.string.progress_logging_off);
+			super(ServerListPickActivity.this, vmgr);
 		}
 
 		@Override

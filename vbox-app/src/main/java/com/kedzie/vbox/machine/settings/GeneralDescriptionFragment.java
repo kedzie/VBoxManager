@@ -1,8 +1,6 @@
 package com.kedzie.vbox.machine.settings;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -13,7 +11,10 @@ import android.widget.EditText;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BundleBuilder;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 /**
  * 
@@ -21,7 +22,7 @@ import com.kedzie.vbox.task.ActionBarTask;
  */
 public class GeneralDescriptionFragment extends Fragment {
 
-    class LoadInfoTask extends ActionBarTask<IMachine, IMachine> {
+    class LoadInfoTask extends BaseTask<IMachine, IMachine> {
     	
         public LoadInfoTask() { 
         	super((AppCompatActivity)getActivity(), null);

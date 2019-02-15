@@ -102,7 +102,7 @@ public class LoginSupport implements ServerListFragment.OnSelectServerListener {
     private LoginCallback callback;
 
     public LogonTask(AppCompatActivity context, LoginCallback callback) {
-      super(context, null, R.string.progress_connecting, true);
+      super(context, null, true);
       this.callback = callback;
     }
 

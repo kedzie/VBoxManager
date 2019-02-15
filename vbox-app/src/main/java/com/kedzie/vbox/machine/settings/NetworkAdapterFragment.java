@@ -45,7 +45,7 @@ public class NetworkAdapterFragment extends Fragment {
 	class LoadInfoTask extends DialogTask<INetworkAdapter, Tuple<INetworkAdapter, String[]>> {
 		
 		public LoadInfoTask() {
-			super((AppCompatActivity)getActivity(), _adapter.getAPI(), R.string.progress_loading_data_generic);
+			super((AppCompatActivity)getActivity(), _adapter.getAPI());
 		}
 
 		@Override 

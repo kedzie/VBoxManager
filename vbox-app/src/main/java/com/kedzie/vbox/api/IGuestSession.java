@@ -1,13 +1,12 @@
 package com.kedzie.vbox.api;
 
-import java.util.List;
-
-import com.kedzie.vbox.api.jaxb.CopyFileFlag;
 import com.kedzie.vbox.api.jaxb.DirectoryCreateFlag;
 import com.kedzie.vbox.api.jaxb.DirectoryOpenFlag;
 import com.kedzie.vbox.api.jaxb.DirectoryRemoveRecFlag;
-import com.kedzie.vbox.api.jaxb.PathRenameFlag;
+import com.kedzie.vbox.api.jaxb.FsObjRenameFlag;
 import com.kedzie.vbox.soap.KSOAP;
+
+import java.util.List;
 
 /**
  * A guest session represents one impersonated user account on the guest, so every operation will use the same credentials specified when 
@@ -77,26 +76,27 @@ public interface IGuestSession extends IManagedObjectRef {
     /**
      * Copies a file from guest to the host.
      * @param source	Source file on the guest to copy to the host.
-     * @param dest	Destination file name on the host.
+     *
+     * @param destination	Destination file name on the host.
      * @param flags		Copy flags; see <a class="el" href="_virtual_box_8idl.html#af4001a07f3e4bc28ecc98faf1d6c7635">CopyFileFlag</a><b></b> for more information.
      * @return		Progress object to track the operation completion.
     * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
     * <td>{@link IVirtualBox#VBOX_E_IPRT_ERROR }</td><td>Error starting the copy operation.</td></tr>
     * </tbody></table></dd></dl>
      */
-    public IProgress copyFrom(@KSOAP("source") String source, @KSOAP("dest") String dest, @KSOAP("flags") CopyFileFlag...flags);
+    public IProgress copyFromGuest(@KSOAP("sources") List<String> sources, @KSOAP("filters") List<String> filters, @KSOAP("flags") List<String> flags, @KSOAP("destination") String destination);
     
     /**
      * Copies a file from host to the guest.
-     * @param source	Source file on the host to copy to the guest.
-     * @param dest	Destination file name on the guest.
-     * @param flags	Copy flags; see {@link CopyFileFlag} for more information.
+     * @param sources	Source file on the host to copy to the guest.
+     * @param filters	filters
+     * @param flags	Copy flags;
      * @return	Progress object to track the operation completion.
      * <dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
      * <td>{@link IVirtualBox#VBOX_E_IPRT_ERROR}</td><td>Error starting the copy operation</td></tr>
      * </tbody></table></dd></dl>
      */
-    public IProgress copyTo(@KSOAP("source") String source, @KSOAP("dest") String dest, @KSOAP("flags") CopyFileFlag...flags);
+    public IProgress copyToGuest(@KSOAP("sources") List<String> sources, @KSOAP("filters") List<String> filters, @KSOAP("flags") List<String> flags, @KSOAP("destination") String destination);
     
     /**
      * Create a directory on the guest.
@@ -159,8 +159,7 @@ public interface IGuestSession extends IManagedObjectRef {
     
     public IProgress directoryRemoveRecursive(@KSOAP("path") String path, @KSOAP("flags") DirectoryRemoveRecFlag...flags);
     
-    public void directoryRename(@KSOAP("source") String source, @KSOAP("dest") String dest, @KSOAP("flags") PathRenameFlag...flags);
-    
+
     public void directorySetACL(@KSOAP("path") String path, @KSOAP("acl") String acl);
     
     public void environmentClear();
@@ -182,139 +181,11 @@ public interface IGuestSession extends IManagedObjectRef {
     
     public IFsObjInfo fileQueryInfo(@KSOAP("path") String path);
     
-    public void fileRename(@KSOAP("source") String source, @KSOAP("dest") String dest, @KSOAP("flags") PathRenameFlag...flags);
+    public void fsObjRename(@KSOAP("oldPath") String oldPath, @KSOAP("newPath") String newPath, @KSOAP("flags") FsObjRenameFlag...flags);
     
     public long fileQuerySize(@KSOAP("path") String path);
     
     public void fileSetACL(@KSOAP("path") String path, @KSOAP("acl") String acl);
-    
-//    <!-- method IGuestSession::processCreate-->
-//    <xsd:element name="IGuestSession_processCreate">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="command" type="xsd:string"/>
-//          <xsd:element name="arguments" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-//          <xsd:element name="environment" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-//          <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:ProcessCreateFlag"/>
-//          <xsd:element name="timeoutMS" type="xsd:unsignedInt"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_processCreateResponse">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="returnval" type="xsd:string"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-    
-//    <!-- method IGuestSession::processCreateEx-->
-//    <xsd:element name="IGuestSession_processCreateEx">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="command" type="xsd:string"/>
-//          <xsd:element name="arguments" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-//          <xsd:element name="environment" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
-//          <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:ProcessCreateFlag"/>
-//          <xsd:element name="timeoutMS" type="xsd:unsignedInt"/>
-//          <xsd:element name="priority" type="vbox:ProcessPriority"/>
-//          <xsd:element name="affinity" minOccurs="0" maxOccurs="unbounded" type="xsd:int"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_processCreateExResponse">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="returnval" type="xsd:string"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-    
-//    <!-- method IGuestSession::processGet-->
-//    <xsd:element name="IGuestSession_processGet">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="pid" type="xsd:unsignedInt"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_processGetResponse">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="returnval" type="xsd:string"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-    
-//    <!-- method IGuestSession::symlinkCreate-->
-//    <xsd:element name="IGuestSession_symlinkCreate">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="source" type="xsd:string"/>
-//          <xsd:element name="target" type="xsd:string"/>
-//          <xsd:element name="type" type="vbox:SymlinkType"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_symlinkCreateResponse">
-//      <xsd:complexType>
-//        <xsd:sequence/>
-//      </xsd:complexType>
-//    </xsd:element>
-    
-//    <!-- method IGuestSession::symlinkExists-->
-//    <xsd:element name="IGuestSession_symlinkExists">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="symlink" type="xsd:string"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_symlinkExistsResponse">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="returnval" type="xsd:boolean"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-    
-//    <!-- method IGuestSession::symlinkRead-->
-//    <xsd:element name="IGuestSession_symlinkRead">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="symlink" type="xsd:string"/>
-//          <xsd:element name="flags" minOccurs="0" maxOccurs="unbounded" type="vbox:SymlinkReadFlag"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_symlinkReadResponse">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="returnval" type="xsd:string"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-    
-//    <!-- method IGuestSession::symlinkRemoveDirectory-->
-//    <xsd:element name="IGuestSession_symlinkRemoveDirectory">
-//      <xsd:complexType>
-//        <xsd:sequence>
-//          <xsd:element name="_this" type="xsd:string"/>
-//          <xsd:element name="path" type="xsd:string"/>
-//        </xsd:sequence>
-//      </xsd:complexType>
-//    </xsd:element>
-//    <xsd:element name="IGuestSession_symlinkRemoveDirectoryResponse">
-//      <xsd:complexType>
-//        <xsd:sequence/>
-//      </xsd:complexType>
-//    </xsd:element>
 
     /**
      * Removes a symbolic link on the guest if it's a file.

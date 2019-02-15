@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for NetworkAttachmentType.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="NetworkAttachmentType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -21,33 +22,34 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum NetworkAttachmentType {
 
-	NULL("Null"),
-	NAT("NAT"),
-	BRIDGED("Bridged"),
-	INTERNAL("Internal"),
-	HOST_ONLY("HostOnly"),
-	GENERIC("Generic"),
-	NAT_NETWORK("NATNetwork");
-	private final String value;
+    NULL("Null"),
+    NAT("NAT"),
+    BRIDGED("Bridged"),
+    INTERNAL("Internal"),
+    HOST_ONLY("HostOnly"),
+    GENERIC("Generic"),
+    NAT_NETWORK("NATNetwork");
+    private final String value;
 
-	NetworkAttachmentType(String v) {
-		value = v;
-	}
+    NetworkAttachmentType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static NetworkAttachmentType fromValue(String v) {
-		for (NetworkAttachmentType c : NetworkAttachmentType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static NetworkAttachmentType fromValue(String v) {
+        for (NetworkAttachmentType c: NetworkAttachmentType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

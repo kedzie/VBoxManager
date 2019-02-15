@@ -3,8 +3,6 @@ package com.kedzie.vbox.machine.settings;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,12 +22,14 @@ import com.kedzie.vbox.api.jaxb.IMediumAttachment;
 import com.kedzie.vbox.api.jaxb.IMediumAttachment.Slot;
 import com.kedzie.vbox.api.jaxb.StorageBus;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.DialogTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -43,7 +43,7 @@ public class StorageHardDiskFragment extends Fragment {
 	/**
 	 * Load medium details
 	 */
-	class LoadInfoTask extends ActionBarTask<Void, Void> {
+	class LoadInfoTask extends BaseTask<Void, Void> {
 
 		public LoadInfoTask() { 
 			super((AppCompatActivity)getActivity(), _machine.getAPI());
@@ -68,7 +68,7 @@ public class StorageHardDiskFragment extends Fragment {
 	/**
 	 * Move the medium to a different slot within controller.
 	 */
-	class MoveTask extends ActionBarTask<Slot, Void> {
+	class MoveTask extends BaseTask<Slot, Void> {
 
 		public MoveTask() { 
 			super((AppCompatActivity)getActivity(), _machine.getAPI());
@@ -87,7 +87,7 @@ public class StorageHardDiskFragment extends Fragment {
 	/**
 	 * Show list of mediums to mount
 	 */
-	class ListMediumsTask extends ActionBarTask<Void, List<IMedium>> {
+	class ListMediumsTask extends BaseTask<Void, List<IMedium>> {
 
 		public ListMediumsTask() { 
 			super((AppCompatActivity)getActivity(), _machine.getAPI());
@@ -126,7 +126,7 @@ public class StorageHardDiskFragment extends Fragment {
 	class MountTask extends DialogTask<IMedium, Void> {
 
 		public MountTask() { 
-			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_mounting_medium);
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 
 		@Override 

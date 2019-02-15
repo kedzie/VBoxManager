@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for HostNetworkInterfaceType.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="HostNetworkInterfaceType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -16,28 +17,29 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum HostNetworkInterfaceType {
 
-	BRIDGED("Bridged"),
-	HOST_ONLY("HostOnly");
-	private final String value;
+    BRIDGED("Bridged"),
+    HOST_ONLY("HostOnly");
+    private final String value;
 
-	HostNetworkInterfaceType(String v) {
-		value = v;
-	}
+    HostNetworkInterfaceType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static HostNetworkInterfaceType fromValue(String v) {
-		for (HostNetworkInterfaceType c : HostNetworkInterfaceType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static HostNetworkInterfaceType fromValue(String v) {
+        for (HostNetworkInterfaceType c: HostNetworkInterfaceType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

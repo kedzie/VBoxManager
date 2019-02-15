@@ -7,9 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,7 +27,7 @@ import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.CollapsiblePanelView;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.MachineCallable;
 
 import java.io.IOException;
@@ -38,6 +35,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * 
@@ -83,7 +84,7 @@ public class GroupInfoFragment extends Fragment {
         }
     }
     
-	class LoadInfoTask extends ActionBarTask<VMGroup, ArrayList<MachineInfo>> {
+	class LoadInfoTask extends BaseTask<VMGroup, ArrayList<MachineInfo>> {
 
 		public LoadInfoTask() { 
 			super((AppCompatActivity)getActivity(), null);

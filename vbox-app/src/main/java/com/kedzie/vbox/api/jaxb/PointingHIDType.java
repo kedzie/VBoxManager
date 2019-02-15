@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for PointingHIDType.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="PointingHIDType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -20,32 +21,33 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum PointingHIDType {
 
-	NONE("None"),
-	PS_2_MOUSE("PS2Mouse"),
-	USB_MOUSE("USBMouse"),
-	USB_TABLET("USBTablet"),
-	COMBO_MOUSE("ComboMouse"),
-	USB_MULTI_TOUCH("USBMultiTouch");
-	private final String value;
+    NONE("None"),
+    PS_2_MOUSE("PS2Mouse"),
+    USB_MOUSE("USBMouse"),
+    USB_TABLET("USBTablet"),
+    COMBO_MOUSE("ComboMouse"),
+    USB_MULTI_TOUCH("USBMultiTouch");
+    private final String value;
 
-	PointingHIDType(String v) {
-		value = v;
-	}
+    PointingHIDType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static PointingHIDType fromValue(String v) {
-		for (PointingHIDType c : PointingHIDType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static PointingHIDType fromValue(String v) {
+        for (PointingHIDType c: PointingHIDType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

@@ -9,10 +9,10 @@ import com.kedzie.vbox.api.jaxb.SessionState;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
 
-public class LaunchVMProcessTask extends DialogTask<IMachine, IMachine> {
+public class LaunchVMProcessTask extends ServiceTask<IMachine, IMachine> {
 	
 	public LaunchVMProcessTask(AppCompatActivity activity, VBoxSvc vmgr) {
-		super(activity, vmgr, R.string.progress_starting);
+		super(activity, vmgr, R.drawable.ic_list_start);
 	}
 	
 	@Override 

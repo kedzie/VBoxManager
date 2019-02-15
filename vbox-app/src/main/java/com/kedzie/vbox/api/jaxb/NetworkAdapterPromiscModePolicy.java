@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for NetworkAdapterPromiscModePolicy.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="NetworkAdapterPromiscModePolicy">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -17,29 +18,30 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum NetworkAdapterPromiscModePolicy {
 
-	DENY("Deny"),
-	ALLOW_NETWORK("AllowNetwork"),
-	ALLOW_ALL("AllowAll");
-	private final String value;
+    DENY("Deny"),
+    ALLOW_NETWORK("AllowNetwork"),
+    ALLOW_ALL("AllowAll");
+    private final String value;
 
-	NetworkAdapterPromiscModePolicy(String v) {
-		value = v;
-	}
+    NetworkAdapterPromiscModePolicy(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static NetworkAdapterPromiscModePolicy fromValue(String v) {
-		for (NetworkAdapterPromiscModePolicy c : NetworkAdapterPromiscModePolicy.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static NetworkAdapterPromiscModePolicy fromValue(String v) {
+        for (NetworkAdapterPromiscModePolicy c: NetworkAdapterPromiscModePolicy.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

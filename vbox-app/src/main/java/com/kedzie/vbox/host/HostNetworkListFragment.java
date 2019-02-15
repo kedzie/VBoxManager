@@ -28,7 +28,7 @@ import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Tuple;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.DialogTask;
 
 import org.ksoap2.SoapFault;
@@ -61,7 +61,7 @@ public class HostNetworkListFragment extends Fragment {
 	private class AddInterfaceTask extends DialogTask<IHost, IHostNetworkInterface> {
 		
 		public AddInterfaceTask() {
-			super((AppCompatActivity)getActivity(), _host.getAPI(), R.string.progress_creating_network_interface);
+			super((AppCompatActivity)getActivity(), _host.getAPI());
 		}
 		
 		@Override
@@ -82,7 +82,7 @@ public class HostNetworkListFragment extends Fragment {
 	/**
 	 * Delete a network interface
 	 */
-	private class DeleteInterfaceTask extends ActionBarTask<IHostNetworkInterface, IHostNetworkInterface> {
+	private class DeleteInterfaceTask extends BaseTask<IHostNetworkInterface, IHostNetworkInterface> {
 		
 		public DeleteInterfaceTask() {
 			super((AppCompatActivity)getActivity(), _host.getAPI());
@@ -104,7 +104,7 @@ public class HostNetworkListFragment extends Fragment {
 	/**
 	 * Load list of host network interfaces
 	 */
-	private class LoadDataTask extends ActionBarTask<Void, ArrayList<IHostNetworkInterface>> {
+	private class LoadDataTask extends BaseTask<Void, ArrayList<IHostNetworkInterface>> {
 		
 		public LoadDataTask() {
 			super((AppCompatActivity)getActivity(), HostNetworkListFragment.this._vmgr);

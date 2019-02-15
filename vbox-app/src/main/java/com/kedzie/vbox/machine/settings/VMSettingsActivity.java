@@ -6,14 +6,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.ActionBar;
 import android.util.Log;
-
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.ISession;
@@ -25,10 +21,14 @@ import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.CategoryFragment.OnSelectCategoryListener;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
@@ -53,7 +53,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
     /**
      * Get Write Lock on machine 
      */
-    class LockMachineTask extends ActionBarTask<IMachine, IMachine> {
+    class LockMachineTask extends BaseTask<IMachine, IMachine> {
     	
         public LockMachineTask() { 
         	super(VMSettingsActivity.this, VMSettingsActivity.this._vmgr);
@@ -79,7 +79,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
     /**
      * Save settings
      */
-    class SaveSettingsTask extends ActionBarTask<IMachine, Integer> {
+    class SaveSettingsTask extends BaseTask<IMachine, Integer> {
     	
         public SaveSettingsTask() {
         	super(VMSettingsActivity.this, VMSettingsActivity.this._vmgr);
@@ -103,7 +103,7 @@ public class VMSettingsActivity extends BaseActivity implements OnSelectCategory
     /**
      * Discard settings
      */
-    class DiscardSettingsTask extends ActionBarTask<IMachine, Integer> {
+    class DiscardSettingsTask extends BaseTask<IMachine, Integer> {
     	
         public DiscardSettingsTask() { 
         	super(VMSettingsActivity.this, VMSettingsActivity.this._vmgr);

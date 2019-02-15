@@ -20,14 +20,12 @@ import java.io.IOException;
  *
  * @apiviz.stereotype Task
  */
-public abstract class MachineTask<Input, Output> extends BaseTask<Input, Output> {
+public abstract class MachineTask<Input, Output> extends ServiceTask<Input, Output> {
 
 		protected IMachine _machine;
-		private int _icon;
 
 		public MachineTask(AppCompatActivity context, VBoxSvc vmgr, int icon, boolean indeterminate, IMachine m) {
-			super(context, vmgr);
-			_icon = icon;
+			super(context, vmgr, icon);
 			_indeterminate=indeterminate;
 			_machine=m;
 		}
@@ -48,15 +46,6 @@ public abstract class MachineTask<Input, Output> extends BaseTask<Input, Output>
 					session.unlockMachine();
 			}
 		}
-
-	@Override
-	protected void handleProgress(IProgress p) throws IOException {
-		Timber.d("Operation Completed. result code: " + p.getResultCode());
-		getContext().startService(new Intent(getContext(), ProgressService.class)
-				.putExtra(IProgress.BUNDLE, p)
-				.putExtra(ProgressService.INTENT_ICON, _icon));
-		return;
-	}
 
 		protected Output work(IMachine m, IConsole console, Input...inputs) throws Exception {return null;};
 		

@@ -2,8 +2,6 @@ package com.kedzie.vbox.machine;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.fragment.app.DialogFragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +18,11 @@ import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.ISnapshot;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.task.ActionBarTask;
+import com.kedzie.vbox.task.BaseTask;
 import com.kedzie.vbox.task.MachineTask;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -89,7 +89,7 @@ public class TakeSnapshotFragment extends DialogFragment {
 			public void onClick(View arg0) {
 				dismiss();
 				if(_snapshot!=null) {
-    				new ActionBarTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr) {
+    				new BaseTask<ISnapshot, Void>((AppCompatActivity)getActivity(), _vmgr) {
                         protected Void work(ISnapshot...s) throws Exception {     
                             s[0].setName(_nameText.getText().toString());
                             s[0].setDescription(_descriptionText.getText().toString());

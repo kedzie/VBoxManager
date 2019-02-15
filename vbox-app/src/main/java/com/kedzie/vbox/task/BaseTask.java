@@ -28,12 +28,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * VirtualBox® API Asynchronous task with progress & error handling.  
- * Don't subclass this directly, instead use {@link ActionBarTask} or {@link DialogTask}
+ * VirtualBox® API Asynchronous task with progress & error handling.
  * @param <Input>  Operation input argument 
  * @param <Output> Operation output
  */
-abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
+public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Output> {
 	/** interval used to update progress bar for longing-running operation*/
 	protected final static int PROGRESS_INTERVAL = 200;
 		
@@ -155,7 +154,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param e <code>Throwable</code> which caused the error
 	 */
 	protected void showAlert(Throwable e) {
-		Timber.e("caught throwable", e);
+		Timber.e(e, "caught throwable");
 		while(Utils.isEmpty(e.getMessage()) && e.getCause()!=null)
 			e = e.getCause();
 		new BundleBuilder().putString("title", e.getClass().getSimpleName()).putString("msg", e.getMessage()).sendMessage(_alertHandler, 0);
@@ -166,7 +165,7 @@ abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress, Outpu
 	 * @param e <code>Throwable</code> which caused the error
 	 */
 	protected void showAlert(SoapFault e) {
-		Timber.e("SoapFault", e);
+		Timber.e(e,"SoapFault");
 		Node detail = e.detail;
 		while(detail.getChildCount()>0) {
 		    Object child = detail.getChild(0);

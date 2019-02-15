@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for DhcpOpt.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="DhcpOpt">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -77,89 +78,90 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum DhcpOpt {
 
-	SUBNET_MASK("SubnetMask"),
-	TIME_OFFSET("TimeOffset"),
-	ROUTER("Router"),
-	TIME_SERVER("TimeServer"),
-	NAME_SERVER("NameServer"),
-	DOMAIN_NAME_SERVER("DomainNameServer"),
-	LOG_SERVER("LogServer"),
-	COOKIE("Cookie"),
-	LPR_SERVER("LPRServer"),
-	IMPRESS_SERVER("ImpressServer"),
-	RESOURSE_LOCATION_SERVER("ResourseLocationServer"),
-	HOST_NAME("HostName"),
-	BOOT_FILE_SIZE("BootFileSize"),
-	MERIT_DUMP_FILE("MeritDumpFile"),
-	DOMAIN_NAME("DomainName"),
-	SWAP_SERVER("SwapServer"),
-	ROOT_PATH("RootPath"),
-	EXTENSION_PATH("ExtensionPath"),
-	IP_FORWARDING_ENABLE_DISABLE("IPForwardingEnableDisable"),
-	NON_LOCAL_SOURCE_ROUTING_ENABLE_DISABLE("NonLocalSourceRoutingEnableDisable"),
-	POLICY_FILTER("PolicyFilter"),
-	MAXIMUM_DATAGRAM_REASSEMBLY_SIZE("MaximumDatagramReassemblySize"),
-	DEFAULT_IP_TIME_2_LIVE("DefaultIPTime2Live"),
-	PATH_MTU_AGING_TIMEOUT("PathMTUAgingTimeout"),
-	IP_LAYER_PARAMETERS_PER_INTERFACE("IPLayerParametersPerInterface"),
-	INTERFACE_MTU("InterfaceMTU"),
-	ALL_SUBNETS_ARE_LOCAL("AllSubnetsAreLocal"),
-	BROADCAST_ADDRESS("BroadcastAddress"),
-	PERFORM_MASK_DISCOVERY("PerformMaskDiscovery"),
-	MASK_SUPPLIER("MaskSupplier"),
-	PERFORM_ROUTE_DISCOVERY("PerformRouteDiscovery"),
-	ROUTER_SOLICITATION_ADDRESS("RouterSolicitationAddress"),
-	STATIC_ROUTE("StaticRoute"),
-	TRAILER_ENCAPSULATION("TrailerEncapsulation"),
-	ARP_CACHE_TIMEOUT("ARPCacheTimeout"),
-	ETHERNET_ENCAPSULATION("EthernetEncapsulation"),
-	TCP_DEFAULT_TTL("TCPDefaultTTL"),
-	TCP_KEEP_ALIVE_INTERVAL("TCPKeepAliveInterval"),
-	TCP_KEEP_ALIVE_GARBAGE("TCPKeepAliveGarbage"),
-	NETWORK_INFORMATION_SERVICE_DOMAIN("NetworkInformationServiceDomain"),
-	NETWORK_INFORMATION_SERVICE_SERVERS("NetworkInformationServiceServers"),
-	NETWORK_TIME_PROTOCOL_SERVERS("NetworkTimeProtocolServers"),
-	VENDOR_SPECIFIC_INFORMATION("VendorSpecificInformation"),
-	OPTION_44("Option_44"),
-	OPTION_45("Option_45"),
-	OPTION_46("Option_46"),
-	OPTION_47("Option_47"),
-	OPTION_48("Option_48"),
-	OPTION_49("Option_49"),
-	IP_ADDRESS_LEASE_TIME("IPAddressLeaseTime"),
-	OPTION_64("Option_64"),
-	OPTION_65("Option_65"),
-	TFTP_SERVER_NAME("TFTPServerName"),
-	BOOTFILE_NAME("BootfileName"),
-	OPTION_68("Option_68"),
-	OPTION_69("Option_69"),
-	OPTION_70("Option_70"),
-	OPTION_71("Option_71"),
-	OPTION_72("Option_72"),
-	OPTION_73("Option_73"),
-	OPTION_74("Option_74"),
-	OPTION_75("Option_75"),
-	OPTION_119("Option_119");
-	private final String value;
+    SUBNET_MASK("SubnetMask"),
+    TIME_OFFSET("TimeOffset"),
+    ROUTER("Router"),
+    TIME_SERVER("TimeServer"),
+    NAME_SERVER("NameServer"),
+    DOMAIN_NAME_SERVER("DomainNameServer"),
+    LOG_SERVER("LogServer"),
+    COOKIE("Cookie"),
+    LPR_SERVER("LPRServer"),
+    IMPRESS_SERVER("ImpressServer"),
+    RESOURSE_LOCATION_SERVER("ResourseLocationServer"),
+    HOST_NAME("HostName"),
+    BOOT_FILE_SIZE("BootFileSize"),
+    MERIT_DUMP_FILE("MeritDumpFile"),
+    DOMAIN_NAME("DomainName"),
+    SWAP_SERVER("SwapServer"),
+    ROOT_PATH("RootPath"),
+    EXTENSION_PATH("ExtensionPath"),
+    IP_FORWARDING_ENABLE_DISABLE("IPForwardingEnableDisable"),
+    NON_LOCAL_SOURCE_ROUTING_ENABLE_DISABLE("NonLocalSourceRoutingEnableDisable"),
+    POLICY_FILTER("PolicyFilter"),
+    MAXIMUM_DATAGRAM_REASSEMBLY_SIZE("MaximumDatagramReassemblySize"),
+    DEFAULT_IP_TIME_2_LIVE("DefaultIPTime2Live"),
+    PATH_MTU_AGING_TIMEOUT("PathMTUAgingTimeout"),
+    IP_LAYER_PARAMETERS_PER_INTERFACE("IPLayerParametersPerInterface"),
+    INTERFACE_MTU("InterfaceMTU"),
+    ALL_SUBNETS_ARE_LOCAL("AllSubnetsAreLocal"),
+    BROADCAST_ADDRESS("BroadcastAddress"),
+    PERFORM_MASK_DISCOVERY("PerformMaskDiscovery"),
+    MASK_SUPPLIER("MaskSupplier"),
+    PERFORM_ROUTE_DISCOVERY("PerformRouteDiscovery"),
+    ROUTER_SOLICITATION_ADDRESS("RouterSolicitationAddress"),
+    STATIC_ROUTE("StaticRoute"),
+    TRAILER_ENCAPSULATION("TrailerEncapsulation"),
+    ARP_CACHE_TIMEOUT("ARPCacheTimeout"),
+    ETHERNET_ENCAPSULATION("EthernetEncapsulation"),
+    TCP_DEFAULT_TTL("TCPDefaultTTL"),
+    TCP_KEEP_ALIVE_INTERVAL("TCPKeepAliveInterval"),
+    TCP_KEEP_ALIVE_GARBAGE("TCPKeepAliveGarbage"),
+    NETWORK_INFORMATION_SERVICE_DOMAIN("NetworkInformationServiceDomain"),
+    NETWORK_INFORMATION_SERVICE_SERVERS("NetworkInformationServiceServers"),
+    NETWORK_TIME_PROTOCOL_SERVERS("NetworkTimeProtocolServers"),
+    VENDOR_SPECIFIC_INFORMATION("VendorSpecificInformation"),
+    OPTION_44("Option_44"),
+    OPTION_45("Option_45"),
+    OPTION_46("Option_46"),
+    OPTION_47("Option_47"),
+    OPTION_48("Option_48"),
+    OPTION_49("Option_49"),
+    IP_ADDRESS_LEASE_TIME("IPAddressLeaseTime"),
+    OPTION_64("Option_64"),
+    OPTION_65("Option_65"),
+    TFTP_SERVER_NAME("TFTPServerName"),
+    BOOTFILE_NAME("BootfileName"),
+    OPTION_68("Option_68"),
+    OPTION_69("Option_69"),
+    OPTION_70("Option_70"),
+    OPTION_71("Option_71"),
+    OPTION_72("Option_72"),
+    OPTION_73("Option_73"),
+    OPTION_74("Option_74"),
+    OPTION_75("Option_75"),
+    OPTION_119("Option_119");
+    private final String value;
 
-	DhcpOpt(String v) {
-		value = v;
-	}
+    DhcpOpt(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static DhcpOpt fromValue(String v) {
-		for (DhcpOpt c : DhcpOpt.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static DhcpOpt fromValue(String v) {
+        for (DhcpOpt c: DhcpOpt.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }

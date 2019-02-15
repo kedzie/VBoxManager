@@ -28,7 +28,7 @@ public class DisplayVideoFragment extends Fragment {
 	class LoadInfoTask extends DialogTask<IMachine, Tuple<ISystemProperties, IHost>> {
 		
 		public LoadInfoTask() {
-			super((AppCompatActivity)getActivity(), _machine.getAPI(), R.string.progress_loading_data_generic);
+			super((AppCompatActivity)getActivity(), _machine.getAPI());
 		}
 		
 		@Override 

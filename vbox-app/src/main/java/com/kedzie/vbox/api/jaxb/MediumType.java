@@ -3,11 +3,12 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+
 /**
  * <p>Java class for MediumType.
- * <p/>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * <p>
  * <pre>
  * &lt;simpleType name="MediumType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -20,32 +21,33 @@ package com.kedzie.vbox.api.jaxb;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
+ * 
  */
 public enum MediumType {
 
-	NORMAL("Normal"),
-	IMMUTABLE("Immutable"),
-	WRITETHROUGH("Writethrough"),
-	SHAREABLE("Shareable"),
-	READONLY("Readonly"),
-	MULTI_ATTACH("MultiAttach");
-	private final String value;
+    NORMAL("Normal"),
+    IMMUTABLE("Immutable"),
+    WRITETHROUGH("Writethrough"),
+    SHAREABLE("Shareable"),
+    READONLY("Readonly"),
+    MULTI_ATTACH("MultiAttach");
+    private final String value;
 
-	MediumType(String v) {
-		value = v;
-	}
+    MediumType(String v) {
+        value = v;
+    }
 
-	public String value() {
-		return value;
-	}
+    public String value() {
+        return value;
+    }
 
-	public static MediumType fromValue(String v) {
-		for (MediumType c : MediumType.values()) {
-			if (c.value.equals(v)) {
-				return c;
-			}
-		}
-		throw new IllegalArgumentException(v);
-	}
+    public static MediumType fromValue(String v) {
+        for (MediumType c: MediumType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 
 }
