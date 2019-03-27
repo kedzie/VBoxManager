@@ -80,10 +80,10 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     /** Cache of {@link VMGroup}s */
     private Map<String, VMGroup> mGroupCache = new HashMap<String, VMGroup>();
     
-    private Animation mSlideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_top);
-    private Animation mSlideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom);
-    private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_top);
-    private Animation mSlideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_bottom);
+    private Animation mSlideInLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_left);
+    private Animation mSlideInRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
+    private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
+    private Animation mSlideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
 
     private Dragger mDragger;
     private VMGroup mDraggedGroup;

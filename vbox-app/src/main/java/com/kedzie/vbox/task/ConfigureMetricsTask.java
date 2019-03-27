@@ -20,9 +20,10 @@ public class ConfigureMetricsTask extends BaseTask<Integer, Void> {
 		if(Utils.isEmpty(params)) {
 			count = Utils.getIntPreference(getContext(), SettingsActivity.PREF_COUNT);
 			period = Utils.getIntPreference(getContext(), SettingsActivity.PREF_PERIOD);
+		} else {
+			period = params[0];
+			count = params[1];
 		}
-		period=params[0];
-		count=params[1];
 		Timber.i("Configuring metrics: period = %d, count = %d", period, count);
 		_vmgr.getVBox().getPerformanceCollector().setupMetrics(new String[] { "*:" }, period, count, (IManagedObjectRef)null);
 		return null;

@@ -1,6 +1,7 @@
 package com.kedzie.vbox.machine.group;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
@@ -99,7 +100,7 @@ public class MachineGroupListBaseFragment extends Fragment {
 	    }
 	
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(Context activity) {
 		super.onAttach(activity);
 		try {
 			_selectListener = (OnTreeNodeSelectListener)activity;

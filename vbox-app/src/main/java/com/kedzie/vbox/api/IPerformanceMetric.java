@@ -34,6 +34,8 @@ public interface IPerformanceMetric extends IManagedObjectRef, Parcelable {
 	public String getDescription();
 	public Integer getMinimumValue();
 	public Integer getMaximumValue();
+	public Long getPeriod();
+	public Long getCount();
 	public String getUnit();
 	public String getObject();
 }

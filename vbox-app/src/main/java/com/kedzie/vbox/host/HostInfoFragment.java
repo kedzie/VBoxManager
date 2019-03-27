@@ -220,8 +220,8 @@ public class HostInfoFragment extends Fragment {
                 startActivity(new Intent(getActivity(), MetricActivity.class).putExtra(VBoxSvc.BUNDLE, (Parcelable)_vmgr)
                         .putExtra(MetricActivity.INTENT_TITLE, getResources().getString(R.string.host_metrics))
                         .putExtra(MetricActivity.INTENT_ICON, R.drawable.ic_launcher)
-                        .putExtra(MetricActivity.INTENT_OBJECT, _vmgr.getVBox().getHost().getIdRef() )
-                        .putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _vmgr.getVBox().getHost().getMemorySize())
+                        .putExtra(MetricActivity.INTENT_OBJECT, _host.getIdRef() )
+                        .putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _host.getMemorySize())
                         .putExtra(MetricActivity.INTENT_CPU_METRICS , new String[] { "CPU/Load/User", "CPU/Load/Kernel" } )
                         .putExtra(MetricActivity.INTENT_RAM_METRICS , new String[] {  "RAM/Usage/Used" }));
                 return true;
