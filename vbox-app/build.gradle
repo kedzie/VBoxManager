@@ -12,8 +12,8 @@ android {
         applicationId "com.kedzie.vbox"
         minSdkVersion rootProject.minSDKInt
         targetSdkVersion rootProject.targetSDKInt
-        versionCode 6000100
-        versionName '6.0.1'
+        versionCode 6000200
+        versionName '6.0.2'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true

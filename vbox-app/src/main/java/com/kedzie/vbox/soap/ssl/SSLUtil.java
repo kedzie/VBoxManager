@@ -28,7 +28,7 @@ import com.kedzie.vbox.task.DialogTask;
  */
 public class SSLUtil {
 	private static final String TAG = "SSLUtil";
-	
+
 	private static final char[] KEYSTORE_PASSWORD = "virtualbox".toCharArray();
 	private static final String KEYSTORE_NAME = "virtualbox.bks";
 
@@ -55,7 +55,7 @@ public class SSLUtil {
 		}
 	}
 
-	private static TrustManager[] mTrustManagers; 
+	private static TrustManager[] mTrustManagers;
 	private static KeyStore mKeystore;
 
 	public static TrustManager[] getKeyStoreTrustManager() {
@@ -92,11 +92,11 @@ public class SSLUtil {
 		mKeystore.store(new FileOutputStream(getKeystorePath()), KEYSTORE_PASSWORD);
 		mTrustManagers = null;  //make sure TrustManagers are using the updated keystore
 	}
-	
+
 	private static File getKeystoreFolder() {
-		return VBoxApplication.getInstance().getExternalFilesDir(null);
+		return VBoxApplication.getInstance().getFilesDir();
 	}
-	
+
 	private static String getKeystorePath() {
 		return getKeystoreFolder().toString()+"/"+KEYSTORE_NAME;
 	}
