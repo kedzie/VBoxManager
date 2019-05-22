@@ -101,7 +101,7 @@ public class StorageDVDFragment extends Fragment {
 
 		@Override 
 		protected List<IMedium> work(Void...params) throws Exception {
-			List<IMedium> mediums = _vmgr.getVBox().getHost().getDVDDrives();
+			List<IMedium> mediums = _vmgr.getVBox().getHost().getDvdDrives();
 			mediums.addAll( _vmgr.getVBox().getDVDImages() );
 			for(IMedium m : mediums) {
 				m.getName(); m.getHostDrive();

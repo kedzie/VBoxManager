@@ -9,7 +9,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.FragmentElement;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.group.MachineGroupListBaseFragment;
+import com.kedzie.vbox.machine.group.MachineGroupListFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.soap.VBoxSvc;
@@ -60,7 +60,7 @@ public class MachineListPickActivity extends BaseActivity implements OnTreeNodeS
 
 		if (savedInstanceState==null) {
 			Utils.replaceFragment(this, getSupportFragmentManager(), android.R.id.content, 
-					new FragmentElement("list", MachineGroupListBaseFragment.class, getIntent().getExtras()));
+					new FragmentElement("list", MachineGroupListFragment.class, getIntent().getExtras()));
 		}
 	}
 

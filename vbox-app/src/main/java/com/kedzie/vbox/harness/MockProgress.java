@@ -3,7 +3,7 @@ package com.kedzie.vbox.harness;
 import android.os.Parcel;
 import com.kedzie.vbox.api.IProgress;
 import com.kedzie.vbox.api.IVirtualBoxErrorInfo;
-import com.kedzie.vbox.soap.KSOAP;
+import com.kedzie.vbox.soap.Ksoap;
 import com.kedzie.vbox.soap.VBoxSvc;
 
 import java.io.IOException;
@@ -18,9 +18,9 @@ public class MockProgress implements IProgress {
     private long now = started;
     private boolean canceled;
 
-    @Override public void waitForCompletion(@KSOAP(type = "int", value = "timeout") int millseconds) throws IOException {}
-    @Override public void waitForCompletion(@KSOAP(type = "unsignedInt", value = "operation") int operation, @KSOAP(type = "int", value = "timeout") int millseconds) throws IOException {}
-    @Override public void waitForAsyncProgressCompletion(@KSOAP("pProgressAsync") String pProgressAsync) {}
+    @Override public void waitForCompletion(@Ksoap(type = "int", value = "timeout") int millseconds) throws IOException {}
+    @Override public void waitForCompletion(@Ksoap(type = "unsignedInt", value = "operation") int operation, @Ksoap(type = "int", value = "timeout") int millseconds) throws IOException {}
+    @Override public void waitForAsyncProgressCompletion(@Ksoap("pProgressAsync") String pProgressAsync) {}
 
     @Override
     public Integer getTimeout() {
@@ -103,15 +103,15 @@ public class MockProgress implements IProgress {
     }
 
     @Override
-    public void setTimeout(@KSOAP(type = "unsignedInt", value = "timeout") int timeout) throws IOException {
+    public void setTimeout(@Ksoap(type = "unsignedInt", value = "timeout") int timeout) throws IOException {
     }
 
     @Override
-    public void setCurrentOperationProgress(@KSOAP(type = "unsignedInt", value = "percent") int percent) throws IOException {
+    public void setCurrentOperationProgress(@Ksoap(type = "unsignedInt", value = "percent") int percent) throws IOException {
     }
 
     @Override
-    public void setNextOperation(@KSOAP("nextOperationDescription") String nextOperationDescription, @KSOAP(type = "unsignedInt", value = "nextOperationsWeight") int nextOperationsWeight) throws IOException {
+    public void setNextOperation(@Ksoap("nextOperationDescription") String nextOperationDescription, @Ksoap(type = "unsignedInt", value = "nextOperationsWeight") int nextOperationsWeight) throws IOException {
     }
 
     @Override

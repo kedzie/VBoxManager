@@ -273,7 +273,7 @@ public class StorageListFragment extends Fragment {
 
 		@Override 
 		protected List<IMedium> work(Void...params) throws Exception {
-			List<IMedium> mediums = _vmgr.getVBox().getHost().getDVDDrives();
+			List<IMedium> mediums = _vmgr.getVBox().getHost().getDvdDrives();
 			mediums.addAll( _vmgr.getVBox().getDVDImages() );
 			for(IMedium m : mediums) {
 				m.getName(); m.getHostDrive();
@@ -335,7 +335,7 @@ public class StorageListFragment extends Fragment {
 					}
 				}
 			}
-			Timber.d( "Attaching to slot: %d", attachment.getSlot());
+			Timber.d( "Attaching to slot: %s", attachment.getSlot());
 			_machine.attachDevice(controller.getName(), attachment.getPort(), attachment.getDevice(), deviceType, medium);
 			attachment.setMedium(medium);
 			attachment.setType(deviceType);

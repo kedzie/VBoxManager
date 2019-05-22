@@ -19,11 +19,47 @@ buildscript {
         mavenLocal()
         mavenCentral()
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.1'
 
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21"
+    ext.versions = [
+            'okHttpVersion'          : '3.9.1',
+            'kotlinVersion'          : '1.3.30',
+            'kotlinCoroutineVersion' : '1.1.1',
+            'gradlePluginVersion'    : '3.4.1',
+            'daggerVersion'          : '2.21',
+            'timberVersion'          : '4.7.1',
+            'butterknifeVersion'          : '10.0.0',
+    ]
+
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:${versions.gradlePluginVersion}"
+
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlinVersion}"
     }
+
+    ext.deps = [
+            // OkHttp
+            'okHttp'                  : "com.squareup.okhttp3:okhttp:${versions.okHttpVersion}",
+            'okHttpLoggingInterceptor': "com.squareup.okhttp3:logging-interceptor:${versions.okHttpVersion}",
+
+            // Kotlin
+            'kotlin'                  : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlinVersion}",
+
+            'kotlinCoroutine'         : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutineVersion}",
+            'kotlinCoroutineAndroid'  : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutineVersion}",
+
+            // Dagger
+            'dagger'                  : "com.google.dagger:dagger:${versions.daggerVersion}",
+            'daggerAndroid'           : "com.google.dagger:dagger-android-support:${versions.daggerVersion}",
+            'daggerCompiler'          : "com.google.dagger:dagger-compiler:${versions.daggerVersion}",
+            'daggerAndroidCompiler'   : "com.google.dagger:dagger-android-processor:${versions.daggerVersion}",
+
+            'timber'                  : "com.jakewharton.timber:timber:${versions.timberVersion}",
+            'butterknife'             : "com.jakewharton:butterknife:${versions.butterknifeVersion}",
+            'butterknifeCompiler'             : "com.jakewharton:butterknife-compiler:${versions.butterknifeVersion}",
+    ]
+
 }
 
 allprojects {

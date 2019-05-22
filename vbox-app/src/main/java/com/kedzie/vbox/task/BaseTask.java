@@ -44,8 +44,6 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 /** <code>true</code> if user pressed back button while task is executing */
 	protected boolean _cancelled=false;
 	protected boolean _failed;
-	private LinkedList<Future<?>> _futures = new LinkedList<Future<?>>();
-	private ExecutorService _executor;
 		
 	/** 
 	 * Show an Alert Dialog 
@@ -66,33 +64,9 @@ public abstract class BaseTask<Input, Output> extends AsyncTask<Input, IProgress
 	 * @param vmgr VirtualBox API service
 	 */
 	protected BaseTask(AppCompatActivity context, VBoxSvc vmgr) {
-
 		_vmgr=vmgr;
-		_context=new WeakReference<AppCompatActivity>(context);
-        _executor = _vmgr!=null ? _vmgr.getExecutor() : Executors.newCachedThreadPool();
+		_context=new WeakReference<>(context);
     }
-
-    protected ExecutorService getExecutor() {
-	    return _executor;
-	}
-	
-	/**
-	 * Fork off parallel execution
-	 * @param task     the {@link Runnable} containing the task
-	 */
-	protected void fork(Runnable task) {
-	    _futures.add(_executor.submit(task));
-	}
-	
-	/**
-	 * Wait for completion of all parallel executions
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
-	 */
-	protected void join() throws InterruptedException, ExecutionException {
-	    for(Future<?> future : _futures)
-	        future.get();
-	}
 	
 	protected AppCompatActivity getContext() {
 		return _context.get();

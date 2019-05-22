@@ -3,16 +3,8 @@
   xmlns:app="http://schema.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/option_menu_refresh"
-        android:icon="@drawable/ic_menu_refresh"
-        android:showAsAction="ifRoom"
-        app:showAsAction="ifRoom"
-        android:title="Refresh"/>
-
-    <item
         android:id="@+id/host_option_menu_metrics"
         android:icon="@drawable/ic_menu_metrics"
-        android:showAsAction="ifRoom"
         app:showAsAction="ifRoom"
         android:title="Host Metrics"/>
 

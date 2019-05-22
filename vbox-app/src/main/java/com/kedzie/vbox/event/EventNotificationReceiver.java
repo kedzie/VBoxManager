@@ -9,6 +9,8 @@ import com.kedzie.vbox.SettingsActivity;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.Utils;
 
+import timber.log.Timber;
+
 /**
  * Create notifications from Machine State change events
  * @author Marek Kędzierski
@@ -18,7 +20,7 @@ public class EventNotificationReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i(TAG, "Recieved Broadcast: " + intent.getAction());
+		Timber.i("Recieved Broadcast: " + intent.getAction());
 		if(intent.getAction().equals(VBoxEventType.ON_MACHINE_STATE_CHANGED.name())
 				&& Utils.getBooleanPreference(context, SettingsActivity.PREF_NOTIFICATIONS)) 
 			context.startService(new Intent(context, EventNotificationService.class).putExtras(intent));

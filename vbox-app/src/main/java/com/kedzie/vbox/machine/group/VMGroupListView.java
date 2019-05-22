@@ -490,7 +490,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             VMGroup oldParent = mGroupCache.get(draggedMachine.getGroups().get(0));
             oldParent.removeChild(draggedMachine);
             parent.addChild(draggedMachine);
-            _vmgr.getExecutor().execute(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -504,7 +504,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                         Log.e(TAG, "Error", e);
                     }
                 }
-            });
+            }).start();
         }
 
         private void dropGroup(final VMGroup draggedGroup, final VMGroup parent, VMGroup child) {
@@ -527,7 +527,8 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             Log.v(TAG, String.format("Moving group [%1$s]  from %2$s --> %2$s", draggedGroup, oldParentName, parent));
             oldParent.removeChild(draggedGroup);
             parent.addChild(draggedGroup);
-            _vmgr.getExecutor().execute(new Runnable() {
+
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -536,7 +537,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
                         Log.e(TAG, "Exception moving group", e);
                     }
                 }
-            });
+            }).start();
         }
 
         private void moveGroup(ISession session, VMGroup parent, VMGroup group) throws IOException {

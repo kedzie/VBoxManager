@@ -12,8 +12,8 @@ android {
         applicationId "com.kedzie.vbox"
         minSdkVersion rootProject.minSDKInt
         targetSdkVersion rootProject.targetSDKInt
-        versionCode 6000200
-        versionName '6.0.2'
+        versionCode 7000000
+        versionName '7.0.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -53,36 +53,43 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
 
     api project(path: ":metadata")
     api project(path: ":tree-view-list-android")
-    kapt project(path: ":compiler")
+    kapt project(path: ":kotlin-compiler")
+
+    implementation deps.okHttp
 
     implementation "androidx.appcompat:appcompat:1.0.0"
     implementation "androidx.preference:preference:1.1.0-alpha01"
     implementation "androidx.gridlayout:gridlayout:1.0.0"
     implementation "com.google.android.material:material:1.0.0"
+    implementation 'androidx.core:core-ktx:1.0.0'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlin_version"
+    implementation deps.kotlin
+    implementation deps.kotlinCoroutine
+    implementation deps.kotlinCoroutineAndroid
 
     implementation "commons-validator:commons-validator:1.4.0"
 
-    implementation "nf.fr.eraasoft:objectpool:1.1.2"
-
     implementation "com.google.guava:guava:24.1-jre"
 
-    implementation 'com.jakewharton:butterknife:10.0.0'
-    kapt 'com.jakewharton:butterknife-compiler:10.0.0'
-    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation deps.butterknife
+    kapt deps.butterknifeCompiler
 
-    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
-    implementation "com.google.dagger:dagger-android:$rootProject.daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion" // if you use the support libraries
-    kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    kapt "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
-    kaptAndroidTest "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
-    kaptAndroidTest "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
+    implementation deps.timber
+
+    implementation deps.dagger
+    implementation deps.daggerAndroid
+    kapt deps.daggerCompiler
+    kapt deps.daggerAndroidCompiler
+    kaptAndroidTest deps.daggerCompiler
+    kaptAndroidTest deps.daggerAndroidCompiler
     
     testImplementation 'junit:junit:4.12'
 

@@ -4,80 +4,85 @@ import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
-import android.util.Log;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
-import com.kedzie.vbox.BuildConfig;
-import com.kedzie.vbox.api.*;
+import com.kedzie.vbox.api.BaseProxy;
+import com.kedzie.vbox.api.IDHCPServer;
+import com.kedzie.vbox.api.IDisplay;
+import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
+import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IMedium;
+import com.kedzie.vbox.api.INetworkAdapter;
+import com.kedzie.vbox.api.ISession;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
+import com.kedzie.vbox.api.ISnapshotDeletedEvent;
+import com.kedzie.vbox.api.ISnapshotTakenEvent;
+import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.api.Screenshot;
 import com.kedzie.vbox.api.jaxb.BitmapFormat;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
-import com.kedzie.vbox.app.Tuple;
+import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.metrics.MetricQuery;
 import com.kedzie.vbox.server.Server;
-import com.kedzie.vbox.soap.ssl.InteractiveTrustedHttpsTransport;
-import com.kedzie.vbox.soap.ssl.KeystoreTrustedHttpsTransport;
 
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.KvmSerializable;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
+import org.kxml2.io.KXmlParser;
+import org.kxml2.io.KXmlSerializer;
+import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
-import java.io.Externalizable;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
 import java.net.ConnectException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import nf.fr.eraasoft.pool.ObjectPool;
-import nf.fr.eraasoft.pool.PoolException;
-import nf.fr.eraasoft.pool.PoolSettings;
-import nf.fr.eraasoft.pool.PoolableObjectBase;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import kotlinx.coroutines.CompletableDeferred;
+import kotlinx.coroutines.Deferred;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import timber.log.Timber;
 
 /**
  * VirtualBox JAX-WS API
- * @apiviz.landmark
- * @apiviz.stereotype service
- * @apiviz.owns com.kedzie.vbox.api.IVirtualBox
- * @apiviz.owns com.kedzie.vbox.soap.HttpTransport
- * @apiviz.owns com.kedzie.vbox.soap.TrustedHttpsTransport
- * @apiviz.owns com.kedzie.vbox.server.Server
- * @apiviz.uses com.kedzie.vbox.soap.KSOAP
- * @apiviz.composedOf com.kedzie.vbox.soap.VBoxSvc$KSOAPInvocationHandler
  */
-public class VBoxSvc implements Parcelable, Externalizable {
-	private static final String TAG = "VBoxSvc";
-	private static final int TIMEOUT = 20000;
+public class VBoxSvc implements Parcelable {
 	public static final String BUNDLE = "vmgr";
 	public static final String NAMESPACE = "http://www.virtualbox.org/";
-	private static final int THREAD_POOL_SIZE = 15;
-	private static final int TRANSPORT_POOL_SIZE = 15;
 	private static final ClassLoader LOADER = VBoxSvc.class.getClassLoader();
 
 	public static final Parcelable.Creator<VBoxSvc> CREATOR = new Parcelable.Creator<VBoxSvc>() {
 		public VBoxSvc createFromParcel(Parcel in) {
 			VBoxSvc svc = new VBoxSvc((Server)in.readParcelable(LOADER));
 			String vboxId = in.readString();
-			svc._vbox = svc.getProxy(IVirtualBox.class, vboxId);
-			svc.init();
+			svc._vbox = new IVirtualBoxProxy(svc, vboxId);
 			return svc;
 		}
 		public VBoxSvc[] newArray(int size) {
@@ -85,18 +90,31 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		}
 	};
 
-    private Map<String, Constructor<? extends BaseProxy>> proxyCache = new HashMap<String, Constructor<? extends BaseProxy>>();
 	private Server _server;
 	private IVirtualBox _vbox;
-	private ObjectPool<HttpTransportSE> _transportPool;
-	private ExecutorService _threadPoolExecutor;
+	OkHttpClient client;
 
 	/**
 	 * @param server	VirtualBox webservice server
 	 */
 	public VBoxSvc(Server server) {
 		_server=server;
-		init();
+		Timber.i( "Initializing Virtualbox API");
+		if(_server.isSSL()) {
+			try {
+				SSLContext sc = SSLContext.getInstance("TLS");
+				sc.init(null, SSLUtil.getKeyStoreTrustManager(), new java.security.SecureRandom());
+				client = new OkHttpClient.Builder()
+                        .sslSocketFactory(sc.getSocketFactory())
+                        .hostnameVerifier(new AllowAllHostnameVerifier())
+                        .build();
+			} catch (Exception e) {
+				Timber.e(e, "error");
+				throw new RuntimeException(e);
+			}
+		} else {
+			client = new OkHttpClient.Builder().build();
+		}
 	}
 
 	/**
@@ -105,24 +123,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 */
 	public VBoxSvc(VBoxSvc copy) {
 		this(copy._server);
-		_vbox = getProxy(IVirtualBox.class, copy._vbox.getIdRef());
-	}
-	
-	private void init() {
-        Log.i(TAG, "Initializing Virtualbox API");
-		_threadPoolExecutor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-		PoolSettings<HttpTransportSE> poolSettings = new PoolSettings<HttpTransportSE>(
-		                new PoolableObjectBase<HttpTransportSE>() {
-		                	@Override public void activate(HttpTransportSE t) {}
-		                	@Override
-		                	public HttpTransportSE make() {
-		                		return _server.isSSL() ? 
-		                				new KeystoreTrustedHttpsTransport(_server, TIMEOUT) : 
-		                				new HttpTransport(_server, TIMEOUT);
-		                	}
-		                });
-		poolSettings.min(0).max(TRANSPORT_POOL_SIZE);
-		_transportPool = poolSettings.pool();
+		_vbox = new IVirtualBoxProxy(this, copy._vbox.getIdRef());
 	}
 
 	public IVirtualBox getVBox() {
@@ -136,30 +137,57 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	public Server getServer() {
 		return _server;
 	}
-	
-	public ExecutorService getExecutor() {
-	    return _threadPoolExecutor;
+
+	protected static final String CONTENT_TYPE_XML_CHARSET_UTF_8 = "text/xml;charset=utf-8";
+	protected static final String CONTENT_TYPE_SOAP_XML_CHARSET_UTF_8 = "application/soap+xml;charset=utf-8";
+	protected static final String USER_AGENT = "vbox-manager";
+	public static final int DEFAULT_BUFFER_SIZE = 256*1024; // 256 Kb
+
+	public static Call soapCall(OkHttpClient client, String url, String soapAction, SoapEnvelope envelope) throws IOException {
+		if (soapAction == null) {
+			soapAction = "\"\"";
+		}
+
+		Request.Builder builder = new Request.Builder()
+				.url(url)
+				.post(RequestBody.create(MediaType.parse("text/xml"), createRequestData(envelope)))
+				.addHeader("content-type", "text/xml");
+
+		builder.addHeader("User-Agent", USER_AGENT);
+		// SOAPAction is not a valid header for VER12 so do not add
+		// it
+		// @see "http://code.google.com/p/ksoap2-android/issues/detail?id=67
+		if (envelope.version != SoapSerializationEnvelope.VER12) {
+			builder.addHeader("SOAPAction", soapAction);
+		}
+
+		if (envelope.version == SoapSerializationEnvelope.VER12) {
+			builder.addHeader("Content-Type", CONTENT_TYPE_SOAP_XML_CHARSET_UTF_8);
+		} else {
+			builder.addHeader("Content-Type", CONTENT_TYPE_XML_CHARSET_UTF_8);
+		}
+
+		return client.newCall(builder.build());
 	}
 
-    /**
-     * Make HTTP request using transport from the pool
-     * @param request
-     * @param envelope
-     * @throws IOException
-     */
-    public void httpCall(String request, SoapSerializationEnvelope envelope) throws IOException {
-        HttpTransportSE transport = null;
-        try {
-            transport = _transportPool.getObj();
-            transport.call(request, envelope);
-        } catch (Throwable e) {
-            Log.e(TAG, "Exception", e);
-            Throwables.propagateIfPossible(e, IOException.class);
-        } finally {
-            if(transport!=null)
-                _transportPool.returnObj(transport);
-        }
-    }
+	public Call soapCall(String soapAction, SoapEnvelope envelope) throws IOException {
+		return soapCall(client, _server.toUriString(), soapAction, envelope);
+	}
+
+	/**
+	 * Serializes the request.
+	 */
+	private static byte[] createRequestData(SoapEnvelope envelope) throws IOException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
+		XmlSerializer xw = new KXmlSerializer();
+		xw.setOutput(bos, null);
+		envelope.write(xw);
+		xw.flush();
+		bos.write('\r');
+		bos.write('\n');
+		bos.flush();
+		return bos.toByteArray();
+	}
 
 	@Override
 	public int describeContents() {
@@ -172,68 +200,6 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		dest.writeString(_vbox.getIdRef());
 	}
 
-	@Override
-	public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
-		Log.w(TAG, "===========VBoxSvc has been SERIALIZED===========");
-		_server=(Server)input.readObject();
-		init();
-		String vboxId = input.readUTF();
-		_vbox = getProxy(IVirtualBox.class, vboxId);
-	}
-
-	@Override
-	public void writeExternal(ObjectOutput output) throws IOException {
-		Log.w(TAG, "===========VBoxSvc being SERIALIZED===========");
-		output.writeObject(_server);
-		output.writeUTF(_vbox.getIdRef());
-	}
-
-	/**
-	 * Create remote-invocation proxy w/o cached properties
-	 * @param clazz 		type of {@link IManagedObjectRef}
-	 * @param id			UIUD of {@link IManagedObjectRef}
-	 * @return 				remote invocation proxy
-	 */
-	public <T extends IManagedObjectRef> T getProxy(Class<T> clazz, String id) {
-		return getProxy(clazz, id, null);
-	}
-
-    /**
-     * Create remote-invocation proxy w/cached properties
-     * @param clazz 		type of {@link IManagedObjectRef}
-     * @param id 			UIUD of {@link IManagedObjectRef}
-     * @param cache			cached properties
-     * @return 				remote invocation proxy
-     */
-    public <T extends IManagedObjectRef> T getProxy(Class<T> clazz, String id, Map<String, Object> cache) {
-        String proxyClassName = clazz.getName()+"$$Proxy";
-        try {
-            synchronized (proxyCache) {
-                if (!proxyCache.containsKey(proxyClassName)) {
-                    Class<? extends BaseProxy> proxyClazz = (Class<? extends BaseProxy>) Class.forName(proxyClassName);
-                    Constructor<? extends BaseProxy> constructor = proxyClazz.getDeclaredConstructor(VBoxSvc.class, String.class, Class.class, Map.class);
-                    proxyCache.put(proxyClassName, constructor);
-                }
-            }
-            T proxy = clazz.cast(proxyCache.get(proxyClassName).newInstance(this, id, clazz, cache));
-
-            if(IEvent.class.equals(clazz)) {
-                VBoxEventType type = ((IEvent)proxy).getType();
-                if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))
-                    return clazz.cast(getProxy(IMachineStateChangedEvent.class, id, cache));
-                else if(type.equals(VBoxEventType.ON_SESSION_STATE_CHANGED))
-                    return clazz.cast(getProxy(ISessionStateChangedEvent.class, id, cache));
-                else if(type.equals(VBoxEventType.ON_SNAPSHOT_DELETED))
-                    return clazz.cast(getProxy(ISnapshotDeletedEvent.class, id, cache));
-                else if(type.equals(VBoxEventType.ON_SNAPSHOT_TAKEN))
-                    return clazz.cast(getProxy(ISnapshotTakenEvent.class, id, cache));
-            }
-            return proxy;
-        } catch (Throwable e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
 	/**
 	 * Connect to <code>vboxwebsrv</code> & initialize the VBoxSvc API interface
 	 * @return initialized {@link IVirtualBox} API interface
@@ -242,9 +208,9 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 */
 	public IVirtualBox logon() throws IOException  {
 		try {
-			return (_vbox = getProxy(IVirtualBox.class, null).logon(_server.getUsername(), _server.getPassword()));
+			return (_vbox = new IVirtualBoxProxy(this, null).logon(_server.getUsername(), _server.getPassword()));
 		} catch(SoapFault e) {
-			Log.e(TAG, "Logon error", e);
+			Timber.e(e, "Logon error");
 			throw new ConnectException("Authentication Error");
 		}
 	}
@@ -272,10 +238,10 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		Map<String, MetricQuery> ret = new HashMap<String, MetricQuery>();
 		for(int i=0; i<data.get("returnMetricNames").size(); i++) {
 			MetricQuery q = new MetricQuery();
-			q.name=(String)data.get("returnMetricNames").get(i);
-			q.object=(String)data.get("returnObjects").get(i);
-			q.scale=Integer.valueOf(data.get("returnScales").get(i));
-			q.unit=(String)data.get("returnUnits").get(i);
+			q.name= data.get("returnMetricNames").get(i);
+			q.object= data.get("returnObjects").get(i);
+			q.scale= Integer.valueOf(data.get("returnScales").get(i));
+			q.unit= data.get("returnUnits").get(i);
 			int start = Integer.valueOf( data.get("returnDataIndices").get(i));
 			int length = Integer.valueOf( data.get("returnDataLengths").get(i));
 
@@ -326,7 +292,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		}
 	}
 
-	public Screenshot readSavedScreenshot(IMachine machine, int screenId) throws IOException {
+	public static Screenshot readSavedScreenshot(IMachine machine, int screenId) throws IOException {
 		Map<String, List<String>> info = machine.querySavedScreenshotInfo(screenId);
 		List<BitmapFormat> formats = new ArrayList<>();
 		for(String val : info.get("returnval")) {
@@ -345,7 +311,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * @return
 	 * @throws IOException
 	 */
-	public Properties getProperties(INetworkAdapter adapter, String...names) throws IOException {
+	public static Properties getProperties(INetworkAdapter adapter, String...names) {
 		StringBuffer nameString = new StringBuffer();
 		for(String name : names)
 			Utils.appendWithComma(nameString, name);
@@ -359,14 +325,14 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * @return	properties
 	 * @throws IOException
 	 */
-	public Properties getProperties(IMedium medium, String...names) throws IOException {
+	public static Properties getProperties(IMedium medium, String...names) {
 		StringBuffer nameString = new StringBuffer();
 		for(String name : names)
 			Utils.appendWithComma(nameString, name);
 		return getProperties(medium.getProperties(nameString.toString()) );
 	}
 
-	private Properties getProperties(Map<String, List<String>> val) throws IOException {
+	private static Properties getProperties(Map<String, List<String>> val) {
 		List<String> returnNames = val.get("returnNames");
 		List<String> values = val.get("returnval");
 		Properties properties = new Properties();
@@ -375,25 +341,15 @@ public class VBoxSvc implements Parcelable, Externalizable {
 		return properties;
 	}
 
-	public Tuple<IHostNetworkInterface, IProgress> createHostOnlyNetworkInterface(IHost host) throws IOException {
-		Map<String, String> val = host.createHostOnlyNetworkInterface();
-        return new Tuple<IHostNetworkInterface, IProgress>(
-                getProxy(IHostNetworkInterface.class, val.get("hostInterface")),
-                getProxy(IProgress.class, val.get("returnval")));
-	}
-
 	/**
-	 * Searches a DHCP server settings to be used for the given internal network name. 
-	 * <p><dl><dt><b>Expected result codes:</b></dt><dd><table><tbody><tr>
-	 * <td>{@link IVirtualBox#E_INVALIDARG}</td><td>Host network interface <em>name</em> already exists.  </td></tr>
-	 * </tbody></table></dd></dl></p>
+	 * Searches a DHCP server settings to be used for the given internal network name.
 	 * @param name		server name
 	 */
 	public IDHCPServer findDHCPServerByNetworkName(String name) throws IOException {
 		try {
 			return getVBox().findDHCPServerByNetworkName(name);
 		} catch(SoapFault e) {
-			Log.e(TAG, "Couldn't find DHCP Server: " + e.getMessage());
+			Timber.e("Couldn't find DHCP Server: %s", e.getMessage());
 			return null;
 		}
 	}
@@ -404,11 +360,44 @@ public class VBoxSvc implements Parcelable, Externalizable {
 	 * @throws IOException
 	 * @throws XmlPullParserException
 	 */
-	public void ping(Handler handler) throws IOException, XmlPullParserException {
+	public void pingInteractiveTLS(Handler handler) throws IOException, NoSuchAlgorithmException, KeyManagementException {
 		SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setAddAdornments(false);
-        envelope.setOutputSoapObject(
-                new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName").addProperty("_this", "0"));
-		new InteractiveTrustedHttpsTransport(_server, TIMEOUT, handler).call(NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
+		envelope.setAddAdornments(false);
+		envelope.setOutputSoapObject(
+				new SoapObject(NAMESPACE, "IManagedObjectRef_getInterfaceName").addProperty("_this", "0"));
+
+		X509TrustManager trust = new X509TrustManager() {
+
+			private X509TrustManager _keystoreTM = (X509TrustManager)SSLUtil.getKeyStoreTrustManager()[0];
+
+			@Override public X509Certificate[] getAcceptedIssuers() { return null; }
+			@Override public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+
+			@Override
+			public void checkServerTrusted(X509Certificate[] chain, String authType) {
+				Timber.i("checkServerTrusted(%1$d, %2$s)", chain.length, authType);
+				try {
+					_keystoreTM.checkServerTrusted(chain, authType);
+				} catch(CertificateException e) {
+					Timber.w( "Untrusted Server %s",  e.getMessage());
+					new BundleBuilder()
+							.putParcelable(Server.BUNDLE, _server)
+							.putBoolean("isTrusted", false)
+							.putSerializable("certs", chain)
+							.sendMessage(handler, 0);
+					return;
+				}
+				new BundleBuilder()
+						.putParcelable(Server.BUNDLE, _server)
+						.putBoolean("isTrusted", true)
+						.sendMessage(handler, 0);
+			}
+		};
+
+		SSLContext sc = SSLContext.getInstance("TLS");
+		sc.init(null, new TrustManager[]{trust}, new java.security.SecureRandom());
+		OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(sc.getSocketFactory(), trust).build();
+
+		soapCall(client, _server.toUriString(), NAMESPACE+"IManagedObjectRef_getInterfaceName", envelope);
 	}
 }

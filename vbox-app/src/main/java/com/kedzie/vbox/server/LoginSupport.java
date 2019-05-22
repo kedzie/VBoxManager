@@ -7,12 +7,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+import timber.log.Timber;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IVirtualBox;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.VBoxSvc;
-import com.kedzie.vbox.soap.ssl.SSLUtil;
+import com.kedzie.vbox.soap.SSLUtil;
 import com.kedzie.vbox.task.DialogTask;
 
 import org.ksoap2.SoapFault;
@@ -25,6 +26,8 @@ import java.security.cert.X509Certificate;
  * @author kedzie
  */
 public class LoginSupport implements ServerListFragment.OnSelectServerListener {
+
+  public static final int REQUEST_CODE_KEYCHAIN = 1;
 
   private AppCompatActivity activity;
   private LoginCallback callback;
@@ -51,6 +54,12 @@ public class LoginSupport implements ServerListFragment.OnSelectServerListener {
             .setPositiveButton("Trust", new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int which) {
+//                try {
+//                  Intent intent = KeyChain.createInstallIntent().putExtra(KeyChain.EXTRA_CERTIFICATE, root.getEncoded());
+//                  Utils.startActivityForResult(activity, intent, REQUEST_CODE_KEYCHAIN);
+//                } catch (CertificateEncodingException e) {
+//                  Timber.e(e, "Error encoding certificate");
+//                }
                 new SSLUtil.AddCertificateToKeystoreTask(activity, server) {
                   @Override
                   protected void onSuccess(Void result) {
@@ -84,9 +93,9 @@ public class LoginSupport implements ServerListFragment.OnSelectServerListener {
       new Thread() {
         public void run() {
           try {
-            new VBoxSvc(server).ping(_sslHandler);
-          } catch (Exception e) {
-            Log.e("ServerListFragment", "error ping", e);
+            new VBoxSvc(server).pingInteractiveTLS(_sslHandler);
+          } catch (Exception e1) {
+            Timber.e(e1, "Error interactive ping");
           }
         }
       }.start();

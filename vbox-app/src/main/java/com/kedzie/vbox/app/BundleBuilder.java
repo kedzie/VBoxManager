@@ -133,10 +133,7 @@ public class BundleBuilder {
      * @return builder pattern
      */
     public BundleBuilder putProxy(String key, IManagedObjectRef value) {
-        if(value instanceof Parcelable)
-            b.putParcelable(key, (Parcelable)value);
-        else
-            b.putSerializable(key, (Serializable)value);
+    	b.putParcelable(key, (Parcelable)value);
         return this;
     }
 	

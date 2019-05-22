@@ -16,6 +16,10 @@ import com.kedzie.vbox.api.IEventListener;
 import com.kedzie.vbox.api.IEventSource;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMachineEvent;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
+import com.kedzie.vbox.api.ISnapshotDeletedEvent;
+import com.kedzie.vbox.api.ISnapshotTakenEvent;
 import com.kedzie.vbox.api.jaxb.VBoxEventType;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.LoopingThread;
@@ -125,6 +129,16 @@ public class EventIntentService extends Service {
         public void loop() {
             try {
                 if((mEvent = mSource.getEvent(mListener, 0))!=null) {
+                    VBoxEventType type = mEvent.getType();
+                    if(type.equals(VBoxEventType.ON_MACHINE_STATE_CHANGED))
+                        return new IMachineStateChangedEventProxy(_vmgr, mEvent.getIdRef());
+                    else if(type.equals(VBoxEventType.ON_SESSION_STATE_CHANGED))
+                        return new ISessionStateChangedEventProxy(_vmgr, mEvent.getIdRef());
+                    else if(type.equals(VBoxEventType.ON_SNAPSHOT_DELETED))
+                        return new ISnapshotDeletedEventProxy(_vmgr, mEvent.getIdRef());
+                    else if(type.equals(VBoxEventType.ON_SNAPSHOT_TAKEN))
+                        return new ISnapshotTakenEventProxy(_vmgr, mEvent.getIdRef());
+
                     BundleBuilder bundle = new BundleBuilder().putProxy(BUNDLE_EVENT, mEvent);
                     if(mEvent instanceof IMachineEvent)
                         bundle.putProxy(IMachine.BUNDLE,  _vmgr.getVBox().findMachine(((IMachineEvent) mEvent).getMachineId()));

@@ -57,7 +57,7 @@ public class EventNotificationService extends IntentService {
 		Timber.d("Sending notification");
 		IMachine eventMachine = BundleBuilder.getProxy(intent, IMachine.BUNDLE, IMachine.class);
         FragmentElement fragment = new FragmentElement(eventMachine.getName(), MachineFragment.class,
-                new BundleBuilder().putVBoxSvc(eventMachine.getAPI()).putProxy(IMachine.BUNDLE, eventMachine).create());
+                new BundleBuilder().putVBoxSvc(eventMachine.getApi()).putProxy(IMachine.BUNDLE, eventMachine).create());
 		Intent i = new Intent(EventNotificationService.this, FragmentActivity.class)
                 .putExtra(FragmentActivity.KEY_PARENT_ACTIVITY, MachineListActivity.class.getName())
                 .putExtra(FragmentElement.BUNDLE, fragment);

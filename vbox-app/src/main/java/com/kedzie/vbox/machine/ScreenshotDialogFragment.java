@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.task.BaseTask;
@@ -23,8 +26,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import timber.log.Timber;
 
 /**
@@ -54,7 +55,7 @@ public class ScreenshotDialogFragment extends DialogFragment {
 			try {
                 MediaStore.Images.Media.insertImage(getActivity().getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
             } catch (Exception e) {
-                Timber.e( "Exception storing in MediaStore", e);
+                Timber.e(e, "Exception storing in MediaStore");
             }
 			return null;
 		}

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
+import androidx.fragment.app.Fragment;
 import androidx.multidex.MultiDexApplication;
 
 import android.util.Log;
@@ -32,6 +33,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 import timber.log.Timber;
 
 /**
@@ -39,7 +41,7 @@ import timber.log.Timber;
  * @author Marek Kedzierski
  * @apiviz.stereotype application
  */
-public class VBoxApplication extends MultiDexApplication implements HasServiceInjector, HasActivityInjector {
+public class VBoxApplication extends MultiDexApplication implements HasServiceInjector, HasActivityInjector, HasSupportFragmentInjector {
 	private static final String TAG = "VBoxApplication";
 	private static final String APPLICATION_PRO_KEY_PACKAGE = "com.kedzie.vbox.pro";
 	private static final String APPLICATION_PACKAGE = "com.kedzie.vbox";
@@ -56,7 +58,8 @@ public class VBoxApplication extends MultiDexApplication implements HasServiceIn
 	@Inject
 	DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
 
-
+	@Inject
+	DispatchingAndroidInjector<Fragment> dispatchingFragmentInjector;
 
 	@Override
 	public AndroidInjector<Activity> activityInjector() {
@@ -66,6 +69,11 @@ public class VBoxApplication extends MultiDexApplication implements HasServiceIn
 	@Override
 	public AndroidInjector<Service> serviceInjector() {
 		return dispatchingServiceInjector;
+	}
+
+	@Override
+	public AndroidInjector<Fragment> supportFragmentInjector() {
+		return dispatchingFragmentInjector;
 	}
 
 	private static VBoxApplication _instance;

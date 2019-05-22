@@ -1,1 +1,1 @@
-include ':metadata', ':compiler', ':tree-view-list-android', ':vbox-app'
+include ':metadata', ':compiler', ':tree-view-list-android', ':vbox-app', ':kotlin-compiler'

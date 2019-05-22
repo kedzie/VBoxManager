@@ -6,6 +6,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.kedzie.vbox.VBoxApplication
 import com.kedzie.vbox.event.EventIntentService
 import com.kedzie.vbox.event.EventNotificationService
+import com.kedzie.vbox.machine.ActionsFragment
+import com.kedzie.vbox.machine.InfoFragment
+import com.kedzie.vbox.machine.MachineListActivity
+import com.kedzie.vbox.machine.group.GroupInfoFragment
+import com.kedzie.vbox.machine.group.MachineGroupListFragment
 import com.kedzie.vbox.task.ProgressService
 import dagger.Component
 import dagger.Module
@@ -38,7 +43,7 @@ class AndroidServicesModule(val context: Context) {
 
     @Provides
     @Singleton
-    fun provideLocalBroadcastManager() = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context);
+    fun provideLocalBroadcastManager() = LocalBroadcastManager.getInstance(context)
 }
 
 /**
@@ -55,6 +60,21 @@ abstract class ProvidedInjectorsModule {
 
     @ContributesAndroidInjector()
     internal abstract fun contributeProgressServiceInjector(): ProgressService
+
+    @ContributesAndroidInjector()
+    internal abstract fun contributeInfoFragmentInjector(): InfoFragment
+
+    @ContributesAndroidInjector()
+    internal abstract fun contributeActionsFragmentInjector(): ActionsFragment
+
+    @ContributesAndroidInjector()
+    internal abstract fun contributeGroupInfoFragmentInjector(): GroupInfoFragment
+
+    @ContributesAndroidInjector()
+    internal abstract fun contributeMachineGroupListFragmentInjector(): MachineGroupListFragment
+
+    @ContributesAndroidInjector()
+    internal abstract fun contributeMachineListActivityInjector(): MachineListActivity
 }
 
 

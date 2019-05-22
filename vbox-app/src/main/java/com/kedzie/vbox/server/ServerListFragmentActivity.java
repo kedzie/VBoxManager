@@ -20,7 +20,10 @@ import static java.security.AccessController.getContext;
 public class ServerListFragmentActivity extends BaseActivity implements OnSelectServerListener {
     
     private LoginSupport loginSupport;
-    
+
+    private static final int REQUEST_CODE_MACHINE_LIST = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +32,7 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
           public void onLogin(VBoxSvc vmgr) {
             Intent intent = new Intent(ServerListFragmentActivity.this, MachineListActivity.class);
             BundleBuilder.putVBoxSvc(intent, vmgr);
-            Utils.startActivityForResult(ServerListFragmentActivity.this, intent, 0);
+            Utils.startActivityForResult(ServerListFragmentActivity.this, intent, REQUEST_CODE_MACHINE_LIST);
           }
         });
         getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -37,7 +40,6 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
             getSupportFragmentManager().beginTransaction().add(android.R.id.content, new ServerListFragment(), "server_list").commit();
         }
     }
-
     @Override
     public void onSelectServer(final Server server) {
       loginSupport.onSelectServer(server);
@@ -46,9 +48,16 @@ public class ServerListFragmentActivity extends BaseActivity implements OnSelect
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if(resultCode == 5) { //new server has been selected so connect immediately
-      Server server = data.getParcelableExtra("server");
-      loginSupport.onSelectServer(server);
+    switch(requestCode) {
+        case REQUEST_CODE_MACHINE_LIST:
+            if(resultCode == 5) { //new server has been selected so connect immediately
+                Server server = data.getParcelableExtra("server");
+                loginSupport.onSelectServer(server);
+            }
+            break;
+        case LoginSupport.REQUEST_CODE_KEYCHAIN:
+            Utils.toastLong(this, "Successfully updated keystore");
+            break;
     }
   }
 }

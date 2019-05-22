@@ -12,7 +12,7 @@ import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.BundleBuilder;
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.machine.group.MachineGroupListBaseFragment;
+import com.kedzie.vbox.machine.group.MachineGroupListFragment;
 import com.kedzie.vbox.machine.group.TreeNode;
 import com.kedzie.vbox.machine.group.VMGroupListView.OnTreeNodeSelectListener;
 import com.kedzie.vbox.server.LoginSupport;
@@ -45,6 +45,8 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 			return null;
 		}
 	}
+
+	private static final int REQUEST_CODE_MACHINE_LIST = 0;
 
 	/** Are we in a dual pane (tablet) layout */
 	private boolean _dualPane;
@@ -79,20 +81,28 @@ public class ServerListPickActivity extends BaseActivity implements OnSelectServ
 		_vmgr=vboxApi;
 		if(_dualPane) {
 			Utils.setCustomAnimations(getSupportFragmentManager().beginTransaction())
-			.replace(R.id.details, Fragment.instantiate(this, MachineGroupListBaseFragment.class.getName(), new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vboxApi).create()))
+			.replace(R.id.details, Fragment.instantiate(this, MachineGroupListFragment.class.getName(), new BundleBuilder().putParcelable(VBoxSvc.BUNDLE, vboxApi).create()))
 			.commit();
 		} else {
 			Utils.startActivityForResult(this, new Intent(ServerListPickActivity.this, MachineListPickActivity.class)
 			.putExtra(VBoxSvc.BUNDLE, (Parcelable)vboxApi)
-			.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId), 0);
+			.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId), REQUEST_CODE_MACHINE_LIST);
 		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode==RESULT_OK) {
-			setResult(resultCode, data);
-			finish();
+
+		switch(requestCode) {
+			case REQUEST_CODE_MACHINE_LIST:
+				if(resultCode==RESULT_OK) {
+					setResult(resultCode, data);
+					finish();
+				}
+				break;
+			case LoginSupport.REQUEST_CODE_KEYCHAIN:
+				Utils.toastLong(this, "Successfully updated keystore");
+				break;
 		}
 	}
 
