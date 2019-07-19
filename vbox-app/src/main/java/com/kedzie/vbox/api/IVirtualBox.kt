@@ -1,13 +1,12 @@
 package com.kedzie.vbox.api
 
 import android.os.Parcelable
-import com.kedzie.vbox.api.jaxb.AccessMode
-import com.kedzie.vbox.api.jaxb.DeviceType
-import com.kedzie.vbox.api.jaxb.IGuestOSType
-import com.kedzie.vbox.api.jaxb.MachineState
+import com.kedzie.vbox.api.jaxb.*
 import com.kedzie.vbox.soap.Cacheable
 import com.kedzie.vbox.soap.Ksoap
 import com.kedzie.vbox.soap.KsoapProxy
+import org.ksoap2.SoapFault
+import timber.log.Timber
 
 
 @KsoapProxy
@@ -325,4 +324,58 @@ interface IVirtualBox : IManagedObjectRef, Parcelable {
     suspend fun findNATNetworkByName(networkName: String): INATNetwork
 
     suspend fun removeNATNetwork(network: INATNetwork)
+}
+
+/**
+ * Searches a DHCP server settings to be used for the given internal network name.
+ * @param name        server name
+ */
+suspend fun IVirtualBox.findDHCPServerByNetworkNameOrNull(name: String): IDHCPServer? {
+    try {
+        return findDHCPServerByNetworkName(name)
+    } catch (e: SoapFault) {
+        Timber.e("Couldn't find DHCP Server: %s", e.message)
+        return null
+    }
+}
+
+suspend fun IVirtualBox.takeScreenshot(machine: IMachine): Screenshot? {
+    if (machine.getState() == MachineState.RUNNING || machine.getState() == MachineState.SAVED) {
+        val session = getSessionObject()
+        machine.lockMachine(session, LockType.SHARED)
+        try {
+            val display = session.getConsole().getDisplay()
+            val res = display.getScreenResolution(0)
+            val width = res.get("width")!!.toInt()
+            val height = res.get("height")!!.toInt()
+            return Screenshot(width, height, display.takeScreenShotToArray(0, width, height, BitmapFormat.PNG))
+        } finally {
+            session.unlockMachine()
+        }
+    }
+    return null
+}
+
+suspend fun IVirtualBox.takeScreenshot(machine: IMachine, width: Int, height: Int): Screenshot {
+    var width = width
+    var height = height
+    val session = getSessionObject()
+    machine.lockMachine(session, LockType.SHARED)
+    try {
+        val display = session.getConsole().getDisplay()
+        val res = display.getScreenResolution(0)
+        val screenW = res.get("width")!!.toFloat()
+        val screenH = res.get("height")!!.toFloat()
+        if (screenW > screenH) {
+            val aspect = screenH / screenW
+            height = (aspect * width).toInt()
+        } else if (screenH > screenW) {
+            val aspect = screenW / screenH
+            width = (aspect * height).toInt()
+        }
+        return Screenshot(width, height,
+                session.getConsole().getDisplay().takeScreenShotToArray(0, width, height, BitmapFormat.PNG))
+    } finally {
+        session.unlockMachine()
+    }
 }

@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:checkableBehavior="single">
+
     <item
-            android:id="@+id/navigation_home"
-            android:checked="true"
+            android:id="@+id/machineActionsFragment"
             android:icon="@drawable/ic_list_vbox"
             android:title="Home"/>
 
     <item
             android:id="@+id/navigation_prefs"
-            android:icon="@drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_menu_settings"
             android:title="Preferences"/>
 
     <item
-            android:id="@+id/navigation_host_network"
+        android:id="@+id/hostInfoFragment"
+        android:checked="true"
+        android:icon="@drawable/ic_list_vbox"
+        android:title="Host Info"/>
+
+    <item
+            android:id="@+id/hostNetworkListFragment"
             android:icon="@drawable/ic_settings_network"
             android:title="Host Networking"/>
 
@@ -20,4 +27,8 @@
             android:id="@+id/navigation_logoff"
             android:icon="@drawable/ic_list_abort"
             android:title="Logoff"/>
+
+    <item android:id="@+id/helpFragment"
+        android:icon="@drawable/ic_menu_help"
+        android:title="@string/help"/>
 </menu>

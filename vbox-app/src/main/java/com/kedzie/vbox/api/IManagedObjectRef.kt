@@ -18,8 +18,7 @@ import com.kedzie.vbox.soap.VBoxSvc
  * @apiviz.stereotype Proxy
  * @apiviz.category Proxy
  */
-@KsoapProxy
-@Ksoap
+@KsoapProxy(KsoapMethodStrategy.INCLUDE_ANNOTATED)
 interface IManagedObjectRef {
 
     /**
@@ -35,6 +34,7 @@ interface IManagedObjectRef {
     /**
      * Returns the name of the interface that this managed object represents, for example, "IMachine", as a string.
      */
+    @Ksoap
     suspend fun getInterfaceName(): String
 
     /**
@@ -42,5 +42,8 @@ interface IManagedObjectRef {
      *
      * After calling this method, the identifier of the reference can no longer be used.
      */
+    @Ksoap
     suspend fun release()
+
+    fun clearCache()
 }

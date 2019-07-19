@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface ISessionStateChangedEvent : IEvent {
+interface ISessionStateChangedEvent : IMachineEvent {
     @Cacheable("State")
 	suspend fun getState(): SessionState
 }

@@ -25,4 +25,8 @@ interface IAudioAdapter : IManagedObjectRef, Parcelable {
 	suspend fun getAudioDriver(): AudioDriverType
 
     suspend fun setAudioDriver(@Cacheable(value = "AudioDriver") audioDriver: AudioDriverType)
+
+    companion object {
+        const val BUNDLE = "audio_adapter"
+    }
 }

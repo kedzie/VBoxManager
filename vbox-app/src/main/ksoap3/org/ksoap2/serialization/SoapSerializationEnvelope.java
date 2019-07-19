@@ -114,9 +114,10 @@ public class SoapSerializationEnvelope extends SoapEnvelope
      * @param addAdornments
      *            the addAdornments to set
      */
-    public void setAddAdornments(boolean addAdornments)
+    public SoapSerializationEnvelope setAddAdornments(boolean addAdornments)
     {
         this.addAdornments = addAdornments;
+        return this;
     }
 
     /**

@@ -176,6 +176,9 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         proxyType.primaryConstructor(primary.build())
 
+        val clearCache = FunSpec.builder("clearCache")
+                .addModifiers(KModifier.OVERRIDE)
+
         for((fieldName, fieldType) in injected.cacheableFields) {
             proxyType.addProperty(PropertySpec.builder("cache_$fieldName",
                     fieldType.asTypeName(nameResolver, proto::getTypeParameter, false).copy(nullable = true))
@@ -183,7 +186,10 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                     .addModifiers(KModifier.PRIVATE)
                     .initializer("null")
                     .build())
+            clearCache.addStatement("cache_$fieldName = null")
         }
+        proxyType.addFunction(clearCache.build())
+
         if (injected.type.interfaces.isNotEmpty()) {
             //PARCELABLE
             val writeToParcel = FunSpec.builder("writeToParcel")
@@ -261,74 +267,83 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                     }
                 }
 
-                method.getAnnotation(Cacheable::class.java)?.takeIf{ it.get }?.let {
-                    spec.beginControlFlow("cache_%L?.let",
-                            if(it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
-                            .addStatement("return it")
-                            .endControlFlow()
-                }
+                if(func.isSuspend) {
+                    method.getAnnotation(Cacheable::class.java)?.takeIf { it.get }?.let {
+                        spec.beginControlFlow("cache_%L?.let",
+                                if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                                .addStatement("return it")
+                                .endControlFlow()
+                    }
 
-                val ksoap = method.getAnnotation(Ksoap::class.java) ?: injected.type.getAnnotation(Ksoap::class.java)
 
-                spec.addStatement("val request = %T(%S, \"%L_%L\")",
-                        ClassName("org.ksoap2.serialization", "SoapObject"),
-                        "http://www.virtualbox.org/",
-                        if(ksoap?.prefix != "") ksoap.prefix else typeName,
-                        nameResolver.getString(func.name))
+                    val ksoap = method.getAnnotation(Ksoap::class.java)
+                            ?: injected.type.getAnnotation(Ksoap::class.java)
 
-                if (ksoap?.thisReference != "")
-                    spec.addStatement("request.addProperty(%S, idRef)", ksoap.thisReference)
+                    //switch context
+                    spec.beginControlFlow("val (envelope, call) = %M(%M)",
+                            MemberName("kotlinx.coroutines", "withContext"),
+                            MemberName("kotlinx.coroutines.Dispatchers", "IO"))
+                        .addStatement("val request = %T(%S, \"%L_%L\")",
+                            ClassName("org.ksoap2.serialization", "SoapObject"),
+                            "http://www.virtualbox.org/",
+                            if (ksoap?.prefix != "") ksoap.prefix else typeName,
+                            nameResolver.getString(func.name))
 
-                for (parameter in method.parameters) {
-                    injected.data.getValueParameterOrNull(func, parameter)?.let { kparam ->
+                    if (ksoap?.thisReference != "")
+                        spec.addStatement("request.addProperty(%S, idRef)", ksoap.thisReference)
 
-                        parameter.getAnnotation(Cacheable::class.java)?.takeIf{ it.put }?.let {
-                            spec.addStatement("cache_%L = %L",
-                                    if(it.value.isNotEmpty()) it.value else nameResolver.getString(kparam.name),
-                                    nameResolver.getString(kparam.name))
-                        }
+                    for (parameter in method.parameters) {
+                        injected.data.getValueParameterOrNull(func, parameter)?.let { kparam ->
 
-                        if(kparam.hasVarargElementType()) {
-                            spec.beginControlFlow("for(element in %L)", nameResolver.getString(kparam.name))
-                            marshalParameter(injected, spec, ksoap,
-                                    kparam.varargElementType,
-                                    elementUtils.getTypeElement(kparam.varargElementType.asTypeName(nameResolver, proto::getTypeParameter).toString()).asType(),
-                                    nameResolver.getString(kparam.name),
-                                    "element")
-                            spec.endControlFlow()
-                        } else {
-                            marshalParameter(injected, spec, parameter.getAnnotation(Ksoap::class.java),
-                                    kparam.type,
-                                    parameter.asType(),
-                                    nameResolver.getString(kparam.name),
-                                    nameResolver.getString(kparam.name))
+                            parameter.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                                spec.addStatement("cache_%L = %L",
+                                        if (it.value.isNotEmpty()) it.value else nameResolver.getString(kparam.name),
+                                        nameResolver.getString(kparam.name))
+                            }
+
+                            if (kparam.hasVarargElementType()) {
+                                spec.beginControlFlow("for(element in %L)", nameResolver.getString(kparam.name))
+                                marshalParameter(injected, spec, ksoap,
+                                        kparam.varargElementType,
+                                        elementUtils.getTypeElement(kparam.varargElementType.asTypeName(nameResolver, proto::getTypeParameter).toString()).asType(),
+                                        nameResolver.getString(kparam.name),
+                                        "element")
+                                spec.endControlFlow()
+                            } else {
+                                marshalParameter(injected, spec, parameter.getAnnotation(Ksoap::class.java),
+                                        kparam.type,
+                                        parameter.asType(),
+                                        nameResolver.getString(kparam.name),
+                                        nameResolver.getString(kparam.name))
+                            }
                         }
                     }
-                }
 
-                spec.addStatement("val envelope = %T(%T.VER11)",
-                        ClassName("org.ksoap2.serialization", "SoapSerializationEnvelope"),
-                        ClassName("org.ksoap2", "SoapEnvelope"))
-                    .addStatement("envelope.setAddAdornments(false)")
-                    .addStatement("envelope.setOutputSoapObject(request)")
+                    spec.addStatement("val envelope = %T(%T.VER11).setAddAdornments(false).setOutputSoapObject(request)",
+                            ClassName("org.ksoap2.serialization", "SoapSerializationEnvelope"),
+                            ClassName("org.ksoap2", "SoapEnvelope"))
 
-                    .beginControlFlow("return %M<%T>",
-                        MemberName("kotlinx.coroutines", "suspendCancellableCoroutine"),
-                            func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
-
-                    .addStatement("val call = api.soapCall(%M+request.getName(), envelope)",
-                        MemberName("com.kedzie.vbox.soap.VBoxSvc", "NAMESPACE"))
-
-                        .beginControlFlow("it.invokeOnCancellation")
-                        .addStatement("call.cancel()")
+                    spec.addStatement("%T(envelope, api.soapCall(%M+request.getName(), envelope))",
+                            ClassName("kotlin", "Pair"),
+                            MemberName("com.kedzie.vbox.soap.VBoxSvc.Companion", "NAMESPACE"))
                         .endControlFlow()
 
-                val successFunc = FunSpec.builder("onResponse")
-                        .addModifiers(KModifier.OVERRIDE)
-                        .throws(ClassName("java.io", "IOException"))
-                        .addParameter("call", ClassName("okhttp3", "Call"))
-                        .addParameter("response", ClassName("okhttp3", "Response"))
-                        .beginControlFlow("if(response.isSuccessful())")
+
+                    //suspend and enqueue
+                    spec.beginControlFlow("return %M<%T>",
+                                    MemberName("kotlinx.coroutines", "suspendCancellableCoroutine"),
+                                    func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
+
+                            .beginControlFlow("it.invokeOnCancellation")
+                            .addStatement("call.cancel()")
+                            .endControlFlow()
+
+                    val successFunc = FunSpec.builder("onResponse")
+                            .addModifiers(KModifier.OVERRIDE)
+                            .throws(ClassName("java.io", "IOException"))
+                            .addParameter("call", ClassName("okhttp3", "Call"))
+                            .addParameter("response", ClassName("okhttp3", "Response"))
+                            .beginControlFlow("if(response.isSuccessful())")
                             .beginControlFlow("try")
                             .addStatement("val xp = %T()",
                                     ClassName("org.kxml2.io", "KXmlParser"))
@@ -336,135 +351,139 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                     MemberName("org.xmlpull.v1.XmlPullParser", "FEATURE_PROCESS_NAMESPACES"))
                             .addStatement("xp.setInput(response.body()!!.byteStream(), null);")
                             .addStatement("envelope.parse(xp);")
-                                .beginControlFlow("if(envelope.bodyIn is org.ksoap2.SoapFault)")
-                                .addStatement("it.%M(envelope.bodyIn as org.ksoap2.SoapFault)",
-                                        MemberName("kotlin.coroutines", "resumeWithException"))
-                                .nextControlFlow("else")
+                            .beginControlFlow("if(envelope.bodyIn is org.ksoap2.SoapFault)")
+                            .addStatement("it.%M(envelope.bodyIn as org.ksoap2.SoapFault)",
+                                    MemberName("kotlin.coroutines", "resumeWithException"))
+                            .nextControlFlow("else")
 
-                val returnTypeName = func.returnType.asTypeName(nameResolver, proto::getTypeParameter).copy(nullable = false)
-                if (returnTypeName != ClassName("kotlin", "Unit")) {
-                    successFunc.addStatement("val ks = envelope.bodyIn as %T",
-                            ClassName("org.ksoap2.serialization", "KvmSerializable"))
+                    val returnTypeName = func.returnType.asTypeName(nameResolver, proto::getTypeParameter).copy(nullable = false)
+                    if (returnTypeName != ClassName("kotlin", "Unit")) {
+                        successFunc.addStatement("val ks = envelope.bodyIn as %T",
+                                ClassName("org.ksoap2.serialization", "KvmSerializable"))
 
-                    if (func.returnType.nullable) {
-                        successFunc.beginControlFlow("if(ks.getPropertyCount()==0)")
-                                .addStatement("it.%M(null)", MemberName("kotlin.coroutines", "resume"))
-                                .endControlFlow()
-                    }
-
-                    val isCollection = func.returnType.argumentCount == 1
-                    val isMap = func.returnType.argumentCount == 2
-
-                    //Array
-                    if(returnTypeName is ParameterizedTypeName
-                            && returnTypeName.rawType == ClassName("kotlin", "Array")) {
-
-                        val componentType = func.returnType.getArgument(0)
-                        successFunc.addStatement("val list = %M<%T>()",
-                                MemberName("kotlin.collections", "mutableListOf"),
-                                componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
-                                .beginControlFlow("for(i in 0..ks.getPropertyCount())")
-                                .beginControlFlow("ks.getProperty(i)?.let")
-                                .beginControlFlow("if(!it.toString().equals(\"anyType{}\"))")
-                                .addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, componentType.type, "it"))
-                                .endControlFlow()
-                                .endControlFlow()
-                                .endControlFlow()
-                                .addStatement("val ret = list.toTypedArray()")
-                    }
-                    else if (isMap) {
-                        val valueType =  func.returnType.getArgument(1)
-                        successFunc.addStatement("val info = %T()",
-                                ClassName("org.ksoap2.serialization", "PropertyInfo"))
-                        //Map<String, List<String>>
-                        if (valueType.type.argumentCount == 1) {
-                            successFunc.addStatement("val map = %M<String, %T<String>>()",
-                                    MemberName("kotlin.collections", "mutableMapOf"),
-                                    ClassName("kotlin.collections", "MutableList"))
-                                    .beginControlFlow("for (i in 0..ks.getPropertyCount())")
-                                    .addStatement("ks.getPropertyInfo(i, null, info)")
-                                    .beginControlFlow("if (!map.containsKey(info.getName()))")
-                                    .addStatement("map.put(info.getName(), %M<String>())",
-                                            MemberName("kotlin.collections", "mutableListOf"))
-                                    .endControlFlow()
-                                    .addStatement("map.get(info.getName())!!.add(ks.getProperty(i).toString())")
-                                    .endControlFlow()
-                        } else { //Map<String, String>
-                            successFunc.addStatement("val map = %M<String, String>()",
-                                    MemberName("kotlin.collections", "mutableMapOf"))
-                                    .beginControlFlow("for (i in 0..ks.getPropertyCount())")
-                                    .addStatement("ks.getPropertyInfo(i, null, info)")
-                                    .addStatement("map.put(info.getName(), ks.getProperty(i).toString())")
-                                    .endControlFlow()
-                        }
-                        successFunc.addStatement("val ret = map")
-                    }
-                    else if (isCollection) {
-                        val componentType = func.returnType.getArgument(0)
-                        successFunc.addStatement("val list = %M<%T>()",
-                                MemberName("kotlin.collections", "mutableListOf"),
-                                componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
-                        successFunc.beginControlFlow("for(i in 0..ks.getPropertyCount())")
-                        successFunc.beginControlFlow("if(ks.getProperty(i)!=null && !ks.getProperty(i).toString().equals(\"anyType{}\"))")
-                        successFunc.addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, componentType.type, "ks.getProperty(i)"))
-                        successFunc.endControlFlow()
-                        successFunc.endControlFlow()
-                        successFunc.addStatement("val ret = list")
-                    }
-                    else {
-                        successFunc.addStatement("val rawRet = ks.getProperty(0)")
                         if (func.returnType.nullable) {
-                            successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
-                                    func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
-                                    .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
-                                    .nextControlFlow("else")
-                                    .addStatement("null")
+                            successFunc.beginControlFlow("if(ks.getPropertyCount()==0)")
+                                    .addStatement("it.%M(null)", MemberName("kotlin.coroutines", "resume"))
                                     .endControlFlow()
-                        } else {
-                            successFunc.addStatement("val ret = %L",
-                                    unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
                         }
+
+                        val isCollection = func.returnType.argumentCount == 1
+                        val isMap = func.returnType.argumentCount == 2
+
+                        //Array
+                        if (returnTypeName is ParameterizedTypeName
+                                && returnTypeName.rawType == ClassName("kotlin", "Array")) {
+
+                            val componentType = func.returnType.getArgument(0)
+                            successFunc.addStatement("val list = %M<%T>()",
+                                    MemberName("kotlin.collections", "mutableListOf"),
+                                    componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
+                                    .beginControlFlow("for(i in 0..ks.getPropertyCount())")
+                                    .beginControlFlow("ks.getProperty(i)?.let")
+                                    .beginControlFlow("if(!it.toString().equals(\"anyType{}\"))")
+                                    .addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, componentType.type, "it"))
+                                    .endControlFlow()
+                                    .endControlFlow()
+                                    .endControlFlow()
+                                    .addStatement("val ret = list.toTypedArray()")
+                        } else if (isMap) {
+                            val valueType = func.returnType.getArgument(1)
+                            successFunc.addStatement("val info = %T()",
+                                    ClassName("org.ksoap2.serialization", "PropertyInfo"))
+                            //Map<String, List<String>>
+                            if (valueType.type.argumentCount == 1) {
+                                successFunc.addStatement("val map = %M<String, %T<String>>()",
+                                        MemberName("kotlin.collections", "mutableMapOf"),
+                                        ClassName("kotlin.collections", "MutableList"))
+                                        .beginControlFlow("for (i in 0..ks.getPropertyCount())")
+                                        .addStatement("ks.getPropertyInfo(i, null, info)")
+                                        .beginControlFlow("if (!map.containsKey(info.getName()))")
+                                        .addStatement("map.put(info.getName(), %M<String>())",
+                                                MemberName("kotlin.collections", "mutableListOf"))
+                                        .endControlFlow()
+                                        .addStatement("map.get(info.getName())!!.add(ks.getProperty(i).toString())")
+                                        .endControlFlow()
+                            } else { //Map<String, String>
+                                successFunc.addStatement("val map = %M<String, String>()",
+                                        MemberName("kotlin.collections", "mutableMapOf"))
+                                        .beginControlFlow("for (i in 0..ks.getPropertyCount())")
+                                        .addStatement("ks.getPropertyInfo(i, null, info)")
+                                        .addStatement("map.put(info.getName(), ks.getProperty(i).toString())")
+                                        .endControlFlow()
+                            }
+                            successFunc.addStatement("val ret = map")
+                        } else if (isCollection) {
+                            val componentType = func.returnType.getArgument(0)
+                            successFunc.addStatement("val list = %M<%T>()",
+                                    MemberName("kotlin.collections", "mutableListOf"),
+                                    componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
+                            successFunc.beginControlFlow("for(i in 0..ks.getPropertyCount())")
+                            successFunc.beginControlFlow("if(ks.getProperty(i)!=null && !ks.getProperty(i).toString().equals(\"anyType{}\"))")
+                            successFunc.addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, componentType.type, "ks.getProperty(i)"))
+                            successFunc.endControlFlow()
+                            successFunc.endControlFlow()
+                            successFunc.addStatement("val ret = list")
+                        } else {
+                            successFunc.addStatement("val rawRet = ks.getProperty(0)")
+                            if (func.returnType.nullable) {
+                                successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
+                                        func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
+                                        .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
+                                        .nextControlFlow("else")
+                                        .addStatement("null")
+                                        .endControlFlow()
+                            } else {
+                                successFunc.addStatement("val ret = %L",
+                                        unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
+                            }
+                        }
+
+                        method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                            successFunc.addStatement("cache_%L = ret",
+                                    if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                        }
+
+                        successFunc.addStatement("it.%M(ret)", MemberName("kotlin.coroutines", "resume"))
+                    } else {
+                        successFunc.addStatement("it.%M(Unit)", MemberName("kotlin.coroutines", "resume"))
                     }
 
-                    method.getAnnotation(Cacheable::class.java)?.takeIf{ it.put }?.let {
-                        successFunc.addStatement("cache_%L = ret",
-                                if(it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
-                    }
-
-                    successFunc.addStatement("it.%M(ret)", MemberName("kotlin.coroutines", "resume"))
-                } else {
-                    successFunc.addStatement("it.%M(Unit)", MemberName("kotlin.coroutines", "resume"))
-                }
-
-                                successFunc.endControlFlow()
+                    successFunc.endControlFlow()
                             .nextControlFlow("catch(e: %T)",
                                     ClassName("org.xmlpull.v1", "XmlPullParserException"))
-                        .addStatement("it.%M(e)",
-                                MemberName("kotlin.coroutines", "resumeWithException"))
+                            .addStatement("it.%M(e)",
+                                    MemberName("kotlin.coroutines", "resumeWithException"))
                             .endControlFlow()
-                        .nextControlFlow("else")
-                        .addStatement("it.%M(IOException(%S))",
-                                MemberName("kotlin.coroutines", "resumeWithException"),
-                                "shitniz")
-                        .endControlFlow()
+                            .nextControlFlow("else")
+                            .addStatement("it.%M(IOException(%S))",
+                                    MemberName("kotlin.coroutines", "resumeWithException"),
+                                    "shitniz")
+                            .endControlFlow()
 
 
-                val failFunc = FunSpec.builder("onFailure")
-                        .addModifiers(KModifier.OVERRIDE)
-                        .addParameter("call", ClassName("okhttp3", "Call"))
-                        .addParameter("exception", IOException::class)
-                        .addStatement("it.%M(exception)",
-                                MemberName("kotlin.coroutines", "resumeWithException"))
+                    val failFunc = FunSpec.builder("onFailure")
+                            .addModifiers(KModifier.OVERRIDE)
+                            .addParameter("call", ClassName("okhttp3", "Call"))
+                            .addParameter("exception", IOException::class)
+                            .addStatement("it.%M(exception)",
+                                    MemberName("kotlin.coroutines", "resumeWithException"))
 
-                val callback = TypeSpec.anonymousClassBuilder()
-                        .addSuperinterface(ClassName("okhttp3", "Callback"))
-                        .addFunction(successFunc.build())
-                        .addFunction(failFunc.build())
+                    val callback = TypeSpec.anonymousClassBuilder()
+                            .addSuperinterface(ClassName("okhttp3", "Callback"))
+                            .addFunction(successFunc.build())
+                            .addFunction(failFunc.build())
 
-                spec.addStatement("call.enqueue(%L)", callback.build())
+                    spec.addStatement("call.enqueue(%L)", callback.build())
 
-                spec.endControlFlow()
+                    spec.endControlFlow()
 
+                } else {
+                    //not suspending function
+                    method.getAnnotation(Cacheable::class.java)!!.takeIf { it.get }!!.let {
+                        spec.addStatement("return cache_%L",
+                                if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                    }
+                }
                 proxyType.addFunction(spec.build())
             }
         }

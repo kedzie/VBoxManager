@@ -1,108 +1,110 @@
 package com.kedzie.vbox.machine.group
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
+import android.widget.ViewFlipper
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kedzie.vbox.R
-import com.kedzie.vbox.SettingsActivity
 import com.kedzie.vbox.api.IHost
 import com.kedzie.vbox.api.IMachine
-import com.kedzie.vbox.api.IManagedObjectRef
-import com.kedzie.vbox.api.jaxb.VBoxEventType
-import com.kedzie.vbox.app.BundleBuilder
+import com.kedzie.vbox.api.IMachineStateChangedEvent
 import com.kedzie.vbox.app.Utils
+import com.kedzie.vbox.machine.MachineListViewModel
+import com.kedzie.vbox.machine.MachineView
 import com.kedzie.vbox.soap.VBoxSvc
-import com.kedzie.vbox.task.BaseTask
-import com.kedzie.vbox.task.DialogTask
-import dagger.android.support.AndroidSupportInjection
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.vmgroup_list_header.view.*
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
-import java.util.HashMap
-import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
-class MachineGroupListFragment : Fragment(), CoroutineScope {
+class MachineGroupListFragment : Fragment(),
+        View.OnClickListener,
+        OnDrillDownListener {
 
-    private lateinit var _vmgr: VBoxSvc
-    private var _root: VMGroup? = null
-    private lateinit var _host: IHost
-    private var _version: String? = null
-    private lateinit var _listView: VMGroupListView
-    private lateinit var _selectListener: VMGroupListView.OnTreeNodeSelectListener
+    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
+        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
 
-    @set:Inject
-    lateinit var lbm: LocalBroadcastManager
 
-    private lateinit var job: Job
 
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+    private lateinit var root: VMGroup
 
-    private val _receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == VBoxEventType.ON_MACHINE_STATE_CHANGED.name)
-                launch {
-                    val m = BundleBuilder.getProxy(intent.extras, IMachine.BUNDLE, IMachine::class.java)
-                    Utils.cacheProperties(m)
+    private lateinit var selectListener: OnTreeNodeSelectListener
 
-                    withContext(Dispatchers.Main) {
-                        _listView.update(m)
-                    }
-                }
+    /** Currently selected view  */
+    private var _selected: View? = null
+
+    /** Is element selection enabled  */
+    var isSelectionEnabled: Boolean = false
+
+    /** Maps Machine ID to all views which reference it.  Used for updating views when events are received.  */
+    private val mMachineViewMap = HashMap<String, MutableList<MachineView>>()
+    /** Maps [VMGroup] to all views which reference it.  Used for updating views when groups change.  */
+    private val mGroupViewMap = HashMap<String, MutableList<VMGroupPanel>>()
+
+
+    //TODO implement programmatic selection
+    var selectedObject: TreeNode?
+        get() {
+            if (_selected is VMGroupPanel) {
+                return (_selected as VMGroupPanel).group
+            } else if (_selected is MachineView) {
+                return (_selected as MachineView).machine
+            }
+            return null
         }
-    }
+        set(value) {
+            if (value is IHost) {
+
+            } else if (value is IMachine) {
+
+            } else if (value is VMGroup) {
+
+            }
+        }
 
     private val groupCache = HashMap<String, VMGroup>()
 
-    private fun get(name: String): VMGroup? {
+    private fun get(name: String): VMGroup {
         if (!groupCache.containsKey(name))
             groupCache[name] = VMGroup(name)
-        return groupCache[name]
+        return groupCache[name]!!
     }
 
     private fun loadGroups() {
-        launch {
-            _vmgr.vBox.version
-            _host = _vmgr.vBox.host
-            _host.memorySize
-            _version = _host.api.vBox.version
-            val vGroups = _vmgr.vBox.machineGroups
-            for (group in vGroups) {
-                if (group == "/") continue
-                var previous = get(group)
-                var lastIndex = group.lastIndexOf('/')
-                var tmp = group
-                while (lastIndex > 0) {
-                    tmp = tmp.substring(0, lastIndex)
-                    val current = get(tmp)
-                    current!!.addChild(previous)
-                    previous = current
-                    lastIndex = tmp.lastIndexOf('/')
+        model.vmgr.value?.vbox?.let { vbox ->
+            model.viewModelScope.launch {
+                for (group in vbox.getMachineGroups()) {
+                    if (group == "/") continue
+                    var previous = get(group)
+                    var lastIndex = group.lastIndexOf('/')
+                    var tmp = group
+                    while (lastIndex > 0) {
+                        tmp = tmp.substring(0, lastIndex)
+                        val current = get(tmp)
+                        current.addChild(previous)
+                        previous = current
+                        lastIndex = tmp.lastIndexOf('/')
+                    }
+                    get("/").addChild(get(tmp))
                 }
-                get("/")!!.addChild(get(tmp))
-            }
-            for (machine in _vmgr.vBox.machines) {
-                Utils.cacheProperties(machine)
-                val groups = machine.groups
-                get(groups[0])!!.addChild(machine)
-            }
-            _vmgr.vBox.performanceCollector.setupMetrics(arrayOf("*:"),
-                    Utils.getIntPreference(activity!!.applicationContext, SettingsActivity.PREF_PERIOD),
-                    Utils.getIntPreference(activity!!.applicationContext, SettingsActivity.PREF_COUNT),
-                    null as IManagedObjectRef?)
+                for (machine in vbox.getMachines()) {
+                    val groups = machine.getGroups()
+                    get(groups[0]).addChild(machine)
+                }
 
-            withContext(Dispatchers.Main) {
-                _listView.setRoot(get("/"), _host, _version)
-                _root = get("/")
+                root = get("/")
+                setRoot(root)
             }
         }
     }
@@ -110,70 +112,198 @@ class MachineGroupListFragment : Fragment(), CoroutineScope {
     override fun onAttach(activity: Context) {
         super.onAttach(activity)
         try {
-            _selectListener = activity as VMGroupListView.OnTreeNodeSelectListener
+            selectListener = activity as OnTreeNodeSelectListener
         } catch (e: ClassCastException) {
             throw ClassCastException("$activity does not implement OnTreeNodeSelectListener")
         }
-
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this);
-        super.onCreate(savedInstanceState)
-
-        if (arguments != null && arguments!!.containsKey(VBoxSvc.BUNDLE)) {
-            _vmgr = BundleBuilder.getVBoxSvc(arguments!!)
-        } else {
-            _vmgr = BundleBuilder.getVBoxSvc(activity!!.intent)
-        }
-
-        if (savedInstanceState != null) {
-            _root = savedInstanceState.getParcelable(VMGroup.BUNDLE)
-            _vmgr = BundleBuilder.getVBoxSvc(savedInstanceState)
-            _host = _vmgr.vBox.host
-            _version = savedInstanceState.getString("version")
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = SwipeRefreshLayout(activity!!)
         view.setOnRefreshListener { loadGroups() }
-        _listView = VMGroupListView(activity, _vmgr)
-        _listView.setOnTreeNodeSelectListener(_selectListener)
-        view.addView(_listView)
+
+        flipper = ViewFlipper(activity!!)
+        view.addView(flipper)
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        model.events.observe(this, Observer {
+            when(it) {
+                is IMachineStateChangedEvent -> {
+                    model.vmgr.value?.let { vmgr ->
+                        model.viewModelScope.launch {
+                            val machine = vmgr.vbox.findMachine(it.getMachineId())
+                            Timber.d("Got machine state changed event %s", machine)
+                            update(machine)
+                        }
+                    }
+                }
+            }
+        })
+
+        model.vmgr.observe(this, Observer {
+            it?.let { vmgr ->
+                Timber.d("Got VMGR")
+                loadGroups()
+            }
+        })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        _listView.isSelectionEnabled = activity!!.findViewById<View>(R.id.details) != null
+        isSelectionEnabled = activity!!.findViewById<View>(R.id.details) != null
     }
-
-    override fun onStart() {
-        super.onStart()
-        lbm.registerReceiver(_receiver, IntentFilter(VBoxEventType.ON_MACHINE_STATE_CHANGED.name))
-        Timber.d("onStart")
-        job = Job()
-        if (_root == null)
-            loadGroups()
-        else
-            _listView.setRoot(_root, _host, _version)
-    }
-
-    override fun onStop() {
-        Timber.d("onStop")
-        job.cancel()
-        super.onStop()
-        lbm.unregisterReceiver(_receiver)
-    }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        BundleBuilder.putVBoxSvc(outState, _vmgr)
-        outState.putParcelable(VMGroup.BUNDLE, _root)
-        outState.putString("version", _version)
         //save current machine
-        outState.putParcelable("checkedItem", _listView.selectedObject)
+        outState.putParcelable("checkedItem", selectedObject)
+    }
+
+    /**
+     * Callback for element selection
+     */
+    interface OnTreeNodeSelectListener {
+        /**
+         * An element has been selected
+         * @param node    the selected element
+         */
+        fun onTreeNodeSelect(node: TreeNode?)
+    }
+
+    suspend fun setRoot(group: VMGroup) {
+        view.addView(GroupSection(activity!!).setGroup(group))
+    }
+
+    override fun onDrillDown(group: VMGroup) {
+        findNavController().navigate(MachineGroupListFragmentDirections.drillDown(group))
+    }
+
+    fun drillOut() {
+        findNavController().popBackStack()
+    }
+
+    /**
+     * Build a scrollable list of everything below a group
+     */
+    private inner class GroupSection(context: Context) : LinearLayout(context) {
+        private val mContents = LinearLayout(context)
+
+        val nodeViews: List<VMGroupPanel>
+            get() {
+                val children = ArrayList<VMGroupPanel>(mContents.childCount)
+                for (i in 0 until mContents.childCount)
+                    if (mContents.getChildAt(i) is VMGroupPanel)
+                        children.add(mContents.getChildAt(i) as VMGroupPanel)
+                return children
+            }
+
+        lateinit var group: VMGroup
+
+        init {
+            orientation = VERTICAL
+            descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+            mContents.orientation = VERTICAL
+
+            val scrollView = NestedScrollView(getContext())
+            scrollView.addView(mContents)
+            super.addView(scrollView)
+//            setOnDragListener(mDragger)
+        }
+
+        suspend fun setGroup(group: VMGroup): GroupSection {
+            val lp = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            if (this.group.name != "/") {
+                val header = LayoutInflater.from(context).inflate(R.layout.vmgroup_list_header, this, false) as LinearLayout
+                header.group_back.setOnClickListener { drillOut() }
+                header.group_title.setText(group.name)
+                header.group_num_groups.setText("${group.numGroups}")
+                header.group_num_machine.setText("${group.numMachines}")
+                lp.bottomMargin = Utils.dpiToPx(context, 4)
+                super.addView(header, lp)
+            }
+            for (child in group.children)
+                mContents.addView(createView(child), lp)
+            return this
+        }
+
+        override fun addView(child: View, params: ViewGroup.LayoutParams) {
+            mContents.addView(child, params)
+        }
+
+        /**
+         * Create a view for a single node in the tree
+         * @param node      tree node
+         * @return  Fully populated view representing the node
+         */
+        suspend fun createView(node: TreeNode): View {
+            if (node is IMachine) {
+                if (!mMachineViewMap.containsKey(node.idRef))
+                    mMachineViewMap[node.idRef] = ArrayList()
+                val view = MachineView(context).apply {
+                    update(node)
+                    setBackgroundResource(R.drawable.list_selector_color)
+                    isClickable = true
+                    setOnClickListener(this@MachineGroupListFragment)
+//                    setOnLongClickListener(this@MachineGroupListFragment)
+                }
+                mMachineViewMap[node.idRef]!!.add(view)
+                return view
+            } else if (node is VMGroup) {
+                val groupView = VMGroupPanel(context, node)
+                descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+                groupView.setOnClickListener(this@MachineGroupListFragment)
+                groupView.setOnDrillDownListener(this@MachineGroupListFragment)
+//                groupView.setOnLongClickListener(this@MachineGroupListFragment)
+                for (child in node.children)
+                    groupView.addChild(createView(child))
+                if (!mGroupViewMap.containsKey(node.name))
+                    mGroupViewMap[node.name] = ArrayList()
+                mGroupViewMap[node.name]!!.add(groupView)
+//                groupView.setBackgroundColor(resources.getColor(VMGroupListView.VIEW_BACKGROUND, null))
+                return groupView
+            }
+            throw IllegalArgumentException("Only views of type MachineView or VMGroupView are allowed")
+        }
+    }
+
+    /**
+     * Update all machine views with new data
+     * @param machine       the machine to update (properties must be cached)
+     */
+    suspend fun update(machine: IMachine) {
+        for (view in mMachineViewMap[machine.idRef]!!)
+            view.update(machine)
+    }
+
+    override fun onClick(v: View) {
+        if (selectListener == null)
+            return
+        if (!isSelectionEnabled) {
+            notifyListener(v)
+            return
+        }
+        //Deselect existing selection
+        if (_selected === v) {
+            _selected!!.isSelected = false
+            _selected = null
+            selectListener.onTreeNodeSelect(null)
+            return
+        }
+        //Make new Selection
+        _selected?.let { it.isSelected = false }
+        _selected = v
+        _selected!!.isSelected = true
+        notifyListener(_selected!!)
+    }
+
+    private fun notifyListener(v: View) {
+        if (v is MachineView)
+            selectListener.onTreeNodeSelect(v.machine)
+        else if (v is VMGroupPanel)
+            selectListener.onTreeNodeSelect(v.group)
     }
 }

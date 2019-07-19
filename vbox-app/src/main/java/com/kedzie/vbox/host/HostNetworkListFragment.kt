@@ -6,101 +6,90 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import com.google.common.base.Throwables
 import com.kedzie.vbox.R
 import com.kedzie.vbox.api.IDHCPServer
 import com.kedzie.vbox.api.IHost
 import com.kedzie.vbox.api.IHostNetworkInterface
+import com.kedzie.vbox.api.IMachine
 import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType
-import com.kedzie.vbox.app.BundleBuilder
-import com.kedzie.vbox.app.Utils
+import com.kedzie.vbox.machine.MachineListViewModel
 import com.kedzie.vbox.soap.VBoxSvc
-import com.kedzie.vbox.task.BaseTask
-import com.kedzie.vbox.task.DialogTask
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.host_settings_network_list.*
+import kotlinx.android.synthetic.main.simple_selectable_list_item.view.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.core.parameter.parametersOf
 import org.ksoap2.SoapFault
 import timber.log.Timber
-import java.util.ArrayList
-import kotlin.coroutines.CoroutineContext
 
-class HostNetworkListFragment : Fragment(), CoroutineScope {
+class HostNetworkListFragment : Fragment() {
 
-    private lateinit var job: Job
+    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
+        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
 
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+    private lateinit var listView: ListView
+    private lateinit var listAdapter: ArrayAdapter<IHostNetworkInterface>
 
-    private var _view: View? = null
-    private var _listView: ListView? = null
-    private var _hostInterfaceAdapterText: TextView? = null
-    private var _hostInterfaceDHCPEnabledText: TextView? = null
-    private var _listAdapter: ArrayAdapter<IHostNetworkInterface>? = null
-    //	private boolean _dualPane;
-
-    private lateinit var _vmgr: VBoxSvc
-    private var _host: IHost? = null
-    private var _interfaces: ArrayList<IHostNetworkInterface>? = null
-    private var _dhcpServers: ArrayList<IDHCPServer?>? = null
-
+    private lateinit var dhcpServers: ArrayList<IDHCPServer?>
 
     private fun addInterface() {
-        launch {
-            val (int, progress) = IHost.createHostOnlyNetworkInterface(_host!!)
-            while (!progress.completed) {
-                delay(500)
-            }
-            loadData()
-            withContext(Dispatchers.Main) {
+        model.vmgr.value?.vbox?.let { vbox ->
+            model.viewModelScope.launch {
+                val (int, progress) = IHost.createHostOnlyNetworkInterface(vbox.getHost())
+                while (!progress.getCompleted()) {
+                    delay(500)
+                }
+                loadData()
+
                 showInterfaceDialog(int)
             }
         }
     }
 
     private fun deleteInterface(int: IHostNetworkInterface) {
-        launch {
-            val progress = _host!!.removeHostOnlyNetworkInterface(int.id)
-            while (!progress.completed) {
-                delay(500)
+        model.vmgr.value?.vbox?.let { vbox ->
+            model.viewModelScope.launch {
+                val progress = vbox.getHost().removeHostOnlyNetworkInterface(int.getId())
+                while (!progress.getCompleted()) {
+                    delay(500)
+                }
+                loadData()
             }
-
-            loadData()
         }
     }
 
     private fun loadData() {
-        launch {
-            _host = _vmgr!!.vBox.host
-            val data = _host!!.findHostNetworkInterfacesOfType(HostNetworkInterfaceType.HOST_ONLY)
-            _dhcpServers = ArrayList(data.size)
-            for (net in data) {
-                net.id
-                net.name
-                net.networkName
-                net.dhcpEnabled
-                try {
-                    val dhcp = _vmgr.vBox.findDHCPServerByNetworkName(net.networkName)
-                    if (dhcp != null) {
-                        dhcp.enabled
-                        _dhcpServers!!.add(dhcp)
+        model.vmgr.value?.vbox?.let { vbox ->
+            model.viewModelScope.launch {
+                val interfaces = mutableListOf<IHostNetworkInterface>()
+                interfaces.addAll(vbox.getHost().findHostNetworkInterfacesOfType(HostNetworkInterfaceType.HOST_ONLY))
+                dhcpServers = arrayListOf()
+                for (net in interfaces) {
+                    try {
+                        val dhcp = vbox.findDHCPServerByNetworkName(net.getNetworkName())
+                        if (dhcp != null) {
+                            dhcp.getEnabled()
+                            dhcpServers.add(dhcp)
+                        }
+                    } catch (e: Throwable) {
+                        val cause = Throwables.getRootCause(e)
+                        if (cause is SoapFault) {
+                            Timber.e(e, "SoapFault finding DHCP Server %s", cause.detail.getText(0))
+                        }
+                        dhcpServers.add(null)
                     }
-                } catch (e: Throwable) {
-                    val cause = Throwables.getRootCause(e)
-                    if (cause is SoapFault) {
-                        Timber.e(e, "SoapFault finding DHCP Server %s", cause.detail.getText(0))
-                    }
-                    _dhcpServers!!.add(null)
+
                 }
 
-            }
-
-            withContext(Dispatchers.Main) {
-                _interfaces = data
-                Timber.d("# of interfaces: %d", _interfaces!!.size)
-                _listAdapter = ItemAdapter(activity!!, _interfaces!!)
-                _listView!!.adapter = _listAdapter
+                Timber.d("# of interfaces: %d", interfaces.size)
+                listAdapter = ItemAdapter(activity!!, interfaces)
+                listView.adapter = listAdapter
             }
         }
     }
@@ -116,70 +105,54 @@ class HostNetworkListFragment : Fragment(), CoroutineScope {
             val info = getItem(position)
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.simple_selectable_list_item, parent, false)
-                convertView!!.tag = convertView.findViewById<View>(android.R.id.text1) as TextView
             }
-            val text1 = convertView.tag as TextView
-            text1.text = info!!.name
-            return convertView
+            model.viewModelScope.launch {
+                convertView!!.text1.text = info.getName()
+            }
+            return convertView!!
         }
     }
 
-    internal fun showInterfaceDialog(hostInterface: IHostNetworkInterface?) {
-        Utils.showDialog(fragmentManager!!, "dialog", HostNetworkDialog.getInstance(BundleBuilder().putParcelable(IHostNetworkInterface.BUNDLE, hostInterface).create()))
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList("interfaces", _interfaces)
-        outState.putParcelable(IHost.BUNDLE, _host)
+    private fun showInterfaceDialog(hostInterface: IHostNetworkInterface) {
+        findNavController().navigate(HostNetworkListFragmentDirections.showNetworkInterface(hostInterface))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        _vmgr = BundleBuilder.getVBoxSvc(arguments!!)
-        if (savedInstanceState != null) {
-            _host = savedInstanceState.getParcelable(IHost.BUNDLE)
-            _interfaces = savedInstanceState.getParcelableArrayList("interfaces")
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //		_dualPane = getActivity().findViewById(R.id.details)!=null;
-        _view = inflater.inflate(R.layout.host_settings_network_list, null)
-        _listView = _view!!.findViewById<View>(R.id.host_interface_list) as ListView
-        _listView!!.choiceMode = ListView.CHOICE_MODE_SINGLE
-        _listView!!.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            _listView!!.setItemChecked(position, true)
-            _hostInterfaceAdapterText!!.text = "Manually Configured"
-            val dhcp = _dhcpServers!![position]
-            if (dhcp != null && dhcp.enabled)
-                _hostInterfaceDHCPEnabledText!!.text = "Enabled"
-            else
-                _hostInterfaceDHCPEnabledText!!.text = "Disabled"
+        return inflater.inflate(R.layout.host_settings_network_list, null)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        host_interface_list.choiceMode = ListView.CHOICE_MODE_SINGLE
+        host_interface_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            host_interface_list.setItemChecked(position, true)
+            model.viewModelScope.launch {
+                host_interface_adapter.text = "Manually Configured"
+                dhcpServers[position]?.let {
+                    if (it.getEnabled())
+                        host_interface_dhcp_enabled.text = "Enabled"
+                    else
+                        host_interface_dhcp_enabled.text = "Disabled"
+                }
+            }
+
         }
-        registerForContextMenu(_listView!!)
-        _hostInterfaceAdapterText = _view!!.findViewById<View>(R.id.host_interface_adapter) as TextView
-        _hostInterfaceDHCPEnabledText = _view!!.findViewById<View>(R.id.host_interface_dhcp_enabled) as TextView
-        return _view
-    }
+        registerForContextMenu(host_interface_list)
 
-    override fun onStart() {
-        super.onStart()
-        job = Job()
-        loadData()
-    }
-
-    override fun onStop() {
-        job.cancel()
-        super.onStop()
+        model.vmgr.observe(this, Observer {
+            it?.vbox?.let { loadData() }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.host_interface_actions, menu)
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -198,7 +171,7 @@ class HostNetworkListFragment : Fragment(), CoroutineScope {
 
     override fun onContextItemSelected(item: android.view.MenuItem): Boolean {
         val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position
-        val hostInterface = _listAdapter!!.getItem(position)
+        val hostInterface = listAdapter.getItem(position)
         when (item.itemId) {
             R.id.host_interface_context_menu_edit -> {
                 showInterfaceDialog(hostInterface)

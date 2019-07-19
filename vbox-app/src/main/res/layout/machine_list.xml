@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -22,22 +22,44 @@
                 tools:subtitle="SHITSHISTHIST"/>
 
         <fragment
-                android:id="@+id/machine_list_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                class="com.kedzie.vbox.machine.group.MachineGroupListFragment" />
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/machine_list" />
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:menu="@menu/machine_list_bottom_nav"/>
     </LinearLayout>
 
-    <com.google.android.material.navigation.NavigationView
+    <LinearLayout
+        android:id="@+id/drawer"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false"
+        android:layout_gravity="start">
+
+        <com.google.android.material.navigation.NavigationView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
             android:id="@+id/nav"
-            android:fitsSystemWindows="false"
             app:menu="@menu/drawer"
-            app:elevation="2dp"
             app:itemTextColor="@color/nav_text"
             app:itemBackground="@drawable/list_selector_color"/>
+
+        <fragment
+            android:id="@+id/nav_host_drawer"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:navGraph="@navigation/drawer" />
+
+
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

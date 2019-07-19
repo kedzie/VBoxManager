@@ -1,138 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="8dp"
-    android:layoutAnimation="@anim/layout_random_slide">
+    android:padding="12dp"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/server_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:hint="@string/server_name"
+        app:endIconMode="clear_text">
 
-        <TextView
-            android:id="@+id/name_label"
-            style="@style/MediumText"
-            android:text="@string/server_name" />
-
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/server_name"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Display Name"
-            android:nextFocusDown="@+id/server_host" />
-    </LinearLayout>
+            android:lines="1"
+            android:inputType="text"/>
 
-    <LinearLayout
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/server_host_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:hint="@string/server_host"
+        app:endIconMode="clear_text"
+        app:helperTextEnabled="true"
+        app:helperText="@string/server_host_help">
 
-        <TextView
-            android:id="@+id/host_label"
-            style="@style/MediumText"
-            android:layout_marginTop="4dp"
-            android:text="@string/server_host" />
-
-        <EditText
-            android:id="@id/server_host"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/server_host"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Server Host"
-            android:nextFocusDown="@+id/server_ssl"
-            android:nextFocusUp="@id/server_name" >
+            android:lines="1"
+            android:inputType="text">
             <requestFocus />
-        </EditText>
-    </LinearLayout>
+        </com.google.android.material.textfield.TextInputEditText>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
+        android:id="@+id/server_ssl_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
             android:id="@+id/ssl_label"
-            style="@style/MediumText"
+            style="?attr/textAppearanceSubtitle1"
             android:text="@string/server_ssl" />
 
-        <CheckBox
-            android:id="@id/server_ssl"
+
+        <Switch
+            android:id="@+id/server_ssl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:nextFocusDown="@+id/server_port"
             android:nextFocusUp="@id/server_host"
-            android:text="SSL" />
+            android:nextFocusDown="@+id/server_port"
+            android:textOn="Enabled"
+            android:textOff="Disabled" />
+
     </LinearLayout>
 
-    <LinearLayout
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/server_port_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal" >
+        android:hint="@string/server_port"
+        app:endIconMode="custom"
+        app:helperTextEnabled="true"
+        app:helperText="@string/server_port_help">
 
-        <TextView
-            android:id="@+id/port_label"
-            style="@style/MediumText"
-            android:text="@string/server_port" />
-
-        <EditText
-            android:id="@id/server_port"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/server_port"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:hint="Server Port"
-            android:nextFocusDown="@+id/server_username"
-            android:nextFocusUp="@id/server_ssl" />
-    </LinearLayout>
+            android:lines="1"
+            android:inputType="number"/>
 
-    <LinearLayout
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/server_username_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal" >
+        android:hint="@string/server_username"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_menu_help"
+        app:helperTextEnabled="true"
+        app:helperText="@string/server_username_help">
 
-        <TextView
-            android:id="@+id/username_label"
-            style="@style/MediumText"
-            android:text="@string/server_username" />
-
-        <EditText
-            android:id="@id/server_username"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/server_username"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Login username"
-            android:nextFocusDown="@+id/server_password"
-            android:nextFocusUp="@id/server_port" />
-    </LinearLayout>
+            android:lines="1"
+            android:inputType="text"/>
 
-    <LinearLayout
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/server_password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal" >
+        android:hint="@string/server_password"
+        app:endIconMode="password_toggle"
+        app:helperTextEnabled="true"
+        app:helperText="@string/server_password_help">
 
-        <TextView
-            android:id="@+id/password_label"
-            style="@style/MediumText"
-            android:text="@string/server_password" />
-
-        <EditText
-            android:id="@id/server_password"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/server_password"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Login password"
-            android:inputType="textPassword"
-            android:nextFocusUp="@id/server_username" />
-    </LinearLayout>
+            android:lines="1"
+            android:inputType="textPassword"/>
 
-    <TextView android:id="@+id/errors" style="@style/ErrorMessage"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

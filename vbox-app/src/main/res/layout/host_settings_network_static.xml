@@ -1,71 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/staticTab"
-    android:padding="8dp" >
+    android:padding="8dp"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/hostnet_ipv4_ip_label"
-        style="@style/SmallTextPrimary"
-        android:layout_alignRight="@+id/hostnet_ipv6_ip_label"
-        android:text="@string/host_interface_ipv4_ip" />
-
-    <EditText
-        android:id="@+id/hostnet_ipv4_ip"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/hostnet_ipv4_ip_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@id/hostnet_ipv4_ip_label"
-        android:layout_toRightOf="@id/hostnet_ipv4_ip_label" />
+        android:hint="@string/host_interface_ipv4_ip"
+        app:endIconMode="clear_text">
 
-    <TextView
-        android:id="@+id/hostnet_ipv4_mask_label"
-        style="@style/SmallTextPrimary"
-        android:layout_alignRight="@id/hostnet_ipv6_ip_label"
-        android:layout_marginTop="8dp"
-        android:layout_below="@id/hostnet_ipv4_ip_label"
-        android:text="@string/host_interface_ipv4_mask" />
-    
-    <EditText
-        android:id="@+id/hostnet_ipv4_mask"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hostnet_ipv4_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/hostnet_ipv4_mask_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/hostnet_ipv4_mask_label"
-        android:layout_alignBaseline="@id/hostnet_ipv4_mask_label"
-        android:layout_alignParentRight="true"/>
+        android:hint="@string/host_interface_ipv4_mask"
+        app:endIconMode="clear_text">
 
-    <TextView
-        android:id="@id/hostnet_ipv6_ip_label"
-        style="@style/SmallTextPrimary"
-        android:layout_marginTop="8dp"
-        android:layout_below="@id/hostnet_ipv4_mask_label"
-        android:text="@string/host_interface_ipv6_ip" />
-    
-    <EditText
-        android:id="@+id/hostnet_ipv6_ip"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hostnet_ipv4_mask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/hostnet_ipv6_ip_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/hostnet_ipv6_ip_label"
-        android:layout_alignBaseline="@id/hostnet_ipv6_ip_label"
-        android:layout_alignParentRight="true"/>
+        android:hint="@string/host_interface_ipv6_ip"
+        app:endIconMode="clear_text">
 
-    <TextView
-        android:id="@+id/hostnet_ipv6_mask_label"
-        style="@style/SmallTextPrimary"
-        android:layout_alignRight="@id/hostnet_ipv6_ip_label"
-        android:layout_below="@id/hostnet_ipv6_ip_label"
-        android:layout_marginTop="8dp"
-        android:text="@string/host_interface_ipv6_mask" />
-    
-    <EditText
-        android:id="@+id/hostnet_ipv6_mask"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hostnet_ipv6_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/hostnet_ipv6_mask_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/hostnet_ipv6_mask_label"
-        android:layout_alignBaseline="@id/hostnet_ipv6_mask_label"
-        android:inputType="number"
-        android:layout_alignParentRight="true"/>
+        android:hint="@string/host_interface_ipv6_mask"
+        app:endIconMode="clear_text">
 
-</RelativeLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hostnet_ipv6_mask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

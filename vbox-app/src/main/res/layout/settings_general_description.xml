@@ -5,13 +5,15 @@
 	android:layout_height="match_parent" >
 	   
 		<LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-			<TextView style="@style/MediumText" android:text="@string/settings_description" android:layout_gravity="left" />
+			<androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" style="?attr/textAppearanceBody1" android:text="@string/settings_description" android:layout_gravity="left" />
 
 			<EditText
 			    android:id="@+id/description"
                 android:hint="VM Description"
 			    android:text="Machine Description"
-			    style="@style/SmallText"
+			    style="?attr/textAppearanceBody2"
 			    android:layout_weight="1"
 			    android:inputType="textMultiLine"
 			    android:gravity="start"

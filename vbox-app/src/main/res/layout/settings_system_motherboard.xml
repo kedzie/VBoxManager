@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     android:padding="8dp" >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/baseMemory_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:text="Base Memory:" />
 
     <com.kedzie.vbox.app.SliderView
@@ -20,9 +22,11 @@
         vbox:tickSpacing="256"
         vbox:unit="MB" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/chipsetLabel"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/baseMemory"
         android:text="Chipset:" />
 
@@ -32,9 +36,11 @@
         android:layout_toRightOf="@id/chipsetLabel"
         android:layout_alignTop="@id/chipsetLabel"/>
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/extended_features"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/chipset"
         android:text="Extended Features:" />
     
@@ -63,12 +69,5 @@
         android:layout_below="@id/efi"
         android:layout_centerHorizontal="true"
         android:text="Hardware clock in UTC time" />
-
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/ErrorMessage"
-        android:layout_below="@id/utc"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"/>
 
 </RelativeLayout>

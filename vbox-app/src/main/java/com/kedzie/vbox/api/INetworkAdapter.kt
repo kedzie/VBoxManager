@@ -4,9 +4,12 @@ import android.os.Parcelable
 import com.kedzie.vbox.api.jaxb.NetworkAdapterPromiscModePolicy
 import com.kedzie.vbox.api.jaxb.NetworkAdapterType
 import com.kedzie.vbox.api.jaxb.NetworkAttachmentType
+import com.kedzie.vbox.app.Utils
 import com.kedzie.vbox.soap.Cacheable
 import com.kedzie.vbox.soap.Ksoap
 import com.kedzie.vbox.soap.KsoapProxy
+import java.io.IOException
+import java.util.*
 
 @KsoapProxy
 @Ksoap
@@ -87,4 +90,23 @@ interface INetworkAdapter : IManagedObjectRef, Parcelable {
     suspend fun setProperty(key: String, value: String)
 
     suspend fun getProperties(names: String): Map<String, List<String>>
+}
+
+/**
+ * Load network adapter properties
+ * @param names  Property names to load, or empty for all
+ * @return    properties
+ */
+suspend fun INetworkAdapter.getProperties(vararg names: String): Properties {
+    val nameString = StringBuffer()
+    for (name in names)
+        Utils.appendWithComma(nameString, name)
+
+    val map = getProperties(nameString.toString())
+    val returnNames = map.get("returnNames")
+    val values = map.get("returnval")
+    val properties = Properties()
+    for (i in returnNames!!.indices)
+        properties[returnNames!![i]] = values!![i]
+    return properties
 }

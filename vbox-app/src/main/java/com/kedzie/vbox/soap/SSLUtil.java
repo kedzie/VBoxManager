@@ -1,5 +1,9 @@
 package com.kedzie.vbox.soap;
 
+import android.util.Log;
+
+import com.kedzie.vbox.VBoxApplication;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,19 +14,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
-
-
-import com.kedzie.vbox.VBoxApplication;
-import com.kedzie.vbox.server.Server;
-import com.kedzie.vbox.task.DialogTask;
 
 /**
  * Manipulate/load/save truststore to filesystem.  Create TrustManagers to use the keystore.
@@ -32,29 +26,6 @@ public class SSLUtil {
 
 	private static final char[] KEYSTORE_PASSWORD = "virtualbox".toCharArray();
 	private static final String KEYSTORE_NAME = "virtualbox.bks";
-
-	/**
-	 * Add certificate to the keystore and save
-	 */
-	public static class AddCertificateToKeystoreTask extends DialogTask<X509Certificate, Void> {
-
-		private Server server;
-
-		public AddCertificateToKeystoreTask(AppCompatActivity context, Server server) {
-			super(context, null);
-			this.server = server;
-		}
-
-		@Override
-		protected Void work(X509Certificate... chain) throws Exception {
-			X509Certificate root = chain[chain.length-1];
-			String alias = String.format("%1$s-$2$d", server.toString(), root.getSubjectDN().hashCode());
-			Log.d(TAG, "Created new certificate entry alias: " + alias);
-			SSLUtil.getKeystore().setEntry(alias, new KeyStore.TrustedCertificateEntry(root), null);
-			SSLUtil.storeKeystore();
-			return null;
-		}
-	}
 
 	private static TrustManager[] mTrustManagers;
 	private static KeyStore mKeystore;

@@ -4,10 +4,10 @@
 
     <corners android:radius="0dp" />
 
-    <solid android:color="@color/blue_alpha" />
+    <solid android:color="?attr/colorPrimaryVariant" />
 
     <stroke
         android:width="1dp"
-        android:color="@color/yellow" />
+        android:color="?attr/colorSecondary" />
 
 </shape>

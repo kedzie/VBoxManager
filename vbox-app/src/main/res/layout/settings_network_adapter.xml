@@ -10,8 +10,10 @@
         android:layout_height="wrap_content"
         android:text="Enable Network Adapter" />
     
-    <TextView android:id="@+id/network_attached_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/network_attached_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/network_enabled" 
         android:layout_alignRight="@+id/network_promiscuous_label"
         android:text="Attached to:" />
@@ -22,8 +24,10 @@
         android:layout_toRightOf="@id/network_attached_label"
         android:layout_alignTop="@id/network_attached_label"/>
     
-    <TextView android:id="@+id/network_name_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/network_name_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/network_attached" 
         android:layout_alignRight="@id/network_promiscuous_label"
         android:text="Name:" />
@@ -48,8 +52,10 @@
 
     </FrameLayout>
 
-    <TextView android:id="@+id/network_adapter_type_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/network_adapter_type_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/network_name_label" 
         android:layout_alignRight="@id/network_promiscuous_label"
         android:text="Adapter Type:" />
@@ -60,8 +66,10 @@
         android:layout_toRightOf="@id/network_adapter_type_label"
         android:layout_alignTop="@id/network_adapter_type_label"/>
     
-    <TextView android:id="@id/network_promiscuous_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@id/network_promiscuous_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/network_adapter_type" 
         android:text="Promiscuous Mode:" />
     
@@ -71,8 +79,10 @@
         android:layout_toRightOf="@id/network_promiscuous_label"
         android:layout_alignTop="@id/network_promiscuous_label"/>
     
-    <TextView android:id="@+id/network_mac_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/network_mac_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/network_promiscuous"
         android:layout_alignRight="@id/network_promiscuous_label" 
         android:text="MAC Address:" />

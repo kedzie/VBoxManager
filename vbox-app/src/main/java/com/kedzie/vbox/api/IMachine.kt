@@ -1,30 +1,21 @@
 package com.kedzie.vbox.api
 
 import android.os.Parcelable
+import android.util.Base64
 import com.kedzie.vbox.api.jaxb.*
+import com.kedzie.vbox.machine.group.TreeNode
 import com.kedzie.vbox.soap.Cacheable
 import com.kedzie.vbox.soap.Ksoap
 import com.kedzie.vbox.soap.KsoapProxy
+import kotlinx.android.parcel.Parcelize
 import java.io.IOException
+import java.util.ArrayList
 
 @KsoapProxy
 @Ksoap
 interface IMachine : IManagedObjectRef, Parcelable {
 
-    enum class LaunchMode constructor(val value: String) {
-        headless("headless"),
-        gui("gui"),
-        sdl("sdl"),
-        emergencystop("emergencystop");
 
-        fun value(): String {
-            return value
-        }
-    }
-
-    companion object {
-        const val BUNDLE = "machine"
-    }
 
     /**
      * @return UUID of the virtual machine.
@@ -32,17 +23,11 @@ interface IMachine : IManagedObjectRef, Parcelable {
     @Cacheable("id")
     suspend fun getId(): String
 
-    /**
-     * @return Name of the virtual machine.
-     */
     @Cacheable("name")
     suspend fun getName(): String
-
     suspend fun setName(@Cacheable("name") name: String)
+    @Cacheable("name", get = false) suspend fun getNameNoCache(): String
 
-    /**
-     * @return Description of the virtual machine.
-     */
     @Cacheable("description")
     suspend fun getDescription(): String
     suspend fun setDescription(@Cacheable("description") description: String)
@@ -53,13 +38,13 @@ interface IMachine : IManagedObjectRef, Parcelable {
     @Cacheable("OSTypeId")
     suspend fun getOSTypeId(): String
     suspend fun setOSTypeId(@Cacheable("OSTypeId") osTypeId: String)
+    @Cacheable("OSTypeId", get = false) suspend fun getOSTypeIdNoCache(): String
 
     /**
      * @return Number of virtual CPUs in the VM.
      */
     @Cacheable("CPUCount")
     suspend fun getCPUCount(): Int
-
     suspend fun setCPUCount(@Cacheable("CPUCount") @Ksoap(type = "unsignedInt") CPUCount: Int)
 
 
@@ -131,7 +116,7 @@ interface IMachine : IManagedObjectRef, Parcelable {
     suspend fun getChipsetType(): ChipsetType
     suspend fun setChipsetType(@Cacheable("chipsetType") chipsetType: ChipsetType)
 
-    @Cacheable("FirmwareType")
+    @Cacheable("firmwareType")
     suspend fun getFirmwareType(): FirmwareType
     suspend fun setFirmwareType(@Cacheable("firmwareType") firmwareType: FirmwareType)
 
@@ -146,7 +131,9 @@ interface IMachine : IManagedObjectRef, Parcelable {
      */
     @Cacheable("groups")
     suspend fun getGroups(): List<String>
-    suspend fun setGroups(@Cacheable("groups") group: Array<String>)
+    suspend fun setGroups(@Cacheable("groups") group: List<String>)
+    @Cacheable("groups")
+    fun getGroupsCacheOnly(): List<String>
 
     @Cacheable("BIOSSettings")
     suspend fun getBIOSSettings(): IBIOSSettings
@@ -226,6 +213,9 @@ interface IMachine : IManagedObjectRef, Parcelable {
     @Cacheable("SessionState")
 	suspend fun getSessionState(): SessionState
 
+    @Cacheable("SessionState", get = false)
+    suspend fun getSessionStateNoCache(): SessionState
+
     /**
      * @return  Type of the session.
      */
@@ -246,6 +236,8 @@ interface IMachine : IManagedObjectRef, Parcelable {
      */
     @Cacheable("State")
     suspend fun getState(): MachineState
+    @Cacheable("State", get = false)
+    suspend fun getStateNoCache(): MachineState
 
     /**
      * @return Number of snapshots taken on this machine.
@@ -257,13 +249,17 @@ interface IMachine : IManagedObjectRef, Parcelable {
      * @return	Current snapshot of this machine.
      */
     @Cacheable("CurrentSnapshot")
-    suspend fun getCurrentSnapshot(): ISnapshot
+    suspend fun getCurrentSnapshot(): ISnapshot?
+    @Cacheable("CurrentSnapshot", get = false)
+    suspend fun getCurrentSnapshotNoCache(): ISnapshot?
 
     /**
      * @return Returns true if the current state of the machine is not identical to the state stored in the current snapshot.
      */
     @Cacheable("CurrentStateModified")
 	suspend fun getCurrentStateModified(): Boolean
+    @Cacheable("CurrentStateModified", get = false)
+    suspend fun getCurrentStateModifiedNoCache(): Boolean
 
     @Cacheable("IOCacheEnabled")
 	suspend fun getIOCacheEnabled(): Boolean
@@ -392,7 +388,6 @@ interface IMachine : IManagedObjectRef, Parcelable {
      *  * [LaunchMode.emergencystop]: reserved value, used for aborting the currently running VM or session owner. In this case the *session* parameter may be `NULL` (if it is non-null it isn't used in any way), and the *progress* return value will be always NULL. The operation completes immediately.
      *
      * @return        Progress object to track the operation completion.
-     * @throws IOException
      */
     suspend fun launchVMProcess(session: ISession, type: LaunchMode): IProgress
 
@@ -434,4 +429,43 @@ interface IMachine : IManagedObjectRef, Parcelable {
 
     @Cacheable
     suspend fun getExtraDataKeys(): List<String>
+}
+
+enum class LaunchMode(val value: String) {
+    headless("headless"),
+    gui("gui"),
+    sdl("sdl"),
+    emergencystop("emergencystop");
+
+    fun value(): String {
+        return value
+    }
+}
+
+@Parcelize
+data class MachineInfo(val machine: IMachine, var screenshot: Screenshot?) : Parcelable
+
+/**
+ * Cache commonly used Machine properties
+ * @param machine
+ */
+suspend fun IMachine.cacheProperties() {
+    getNameNoCache()
+    getStateNoCache()
+    getCurrentStateModifiedNoCache()
+    getOSTypeIdNoCache()
+    getCurrentSnapshotNoCache()
+}
+
+suspend fun IMachine.readSavedScreenshot(screenId: Int): Screenshot {
+    val info = querySavedScreenshotInfo(screenId)
+    val formats = ArrayList<BitmapFormat>()
+    for (format in info["returnval"]!!) {
+        formats.add(BitmapFormat.fromValue(format))
+    }
+    //prefer jpeg, otherwise pick first available screenshot
+    val format = if (formats.contains(BitmapFormat.JPEG)) BitmapFormat.JPEG else formats[0]
+    val map = readSavedScreenshotToArray(screenId, format)
+    return Screenshot(map["width"]!!.toInt(), map["height"]!!.toInt(),
+            Base64.decode(map["returnval"], 0))
 }

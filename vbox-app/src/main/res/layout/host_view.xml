@@ -1,32 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="8dp" >
 
-    <ImageView
-        android:id="@+id/ostype"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_launcher" />
-
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/host_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginRight="6dp"
-        android:layout_toRightOf="@id/ostype"
         android:text="VirtualBox"
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/host_ip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/host_name"
         android:layout_toRightOf="@id/host_name"
         android:text="(127.0.0.1)"
@@ -37,26 +28,16 @@
         android:layout_width="16dip"
         android:layout_height="16dip"
         android:layout_below="@id/host_name"
-        android:layout_marginRight="2dp"
-        android:layout_toRightOf="@id/ostype"
+        android:layout_marginRight="8dp"
         android:src="@drawable/ic_list_vbox" />
 
-    <TextView
-        android:id="@+id/host_hosting_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/host_name"
-        android:layout_alignParentBottom="@id/host_state"
-        android:layout_toRightOf="@id/host_state"
-        android:text="Hosting - "
-        android:textSize="12sp" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/host_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/host_hosting_text"
-        android:layout_toRightOf="@id/host_hosting_text"
+        android:layout_toRightOf="@id/host_state"
+        android:layout_below="@id/host_name"
         android:text="4.2.12 "
         android:textSize="12sp" />
-</RelativeLayout>
+</merge>

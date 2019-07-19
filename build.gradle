@@ -1,7 +1,7 @@
 project.ext.set("compileSDKInt", 28)
 project.ext.set("buildToolVersionString", "28.0.3")
 project.ext.set("targetSDKInt", 26)
-project.ext.set("minSDKInt", 14)
+project.ext.set("minSDKInt", 21)
 project.ext.set("daggerVersion", '2.21')
 project.ext.set("runnerVersion", '1.0.2')
 project.ext.set("rulesVersion", '1.0.2')
@@ -24,10 +24,9 @@ buildscript {
             'okHttpVersion'          : '3.9.1',
             'kotlinVersion'          : '1.3.30',
             'kotlinCoroutineVersion' : '1.1.1',
-            'gradlePluginVersion'    : '3.4.1',
-            'daggerVersion'          : '2.21',
+            'gradlePluginVersion'    : '3.4.2',
             'timberVersion'          : '4.7.1',
-            'butterknifeVersion'          : '10.0.0',
+            'navigationVersion'      : '2.1.0-alpha06'
     ]
 
 
@@ -36,6 +35,7 @@ buildscript {
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlinVersion}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlinVersion}"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:${versions.navigationVersion}"
     }
 
     ext.deps = [
@@ -49,15 +49,10 @@ buildscript {
             'kotlinCoroutine'         : "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutineVersion}",
             'kotlinCoroutineAndroid'  : "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutineVersion}",
 
-            // Dagger
-            'dagger'                  : "com.google.dagger:dagger:${versions.daggerVersion}",
-            'daggerAndroid'           : "com.google.dagger:dagger-android-support:${versions.daggerVersion}",
-            'daggerCompiler'          : "com.google.dagger:dagger-compiler:${versions.daggerVersion}",
-            'daggerAndroidCompiler'   : "com.google.dagger:dagger-android-processor:${versions.daggerVersion}",
-
             'timber'                  : "com.jakewharton.timber:timber:${versions.timberVersion}",
-            'butterknife'             : "com.jakewharton:butterknife:${versions.butterknifeVersion}",
-            'butterknifeCompiler'             : "com.jakewharton:butterknife-compiler:${versions.butterknifeVersion}",
+
+            'navigationFragment'      : "androidx.navigation:navigation-fragment-ktx:${versions.navigationVersion}",
+            'navigationUi'            : "androidx.navigation:navigation-ui-ktx:${versions.navigationVersion}"
     ]
 
 }

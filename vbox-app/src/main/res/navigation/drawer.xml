@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerNav">
+
+    <fragment
+        android:id="@+id/machineListFragment"
+        android:name="com.kedzie.vbox.machine.group.MachineGroupListFragment">
+
+        <argument android:id="@+id/group"
+            android:name="group"
+            app:argType="com.kedzie.vbox.machine.group.VMGroup"
+            android:defaultValue="@null"
+            app:nullable="true"/>
+
+        <action android:id="@+id/drillDown"
+            app:destination="@id/machineListFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+</navigation>

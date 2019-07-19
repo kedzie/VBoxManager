@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/machineListNav"
+    app:startDestination="@id/serverListFragment">
+
+    <action android:id="@+id/showHostInfo"
+        app:destination="@id/hostInfoFragment"/>
+
+    <action android:id="@+id/showMachine"
+        app:destination="@id/machineActionsFragment"/>
+
+    <action android:id="@+id/showGroup"
+        app:destination="@id/groupInfoFragment"/>
+
+    <action android:id="@+id/showWelcome"
+        app:destination="@id/welcomeFragment"/>
+
+    <!-- Bottom nav -->
+    <fragment
+        android:id="@+id/machineActionsFragment"
+        android:label="@string/machine_tab_actions"
+        android:name="com.kedzie.vbox.machine.ActionsFragment">
+
+        <action android:id="@+id/showSnapshot"
+            app:destination="@id/TakeSnapshotFragment" />
+
+        <action android:id="@+id/machineMetrics"
+            app:destination="@id/machineMetricsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/machineInfoFragment"
+        android:label="@string/machine_tab_info"
+        android:name="com.kedzie.vbox.machine.InfoFragment"
+        tools:layout="@layout/machine_info">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/machineLogFragment"
+        android:label="@string/machine_tab_log"
+        android:name="com.kedzie.vbox.machine.LogFragment"
+        tools:layout="@layout/machine_log">
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/machineSnapshotFragment"
+        android:label="@string/machine_tab_snapshots"
+        android:name="com.kedzie.vbox.machine.SnapshotFragment"
+        tools:layout="@layout/snapshot_tree">
+
+        <action android:id="@+id/showSnapshot"
+            app:destination="@id/TakeSnapshotFragment" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/TakeSnapshotFragment"
+        android:name="com.kedzie.vbox.machine.TakeSnapshotFragment"
+        tools:layout="@layout/snapshot_dialog">
+
+        <argument android:name="snapshot"
+            app:argType="com.kedzie.vbox.api.ISnapshot"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+    </dialog>
+
+    <fragment
+        android:id="@+id/machineMetricsFragment"
+        android:label="@string/machine_metrics"
+        android:name="com.kedzie.vbox.metrics.MetricFragment"
+        tools:layout="@layout/metrics">
+
+        <argument android:name="target"
+            app:nullable="false"
+            app:argType="string"/>
+
+        <argument android:name="ramAvailable"
+            app:nullable="false"
+            app:argType="integer"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/hostMetricsFragment"
+        android:label="@string/host_metrics"
+        android:name="com.kedzie.vbox.metrics.MetricFragment"
+        tools:layout="@layout/metrics">
+
+        <argument android:name="target"
+            app:nullable="false"
+            app:argType="string"/>
+
+        <argument android:name="ramAvailable"
+            app:nullable="false"
+            app:argType="integer"/>
+
+    </fragment>
+
+    <!-- server stuff -->
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:label="@string/firstrun_welcome"
+        android:name="com.kedzie.vbox.server.WelcomeFragment"
+        tools:layout="@layout/welcome_fragment">
+
+        <argument android:name="message"
+            app:nullable="false"
+            app:argType="reference"
+            android:defaultValue="@string/firstrun_message"/>
+
+        <action android:id="@+id/addServer"
+            app:destination="@id/editServerFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/helpFragment"
+        android:label="@string/help"
+        android:name="com.kedzie.vbox.server.HelpFragment"
+        tools:layout="@layout/help">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/serverListFragment"
+        android:label="@string/servers"
+        android:name="com.kedzie.vbox.server.ServerListFragment"
+        tools:layout="@layout/server_list">
+
+        <action android:id="@+id/editServer"
+            app:destination="@id/editServerFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editServerFragment"
+        android:label="@string/edit_virtualbox_server"
+        android:name="com.kedzie.vbox.server.EditServerFragment"
+        tools:layout="@layout/server">
+
+        <argument android:name="server"
+            app:argType="com.kedzie.vbox.server.Server" />
+
+        <action android:id="@+id/saveServer"
+            app:destination="@id/serverListFragment"
+            app:popUpToInclusive="@id/serverListFragment"/>
+
+    </fragment>
+
+
+    <!-- tree elements -->
+    <fragment
+        android:id="@+id/groupInfoFragment"
+        android:name="com.kedzie.vbox.machine.group.GroupInfoFragment">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/hostInfoFragment"
+        android:name="com.kedzie.vbox.host.HostInfoFragment"
+        tools:layout="@layout/host_info">
+
+        <action android:id="@+id/hostMetrics"
+            app:destination="@id/hostMetricsFragment" />
+
+    </fragment>
+
+    <!-- Nav Drawer -->
+    <navigation
+        android:id="@+id/navigation_prefs"
+        app:startDestination="@id/settings_categories">
+
+        <fragment
+            android:id="@+id/settings_categories"
+            android:label="@string/preferences"
+            android:name="com.kedzie.vbox.SettingsCategoryFragment"/>
+
+        <fragment
+            android:id="@+id/settings_general"
+            android:label="@string/pref_category_general"
+            android:name="com.kedzie.vbox.SettingsGeneralFragment"/>
+
+        <fragment
+            android:id="@+id/settings_metrics"
+            android:label="@string/pref_category_metrics"
+            android:name="com.kedzie.vbox.SettingsMetricFragment"/>
+
+    </navigation>
+
+    <fragment
+        android:id="@+id/hostNetworkListFragment"
+        android:name="com.kedzie.vbox.host.HostNetworkListFragment"
+        tools:layout="@layout/host_settings_network_list">
+
+        <action android:id="@+id/showNetworkInterface"
+            app:destination="@id/hostNetworkInterfaceFragment"/>
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/hostNetworkInterfaceFragment"
+        android:name="com.kedzie.vbox.host.HostNetworkDialog">
+
+        <argument android:name="hostNetwork"
+            app:argType="com.kedzie.vbox.api.IHostNetworkInterface"/>
+
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_logoff"
+        android:name="com.kedzie.vbox.machine.LogoutDialogFragment">
+
+
+    </dialog>
+
+</navigation>

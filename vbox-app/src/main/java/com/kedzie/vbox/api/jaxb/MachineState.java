@@ -3,6 +3,7 @@
 package com.kedzie.vbox.api.jaxb;
 
 
+import com.kedzie.vbox.R;
 
 /**
  * <p>Java class for MachineState.
@@ -46,44 +47,49 @@ package com.kedzie.vbox.api.jaxb;
  * 
  */
 public enum MachineState {
+    //TODO make new drawables for missing states
+    NULL("Null", R.drawable.ic_list_start),
+    POWERED_OFF("PoweredOff", R.drawable.ic_list_poweroff),
+    SAVED("Saved", R.drawable.ic_list_save),
+    TELEPORTED("Teleported", R.drawable.ic_list_start),
+    ABORTED("Aborted", R.drawable.ic_list_abort),
+    RUNNING("Running", R.drawable.ic_list_start),
+    PAUSED("Paused", R.drawable.ic_list_pause),
+    STUCK("Stuck", R.drawable.ic_list_stuck),
+    TELEPORTING("Teleporting", R.drawable.ic_list_start),
+    LIVE_SNAPSHOTTING("LiveSnapshotting", R.drawable.ic_list_snapshot),
+    STARTING("Starting", R.drawable.ic_list_start),
+    STOPPING("Stopping", R.drawable.ic_list_acpi),
+    SAVING("Saving", R.drawable.ic_list_save),
+    RESTORING("Restoring", R.drawable.ic_list_save),
+    TELEPORTING_PAUSED_VM("TeleportingPausedVM", R.drawable.ic_list_start),
+    TELEPORTING_IN("TeleportingIn", R.drawable.ic_list_start),
+    FAULT_TOLERANT_SYNCING("FaultTolerantSyncing", R.drawable.ic_list_start),
+    DELETING_SNAPSHOT_ONLINE("DeletingSnapshotOnline", R.drawable.ic_list_snapshot_del),
+    DELETING_SNAPSHOT_PAUSED("DeletingSnapshotPaused", R.drawable.ic_list_snapshot_del),
+    ONLINE_SNAPSHOTTING("OnlineSnapshotting", R.drawable.ic_list_snapshot_add),
+    RESTORING_SNAPSHOT("RestoringSnapshot", R.drawable.ic_list_snapshot),
+    DELETING_SNAPSHOT("DeletingSnapshot", R.drawable.ic_list_snapshot_del),
+    SETTING_UP("SettingUp", R.drawable.ic_list_start),
+    SNAPSHOTTING("Snapshotting", R.drawable.ic_list_snapshot_add),
+    FIRST_ONLINE("FirstOnline", R.drawable.ic_list_start),
+    LAST_ONLINE("LastOnline", R.drawable.ic_list_start),
+    FIRST_TRANSIENT("FirstTransient", R.drawable.ic_list_start),
+    LAST_TRANSIENT("LastTransient", R.drawable.ic_list_start);
 
-    NULL("Null"),
-    POWERED_OFF("PoweredOff"),
-    SAVED("Saved"),
-    TELEPORTED("Teleported"),
-    ABORTED("Aborted"),
-    RUNNING("Running"),
-    PAUSED("Paused"),
-    STUCK("Stuck"),
-    TELEPORTING("Teleporting"),
-    LIVE_SNAPSHOTTING("LiveSnapshotting"),
-    STARTING("Starting"),
-    STOPPING("Stopping"),
-    SAVING("Saving"),
-    RESTORING("Restoring"),
-    TELEPORTING_PAUSED_VM("TeleportingPausedVM"),
-    TELEPORTING_IN("TeleportingIn"),
-    FAULT_TOLERANT_SYNCING("FaultTolerantSyncing"),
-    DELETING_SNAPSHOT_ONLINE("DeletingSnapshotOnline"),
-    DELETING_SNAPSHOT_PAUSED("DeletingSnapshotPaused"),
-    ONLINE_SNAPSHOTTING("OnlineSnapshotting"),
-    RESTORING_SNAPSHOT("RestoringSnapshot"),
-    DELETING_SNAPSHOT("DeletingSnapshot"),
-    SETTING_UP("SettingUp"),
-    SNAPSHOTTING("Snapshotting"),
-    FIRST_ONLINE("FirstOnline"),
-    LAST_ONLINE("LastOnline"),
-    FIRST_TRANSIENT("FirstTransient"),
-    LAST_TRANSIENT("LastTransient");
     private final String value;
+    private int drawable;
 
-    MachineState(String v) {
+    MachineState(String v, int drawable) {
         value = v;
+        this.drawable = drawable;
     }
 
     public String value() {
         return value;
     }
+
+    public int drawable() { return drawable; }
 
     public static MachineState fromValue(String v) {
         for (MachineState c: MachineState.values()) {

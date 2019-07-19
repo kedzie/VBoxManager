@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    			xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox" 
-			android:id="@+id/flipper"  
-			android:orientation="vertical"
+<androidx.viewpager.widget.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    			xmlns:app="http://schemas.android.com/apk/res-auto"
+			android:id="@+id/flipper"
 			android:layout_width="match_parent"  
 			android:layout_height="match_parent">
-	
-    <com.kedzie.vbox.metrics.MetricView  
-        android:id="@+id/cpu_metrics"  
-        android:layout_width="wrap_content"  
-        android:layout_height="match_parent" 
-        android:layout_weight="1"
-        vbox:header="CPU"
-        vbox:backgroundColor="#ffffffff"
-        vbox:gridColor="#64000000"
-        vbox:textColor="#ff000000"
-        vbox:borderColor="#ff0000ff" />
-    
-     <com.kedzie.vbox.metrics.MetricView  
-         android:id="@+id/ram_metrics" 
-         android:layout_width="wrap_content"  
-         android:layout_height="match_parent" 
-         android:layout_weight="1"
-         vbox:header="Memory"
-         vbox:backgroundColor="#ffffffff"
-        vbox:gridColor="#64000000"
-        vbox:textColor="#ff000000"
-        vbox:borderColor="#ff0000ff" />
+
+	<androidx.viewpager.widget.PagerTitleStrip
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
      
-</LinearLayout>
+</androidx.viewpager.widget.ViewPager>

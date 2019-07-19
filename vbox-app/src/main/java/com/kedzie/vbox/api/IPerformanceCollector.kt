@@ -1,9 +1,11 @@
 package com.kedzie.vbox.api
 
 import android.os.Parcelable
+import com.kedzie.vbox.metrics.MetricQuery
 import com.kedzie.vbox.soap.Ksoap
 import com.kedzie.vbox.soap.KsoapProxy
 import java.io.IOException
+import java.util.HashMap
 
 @KsoapProxy
 @Ksoap
@@ -96,6 +98,35 @@ interface IPerformanceCollector : IManagedObjectRef, Parcelable {
      *
      */
     suspend fun queryMetricsData(
-            metricNames: Array<String>,
-            vararg objects: IManagedObjectRef): Map<String, List<String>>
+            metricNames: Array<out String>,
+            vararg objects: String): Map<String, List<String>>
 }
+
+/**
+ * Query metric data for specified [IManagedObjectRef]
+ * @param obj object to get metrics for
+ * @param metrics specify which metrics/accumulations to query. * for all
+ * @return  [Map] from metric name to [MetricQuery]
+ */
+suspend fun IPerformanceCollector.queryMetrics(obj: String, vararg metrics: String): Map<String, MetricQuery> {
+    val data = queryMetricsData(metrics, obj)
+
+    val ret = HashMap<String, MetricQuery>()
+    for (i in 0 until data.get("returnMetricNames")!!.size) {
+        val q = MetricQuery()
+        q.name = data.get("returnMetricNames")!![i]
+        q.`object` = data.get("returnObjects")!![i]
+        q.scale = Integer.valueOf(data.get("returnScales")!![i])
+        q.unit = data.get("returnUnits")!![i]
+        val start = Integer.valueOf(data.get("returnDataIndices")!![i])
+        val length = Integer.valueOf(data.get("returnDataLengths")!![i])
+
+        q.values = IntArray(length)
+        var j = 0
+        for (s in data.get("returnval")!!.subList(start, start + length))
+            q.values[j++] = Integer.valueOf(s) / q.scale
+        ret[q.name] = q
+    }
+    return ret
+}
+

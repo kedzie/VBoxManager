@@ -9,8 +9,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            style="@style/SmallTextPrimary"
+        <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
             android:layout_gravity="left"
             android:text="@string/settings_name"/>
 
@@ -28,8 +30,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            style="@style/SmallTextPrimary"
+        <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
             android:layout_gravity="left"
             android:text="@string/settings_operating_system"/>
 

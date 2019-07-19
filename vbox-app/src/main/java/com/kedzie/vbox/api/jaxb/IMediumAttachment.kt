@@ -17,7 +17,7 @@ data class IMediumAttachment(
         var nonRotational: Boolean,
         var discard: Boolean,
         var hotPluggable: Boolean,
-        var bandwidthGroup: String,
+        var bandwidthGroup: String?,
         var port: Int,
         var device: Int) : Parcelable {
 

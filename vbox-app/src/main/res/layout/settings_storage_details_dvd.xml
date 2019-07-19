@@ -5,14 +5,18 @@
     android:layout_height="match_parent"
     android:padding="8dp" >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_attributes"
-        style="@style/MediumText"
+        style="?attr/textAppearanceBody1"
         android:text="@string/storage_attributes" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_dvd"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/storage_attributes"
         android:text="CD/DVD:" />
     
@@ -39,51 +43,65 @@
         android:layout_below="@id/storage_port"
         android:layout_alignLeft="@id/storage_port"/>
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_information"
-        style="@style/MediumText"
+        style="?attr/textAppearanceBody1"
         android:text="@string/storage_information"
         android:layout_below="@id/storage_live"
         android:layout_marginTop="12dp" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_type_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_marginTop="8dp"
         android:layout_below="@id/storage_information"
         android:text="Type (Format):" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_type"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignBaseline="@id/storage_type_label"
         android:layout_toRightOf="@id/storage_type_label"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_size_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
     	android:layout_marginTop="8dp"
         android:layout_below="@id/storage_type_label"
         android:layout_alignRight="@id/storage_type_label"
         android:text="Size:" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_size"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignBaseline="@id/storage_size_label"
         android:layout_toRightOf="@id/storage_size_label"/>
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_location_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
     	android:layout_marginTop="8dp"
         android:layout_below="@id/storage_size_label"
         android:layout_alignRight="@id/storage_size_label"
         android:text="Location:" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_location"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignBaseline="@id/storage_location_label"
         android:layout_toRightOf="@id/storage_location_label"/>
 </RelativeLayout>

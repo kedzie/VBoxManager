@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.kedzie.vbox.metrics.MetricView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/cpu_metrics"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	app:header="CPU"
+	app:backgroundColor="?attr/colorSurface"
+	app:gridColor="?attr/colorSecondaryVariant"
+	app:textColor="?android:attr/textColorPrimary"
+	app:borderColor="?attr/colorSecondary"/>

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     
-    <item android:id="@+id/menu_help" 
+    <item android:id="@+id/helpFragment"
         android:icon="@drawable/ic_menu_help" 
         android:title="@string/help"
         app:showAsAction="ifRoom"/>

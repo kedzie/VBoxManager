@@ -233,8 +233,9 @@ public class SoapEnvelope {
      * Assigns the object to the envelope as the outbound message for the soap call.
      * @param soapObject the object to send in the soap call.
      */
-    public void setOutputSoapObject(Object soapObject) {
+    public SoapEnvelope setOutputSoapObject(Object soapObject) {
         bodyOut = soapObject;
+        return this;
     }
 
 }

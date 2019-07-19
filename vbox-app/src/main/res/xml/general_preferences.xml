@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+<PreferenceScreen xmlns:app="http://schemas.app.com/apk/res-auto" >
 
     <PreferenceCategory app:title="@string/pref_category_general" >
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="colored_icons"
-            app:summary="@string/pref_colored_icons_summary"
-            app:title="@string/pref_colored_icons" />
 
         <ListPreference
             app:defaultValue="Slide"
@@ -15,14 +11,16 @@
             app:entryValues="@array/tab_transition_entryValues"
             app:key="tab_transition"
             app:summary="@string/pref_tab_transition_summary"
-            app:title="@string/pref_tab_transition_title"
-            app:useSimpleSummaryProvider="true"/>
+            app:title="@string/pref_tab_transition_title" />
 
         <SwitchPreferenceCompat
-            app:defaultValue="false"
+            app:defaultValue="true"
             app:key="notifications"
-            app:summary="@string/pref_notifications_summary"
-            app:title="@string/pref_notifications" />
+            app:summaryOff="@string/pref_notifications_summary_off"
+            app:summaryOn="@string/pref_notifications_summary_on"
+            app:switchTextOff="@string/pref_notifications_switch_off"
+            app:switchTextOn="@string/pref_notifications_switch_on"
+            app:title="@string/pref_notifications_title" />
 
         <ListPreference
             app:defaultValue="30000"
@@ -31,8 +29,7 @@
             app:entryValues="@array/widget_interval_entryValues"
             app:key="widget_interval"
             app:summary="@string/pref_widget_interval_summary"
-            app:title="@string/pref_widget_interval_title"
-            app:useSimpleSummaryProvider="true"/>
+            app:title="@string/pref_widget_interval_title" />
     </PreferenceCategory>
 
-</androidx.preference.PreferenceScreen>
+</PreferenceScreen>

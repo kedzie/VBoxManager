@@ -13,7 +13,7 @@
 	    android:layout_centerVertical="true"
 	    android:layout_marginRight="8dp"  />
     	
-		<TextView  
+		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/machine_list_item_name" 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
 			android:lines="1"
 			android:text="Machine Name" />
 		
-		<TextView  
+		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/machine_list_item_snapshot" 
 			android:layout_width="wrap_content"  
 			android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
 			android:layout_toRightOf="@id/machine_list_item_ostype" 
 			android:layout_below="@id/machine_list_item_name" />
 		
-		<TextView   
+		<androidx.appcompat.widget.AppCompatTextView
 			android:id="@+id/machine_list_item_state_text" 
 			android:layout_width="wrap_content"  
 			android:layout_height="wrap_content"

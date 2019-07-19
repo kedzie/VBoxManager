@@ -15,9 +15,11 @@
 		android:layout_width="32dip" 
 		android:layout_height="32dip" />
 	
-	<TextView 
+	<androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 	    	android:id="@+id/group_title" 
-		style="@style/MediumText"
+		style="?attr/textAppearanceBody1"
 		android:layout_gravity="left"	 
 		android:layout_weight="1" />
 	

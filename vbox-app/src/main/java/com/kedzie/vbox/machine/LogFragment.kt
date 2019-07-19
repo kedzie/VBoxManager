@@ -14,12 +14,11 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
-class LogFragment : Fragment(), CoroutineScope {
+class LogFragment(arguments: Bundle) : Fragment(), CoroutineScope by CoroutineScope(Dispatchers.Main) {
 
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+    init {
+        this.arguments = arguments
+    }
 
     private lateinit var _machine: IMachine
     private var _log: String? = null
@@ -29,15 +28,13 @@ class LogFragment : Fragment(), CoroutineScope {
             var text = ""
             try {
                 text = String(_machine.readLog(0, 0, MAX_LOG_SIZE.toLong()))
-            } catch (e: Exception) {
-                Timber.w(e, "Error reading log")
-            }
 
-            withContext(Dispatchers.Main) {
                 if (text.length == MAX_LOG_SIZE)
                     Timber.w( "Didn't get entire log file.  Log size: %d", text.length)
                 _log = text
                 logText!!.text = _log
+            } catch (e: Exception) {
+                Timber.w(e, "Error reading log")
             }
         }
     }
@@ -58,16 +55,15 @@ class LogFragment : Fragment(), CoroutineScope {
 
     override fun onStart() {
         super.onStart()
-        job = Job()
         if (_log != null)
             logText!!.text = _log
         else
             loadLog()
     }
 
-    override fun onStop() {
-        job.cancel()
-        super.onStop()
+    override fun onDestroy() {
+        cancel()
+        super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

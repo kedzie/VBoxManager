@@ -10,61 +10,89 @@ import android.view.ContextMenu.ContextMenuInfo
 import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ListView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kedzie.vbox.R
 import com.kedzie.vbox.VBoxApplication
 import com.kedzie.vbox.VMAction
-import com.kedzie.vbox.api.*
+import com.kedzie.vbox.api.IProgress
+import com.kedzie.vbox.api.ISnapshot
+import com.kedzie.vbox.api.ISnapshotDeletedEvent
+import com.kedzie.vbox.api.ISnapshotTakenEvent
+import com.kedzie.vbox.api.jaxb.LockType
+import com.kedzie.vbox.api.jaxb.SessionState
 import com.kedzie.vbox.api.jaxb.VBoxEventType
-import com.kedzie.vbox.app.BundleBuilder
 import com.kedzie.vbox.app.Utils
 import com.kedzie.vbox.event.EventIntentService
-import com.kedzie.vbox.soap.VBoxSvc
-import com.kedzie.vbox.task.BaseTask
-import com.kedzie.vbox.task.MachineTask
-import dagger.android.support.AndroidSupportInjection
+import com.kedzie.vbox.task.ProgressService
 import kotlinx.android.synthetic.main.snapshot_tree.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.core.parameter.parametersOf
 import pl.polidea.treeview.*
-import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 /**
  *
  * @apiviz.stereotype fragment
  */
-class SnapshotFragment : Fragment(), CoroutineScope {
+class SnapshotFragment(arguments: Bundle) : Fragment(), CoroutineScope {
+
+    init {
+        this.arguments = arguments
+    }
 
     private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+        get() = job + Dispatchers.Main
 
-    private lateinit var _vmgr: VBoxSvc
-    private lateinit var _machine: IMachine
 
-    private var _root: ISnapshot? = null
-    private var _stateManager: TreeStateManager<ISnapshot>? = null
-    private var _treeBuilder: TreeBuilder<ISnapshot>? = null
+    private val model: MachineListViewModel by sharedViewModel { parametersOf(activity!!) }
 
-    @Inject
-    lateinit var lbm: LocalBroadcastManager
+    private val args: SnapshotFragmentArgs by navArgs()
+
+    private var root: ISnapshot? = null
+    private lateinit var stateManager: TreeStateManager<ISnapshot>
+    private lateinit var treeBuilder: TreeBuilder<ISnapshot>
+
+    private val lbm: LocalBroadcastManager by inject { parametersOf(activity!!) }
 
     private val _receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == VBoxEventType.ON_SNAPSHOT_TAKEN.name) {
                 val event = intent.getParcelableExtra<ISnapshotTakenEvent>(EventIntentService.BUNDLE_EVENT)
                 Utils.toastShort(activity, "Snapshot event: %1\$s", intent.action)
-                HandleAddedEventTask(_vmgr).execute(event)
-                //                refresh();
+                launch {
+                    args.machine.getCurrentSnapshotNoCache()?.let { snapshot ->
+                        if (snapshot.getParent() == null) {
+                            root = snapshot
+                            treeBuilder.sequentiallyAddNextNode(snapshot, 0)
+                        } else {
+                            val parent = stateManager.getNodeInfo(snapshot.getParent()).id
+                            treeBuilder.addRelation(parent, snapshot)
+                        }
+                    }
+                }
             } else if (intent.action == VBoxEventType.ON_SNAPSHOT_DELETED.name) {
                 val event = intent.getParcelableExtra<ISnapshotDeletedEvent>(EventIntentService.BUNDLE_EVENT)
                 Utils.toastShort(activity, "Snapshot event: %1\$s", intent.action)
-                HandleDeletedEventTask(_vmgr).execute(event)
-                //                refresh();
+                launch {
+                    findSnapshot(root!!, event.getSnapshotId())?.let { snapshot ->
+                        stateManager.removeNodeRecursively(snapshot)
+                        if (snapshot == root) {
+                            root = null
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -78,76 +106,17 @@ class SnapshotFragment : Fragment(), CoroutineScope {
 
     private fun loadSnapshots() {
         launch {
-            var root: ISnapshot?
+            root = model.machine.value?.getCurrentSnapshotNoCache()
 
-            synchronized(_machine) {
-                _machine.clearCacheNamed("getCurrentSnapshot")
-                root = _machine.currentSnapshot
-            }
+            while (root?.getParent() != null)
+                root = root?.getParent()
+
+            stateManager = InMemoryTreeStateManager()
+            treeBuilder = TreeBuilder(stateManager)
+            mainTreeView!!.adapter = SnapshotTreeAdapter(activity!!, stateManager, 10)
 
             root?.let {
-                while (root!!.parent != null)
-                    root = root!!.parent
-                cache(root!!)
-            }
-            withContext(Dispatchers.Main) {
-                _root = root
-                _stateManager = InMemoryTreeStateManager()
-                _treeBuilder = TreeBuilder(_stateManager)
-                mainTreeView!!.adapter = SnapshotTreeAdapter(activity!!, _stateManager!!, 10)
-                if (root != null)
-                    populate(null, _root!!)
-            }
-        }
-    }
-
-    private fun cache(s: ISnapshot) {
-        s.name
-        s.description
-        for (child in s.children)
-            cache(child)
-    }
-
-    internal inner class HandleDeletedEventTask(vmgr: VBoxSvc) : BaseTask<ISnapshotDeletedEvent, ISnapshot>(activity as AppCompatActivity?, vmgr) {
-
-        @Throws(Exception::class)
-        override fun work(vararg params: ISnapshotDeletedEvent): ISnapshot {
-            val snapshot = findSnapshot(_root!!, params[0].snapshotId)
-            snapshot!!.name
-            snapshot.description
-            if (snapshot.parent != null)
-                snapshot.parent.name
-            return snapshot
-        }
-
-        override fun onSuccess(result: ISnapshot) {
-            _stateManager!!.removeNodeRecursively(result)
-            if (result == _root) {
-                _root = null
-            }
-        }
-    }
-
-    internal inner class HandleAddedEventTask(vmgr: VBoxSvc) : BaseTask<ISnapshotTakenEvent, ISnapshot>(activity as AppCompatActivity?, vmgr) {
-
-        @Throws(Exception::class)
-        override fun work(vararg params: ISnapshotTakenEvent): ISnapshot {
-            _machine!!.clearCacheNamed("getCurrentSnapshot")
-            val snapshot = _machine!!.currentSnapshot
-            snapshot.name
-            snapshot.description
-            if (snapshot.parent != null)
-                snapshot.parent.name
-            return snapshot
-        }
-
-        override fun onSuccess(result: ISnapshot) {
-            if (result.parent == null) {
-                _root = result
-                _treeBuilder!!.sequentiallyAddNextNode(result, 0)
-            } else {
-                val parent = _stateManager!!.getNodeInfo(result.parent).id
-                _treeBuilder!!.addRelation(parent, result)
+                populate(null, it)
             }
         }
     }
@@ -171,16 +140,18 @@ class SnapshotFragment : Fragment(), CoroutineScope {
 
         override fun updateView(view: View, treeNodeInfo: TreeNodeInfo<ISnapshot>): View {
             val text1 = view.tag as TextView
-            text1.text = treeNodeInfo.id.name
-            text1.setCompoundDrawablesWithIntrinsicBounds(app.getDrawable(VMAction.RESTORE_SNAPSHOT), 0, 0, 0)
+            launch {
+                text1.text = treeNodeInfo.id.getName()
+            }
+            text1.setCompoundDrawablesWithIntrinsicBounds(VMAction.RESTORE_SNAPSHOT.drawable(), 0, 0, 0)
             return view
         }
     }
 
-    private fun findSnapshot(current: ISnapshot, id: String): ISnapshot? {
-        if (current.id == id)
+    private suspend fun findSnapshot(current: ISnapshot, id: String): ISnapshot? {
+        if (current.getId() == id)
             return current
-        for (child in current.children) {
+        for (child in current.getChildren()) {
             val found = findSnapshot(child, id)
             if (found != null)
                 return found
@@ -193,12 +164,12 @@ class SnapshotFragment : Fragment(), CoroutineScope {
      * @param parent
      * @param snapshot
      */
-    protected fun populate(parent: ISnapshot?, snapshot: ISnapshot) {
+    private suspend fun populate(parent: ISnapshot?, snapshot: ISnapshot) {
         if (parent == null)
-            _treeBuilder!!.sequentiallyAddNextNode(snapshot, 0)
+            treeBuilder.sequentiallyAddNextNode(snapshot, 0)
         else
-            _treeBuilder!!.addRelation(parent, snapshot)
-        for (child in snapshot.children)
+            treeBuilder.addRelation(parent, snapshot)
+        for (child in snapshot.getChildren())
             populate(snapshot, child)
     }
 
@@ -206,29 +177,25 @@ class SnapshotFragment : Fragment(), CoroutineScope {
      * Refresh the snapshot tree
      */
     private fun refresh() {
-        _stateManager!!.clear()
-        _stateManager = InMemoryTreeStateManager()
-        _treeBuilder = TreeBuilder(_stateManager)
-        mainTreeView!!.adapter = SnapshotTreeAdapter(activity!!, _stateManager!!, 10)
+        stateManager.clear()
+        stateManager = InMemoryTreeStateManager()
+        treeBuilder = TreeBuilder(stateManager)
+        mainTreeView!!.adapter = SnapshotTreeAdapter(activity!!, stateManager, 10)
         loadSnapshots()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putSerializable("manager", _stateManager)
-        outState.putParcelable("root", _root)
+        outState.putSerializable("manager", stateManager)
+        outState.putParcelable("root", root)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidSupportInjection.inject(this)
-        _vmgr = BundleBuilder.getVBoxSvc(arguments!!)
 
-        _machine = arguments!!.getParcelable(IMachine.BUNDLE)
-        _machine = _vmgr.getProxy(IMachine::class.java, _machine!!.idRef)
         if (savedInstanceState != null) {
-            _stateManager = savedInstanceState.getSerializable("manager") as TreeStateManager<ISnapshot>
-            _root = savedInstanceState.getParcelable("root")
+            stateManager = savedInstanceState.getSerializable("manager") as TreeStateManager<ISnapshot>
+            root = savedInstanceState.getParcelable("root")
         }
     }
 
@@ -241,9 +208,11 @@ class SnapshotFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainTreeView!!.choiceMode = ListView.CHOICE_MODE_NONE
+        mainTreeView.choiceMode = ListView.CHOICE_MODE_NONE
         registerForContextMenu(mainTreeView!!)
-        addButton!!.setOnClickListener { Utils.showDialog(fragmentManager!!, "snapshotDialog", TakeSnapshotFragment.getInstance(_vmgr, _machine, null)) }
+        addButton.setOnClickListener {
+            findNavController().navigate(SnapshotFragmentDirections.showSnapshot(null))
+        }
     }
 
     override fun onStart() {
@@ -253,11 +222,11 @@ class SnapshotFragment : Fragment(), CoroutineScope {
                 VBoxEventType.ON_SNAPSHOT_DELETED.name,
                 VBoxEventType.ON_SNAPSHOT_TAKEN.name))
 
-        if (_stateManager == null)
+        if (stateManager == null)
             loadSnapshots()
         else {
-            _treeBuilder = TreeBuilder(_stateManager)
-            mainTreeView!!.adapter = SnapshotTreeAdapter(activity!!, _stateManager!!, 10)
+            treeBuilder = TreeBuilder(stateManager)
+            mainTreeView.adapter = SnapshotTreeAdapter(activity!!, stateManager, 10)
         }
     }
 
@@ -274,33 +243,49 @@ class SnapshotFragment : Fragment(), CoroutineScope {
         menu.add(Menu.NONE, R.id.context_menu_details_snapshot, Menu.NONE, R.string.action_edit_snapshot)
     }
 
+    private fun handleProgress(p: IProgress, action: VMAction) =
+            activity?.startService(Intent(activity, ProgressService::class.java)
+                    .putExtra(IProgress.BUNDLE, p)
+                    .putExtra(ProgressService.INTENT_ICON, action.drawable()))
+
+
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterContextMenuInfo
         val nodeinfo: TreeNodeInfo<ISnapshot>
         when (item.itemId) {
             R.id.context_menu_details_snapshot -> {
                 nodeinfo = treeAdapter.getTreeNodeInfo(info.position)
-                Utils.showDialog(fragmentManager!!, "snapshotDialog", TakeSnapshotFragment.getInstance(_vmgr, _machine, nodeinfo.id))
+                findNavController().navigate(SnapshotFragmentDirections.showSnapshot(nodeinfo.id))
                 return true
             }
             R.id.context_menu_delete_snapshot -> {
                 nodeinfo = treeAdapter.getTreeNodeInfo(info.position)
-                object : MachineTask<ISnapshot, Void>(activity as AppCompatActivity?, _vmgr, R.drawable.ic_list_snapshot_del, false, _machine) {
-                    @Throws(Exception::class)
-                    override fun workWithProgress(m: IMachine, console: IConsole, vararg s: ISnapshot): IProgress? {
-                        return console.deleteSnapshot(s[0].id)
+                launch {
+                    val session = args.vmgr.vbox!!.getSessionObject()
+                    if (session.getState() == SessionState.UNLOCKED)
+                        args.machine.lockMachine(session, LockType.SHARED)
+                    try {
+                        handleProgress(session.getConsole().deleteSnapshot(nodeinfo.id.idRef), VMAction.DELETE_SNAPSHOT)
+                    } finally {
+                        if (session.getState() == SessionState.LOCKED)
+                            session.unlockMachine()
                     }
-                }.execute(nodeinfo.id)
+                }
                 return true
             }
             R.id.context_menu_restore_snapshot -> {
                 nodeinfo = treeAdapter.getTreeNodeInfo(info.position)
-                object : MachineTask<ISnapshot, Void>(activity as AppCompatActivity?, _vmgr, R.drawable.ic_list_snapshot, false, _machine) {
-                    @Throws(Exception::class)
-                    override fun workWithProgress(m: IMachine, console: IConsole, vararg s: ISnapshot): IProgress? {
-                        return console.restoreSnapshot(s[0])
+                launch {
+                    val session = args.vmgr.vbox!!.getSessionObject()
+                    if (session.getState() == SessionState.UNLOCKED)
+                        args.machine.lockMachine(session, LockType.SHARED)
+                    try {
+                        handleProgress(session.getConsole().restoreSnapshot(nodeinfo.id), VMAction.RESTORE_SNAPSHOT)
+                    } finally {
+                        if (session.getState() == SessionState.LOCKED)
+                            session.unlockMachine()
                     }
-                }.execute(nodeinfo.id)
+                }
                 return true
             }
         }

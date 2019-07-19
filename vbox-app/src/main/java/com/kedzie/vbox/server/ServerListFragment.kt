@@ -1,68 +1,40 @@
 package com.kedzie.vbox.server
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
-import android.preference.PreferenceManager
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import com.kedzie.vbox.R
-import com.kedzie.vbox.app.Utils
-import com.kedzie.vbox.task.BaseTask
+import com.kedzie.vbox.api.IMachine
+import com.kedzie.vbox.machine.MachineListViewModel
+import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.android.synthetic.main.server_list.*
-import kotlinx.coroutines.*
-import timber.log.Timber
-import kotlin.coroutines.CoroutineContext
+import kotlinx.android.synthetic.main.simple_selectable_list_item.view.*
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.core.parameter.parametersOf
 
-class ServerListFragment : Fragment(), CoroutineScope {
+class ServerListFragment : Fragment() {
 
-    private var _listener: OnSelectServerListener? = null
-    private var _db: ServerSQlite? = null
+    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
+        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
 
-    private var _dualPane: Boolean = false
-
-    private lateinit var job: Job
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+    private var dualPane: Boolean = false
 
     private val adapter: ServerListAdapter
         get() = list!!.adapter as ServerListAdapter
 
-    /**
-     * Handle Server selection
-     */
-    interface OnSelectServerListener {
+    private var listener: OnServerSelectedListener? = null
 
-        /**
-         * @param server    the selected [Server]
-         */
-        fun onSelectServer(server: Server?)
-    }
-
-    private fun loadServers() {
-        launch {
-            val result = _db!!.query()
-
-            withContext(Dispatchers.Main) {
-                list!!.adapter = ServerListAdapter(activity!!, result)
-                if (result.isEmpty())
-                    showAddNewServerPrompt()
-                else
-                    checkIfFirstRun(result[0])
-            }
-        }
+    interface OnServerSelectedListener {
+        fun onServerSelected(server: Server)
     }
 
     /**
@@ -84,19 +56,23 @@ class ServerListFragment : Fragment(), CoroutineScope {
             var convertView = convertView
             if (convertView == null) {
                 convertView = _inflater.inflate(R.layout.simple_selectable_list_item, parent, false)
-                convertView!!.tag = convertView.findViewById<View>(android.R.id.text1) as TextView
             }
-            val text1 = convertView.tag as TextView
-            text1.text = getItem(position)!!.toString()
-            text1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_list_vbox, 0, 0, 0)
+            convertView!!.text1.text = getItem(position)!!.toString()
+            convertView!!.text1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_list_vbox, 0, 0, 0)
             return convertView
         }
     }
 
-    override fun onAttach(activity: Context) {
-        super.onAttach(activity)
-        if (activity is OnSelectServerListener)
-            _listener = activity
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is OnServerSelectedListener) {
+            listener = context
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -105,75 +81,28 @@ class ServerListFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _dualPane = activity!!.findViewById<View>(R.id.details) != null
-        list!!.choiceMode = if (_dualPane) ListView.CHOICE_MODE_SINGLE else ListView.CHOICE_MODE_NONE
+        dualPane = activity!!.findViewById<View>(R.id.details) != null
+        list!!.choiceMode = if (dualPane) ListView.CHOICE_MODE_SINGLE else ListView.CHOICE_MODE_NONE
         list!!.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            if (_dualPane)
-                list!!.setSelection(position)
-            _listener!!.onSelectServer(adapter.getItem(position))
+            listener?.onServerSelected(adapter.getItem(position))
         }
+        model.vmgr.observe(this, Observer {
+            if (dualPane) {
+                list!!.setSelection(adapter.getPosition(it.server))
+            }
+        })
         registerForContextMenu(list!!)
         addButton!!.setOnClickListener { addServer() }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-        _db = ServerSQlite(activity)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        job = Job()
-        loadServers()
-    }
-
-    override fun onStop() {
-        job.cancel()
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _db!!.close()
-    }
-
-    private fun checkIfFirstRun(s: Server) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
-        if (!prefs.contains(FIRST_RUN_PREFERENCE)) {
-            val editor = prefs.edit()
-            editor.putBoolean(FIRST_RUN_PREFERENCE, false)
-            editor.commit()
-            AlertDialog.Builder(activity)
-                    .setTitle(R.string.firstrun_welcome)
-                    .setMessage(getString(R.string.firstrun_message, s.host, s.port))
-                    .setIcon(android.R.drawable.ic_dialog_info)
-                    .setPositiveButton("OK") { dialog, which -> dialog.dismiss() }
-                    .show()
-        }
-    }
-
-    private fun showAddNewServerPrompt() {
-        AlertDialog.Builder(activity)
-                .setTitle(R.string.add_server_title)
-                .setMessage(R.string.add_server_question)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton("OK") { dialog, which ->
-                    dialog.dismiss()
-                    addServer()
-                }
-                .show()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (!_dualPane)
-            inflater.inflate(R.menu.server_list_actions, menu)
+        inflater.inflate(R.menu.server_list_actions, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_help -> {
-                Utils.startActivity(activity, Intent(activity, HelpActivity::class.java))
+            R.id.helpFragment -> {
+                item.onNavDestinationSelected(findNavController())
                 return true
             }
         }
@@ -191,15 +120,19 @@ class ServerListFragment : Fragment(), CoroutineScope {
         val s = adapter.getItem(position)
         when (item.itemId) {
             R.id.server_list_context_menu_select -> {
-                _listener!!.onSelectServer(adapter.getItem(position))
+                model.viewModelScope.launch {
+                    login(activity!!, adapter.getItem(position)) {
+                        model.vmgr.postValue(it)
+                    }
+                }
                 return true
             }
             R.id.server_list_context_menu_edit -> {
-                Utils.startActivity(activity, Intent(activity, EditServerActivity::class.java).putExtra(EditServerActivity.INTENT_SERVER, s as Parcelable))
+                findNavController().navigate(ServerListFragmentDirections.editServer(s))
                 return true
             }
             R.id.server_list_context_menu_delete -> {
-                _db!!.delete(s!!.id)
+                model.deleteServer(s)
                 adapter.remove(s)
                 adapter.notifyDataSetChanged()
                 return true
@@ -212,10 +145,6 @@ class ServerListFragment : Fragment(), CoroutineScope {
      * Launch activity to create a new Server
      */
     private fun addServer() {
-        Utils.startActivity(activity, Intent(activity, EditServerActivity::class.java).putExtra(EditServerActivity.INTENT_SERVER, Server() as Parcelable))
-    }
-
-    companion object {
-        private const val FIRST_RUN_PREFERENCE = "first_run"
+        findNavController().navigate(ServerListFragmentDirections.editServer(Server()))
     }
 }

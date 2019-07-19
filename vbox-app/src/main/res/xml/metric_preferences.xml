@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto" >
-    
-        <PreferenceCategory  app:title="@string/pref_category_metrics">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+
+        <PreferenceCategory app:title="@string/pref_category_metrics">
+
+			<SwitchPreferenceCompat
+				app:defaultValue="true"
+				app:key="metric_enabled"
+				app:summaryOff="@string/pref_metric_enabled_summary_off"
+				app:summaryOn="@string/pref_metric_enabled_summary_on"
+				app:switchTextOff="@string/pref_metric_enabled_off"
+				app:switchTextOn="@string/pref_metric_enabled_on"
+				app:title="@string/pref_metric_enabled_title" />
+
         	<ListPreference
 				app:key="metric_count"
 				app:title="@string/pref_metric_count_title"
@@ -25,4 +36,4 @@
         	
     </PreferenceCategory>
     
-</androidx.preference.PreferenceScreen>
+</PreferenceScreen>

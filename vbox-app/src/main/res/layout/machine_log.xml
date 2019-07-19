@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent">
 
-    <TextView android:id="@+id/logText"
+    <androidx.appcompat.widget.AppCompatTextView
+       android:id="@+id/logText"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:inputType="textMultiLine"
-        style="@style/SmallText"/>
+        style="?attr/textAppearanceBody2"/>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     android:padding="8dp" >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/processors_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignRight="@+id/execution_cap_label"
         android:text="Processors:" />
 
@@ -21,9 +23,11 @@
         vbox:tickSpacing="1"
         vbox:unit="CPU" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@id/execution_cap_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/processors"
         android:text="Execution Cap:" />
 
@@ -41,9 +45,11 @@
         vbox:tickSpacing="10"
         vbox:unit="%" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/extended_features"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/execution_cap"
         android:text="@string/extended_features" />
     
@@ -54,12 +60,5 @@
         android:layout_below="@id/extended_features"
         android:layout_centerHorizontal="true"
         android:text="Enable PAE/NX" />
-
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/ErrorMessage"
-        android:layout_below="@id/pae_nx"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"/>
     
 </RelativeLayout>

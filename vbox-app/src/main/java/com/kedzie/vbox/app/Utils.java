@@ -11,6 +11,7 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -82,23 +83,6 @@ public class Utils {
 	}
 
 	/**
-	 * Provides default implementations for {@link OnItemSelectedListener}
-	 */
-	public static abstract class OnItemSelectedAdapter implements OnItemSelectedListener {
-		@Override
-		public void onNothingSelected(AdapterView<?> parent) {
-		}
-	}
-
-	public static boolean isIceCreamSandwhich() {
-		return isVersion(Build.VERSION_CODES.ICE_CREAM_SANDWICH);
-	}
-
-	public static boolean isJellyBean() {
-		return isVersion(Build.VERSION_CODES.JELLY_BEAN);
-	}
-
-	/**
 	 * Check if API level satisfies the minimum API level
 	 * 
 	 * @param versionCode minimum API version code
@@ -106,17 +90,6 @@ public class Utils {
 	 */
 	public static boolean isVersion(int versionCode) {
 		return Build.VERSION.SDK_INT >= versionCode;
-	}
-
-	/**
-	 * Get integer value from default shared preferences
-	 * 
-	 * @param context the context
-	 * @param name preference key
-	 * @return The integer value
-	 */
-	public static int getIntPreference(Context context, String name) {
-		return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString(name, "0"));
 	}
 
 	/**
@@ -223,32 +196,6 @@ public class Utils {
 		if (base.length() > 0)
 			base.append(", ");
 		return base.append(append);
-	}
-
-	/**
-	 * Get type generic type parameter
-	 * @param genericType the generic {@link Type}
-	 * @param index parameter index
-	 * @return type parameter
-	 */
-	public static Class<?> getTypeParameter(Type genericType, int index) {
-		if (!(genericType instanceof ParameterizedType))
-			return null;
-		return (Class<?>) ((ParameterizedType) genericType).getActualTypeArguments()[index];
-	}
-
-	/**
-	 * Search an array for a specific type of annotation
-	 * 
-	 * @param clazz the class
-	 * @param annotations type of annotation
-	 * @return the annotation or <code>null</code> if not found
-	 */
-	public static <T extends Annotation> T getAnnotation(Class<T> clazz, Annotation[] annotations) {
-		for (Annotation a : annotations)
-			if (a.annotationType().equals(clazz))
-				return clazz.cast(a);
-		return null;
 	}
 
 	/**
@@ -518,43 +465,6 @@ public class Utils {
     }
 
 	/**
-	 * Cache commonly used Medium properties
-	 * @param medium
-	 */
-	public static void cacheProperties(IMedium medium) {
-		synchronized (medium) {
-			medium.getName();
-			medium.getDescription();
-			medium.getSize();
-			medium.getType();
-			medium.getLocation();
-			medium.getLogicalSize();
-			medium.getBase().getName();
-			medium.getBase().getSize();
-			medium.getBase().getType();
-			medium.getBase().getLocation();
-			medium.getBase().getLogicalSize();
-		}
-	}
-
-    /**
-     * Cache commonly used Machine properties
-     * @param machine
-     */
-    public static IMachine cacheProperties(IMachine machine) {
-        synchronized (machine) {
-            machine.clearCacheNamed("getName", "getState", "getCurrentStateModified", "gotOSTypeId", "getCurrentSnapshot");
-            machine.getName();
-            machine.getState();
-            machine.getCurrentStateModified();
-            machine.getOSTypeId();
-            if (machine.getCurrentSnapshot() != null)
-                machine.getCurrentSnapshot().getName();
-        }
-		return machine;
-    }
-
-	/**
 	 * Launch activity using custom animations. Uses ActivityOptions if on
 	 * JellyBean, otherwise overrides transition
 	 * 
@@ -575,12 +485,7 @@ public class Utils {
 	 * @param animOut Out animation
 	 */
 	public static void startActivity(Activity parent, Intent intent, int animIn, int animOut) {
-		if (isJellyBean())
-			parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
-		else {
-			parent.startActivity(intent);
-			parent.overridePendingTransition(animIn, animOut);
-		}
+	    parent.startActivity(intent, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
 	}
 
 	/**
@@ -604,12 +509,7 @@ public class Utils {
 	 * @param animOut Out animation
 	 */
 	public static void startActivityForResult(Activity parent, Intent intent, int requestCode, int animIn, int animOut) {
-		if (isJellyBean())
-			parent.startActivityForResult(intent, requestCode, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
-		else {
-			parent.startActivityForResult(intent, requestCode);
-			parent.overridePendingTransition(animIn, animOut);
-		}
+	    parent.startActivityForResult(intent, requestCode, ActivityOptions.makeCustomAnimation(parent, animIn, animOut).toBundle());
 	}
 
 	/**

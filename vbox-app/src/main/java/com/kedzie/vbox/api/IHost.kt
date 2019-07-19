@@ -18,7 +18,7 @@ import com.kedzie.vbox.soap.KsoapProxy
  */
 @KsoapProxy
 @Ksoap
-interface IHost : IManagedObjectRef, Parcelable, TreeNode {
+interface IHost : IManagedObjectRef, Parcelable {
 
     /**
      * @return    Amount of system memory in megabytes installed in the host system.
@@ -121,7 +121,6 @@ interface IHost : IManagedObjectRef, Parcelable, TreeNode {
     suspend fun findHostNetworkInterfacesOfType(type: HostNetworkInterfaceType): List<IHostNetworkInterface>
 
     companion object {
-        const val BUNDLE = "host"
 
         suspend fun createHostOnlyNetworkInterface(host: IHost): Pair<IHostNetworkInterface, IProgress> {
             val ret = host.createHostOnlyNetworkInterface()

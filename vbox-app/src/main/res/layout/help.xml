@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutAnimation="@anim/layout_random_fade" >
@@ -10,14 +10,18 @@
         android:orientation="vertical"
         android:padding="8dp" >
         
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
             android:id="@+id/main_text"
-            style="@style/SmallTextPrimary"
+            android:textAppearance="?attr/textAppearanceBody1"
             android:text="@string/help_main" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
             android:id="@+id/ssl_text"
-            style="@style/SmallTextPrimary"/>
+            android:textAppearance="?attr/textAppearanceBody1"/>
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

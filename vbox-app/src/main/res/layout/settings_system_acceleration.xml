@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:vbox="http://schemas.android.com/apk/res/com.kedzie.vbox"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp" >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/extended_features"
-        style="@style/MediumText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?attr/textAppearanceHeadline4"
         android:text="Hardware Virtualization:" />
     
     <CheckBox
@@ -26,12 +28,5 @@
         android:layout_below="@id/vtx_amdv"
         android:layout_centerHorizontal="true"
         android:text="Enable Nested Paging" />
-
-    <TextView
-        android:id="@+id/error_message"
-        style="@style/ErrorMessage"
-        android:layout_below="@id/nested_paging"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"/>
 
 </RelativeLayout>

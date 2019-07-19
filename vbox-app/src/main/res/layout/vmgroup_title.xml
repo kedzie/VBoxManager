@@ -16,22 +16,29 @@
 		android:layout_width="32dip" 
 		android:layout_height="32dip" />
 	
-	<TextView android:id="@+id/group_title" 
-		style="@style/MediumText"
+	<androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        android:id="@+id/group_title"
+		style="?attr/textAppearanceBody1"
 		android:layout_gravity="left"	 
 		android:layout_weight="1"
 		android:text="Group Name" />
 	
-	<TextView android:id="@+id/group_num_groups" 
+	<androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/group_num_groups"
 	    	android:drawableLeft="@drawable/ic_context_network"
 	    	android:drawablePadding="4dp"
-		style="@style/SmallText"
+		style="?attr/textAppearanceBody2"
 		android:layout_gravity="center" />
 	
-	<TextView android:id="@+id/group_num_machine" 
+	<androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/group_num_machine"
 	    	android:drawableLeft="@drawable/ic_context_machine"  
 	    	android:drawablePadding="4dp"
-		style="@style/SmallText"
+		style="?attr/textAppearanceBody2"
 		android:layout_gravity="center" />
 	
 	<ImageView android:id="@+id/group_enter" 

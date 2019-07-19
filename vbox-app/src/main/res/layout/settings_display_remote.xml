@@ -11,9 +11,11 @@
         android:layout_height="wrap_content"
         android:text="Enable Server" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/server_port_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignRight="@+id/auth_timeout_label"
         android:layout_marginTop="8dp"
         android:layout_below="@id/enabled"
@@ -27,9 +29,11 @@
         android:layout_alignBaseline="@id/server_port_label"
         android:layout_toRightOf="@id/server_port_label" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/auth_method_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_marginTop="8dp"
         android:layout_below="@id/server_port_label"
         android:layout_alignRight="@id/auth_timeout_label"
@@ -43,9 +47,11 @@
         android:layout_alignTop="@id/auth_method_label"
         android:layout_alignParentRight="true"/>
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/auth_timeout_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_marginTop="8dp"
         android:layout_below="@id/auth_method"
         android:text="Authentication Timeout" />
@@ -58,9 +64,11 @@
         android:layout_alignBaseline="@id/auth_timeout_label"
         android:layout_alignParentRight="true"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/extended_features"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_marginTop="8dp"
         android:layout_below="@id/auth_timeout_label"
         android:text="@string/extended_features" />

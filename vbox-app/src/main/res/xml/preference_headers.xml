@@ -2,12 +2,12 @@
 
 <androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto" >
 
-    <Preference
-        app:fragment="com.kedzie.vbox.SettingsActivity$GeneralFragment"
+    <androidx.preference.Preference
+        app:fragment="com.kedzie.vbox.GeneralSettingsFragment"
         app:title="@string/pref_category_general"
         app:summary="@string/pref_category_general_summary" />
-    <Preference
-        app:fragment="com.kedzie.vbox.SettingsActivity$MetricFragment"
+    <androidx.preference.Preference
+        app:fragment="com.kedzie.vbox.MetricSettingsFragment"
         app:title="@string/pref_category_metrics"
         app:summary="@string/pref_category_metrics_summary" />
 

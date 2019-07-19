@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,42 +16,50 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kedzie.vbox.R
+import com.kedzie.vbox.SettingsActivity
 import com.kedzie.vbox.VBoxApplication
 import com.kedzie.vbox.VMAction
-import com.kedzie.vbox.api.*
+import com.kedzie.vbox.api.IMachine
+import com.kedzie.vbox.api.IPerformanceCollector
+import com.kedzie.vbox.api.IProgress
+import com.kedzie.vbox.api.ISessionStateChangedEvent
 import com.kedzie.vbox.api.jaxb.BitmapFormat
+import com.kedzie.vbox.api.jaxb.LockType
 import com.kedzie.vbox.api.jaxb.SessionState
 import com.kedzie.vbox.api.jaxb.VBoxEventType
-import com.kedzie.vbox.app.BundleBuilder
 import com.kedzie.vbox.app.Utils
 import com.kedzie.vbox.event.EventIntentService
 import com.kedzie.vbox.machine.settings.VMSettingsActivity
-import com.kedzie.vbox.metrics.MetricActivity
+import com.kedzie.vbox.metrics.MetricFragment
 import com.kedzie.vbox.soap.VBoxSvc
-import com.kedzie.vbox.task.BaseTask
-import com.kedzie.vbox.task.LaunchVMProcessTask
-import com.kedzie.vbox.task.MachineTask
+import com.kedzie.vbox.task.ProgressService
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.machine_action_item.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class ActionsFragment : Fragment(), AdapterView.OnItemClickListener, CoroutineScope {
+class ActionsFragment(arguments: Bundle) : Fragment(), AdapterView.OnItemClickListener, CoroutineScope {
+
+    init {
+        this.arguments = arguments
+    }
 
     private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+        get() = job + Dispatchers.Main
 
-    private var _headerView: MachineView? = null
-    private var _listView: ListView? = null
+    private var listView: ListView? = null
 
     /** VirtualBox API  */
-    private lateinit var _vmgr: VBoxSvc
+    private lateinit var vmgr: VBoxSvc
     /** The Virtual Machine  */
-    private lateinit var _machine: IMachine
+    private lateinit var machine: IMachine
 
     @set:Inject
     lateinit var lbm: LocalBroadcastManager
@@ -62,43 +69,18 @@ class ActionsFragment : Fragment(), AdapterView.OnItemClickListener, CoroutineSc
         override fun onReceive(context: Context, intent: Intent) {
             Timber.i("Received Broadcast: %s", intent.action!!)
             if (intent.action == VBoxEventType.ON_MACHINE_STATE_CHANGED.name) {
-                val m = BundleBuilder.getProxy(intent.extras, IMachine.BUNDLE, IMachine::class.java)
+                val m = intent.getParcelableExtra<IMachine>(IMachine.BUNDLE)
                 loadData()
             } else if (intent.action == VBoxEventType.ON_SESSION_STATE_CHANGED.name) {
-                HandleSessionChangedEvent(_vmgr).execute(intent.extras)
+                val event = intent.getParcelableExtra<ISessionStateChangedEvent>(EventIntentService.BUNDLE_EVENT)
             }
         }
     }
-
-    val app: VBoxApplication
-        get() = activity!!.application as VBoxApplication
 
     private fun loadData() {
         launch {
-            Utils.cacheProperties(_machine)
-            _machine.memorySize
-            _machine.sessionState
-
-            withContext(Dispatchers.Main) {
-                _headerView!!.update(_machine)
-                if (activity != null)
-                    _listView!!.adapter = MachineActionAdapter(VMAction.getVMActions(_machine.state))
-            }
+            listView?.adapter = MachineActionAdapter(VMAction.getVMActions(machine.getState()))
         }
-    }
-
-    /**
-     * Handle SessionStateChanged event
-     */
-    internal inner class HandleSessionChangedEvent(vmgr: VBoxSvc) : BaseTask<Bundle, SessionState>(activity as AppCompatActivity?, vmgr) {
-
-        @Throws(Exception::class)
-        override fun work(vararg params: Bundle): SessionState {
-            val event = BundleBuilder.getProxy(params[0], EventIntentService.BUNDLE_EVENT, IEvent::class.java) as ISessionStateChangedEvent
-            return event.state
-        }
-
-        override fun onSuccess(result: SessionState) {}
     }
 
     /**
@@ -112,7 +94,7 @@ class ActionsFragment : Fragment(), AdapterView.OnItemClickListener, CoroutineSc
             var view = if (existingView != null) existingView
                             else _layoutInflater.inflate(R.layout.machine_action_item, parent, false)
             view.action_item_text.text = getItem(position)!!.toString()
-            view.action_item_icon.setImageResource(app.getDrawable(getItem(position)))
+            view.action_item_icon.setImageResource(getItem(position).drawable())
             return view
         }
     }
@@ -120,20 +102,17 @@ class ActionsFragment : Fragment(), AdapterView.OnItemClickListener, CoroutineSc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
-        _vmgr = BundleBuilder.getVBoxSvc(arguments!!)
-        _machine = BundleBuilder.getProxy(savedInstanceState
-                ?: arguments, IMachine.BUNDLE, IMachine::class.java)
+        vmgr = arguments!!.getParcelable(VBoxSvc.BUNDLE)
+        machine = arguments!!.getParcelable(IMachine.BUNDLE)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val swipeLayout = SwipeRefreshLayout(activity!!)
         swipeLayout.setOnRefreshListener { loadData() }
-        _headerView = MachineView(activity)
-        _listView = ListView(activity)
-        _listView!!.clipChildren = false
-        _listView!!.addHeaderView(_headerView)
-        _listView!!.onItemClickListener = this
-        swipeLayout.addView(_listView)
+        listView = ListView(activity)
+        listView!!.clipChildren = false
+        listView!!.onItemClickListener = this
+        swipeLayout.addView(listView)
         return swipeLayout
     }
 
@@ -152,103 +131,81 @@ class ActionsFragment : Fragment(), AdapterView.OnItemClickListener, CoroutineSc
         super.onStop()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        BundleBuilder.putProxy(outState, IMachine.BUNDLE, _machine)
-    }
+    private fun handleProgress(p: IProgress, action: VMAction) =
+            activity?.startService(Intent(activity, ProgressService::class.java)
+                    .putExtra(IProgress.BUNDLE, p)
+                    .putExtra(ProgressService.INTENT_ICON, action.drawable()))
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        val action = _listView!!.adapter.getItem(position) as VMAction ?: return
-        if (action == VMAction.START)
-            LaunchVMProcessTask(activity as AppCompatActivity?, _vmgr).execute(_machine)
-        else if (action == VMAction.POWER_OFF)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.POWER_OFF), false, _machine) {
-                @Throws(Exception::class)
-                override fun workWithProgress(m: IMachine, console: IConsole, vararg i: IMachine): IProgress? {
-                    return console.powerDown()
-                }
-            }.execute(_machine)
-        else if (action == VMAction.RESET)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.RESET), true, _machine) {
-                @Throws(Exception::class)
-                override fun work(m: IMachine, console: IConsole, vararg i: IMachine): Void? {
-                    console.reset()
-                    return null
-                }
-            }.execute(_machine)
-        else if (action == VMAction.PAUSE)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.PAUSE), true, _machine) {
-                @Throws(Exception::class)
-                override fun work(m: IMachine, console: IConsole, vararg i: IMachine): Void? {
-                    console.pause()
-                    return null
-                }
-            }.execute(_machine)
-        else if (action == VMAction.RESUME)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.RESUME), true, _machine) {
-                @Throws(Exception::class)
-                override fun work(m: IMachine, console: IConsole, vararg i: IMachine): Void? {
-                    console.resume()
-                    return null
-                }
-            }.execute(_machine)
-        else if (action == VMAction.POWER_BUTTON)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.POWER_BUTTON), true, _machine) {
-                @Throws(Exception::class)
-                override fun work(m: IMachine, console: IConsole, vararg i: IMachine): Void? {
-                    console.powerButton()
-                    return null
-                }
-            }.execute(_machine)
-        else if (action == VMAction.SAVE_STATE)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.SAVE_STATE), false, _machine) {
-                @Throws(Exception::class)
-                override fun workWithProgress(m: IMachine, console: IConsole, vararg i: IMachine): IProgress? {
-                    return console.saveState()
-                }
-            }.execute(_machine)
-        else if (action == VMAction.DISCARD_STATE)
-            object : MachineTask<IMachine, Void>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.DISCARD_STATE), true, _machine) {
-                @Throws(Exception::class)
-                override fun work(m: IMachine, console: IConsole, vararg i: IMachine): Void? {
-                    console.discardSavedState(true)
-                    return null
-                }
-            }.execute(_machine)
-        else if (action == VMAction.TAKE_SNAPSHOT) {
-            Utils.showDialog((activity as AppCompatActivity).supportFragmentManager, "snapshotDialog",
-                    TakeSnapshotFragment.getInstance(_vmgr, _machine, null))
-        } else if (action == VMAction.VIEW_METRICS) {
-            startActivity(Intent(activity, MetricActivity::class.java).putExtra(VBoxSvc.BUNDLE, _vmgr as Parcelable?)
-                    .putExtra(MetricActivity.INTENT_TITLE, _machine!!.name + " Metrics")
-                    .putExtra(MetricActivity.INTENT_ICON, app.getOSDrawable(_machine!!.osTypeId))
-                    .putExtra(MetricActivity.INTENT_OBJECT, _machine!!.idRef)
-                    .putExtra(MetricActivity.INTENT_RAM_AVAILABLE, _machine!!.memorySize)
-                    .putExtra(MetricActivity.INTENT_CPU_METRICS, arrayOf("CPU/Load/User", "CPU/Load/Kernel"))
-                    .putExtra(MetricActivity.INTENT_RAM_METRICS, arrayOf("RAM/Usage/Used")))
-        } else if (action == VMAction.TAKE_SCREENSHOT) {
-            object : MachineTask<Void, ByteArray>(activity as AppCompatActivity?, _vmgr, app.getDrawable(VMAction.TAKE_SCREENSHOT), true, _machine) {
-                @Throws(Exception::class)
-                override fun work(m: IMachine, console: IConsole, vararg i: Void): ByteArray? {
-                    val display = console.display
-                    val res = display.getScreenResolution(0)
-                    return display.takeScreenShotToArray(0, Integer.valueOf(res["width"]!!), Integer.valueOf(res["height"]!!), BitmapFormat.PNG)
-                }
+        val action = listView!!.adapter.getItem(position) as VMAction
 
-                override fun onSuccess(result: ByteArray) {
-                    super.onSuccess(result)
-                    Utils.showDialog(activity!!.supportFragmentManager, "screenshotDialog", ScreenshotDialogFragment.getInstance(result))
+        launch {
+            if (action == VMAction.TAKE_SNAPSHOT) {
+                Utils.showDialog((activity as AppCompatActivity).supportFragmentManager, "snapshotDialog",
+                        TakeSnapshotFragment.getInstance(vmgr, machine, null))
+            } else if (action == VMAction.VIEW_METRICS) {
+                startActivity(Intent(activity, MetricFragment::class.java).putExtra(VBoxSvc.BUNDLE, vmgr)
+                        .putExtra(MetricFragment.INTENT_TITLE, machine.getName() + " Metrics")
+                        .putExtra(MetricFragment.INTENT_ICON, VBoxApplication.getOSDrawable(activity, machine.getOSTypeId()))
+                        .putExtra(MetricFragment.INTENT_OBJECT, machine.idRef)
+                        .putExtra(MetricFragment.INTENT_RAM_AVAILABLE, machine.getMemorySize())
+                        .putExtra(MetricFragment.INTENT_CPU_METRICS, arrayOf(IPerformanceCollector.CPU_LOAD_USER, IPerformanceCollector.CPU_LOAD_KERNEL))
+                        .putExtra(MetricFragment.INTENT_RAM_METRICS, arrayOf(IPerformanceCollector.RAM_USAGE_USED)))
+            } else if (action == VMAction.EDIT_SETTINGS) {
+                if (machine.getSessionStateNoCache() != SessionState.UNLOCKED) {
+                    AlertDialog.Builder(activity)
+                            .setTitle("Cannot edit machine")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setMessage("Session state is " + machine.getSessionStateNoCache())
+                            .show()
+                } else {
+                    Utils.startActivity(activity, Intent(activity, VMSettingsActivity::class.java).putExtras(arguments!!))
                 }
-            }.execute()
-        } else if (action == VMAction.EDIT_SETTINGS) {
-            if (_machine!!.sessionState != SessionState.UNLOCKED) {
-                AlertDialog.Builder(activity)
-                        .setTitle("Cannot edit machine")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setMessage("Session state is " + _machine!!.sessionState)
-                        .show()
-            } else
-                Utils.startActivity(activity, Intent(activity, VMSettingsActivity::class.java).putExtras(arguments!!))
-
+            } else {
+                val session = vmgr.vbox!!.getSessionObject()
+                if (session.getState() == SessionState.UNLOCKED)
+                    machine.lockMachine(session, LockType.SHARED)
+                try {
+                    when (action) {
+                        VMAction.START -> {
+                            handleProgress(machine.launchVMProcess(session, IMachine.LaunchMode.headless), VMAction.START)
+                            vmgr.vbox!!.getPerformanceCollector().setupMetrics(arrayOf<String>("*:"),
+                                    Utils.getIntPreference(context, SettingsActivity.PREF_PERIOD),
+                                    Utils.getIntPreference(context, SettingsActivity.PREF_COUNT), machine)
+                        }
+                        VMAction.POWER_OFF -> {
+                            handleProgress(session.getConsole().powerDown(), VMAction.POWER_OFF)
+                        }
+                        VMAction.RESET -> {
+                            session.getConsole().reset()
+                        }
+                        VMAction.PAUSE -> {
+                            session.getConsole().pause()
+                        }
+                        VMAction.RESUME -> {
+                            session.getConsole().resume()
+                        }
+                        VMAction.POWER_BUTTON -> {
+                            session.getConsole().powerButton()
+                        }
+                        VMAction.SAVE_STATE -> {
+                            handleProgress(session.getConsole().saveState(), VMAction.SAVE_STATE)
+                        }
+                        VMAction.DISCARD_STATE -> {
+                            session.getConsole().discardSavedState(true)
+                        }
+                        VMAction.TAKE_SCREENSHOT -> {
+                            val display = session.getConsole().getDisplay()
+                            val res = display.getScreenResolution(0)
+                            val result = display.takeScreenShotToArray(0, Integer.valueOf(res["width"]!!), Integer.valueOf(res["height"]!!), BitmapFormat.PNG)
+                            Utils.showDialog(activity!!.supportFragmentManager, "screenshotDialog", ScreenshotDialogFragment.getInstance(result))
+                        }
+                    }
+                } finally {
+                    if (session.getState() == SessionState.LOCKED)
+                        session.unlockMachine()
+                }
+            }
         }
     }
 }

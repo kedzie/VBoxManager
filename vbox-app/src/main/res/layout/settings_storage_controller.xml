@@ -5,29 +5,35 @@
     android:layout_height="match_parent"
     android:padding="8dp" >
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/storage_attributes"
-        style="@style/MediumText"
+        style="?attr/textAppearanceBody1"
         android:text="@string/storage_attributes" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/controller_name_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_marginTop="8dp"
         android:layout_below="@id/storage_attributes"
         android:text="Name:" />
     
     <EditText
         android:id="@+id/controller_name"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:text="BLABLA"
         android:layout_alignBaseline="@id/controller_name_label"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/controller_name_label"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/controller_type_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_marginTop="8dp"
         android:layout_alignRight="@id/controller_name_label"
         android:layout_below="@id/controller_name_label"

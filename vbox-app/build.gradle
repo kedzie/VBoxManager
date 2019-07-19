@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
 
@@ -64,43 +65,51 @@ dependencies {
     kapt project(path: ":kotlin-compiler")
 
     implementation deps.okHttp
+    implementation deps.okHttpLoggingInterceptor
 
-    implementation "androidx.appcompat:appcompat:1.0.0"
-    implementation "androidx.preference:preference:1.1.0-alpha01"
+    implementation "androidx.appcompat:appcompat:1.1.0-beta01"
+    implementation "androidx.preference:preference:1.1.0-beta01"
     implementation "androidx.gridlayout:gridlayout:1.0.0"
-    implementation "com.google.android.material:material:1.0.0"
-    implementation 'androidx.core:core-ktx:1.0.0'
+    implementation "com.google.android.material:material:1.1.0-alpha07"
+    implementation 'androidx.core:core-ktx:1.0.1'
+    implementation "androidx.fragment:fragment-ktx:1.1.0-alpha09"
+    implementation "androidx.drawerlayout:drawerlayout:1.1.0-alpha01"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
+
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha01'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-alpha01'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha01'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha01'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha01'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha01'
+
+    implementation "androidx.paging:paging-runtime-ktx:2.1.0"
+
+    implementation 'androidx.room:room-runtime:2.1.0'
+    implementation 'androidx.room:room-ktx:2.1.0'
+    kapt 'androidx.room:room-compiler:2.1.0'
+
+    implementation deps.navigationFragment
+    implementation deps.navigationUi
+
+    implementation "androidx.multidex:multidex:2.0.0"
 
     implementation deps.kotlin
     implementation deps.kotlinCoroutine
     implementation deps.kotlinCoroutineAndroid
 
-    implementation "commons-validator:commons-validator:1.4.0"
-
     implementation "com.google.guava:guava:24.1-jre"
-
-    implementation deps.butterknife
-    kapt deps.butterknifeCompiler
 
     implementation deps.timber
 
-    implementation deps.dagger
-    implementation deps.daggerAndroid
-    kapt deps.daggerCompiler
-    kapt deps.daggerAndroidCompiler
-    kaptAndroidTest deps.daggerCompiler
-    kaptAndroidTest deps.daggerAndroidCompiler
-    
+    implementation 'org.koin:koin-android:2.0.1'
+    implementation 'org.koin:koin-androidx-scope:2.0.1'
+    implementation 'org.koin:koin-androidx-viewmodel:2.0.1'
+
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.arch.core:core-testing:2.0.0";
     androidTestImplementation "androidx.test:runner:1.1.1";
     androidTestImplementation "androidx.test:rules:1.1.1";
-        
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.0", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
-    })
-    androidTestImplementation 'com.squareup:fest-android:1.0.5'
 }

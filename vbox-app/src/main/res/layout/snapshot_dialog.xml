@@ -1,71 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dip" >
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="8dip" >
 
-	<TextView
-	    android:id="@+id/snapshot_name_label"
-	    style="@style/MediumText"
-	    android:layout_alignParentLeft="true"
-	    android:layout_marginRight="8dip"
-	    android:text="@string/snapshot_name" />
-	
-	<EditText
-	    android:id="@+id/snapshot_name"
-	    android:inputType="textCapWords"
-	    android:text="@string/snapshot_name_new"
-	    android:gravity="start"
-	    android:nextFocusDown="@+id/snapshot_description"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignTop="@id/snapshot_name_label"
-	    android:layout_toRightOf="@id/snapshot_name_label"
-	    android:layout_alignParentRight="true" >
-		<requestFocus/>
-	</EditText>
-    
-    	<TextView 
-		android:id="@+id/snapshot_description_label"
-    	    	android:text="@string/snapshot_description"  
-		style="@style/MediumText"
-		android:layout_alignParentLeft="true"
-		android:layout_below="@id/snapshot_name"
-		android:layout_marginRight="8dip"  />
-    	
-    	<EditText
-		android:id="@+id/snapshot_description"
-		android:inputType="textMultiLine"
-		android:lines="4"
-		android:nextFocusDown="@id/button_save"
-		android:text="@string/snapshot_description_new" 
-    	    	android:gravity="start"
+	<com.google.android.material.textfield.TextInputLayout
+		android:id="@+id/snapshot_name_layout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignTop="@id/snapshot_description_label"
-		android:layout_toRightOf="@id/snapshot_description_label"
-		android:layout_alignParentRight="true"/>
+		android:hint="@string/snapshot_name"
+		app:endIconMode="clear_text">
 
-	<View 
-	    	android:id="@+id/space"
-	    	android:layout_width="8dp"
-	    	android:layout_height="8dp"
-	    	android:layout_centerHorizontal="true" />
-	
-	<ImageButton android:id="@+id/button_cancel" 
-	    	android:src="@drawable/ic_menu_close" 
-		android:layout_width="wrap_content" 
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/snapshot_name"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:inputType="text">
+			<requestFocus />
+		</com.google.android.material.textfield.TextInputEditText>
+
+	</com.google.android.material.textfield.TextInputLayout>
+
+	<com.google.android.material.textfield.TextInputLayout
+		android:id="@+id/snapshot_description_layout"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/snapshot_description"
+		android:layout_below="@id/snapshot_name_layout"
+		android:hint="@string/snapshot_description"
+		app:endIconMode="clear_text">
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/snapshot_description"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:inputType="text"/>
+
+	</com.google.android.material.textfield.TextInputLayout>
+
+	<View
+		android:id="@+id/space"
+		android:layout_width="8dp"
+		android:layout_height="8dp"
+		android:layout_centerHorizontal="true" />
+
+	<com.google.android.material.button.MaterialButton
+		android:id="@+id/button_cancel"
+		app:icon="@drawable/ic_menu_close"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/snapshot_description_layout"
 		android:layout_toLeftOf="@id/space"
 		android:layout_alignParentLeft="true"/>
-				
-	<ImageButton android:id="@+id/button_save"
-		android:src="@drawable/ic_menu_camera"
-		android:layout_width="wrap_content" 
+
+	<com.google.android.material.button.MaterialButton
+		android:id="@+id/button_save"
+		style="@style/Widget.MaterialComponents.Button.Icon"
+		app:icon="@drawable/ic_menu_camera"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/snapshot_description"
+		android:layout_below="@id/snapshot_description_layout"
 		android:layout_toRightOf="@id/space"
-		android:layout_alignParentRight="true"/>
-			
+		android:layout_alignParentRight="true" />
+
 </RelativeLayout>

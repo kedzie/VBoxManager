@@ -8,6 +8,12 @@
               android:background="@drawable/feature"
               android:gravity="bottom|center_horizontal">
 
+  <com.kedzie.vbox.host.HostView
+      android:id="@+id/hostView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
+
+
   <Spinner
     android:id="@+id/server_spinner"
     android:layout_width="wrap_content"

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/machine_actions"
+            android:checked="true"
+            android:icon="@drawable/ic_list_vbox"
+            android:title="@string/machine_tab_actions"/>
+
+    <item
+            android:id="@+id/machine_info"
+            android:icon="@drawable/ic_menu_info_details"
+            android:title="@string/machine_tab_info"/>
+
+    <item
+            android:id="@+id/machine_log"
+            android:icon="@drawable/ic_settings_network"
+            android:title="@string/machine_tab_log"/>
+
+    <item
+            android:id="@+id/machine_snapshot"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/machine_tab_snapshots"/>
+</menu>

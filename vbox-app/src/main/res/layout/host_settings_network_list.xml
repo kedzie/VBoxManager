@@ -13,28 +13,35 @@
 
 <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/host_interface_adapter_label"
-        style="@style/SmallTextPrimary"
-        android:layout_below="@id/host_interface_list"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignRight="@+id/host_interface_dhcp_enabled_label"
         android:text="@string/host_interface_adapter" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/host_interface_adapter"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignBaseline="@id/host_interface_adapter_label"
         android:layout_toRightOf="@id/host_interface_adapter_label"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@id/host_interface_dhcp_enabled_label"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/host_interface_adapter_label"
         android:text="@string/host_interface_dhcp_enabled" />
     
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
         android:id="@+id/host_interface_dhcp_enabled"
-        style="@style/SmallTextPrimary"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_alignBaseline="@id/host_interface_dhcp_enabled_label"
         android:layout_toRightOf="@id/host_interface_dhcp_enabled_label"/>
     

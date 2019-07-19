@@ -30,7 +30,7 @@ interface ISnapshot : IManagedObjectRef, Parcelable {
 	suspend fun getOnline(): Boolean
 
     @Cacheable("Parent")
-	suspend fun getParent(): ISnapshot
+	suspend fun getParent(): ISnapshot?
 
     @Cacheable("Children")
 	suspend fun getChildren(): List<ISnapshot>

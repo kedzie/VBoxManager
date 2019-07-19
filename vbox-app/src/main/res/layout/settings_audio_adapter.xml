@@ -10,8 +10,10 @@
         android:layout_height="wrap_content"
         android:text="Enable Audio" />
     
-    <TextView android:id="@+id/audio_driver_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/audio_driver_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/enabled" 
         android:text="Host Audio Driver:" />
     
@@ -21,8 +23,10 @@
         android:layout_toRightOf="@id/audio_driver_label"
         android:layout_alignTop="@id/audio_driver_label"/>
     
-    <TextView android:id="@+id/audio_controller_label"
-        style="@style/SmallTextPrimary" 
+    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/audio_controller_label"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:layout_below="@id/audio_driver" 
         android:layout_alignRight="@id/audio_driver_label"
         android:text="Audio Controller:" />

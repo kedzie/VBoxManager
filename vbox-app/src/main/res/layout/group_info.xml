@@ -32,38 +32,50 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/name_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:text="@string/name"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/name"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@id/name_label"
                 android:layout_toRightOf="@id/name_label"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/ostype_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_below="@id/name_label"
                 android:text="@string/operating_system"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/ostype"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@id/ostype_label"
                 android:layout_toRightOf="@id/ostype_label"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/groups_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_below="@id/ostype_label"
                 android:text="@string/groups"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/groups"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@id/groups_label"
                 android:layout_toRightOf="@id/groups_label"/>
 
@@ -80,50 +92,66 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/baseMemory_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:text="@string/base_memory"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/baseMemory"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@+id/baseMemory_label"
                 android:layout_toRightOf="@+id/baseMemory_label"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/processors_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_below="@+id/baseMemory_label"
                 android:text="@string/processors"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/processors"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@+id/processors_label"
                 android:layout_toRightOf="@+id/processors_label"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/bootOrder_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_below="@+id/processors_label"
                 android:text="@string/boot_order"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/bootOrder"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@+id/bootOrder_label"
                 android:layout_toRightOf="@+id/bootOrder_label"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/acceleration_label"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_below="@+id/bootOrder_label"
                 android:text="@string/acceleration"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/acceleration"
-                style="@style/SmallTextPrimary"
+                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_alignBaseline="@+id/acceleration_label"
                 android:layout_toRightOf="@+id/acceleration_label"/>
         </RelativeLayout>

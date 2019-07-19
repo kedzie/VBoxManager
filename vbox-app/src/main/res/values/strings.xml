@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:ff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">VirtualBox Manager</string>
-    <string name="server_name">Display Name:</string>
-    <string name="server_host">Host/IP Address:</string>
+    <string name="server_name">Display Name</string>
+    <string name="server_host">Host/IP Address</string>
+    <string name="server_host_help">VirtualBox webservice server</string>
+    <string name="server_host_error">Invalid host name or IP Address</string>
     <string name="server_ssl">Use SSL?</string>
-    <string name="server_port">Port:</string>
-    <string name="server_username">Username:</string>
-    <string name="server_password">Password:</string>
+    <string name="server_ssl_help">Secure communications, see vboxwebsrv documentation</string>
+    <string name="server_port">Port</string>
+    <string name="server_port_help">-P argument vboxwebsrv</string>
+    <string name="server_username">Username</string>
+    <string name="server_username_help">see vboxwebsrvauthlibrary</string>
+    <string name="server_password">Password</string>
+    <string name="server_password_help">see vboxwebsrvauthlibrary</string>
     <string name="metric_cpu">CPU Load</string>
     <string name="metric_ram">Memory Usage</string>
     <string name="menu_context_snapshot_details">View Details</string>
@@ -22,18 +28,16 @@
     <string name="pref_tab_transition_title">Transition Animation</string>
     <string name="pref_tab_transition_summary">Tab Transition Animation</string>
     <string name="pref_notifications">Event Notifications</string>
-    <string name="pref_notifications_summary">Publish VirtualBox® event notifications</string>
+    <string name="pref_notifications_summary">Publish VirtualBox event notifications</string>
     <string name="pref_category_general">General</string>
     <string name="pref_category_general_summary">General settings</string>
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_category_appearance_summary">Application visual appearance</string>
     <string name="pref_category_metrics">Metrics</string>
     <string name="pref_category_metrics_summary">Settings for displaying metric graphs</string>
-    
-    <string name="firstrun_welcome">Welcome</string>
-    <string name="event_handler_notification_title">VirtualBox® is connected</string>
-    <string name="firstrun_message">Make sure you VirtualBox® web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
-    <string name="event_handler_notification_content">You are connected to VirtualBox® server at <ff:g id="server">%1$s</ff:g>.  Events are being processed in real-time.</string>
+
+    <string name="event_handler_notification_title">VirtualBox is connected</string>
+     <string name="event_handler_notification_content">You are connected to VirtualBox server at <ff:g id="server">%1$s</ff:g>.  Events are being processed in real-time.</string>
     <string name="vbox_version">VirtualBox® v.<ff:g id="version">%1$s</ff:g></string>
     <string name="notification_text">Virtual Machine <ff:g id="vm">%1$s</ff:g> changed state to [<ff:g id="state">%2$s</ff:g>]</string>
     <string name="notification_title"><ff:g id="vm">%1$s</ff:g> is <ff:g id="state">%2$s</ff:g></string>
@@ -44,10 +48,7 @@
     <string name="snapshot_name_new">New Snapshot</string>
     <string name="snapshot_description_new">None</string>
     <string name="host_metrics">Host Metrics</string>
-    <string name="tab_actions">Actions</string>
-    <string name="tab_info">Info</string>
-    <string name="tab_log">Log</string>
-    <string name="tab_snapshots">Snapshots</string>
+    <string name="machine_metrics">VM Metrics</string>
     <string name="widget_server_list">Select Server for Widget</string>
 
     <string name="progress_notification_text">Operation <ff:g id="operation">%1$d</ff:g>/<ff:g id="operationCount">%2$d</ff:g> - <ff:g id="operationDescription">%3$s</ff:g></string>
@@ -56,36 +57,28 @@
 
     <string name="action_machine_settings">Machine Settings</string>
     <string name="action_start">Start</string>
+    <string name="action_reset">Reset</string>
     <string name="action_poweroff">Power Off</string>
     <string name="action_acpi">ACPI Button</string>
     <string name="action_save_state">Save State</string>
     <string name="action_discard_state">Discard State</string>
     <string name="action_pause">Pause</string>
     <string name="action_resume">Resume</string>
+    <string name="action_take_snapshot">Take Snapshot</string>
     <string name="action_edit_snapshot">Edit Snapshot</string>
     <string name="action_restore_snapshot">Restore Snapshot</string>
     <string name="action_delete_snapshot">Delete Snapshot</string>
-    
-    <string name="progress_taking_snapshot">Taking Snapshot</string>
-    <string name="progress_saving_state">Saving State</string>
-    <string name="progress_discarding_state">Discarding State</string>
-    <string name="progress_starting">Starting</string>
-    <string name="progress_powering_off">Powering Off</string>
-    <string name="progress_acpi_down">ACPI Powering Down</string>
-    <string name="progress_resuming">Resuming</string>
-    <string name="progress_pausing">Pausing</string>
-    <string name="progress_restarting">Restarting</string>
-    <string name="progress_creating_network_interface">Creating Network Interface</string>
-    <string name="progress_logging_off">Logging Off</string>
-    <string name="progress_connecting">Connecting</string>
-    <string name="progress_updating_keystore">Updating Keystore</string>
-    <string name="progress_loading_machines">Loading Machines</string>
-    <string name="progress_deleting_snapshot">Deleting Snapshot</string>
-    <string name="progress_restore_snapshot">Restoring Snapshot</string>
-    <string name="progress_load_storage_controllers">Loading Storage Controllers</string>
-    <string name="progress_mounting_medium">Mounting medium</string>
-    <string name="progress_loading_data_generic">Loading Data</string>
-    
+    <string name="action_take_screenshot">Take Screenshot</string>
+    <string name="action_view_metrics">View Metrics</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="machine_tab_actions">Actions</string>
+    <string name="machine_tab_info">Info</string>
+    <string name="machine_tab_log">Log</string>
+    <string name="machine_tab_snapshots">Snapshots</string>
+
+    <string name="logout_confirmation">This will log you out of the virtualbox server</string>
+
     <string name="contentDescription_preview">Preview</string>
     <string name="acceleration">Acceleration:</string>
     <string name="boot_order">Boot Order:</string>
@@ -105,10 +98,6 @@
     <string name="edit_server_actionmode_title">Edit Server</string>
     <string name="server_connect">Connect</string>
     <string name="cancelling_operation_toast">Cancelling Operation...</string>
-    <string name="pro_key_required_dialog_title">Not Authorized</string>
-    <string name="pro_key_required_dialog_message">This feature requires the Premium Version of the application.  Would you like to upgrade?</string>
-    <string name="pro_key_required_dialog_ok_button">Upgrade</string>
-    <string name="pro_key_required_dialog_cancel_button">Not Now</string>
     <string name="dhcp_mask">Server Mask</string>
     <string name="dhcp_lower_bound">Lower Address Bound</string>
     <string name="dhcp_upper_bound">Upper Address Bound</string>
@@ -139,6 +128,7 @@
     <string name="add">Add</string>
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="toast_discarding_settings">Discarded Settings</string>
     <string name="toast_saved_settings">Saved Settings</string>
     <string name="virtualbox_error_dialog_title">VirtualBox Error</string>
@@ -152,7 +142,27 @@
     <string name="help_main">&lt;H1&gt;Help&lt;/H1&gt;&lt;p&gt;To use this application the vboxwebsrv command (from the VirtualBox installation directory), must be running on your host.  &lt;em&gt;In Windows the default installation folder is C:\\Program Files\\Oracle\\VirtualBox&lt;/em&gt;&lt;/p&gt; &lt;code&gt;vboxwebsrv -H 0.0.0.0 -p 18083&lt;/code&gt;    &lt;p&gt;Then launch the Android app and create a new server definition with the IP address of the computer running VirtualBox and your normal OS login credentials.  You can also disable authentication by executing &lt;block&gt;vboxmanage setproperty websrvauthlibrary null&lt;/block&gt;    &lt;/p&gt;</string>
     <string name="help_ssl">&lt;H3&gt;SSL Support&lt;/H3&gt;&lt;p&gt;For SSL support you must have a the following: &lt;ul&gt;&lt;li&gt;PEM file containing server certificate and key (&lt;em&gt;self-signed or signed by authority&lt;/em&gt;)&lt;li&gt;CRT file containg Certificate Authority certificate (&lt;em&gt;not needed if self-signed server certificate&lt;/em&gt;)&lt;/ul&gt;&lt;/p&gt;  &lt;p&gt;To start the webservice execute &lt;/p&gt;  &lt;code&gt;vboxwebsrv -H 0.0.0.0 -p 18083 --ssl -K server.pem -c ca.crt&lt;/code&gt;  &lt;p&gt;For more info on creating a self-signed server certificate consult &lt;a href=\"http://www.openssl.org/docs/HOWTO/certificates.txt\"&gt;\"OpenSSL documentation\"&lt;/a&gt;&lt;/p&gt;</string>
     <string name="edit_virtualbox_server">Edit VirtualBox Server</string>
+    <string name="servers">VirtualBox Servers</string>
+
+    <string name="welcome_next">Next</string>
+    <string name="welcome_previous">Previous</string>
+    <string name="firstrun_welcome">Welcome</string>
+    <string name="firstrun_message">Make sure you VirtualBox web service is running.  i.e. vboxwebsrv --host <ff:g id="host">%1$s</ff:g> --port <ff:g id="port">%2$d</ff:g></string>
 
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_closed">Drawer Closed</string>
+
+    <string name="preferences">Preferences</string>
+
+    <string name="pref_notifications_title">Event Notifications</string>
+    <string name="pref_notifications_summary_on">Publish notifications</string>
+    <string name="pref_notifications_summary_off">Don\'t publish notifications</string>
+    <string name="pref_notifications_switch_on">On</string>
+    <string name="pref_notifications_switch_off">Off</string>
+
+    <string name="pref_metric_enabled_title">Metrics</string>
+    <string name="pref_metric_enabled_summary_on">Gather metrics</string>
+    <string name="pref_metric_enabled_summary_off">Don\'t gather metrics</string>
+    <string name="pref_metric_enabled_on">On</string>
+    <string name="pref_metric_enabled_off">Off</string>
 </resources>

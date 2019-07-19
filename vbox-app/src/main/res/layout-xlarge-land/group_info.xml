@@ -14,14 +14,26 @@
 	    android:layout_alignParentLeft="true">
 	    
 	    	<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
-	    	    <TextView android:id="@+id/name_label" style="@style/SmallTextPrimary" android:text="@string/name" />
-	    	    <TextView android:id="@+id/name" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/name_label" android:layout_toRightOf="@id/name_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/name_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/name" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/name" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@id/name_label" android:layout_toRightOf="@id/name_label" />
 
-	    	    <TextView android:id="@+id/ostype_label" style="@style/SmallTextPrimary" android:text="@string/operating_system" android:layout_below="@id/name_label"/>
-	    	    <TextView android:id="@+id/ostype" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/ostype_label" android:layout_toRightOf="@id/ostype_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/ostype_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/operating_system" android:layout_below="@id/name_label"/>
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/ostype" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@id/ostype_label" android:layout_toRightOf="@id/ostype_label" />
 	    	    
-	    	    <TextView android:id="@+id/groups_label" style="@style/SmallTextPrimary" android:text="@string/groups" android:layout_below="@id/ostype_label"/>
-	    	    <TextView android:id="@+id/groups" style="@style/SmallTextPrimary" android:layout_alignBaseline="@id/groups_label" android:layout_toRightOf="@id/groups_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/groups_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/groups" android:layout_below="@id/ostype_label"/>
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/groups" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@id/groups_label" android:layout_toRightOf="@id/groups_label" />
 		</RelativeLayout>
 	</com.kedzie.vbox.app.CollapsiblePanelView>
 	
@@ -36,17 +48,33 @@
 	    android:layout_toLeftOf="@id/previewPanel">
 	    	
 	    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent" >
-	    	    <TextView android:id="@+id/baseMemory_label" style="@style/SmallTextPrimary" android:text="@string/base_memory" />
-	    	    <TextView android:id="@+id/baseMemory" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/baseMemory_label" android:layout_toRightOf="@+id/baseMemory_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/baseMemory_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/base_memory" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/baseMemory" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@+id/baseMemory_label" android:layout_toRightOf="@+id/baseMemory_label" />
 
-	    	    <TextView android:id="@+id/processors_label" style="@style/SmallTextPrimary" android:text="@string/processors" android:layout_below="@+id/baseMemory_label"/>
-	    	    <TextView android:id="@+id/processors" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/processors_label" android:layout_toRightOf="@+id/processors_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/processors_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/processors" android:layout_below="@+id/baseMemory_label"/>
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/processors" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@+id/processors_label" android:layout_toRightOf="@+id/processors_label" />
 	    	    
-	    	    <TextView android:id="@+id/bootOrder_label" style="@style/SmallTextPrimary" android:text="@string/boot_order" android:layout_below="@+id/processors_label"/>
-	    	    <TextView android:id="@+id/bootOrder" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/bootOrder_label" android:layout_toRightOf="@+id/bootOrder_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/bootOrder_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/boot_order" android:layout_below="@+id/processors_label"/>
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/bootOrder" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@+id/bootOrder_label" android:layout_toRightOf="@+id/bootOrder_label" />
 	    	    
-	    	    <TextView android:id="@+id/acceleration_label" style="@style/SmallTextPrimary" android:text="@string/acceleration" android:layout_below="@+id/bootOrder_label"/>
-	    	    <TextView android:id="@+id/acceleration" style="@style/SmallTextPrimary" android:layout_alignBaseline="@+id/acceleration_label" android:layout_toRightOf="@+id/acceleration_label" />
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/acceleration_label" android:textAppearance="?attr/textAppearanceBody1" android:text="@string/acceleration" android:layout_below="@+id/bootOrder_label"/>
+	    	    <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/acceleration" android:textAppearance="?attr/textAppearanceBody1" android:layout_alignBaseline="@+id/acceleration_label" android:layout_toRightOf="@+id/acceleration_label" />
 		</RelativeLayout>
 	</com.kedzie.vbox.app.CollapsiblePanelView>
 		

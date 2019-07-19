@@ -6,7 +6,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap(prefix="ISnapshotEvent")
-interface ISnapshotEvent : IEvent {
+interface ISnapshotEvent : IMachineEvent {
 
     @Cacheable("snapshotId")
 	suspend fun getSnapshotId(): String

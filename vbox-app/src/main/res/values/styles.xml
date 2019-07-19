@@ -1,48 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="SmallText" parent="@android:style/TextAppearance.Small">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-    </style>
-    
-    <style name="SmallTextPrimary" parent="@style/SmallText">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-
-    <style name="MediumText" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-    
-    <style name="BoldText" parent="@android:style/TextAppearance.Medium">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-
-    <style name="HeaderText" parent="@android:style/TextAppearance.Large">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-    
-    <style name="ErrorMessage" parent="@style/MediumText">
-        <item name="android:textColor">@color/red</item>
-        <item name="android:textStyle">bold|italic</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:layout_marginTop">12dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-    </style>
-
-    <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorOnBackground">@color/black</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimary">@color/midnight_blue</item>
+        <item name="colorPrimaryVariant">@color/blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/yellow</item>
+        <item name="colorSecondaryVariant">@color/yellow_dark</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorError">@color/white</item>
+        <item name="colorOnError">@color/red</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="@style/AppTheme">
@@ -50,5 +23,12 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="MetricView">
+        <item name="backgroundColor">?attr/colorSurface</item>
+        <item name="gridColor">?attr/colorOnSurface</item>
+        <item name="textColor">?android:attr/textColorPrimary</item>
+        <item name="borderColor">?attr/colorSecondary</item>
     </style>
 </resources>

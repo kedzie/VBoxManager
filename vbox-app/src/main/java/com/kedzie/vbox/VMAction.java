@@ -7,30 +7,33 @@ import com.kedzie.vbox.api.jaxb.MachineState;
  * @author Marek Kedzierski
  */
 public enum VMAction {
-	START(VBoxApplication.getInstance().getResources().getString(R.string.action_start)),
-	RESET("Reset"),
-	PAUSE(VBoxApplication.getInstance().getResources().getString(R.string.action_pause)),
-	RESUME(VBoxApplication.getInstance().getResources().getString(R.string.action_resume)),
-	TAKE_SNAPSHOT("Take Snapshot"),
-	RESTORE_SNAPSHOT(VBoxApplication.getInstance().getResources().getString(R.string.action_restore_snapshot)),
-	DELETE_SNAPSHOT(VBoxApplication.getInstance().getResources().getString(R.string.action_delete_snapshot)),
-	SAVE_STATE(VBoxApplication.getInstance().getResources().getString(R.string.action_save_state)),
-	DISCARD_STATE(VBoxApplication.getInstance().getResources().getString(R.string.action_discard_state)),
-	POWER_BUTTON(VBoxApplication.getInstance().getResources().getString(R.string.action_acpi)),
-	POWER_OFF(VBoxApplication.getInstance().getResources().getString(R.string.action_poweroff)),
-	VIEW_METRICS("View Metrics"),
-	TAKE_SCREENSHOT("Take Screenshot"),
-	EDIT_SETTINGS("Settings");
+	START(R.string.action_start, R.drawable.ic_list_start),
+	RESET(R.string.action_reset, R.drawable.ic_list_reset),
+	PAUSE(R.string.action_pause, R.drawable.ic_list_pause),
+	RESUME(R.string.action_resume, R.drawable.ic_list_start),
+	TAKE_SNAPSHOT(R.string.action_take_snapshot, R.drawable.ic_list_snapshot_add),
+	RESTORE_SNAPSHOT(R.string.action_restore_snapshot, R.drawable.ic_list_snapshot),
+	DELETE_SNAPSHOT(R.string.action_delete_snapshot, R.drawable.ic_list_snapshot_del),
+	SAVE_STATE(R.string.action_save_state, R.drawable.ic_list_save),
+	DISCARD_STATE(R.string.action_discard_state, R.drawable.ic_list_save),
+	POWER_BUTTON(R.string.action_acpi, R.drawable.ic_list_acpi),
+	POWER_OFF(R.string.action_poweroff, R.drawable.ic_list_poweroff),
+	VIEW_METRICS(R.string.action_view_metrics, R.drawable.ic_menu_metrics),
+	TAKE_SCREENSHOT(R.string.action_take_screenshot, R.drawable.ic_list_snapshot_add),
+	EDIT_SETTINGS(R.string.action_settings, R.drawable.ic_menu_settings);
 
-	private String _val;
+	private int value;
+	private int drawable;
 
-	private VMAction(String val) {
-		_val=val;
+	VMAction(int value, int drawable) {
+
+		this.value=value;
+		this.drawable = drawable;
 	}
 
-	public String toString() {
-		return _val;
-	}
+	public int value() { return value; }
+
+	public int drawable() { return drawable; }
 
 	/**
 	 * Which actions can be performed on a Virtual Machine for each {@link MachineState}

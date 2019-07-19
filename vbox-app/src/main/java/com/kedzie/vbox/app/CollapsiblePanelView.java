@@ -47,6 +47,8 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
         private final int mDeltaHeight;
         private final int mStartRotation;
         private final int mDeltaRotation;
+		private final int mStartAlpha;
+		private final int mDeltaAlpha;
 		private final boolean mExpanding;
 
         public PanelAnimation(boolean expanding, int startHeight, int endHeight) {
@@ -58,16 +60,18 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
             if(isExpanding()) {
             	mStartRotation = mCollapseRotation;
             	mDeltaRotation = mCollapseRotation*-1;
+				mStartAlpha = 0;
+				mDeltaAlpha = 1;
             } else {
             	mStartRotation = 0;
             	mDeltaRotation = mCollapseRotation;
+				mStartAlpha = 1;
+				mDeltaAlpha = -1;
             }
             setAnimationListener(new AnimationAdapter() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    if(isCollapsing()) {
-						mContents.setAlpha(0f);
-                    } else {
+                    if(isExpanded()) {
 						setExpanded(true);
                     }
                 }
@@ -77,8 +81,6 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
                     if(isCollapsing()) {
 						setExpanded(false);
                         mFrame.setVisibility(View.GONE);
-                    } else {
-						mContents.setAlpha(1f);
                     }
                 }
             });
@@ -90,6 +92,8 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             mFrame.setLayoutParams(lp);
 			mCollapseButton.setRotation(mStartRotation + mDeltaRotation*interpolatedTime);
+			mContents.setAlpha(mStartAlpha + mDeltaAlpha*interpolatedTime);
+
         }
 
         @Override
@@ -152,9 +156,6 @@ public class CollapsiblePanelView extends LinearLayout implements OnClickListene
 			collapse(false);
 //		else
 //			expand(false);
-
-		if(Utils.isVersion(Build.VERSION_CODES.HONEYCOMB))
-			setLayerType(LAYER_TYPE_HARDWARE, null);
 	}
 
 	/**

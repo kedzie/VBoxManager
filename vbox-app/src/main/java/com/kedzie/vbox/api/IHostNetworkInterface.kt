@@ -57,4 +57,7 @@ interface IHostNetworkInterface : IManagedObjectRef, Parcelable {
 
     @Cacheable("DHCPRediscover")
     suspend fun DHCPRediscover(): Boolean
+
+    suspend fun enableStaticIPConfig(IPAddress: String, networkMask: String)
+    suspend fun enableStaticIPConfigV6(IPV6Address: String, @Ksoap(type= "unsignedInt") IPV6NetworkMaskPrefixLength: Int)
 }
