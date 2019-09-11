@@ -12,19 +12,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import com.kedzie.vbox.R
+import com.kedzie.vbox.api.CacheDatabase
 import com.kedzie.vbox.api.IMachine
+import com.kedzie.vbox.api.IVirtualBoxProxy
 import com.kedzie.vbox.machine.MachineListViewModel
 import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.android.synthetic.main.server_list.*
 import kotlinx.android.synthetic.main.simple_selectable_list_item.view.*
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
 class ServerListFragment : Fragment() {
 
-    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
-        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
+    private val model: MachineListViewModel by sharedViewModel()
 
     private var dualPane: Boolean = false
 
@@ -86,9 +88,9 @@ class ServerListFragment : Fragment() {
         list!!.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             listener?.onServerSelected(adapter.getItem(position))
         }
-        model.vmgr.observe(this, Observer {
+        model.vbox.observe(this, Observer {
             if (dualPane) {
-                list!!.setSelection(adapter.getPosition(it.server))
+                list!!.setSelection(adapter.getPosition(it?.api?.server))
             }
         })
         registerForContextMenu(list!!)
@@ -121,8 +123,9 @@ class ServerListFragment : Fragment() {
         when (item.itemId) {
             R.id.server_list_context_menu_select -> {
                 model.viewModelScope.launch {
-                    login(activity!!, adapter.getItem(position)) {
-                        model.vmgr.postValue(it)
+                    login(activity!!, adapter.getItem(position))?.let {
+                        val vmgr = get<VBoxSvc> { parametersOf(it) }
+                        model.vbox.postValue(IVirtualBoxProxy(vmgr, get(), "").logon(it.username, it.password))
                     }
                 }
                 return true

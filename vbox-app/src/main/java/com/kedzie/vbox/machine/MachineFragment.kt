@@ -21,8 +21,7 @@ import timber.log.Timber
 
 class MachineFragment : Fragment() {
 
-    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
-        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
+    private val model: MachineListViewModel by sharedViewModel()
 
     private fun loadData() {
         model.machine.value?.let {

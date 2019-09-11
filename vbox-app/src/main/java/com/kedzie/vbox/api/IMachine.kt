@@ -2,140 +2,135 @@ package com.kedzie.vbox.api
 
 import android.os.Parcelable
 import android.util.Base64
+import androidx.lifecycle.LiveData
 import com.kedzie.vbox.api.jaxb.*
-import com.kedzie.vbox.machine.group.TreeNode
 import com.kedzie.vbox.soap.Cacheable
 import com.kedzie.vbox.soap.Ksoap
 import com.kedzie.vbox.soap.KsoapProxy
 import kotlinx.android.parcel.Parcelize
 import java.io.IOException
-import java.util.ArrayList
+import java.util.*
 
 @KsoapProxy
 @Ksoap
-interface IMachine : IManagedObjectRef, Parcelable {
-
-
+interface IMachine : IManagedObjectRef {
 
     /**
      * @return UUID of the virtual machine.
      */
     @Cacheable("id")
-    suspend fun getId(): String
+    fun getId(): LiveData<String>
 
     @Cacheable("name")
-    suspend fun getName(): String
+    fun getName(): LiveData<String>
     suspend fun setName(@Cacheable("name") name: String)
     @Cacheable("name", get = false) suspend fun getNameNoCache(): String
 
     @Cacheable("description")
-    suspend fun getDescription(): String
+    fun getDescription(): LiveData<String>
     suspend fun setDescription(@Cacheable("description") description: String)
 
     /**
      * @return User-defined identifier of the Guest OS type.
      */
-    @Cacheable("OSTypeId")
-    suspend fun getOSTypeId(): String
-    suspend fun setOSTypeId(@Cacheable("OSTypeId") osTypeId: String)
-    @Cacheable("OSTypeId", get = false) suspend fun getOSTypeIdNoCache(): String
+    @Cacheable("osTypeId")
+    fun getOSTypeId(): LiveData<String>
+    suspend fun setOSTypeId(@Cacheable("osTypeId") osTypeId: String)
+    @Cacheable("osTypeId", get = false) suspend fun getOSTypeIdNoCache(): String
 
     /**
      * @return Number of virtual CPUs in the VM.
      */
-    @Cacheable("CPUCount")
-    suspend fun getCPUCount(): Int
-    suspend fun setCPUCount(@Cacheable("CPUCount") @Ksoap(type = "unsignedInt") CPUCount: Int)
+    @Cacheable("cpuCount")
+    fun getCPUCount(): LiveData<Int>
+    suspend fun setCPUCount(@Cacheable("cpuCount") @Ksoap(type = "unsignedInt") CPUCount: Int)
 
 
     /**
      * This setting determines whether VirtualBox allows CPU hotplugging for this machine.
      */
-    @Cacheable("CPUHotPlugEnabled")
-    suspend fun getCPUHotPlugEnabled(): Boolean;
+    @Cacheable("cpuHotPlugEnabled")
+    fun getCPUHotPlugEnabled(): LiveData<Boolean>;
 
     /**
      * @return Number of virtual CPUs in the VM.
      */
-    @Cacheable("CPUExecutionCap")
-    suspend fun getCPUExecutionCap(): Int
-    suspend fun setCPUExecutionCap(@Cacheable("CPUExecutionCap") @Ksoap(type = "unsignedInt") CPUExecutionCap: Int)
+    @Cacheable("cpuExecutionCap")
+    fun getCPUExecutionCap(): LiveData<Int>
+    suspend fun setCPUExecutionCap(@Cacheable("cpuExecutionCap") @Ksoap(type = "unsignedInt") CPUExecutionCap: Int)
 
     /**
      * @return System memory size in megabytes.
      */
     @Cacheable("memorySize")
-    suspend fun getMemorySize(): Int
+    fun getMemorySize(): LiveData<Int>
     suspend fun setMemorySize(@Cacheable("memorySize") @Ksoap(type = "unsignedInt") memorySize: Int)
 
     /**
      * @return Memory balloon size in megabytes.
      */
-    @Cacheable("MemoryBalloonSize")
-    suspend fun getMemoryBalloonSize(): Int
+    @Cacheable("memoryBalloonSize")
+    fun getMemoryBalloonSize(): LiveData<Int>
 
     /**
      * @return Video memory size in megabytes.
      */
-    @Cacheable("VRAMSize")
-    suspend fun getVRAMSize(): Int
-    suspend fun setVRAMSize(@Cacheable("VRAMSize") @Ksoap(type = "unsignedInt") VRAMSize: Int)
+    @Cacheable("vramSize")
+    fun getVRAMSize(): LiveData<Int>
+    suspend fun setVRAMSize(@Cacheable("vramSize") @Ksoap(type = "unsignedInt") VRAMSize: Int)
 
     /**
      * @return This setting determines whether VirtualBox allows this machine to make use of the 3D graphics support available on the host.
      */
     @Cacheable("accelerate3DEnabled")
-    suspend fun getAccelerate3DEnabled(): Boolean
+    fun getAccelerate3DEnabled(): LiveData<Boolean>
     suspend fun setAccelerate3DEnabled(@Cacheable("accelerate3DEnabled") @Ksoap(type = "Boolean") accelerate3DEnabled: Boolean)
 
     /**
      * @return This setting determines whether VirtualBox allows this machine to make use of the 2D video acceleration support available on the host.
      */
-    @Cacheable("Accelerate2DVideoEnabled")
-    suspend fun getAccelerate2DVideoEnabled(): Boolean
-    suspend fun setAccelerate2DVideoEnabled(@Cacheable("Accelerate2DVideoEnabled") @Ksoap(type = "Boolean") accelerate2DVideoEnabled: Boolean)
+    @Cacheable("accelerate2DVideoEnabled")
+    fun getAccelerate2DVideoEnabled(): LiveData<Boolean>
+    suspend fun setAccelerate2DVideoEnabled(@Cacheable("accelerate2DVideoEnabled") @Ksoap(type = "Boolean") accelerate2DVideoEnabled: Boolean)
 
     /**
      * @return Number of virtual monitors.
      */
-    @Cacheable("MonitorCount")
-    suspend fun getMonitorCount(): Int
-    suspend fun setMonitorCount(@Cacheable("MonitorCount") @Ksoap(type = "unsignedInt") monitorCount: Int)
+    @Cacheable("monitorCount")
+    fun getMonitorCount(): LiveData<Int>
+    suspend fun setMonitorCount(@Cacheable("monitorCount") @Ksoap(type = "unsignedInt") monitorCount: Int)
 
     /**
      * @return This attribute controls if High Precision Event Timer (HPET) is enabled in this VM.
      */
-    @Cacheable("HPETEnabled")
-    suspend fun getHPETEnabled(): Boolean
-    suspend fun setHPETEnabled(@Cacheable("HPETEnabled") HPETEnabled: Boolean)
+    @Cacheable("hpetEnabled")
+    fun getHPETEnabled(): LiveData<Boolean>
+    suspend fun setHPETEnabled(@Cacheable("hpetEnabled") HPETEnabled: Boolean)
 
     /**
      * @return  Chipset type used in this VM.
      */
     @Cacheable("chipsetType")
-    suspend fun getChipsetType(): ChipsetType
+    fun getChipsetType(): LiveData<ChipsetType>
     suspend fun setChipsetType(@Cacheable("chipsetType") chipsetType: ChipsetType)
 
     @Cacheable("firmwareType")
-    suspend fun getFirmwareType(): FirmwareType
+    fun getFirmwareType(): LiveData<FirmwareType>
     suspend fun setFirmwareType(@Cacheable("firmwareType") firmwareType: FirmwareType)
 
-    @Cacheable("RTCUseUTC")
-    suspend fun getRTCUseUTC(): Boolean
-    suspend fun setRTCUseUTC(@Cacheable("RTCUseUTC") RTCUseUTC: Boolean)
+    @Cacheable("rtcUseUTC")
+    fun getRTCUseUTC(): LiveData<Boolean>
+    suspend fun setRTCUseUTC(@Cacheable("rtcUseUTC") RTCUseUTC: Boolean)
 
     /**
      * <p>Array of machine group names of which this machine is a member. </p>
      * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and
      * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
      */
-    @Cacheable("groups")
     suspend fun getGroups(): List<String>
-    suspend fun setGroups(@Cacheable("groups") group: List<String>)
-    @Cacheable("groups")
-    fun getGroupsCacheOnly(): List<String>
+    suspend fun setGroups(group: List<String>)
 
-    @Cacheable("BIOSSettings")
+    @Cacheable("biosSettings")
     suspend fun getBIOSSettings(): IBIOSSettings
 
     suspend fun getHWVirtExProperty(property: HWVirtExPropertyType): Boolean
@@ -149,16 +144,14 @@ interface IMachine : IManagedObjectRef, Parcelable {
 
     suspend fun setBootOrder(@Ksoap(type = "unsignedInt") position: Int, device: DeviceType)
 
-    @Cacheable("AudioAdapter")
+    @Cacheable("audioAdapter")
     suspend fun getAudioAdapter(): IAudioAdapter
 
-    @Cacheable("MediumAttachments")
 	suspend fun getMediumAttachments(): List<IMediumAttachment>
     suspend fun getMedium(name: String, @Ksoap(type = "int") controllerPort: Int, @Ksoap(type = "int") device: Int): IMedium
-    suspend fun getMediumAttachment(name: String, @Ksoap(type = "int") controllerPort: Int, @Ksoap(type = "int") device: Int): IMediumAttachment
+    suspend fun getMediumAttachment(name: String, @Ksoap(type = "int") controllerPort: Int, @Ksoap(type = "int") device: Int):  IMediumAttachment
     suspend fun getMediumAttachmentsOfController( name: String): List<IMediumAttachment>
 
-    @Cacheable("StorageControllers")
 	suspend fun getStorageControllers(): List<IStorageController>
     suspend fun getStorageControllerByName(name: String): IStorageController
     suspend fun getStorageControllerByInstance(@Ksoap(type = "unsignedInt") instance: Int): IStorageController
@@ -196,7 +189,7 @@ interface IMachine : IManagedObjectRef, Parcelable {
     /**
      * @return  Full path to the directory used to store snapshot data (differencing media and saved state files) of this machine.
      */
-    @Cacheable("SnapshotFolder")
+    @Cacheable("snapshotFolder")
 	suspend fun getSnapshotFolder(): String
 
     suspend fun  getNetworkAdapter(@Ksoap(type="unsignedInt") slot: Int): INetworkAdapter
@@ -204,39 +197,39 @@ interface IMachine : IManagedObjectRef, Parcelable {
     /**
      * @return  VirtualBox Remote Desktop Extension (VRDE) server object.
      */
-    @Cacheable("VRDEServer")
+    @Cacheable("vrdeServer")
 	suspend fun getVRDEServer(): IVRDEServer
 
     /**
      * @return Current session state for this machine.
      */
-    @Cacheable("SessionState")
+    @Cacheable("sessionState")
 	suspend fun getSessionState(): SessionState
 
-    @Cacheable("SessionState", get = false)
+    @Cacheable("sessionState", get = false)
     suspend fun getSessionStateNoCache(): SessionState
 
     /**
      * @return  Type of the session.
      */
-    @Cacheable("SessionType")
+    @Cacheable("sessionType")
 	suspend fun getSessionType(): SessionType
 
-    @Cacheable("SettingsModified")
+    @Cacheable("settingsModified")
 	suspend fun getSettingsModified(): Boolean
 
     /**
      * @return Identifier of the session process.
      */
-    @Cacheable("SessionPid")
+    @Cacheable("sessionPid")
 	suspend fun getSessionPid(): Int
 
     /**
      * @return Current execution state of this machine.
      */
-    @Cacheable("State")
+    @Cacheable("state")
     suspend fun getState(): MachineState
-    @Cacheable("State", get = false)
+    @Cacheable("state", get = false)
     suspend fun getStateNoCache(): MachineState
 
     /**
@@ -248,26 +241,26 @@ interface IMachine : IManagedObjectRef, Parcelable {
     /**
      * @return	Current snapshot of this machine.
      */
-    @Cacheable("CurrentSnapshot")
+    @Cacheable("currentSnapshot")
     suspend fun getCurrentSnapshot(): ISnapshot?
-    @Cacheable("CurrentSnapshot", get = false)
+    @Cacheable("currentSnapshot", get = false)
     suspend fun getCurrentSnapshotNoCache(): ISnapshot?
 
     /**
      * @return Returns true if the current state of the machine is not identical to the state stored in the current snapshot.
      */
-    @Cacheable("CurrentStateModified")
+    @Cacheable("currentStateModified")
 	suspend fun getCurrentStateModified(): Boolean
-    @Cacheable("CurrentStateModified", get = false)
+    @Cacheable("currentStateModified", get = false)
     suspend fun getCurrentStateModifiedNoCache(): Boolean
 
-    @Cacheable("IOCacheEnabled")
+    @Cacheable("ioCacheEnabled")
 	suspend fun getIOCacheEnabled(): Boolean
-    suspend fun setIOCacheEnabled(@Cacheable("IOCacheEnabled") IOCacheEnabled: Boolean)
+    suspend fun setIOCacheEnabled(@Cacheable("ioCacheEnabled") IOCacheEnabled: Boolean)
 
-    @Cacheable("IOCacheSize")
+    @Cacheable("ioCacheSize")
 	suspend fun getIOCacheSize(): Int
-    suspend fun setIOCacheSize(@Cacheable("IOCacheSize") @Ksoap(type="unsignedInt") IOCacheSize: Int)
+    suspend fun setIOCacheSize(@Cacheable("ioCacheSize") @Ksoap(type="unsignedInt") IOCacheSize: Int)
 
     /**
      *
@@ -444,18 +437,6 @@ enum class LaunchMode(val value: String) {
 
 @Parcelize
 data class MachineInfo(val machine: IMachine, var screenshot: Screenshot?) : Parcelable
-
-/**
- * Cache commonly used Machine properties
- * @param machine
- */
-suspend fun IMachine.cacheProperties() {
-    getNameNoCache()
-    getStateNoCache()
-    getCurrentStateModifiedNoCache()
-    getOSTypeIdNoCache()
-    getCurrentSnapshotNoCache()
-}
 
 suspend fun IMachine.readSavedScreenshot(screenId: Int): Screenshot {
     val info = querySavedScreenshotInfo(screenId)

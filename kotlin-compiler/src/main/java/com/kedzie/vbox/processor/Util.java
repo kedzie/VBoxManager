@@ -54,12 +54,6 @@ final class Util {
         return (PackageElement) type;
     }
 
-    /** Returns true if {@code name} is the name of a platform-provided class. */
-    public static boolean isPlatformType(String name) {
-        return name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("android.");
-    }
-
-
     /** Returns a string for the raw type of {@code type}. Primitive types are always boxed. */
     public static String rawTypeToString(TypeMirror type, char innerClassSeparator) {
         if(type.getKind()==TypeKind.VOID)
@@ -73,26 +67,6 @@ final class Util {
         return result.toString();
     }
 
-    /**
-     * Returns true if {@code value} can be assigned to {@code expectedClass}.
-     * Like {@link Class#isInstance} but more lenient for {@code Class<?>} values.
-     */
-    private static boolean lenientIsInstance(Class<?> expectedClass, Object value) {
-        if (expectedClass.isArray()) {
-            Class<?> componentType = expectedClass.getComponentType();
-            if (!(value instanceof Object[])) {
-                return false;
-            }
-            for (Object element : (Object[]) value) {
-                if (!lenientIsInstance(componentType, element)) return false;
-            }
-            return true;
-        } else if (expectedClass == Class.class) {
-            return value instanceof TypeMirror;
-        } else {
-            return expectedClass == value.getClass();
-        }
-    }
 
     static void rawTypeToString(StringBuilder result, TypeElement type,
                                 char innerClassSeparator) {
@@ -112,16 +86,5 @@ final class Util {
     public static boolean isEnum(TypeMirror typeMirror) {
         return typeMirror instanceof DeclaredType
                 && ((DeclaredType) typeMirror).asElement().getKind() == ElementKind.ENUM;
-    }
-
-    /**
-     * An exception thrown when a type is not extant (returns as an error type),
-     * usually as a result of another processor not having yet generated its types upon
-     * which a dagger-annotated type depends.
-     */
-    final static class CodeGenerationIncompleteException extends IllegalStateException {
-        public CodeGenerationIncompleteException(String s) {
-            super(s);
-        }
     }
 }

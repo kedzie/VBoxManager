@@ -35,8 +35,7 @@ import java.util.*
  */
 class ScreenshotDialogFragment : DialogFragment() {
 
-    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
-        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
+    private val model: MachineListViewModel by sharedViewModel()
 
     private lateinit var bitmap: Bitmap
     private val filename = "screenshot_" + DateFormat.format("yyyyMMdd_hmmssaa", Date()) + ".jpg"
@@ -84,7 +83,7 @@ class ScreenshotDialogFragment : DialogFragment() {
         private const val BUNDLE_BYTES = "bytes"
 
         fun getInstance(bytes: ByteArray) = ScreenshotDialogFragment().apply {
-            arguments = BundleBuilder().putByteArray(BUNDLE_BYTES, bytes).create()
+            arguments = Bundle.putByteArray(BUNDLE_BYTES, bytes).create()
         }
     }
 }

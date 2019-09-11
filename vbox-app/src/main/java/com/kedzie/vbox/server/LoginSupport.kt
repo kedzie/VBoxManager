@@ -23,7 +23,7 @@ import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.resume
 
 
-suspend fun CoroutineScope.login(activity: Activity, server: Server, callback: (VBoxSvc) -> Unit) {
+suspend fun login(activity: Activity, server: Server) : Server? {
     if (server.isSSL) {
         val chain = suspendCancellableCoroutine<Array<X509Certificate>?> {
             val envelope = SoapSerializationEnvelope(SoapEnvelope.VER11)
@@ -69,45 +69,41 @@ suspend fun CoroutineScope.login(activity: Activity, server: Server, callback: (
         }
         if (chain == null) {
             //we have no untrusted certs, login
-            val vmgr = VBoxSvc(server)
-            vmgr.logon()
-            callback(vmgr)
+            return server
         } else {
             val root = chain[chain.size - 1]
             val text = String.format("Issuer: %1\$s\nSubject: %2\$s", root.issuerDN.name, root.subjectDN.name)
 
-            AlertDialog.Builder(activity)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Unrecognized Certificate")
-                    .setMessage("Do you trust this certificate?\n$text")
-                    .setPositiveButton("Trust") { dialog, which ->
-                        //                try {
-                        //                  Intent intent = KeyChain.createInstallIntent().putExtra(KeyChain.EXTRA_CERTIFICATE, root.getEncoded());
-                        //                  Utils.startActivityForResult(activity, intent, REQUEST_CODE_KEYCHAIN);
-                        //                } catch (CertificateEncodingException e) {
-                        //                  Timber.e(e, "Error encoding certificate");
-                        //                }
-                        launch(Dispatchers.IO) {
-                            val root = chain[chain.size - 1]
-                            val alias = String.format("%1\$s-$2\$d", server.toString(), root.subjectDN.hashCode())
-                            Timber.d( "Created new certificate entry alias: $alias")
-                            SSLUtil.getKeystore().setEntry(alias, KeyStore.TrustedCertificateEntry(root), null)
-                            SSLUtil.storeKeystore()
-
-                            withContext(Dispatchers.Main) {
-                                val vmgr = VBoxSvc(server)
-                                vmgr.logon()
-                                callback(vmgr)
-                            }
-                        }
-                        dialog.dismiss()
-                    }.setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }.show()
+            return suspendCancellableCoroutine<Server?> {
+                AlertDialog.Builder(activity)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Unrecognized Certificate")
+                        .setMessage("Do you trust this certificate?\n$text")
+                        .setPositiveButton("Trust") { dialog, which ->
+                            it.resume(server)
+                            dialog.dismiss()
+                        }.setNegativeButton("Cancel") { dialog, which ->
+                            it.resume(null)
+                            dialog.dismiss() }.show()
+            }?.apply {
+                //                try {
+                //                  Intent intent = KeyChain.createInstallIntent().putExtra(KeyChain.EXTRA_CERTIFICATE, root.getEncoded());
+                //                  Utils.startActivityForResult(activity, intent, REQUEST_CODE_KEYCHAIN);
+                //                } catch (CertificateEncodingException e) {
+                //                  Timber.e(e, "Error encoding certificate");
+                //                }
+                withContext(Dispatchers.IO) {
+                    val root = chain[chain.size - 1]
+                    val alias = String.format("%1\$s-$2\$d", server.toString(), root.subjectDN.hashCode())
+                    Timber.d( "Created new certificate entry alias: $alias")
+                    SSLUtil.getKeystore().setEntry(alias, KeyStore.TrustedCertificateEntry(root), null)
+                    SSLUtil.storeKeystore()
+                }
+            }
         }
     }
     else {
-        val vmgr = VBoxSvc(server)
-        vmgr.logon()
-        callback(vmgr)
+        return server
     }
 }
 

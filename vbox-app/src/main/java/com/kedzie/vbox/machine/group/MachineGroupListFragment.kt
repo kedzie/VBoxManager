@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.ViewFlipper
 import androidx.core.widget.NestedScrollView
@@ -21,21 +20,16 @@ import com.kedzie.vbox.api.IMachineStateChangedEvent
 import com.kedzie.vbox.app.Utils
 import com.kedzie.vbox.machine.MachineListViewModel
 import com.kedzie.vbox.machine.MachineView
-import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.android.synthetic.main.vmgroup_list_header.view.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 class MachineGroupListFragment : Fragment(),
         View.OnClickListener,
         OnDrillDownListener {
 
-    private val model: MachineListViewModel by sharedViewModel { activity!!.intent.let {
-        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
-
-
+    private val model: MachineListViewModel by sharedViewModel()
 
     private lateinit var root: VMGroup
 
@@ -53,26 +47,6 @@ class MachineGroupListFragment : Fragment(),
     private val mGroupViewMap = HashMap<String, MutableList<VMGroupPanel>>()
 
 
-    //TODO implement programmatic selection
-    var selectedObject: TreeNode?
-        get() {
-            if (_selected is VMGroupPanel) {
-                return (_selected as VMGroupPanel).group
-            } else if (_selected is MachineView) {
-                return (_selected as MachineView).machine
-            }
-            return null
-        }
-        set(value) {
-            if (value is IHost) {
-
-            } else if (value is IMachine) {
-
-            } else if (value is VMGroup) {
-
-            }
-        }
-
     private val groupCache = HashMap<String, VMGroup>()
 
     private fun get(name: String): VMGroup {
@@ -82,7 +56,7 @@ class MachineGroupListFragment : Fragment(),
     }
 
     private fun loadGroups() {
-        model.vmgr.value?.vbox?.let { vbox ->
+        model.vbox.value?.let { vbox ->
             model.viewModelScope.launch {
                 for (group in vbox.getMachineGroups()) {
                     if (group == "/") continue

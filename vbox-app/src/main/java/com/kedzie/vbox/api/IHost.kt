@@ -1,6 +1,7 @@
 package com.kedzie.vbox.api
 
 import android.os.Parcelable
+import androidx.lifecycle.LiveData
 import com.kedzie.vbox.api.jaxb.HostNetworkInterfaceType
 import com.kedzie.vbox.api.jaxb.IMediumAttachment
 import com.kedzie.vbox.api.jaxb.ProcessorFeature
@@ -74,17 +75,14 @@ interface IHost : IManagedObjectRef, Parcelable {
     @Cacheable(value = "utcTime", get = true, put = true)
     suspend fun getUtcTime(): Long
 
-    @Cacheable(value = "networkInterfaces", get = true, put = true)
     suspend fun getNetworkInterfaces(): List<IHostNetworkInterface>
 
     //	@Ksoap(cacheable=true) public ArrayList<IHostUSBDeviceFilter> getUSBDeviceFilters();
 
     //	@Ksoap(cacheable=true) public ArrayList<IHostUSBDevice> getUSBDevices();
 
-    @Cacheable(value = "dvdDrives", get = true, put = true)
     suspend fun getDvdDrives(): List<IMedium>
 
-    @Cacheable(value = "floppyDrives", get = true, put = true)
     suspend fun getFloppyDrives(): List<IMedium>
 
     /**
@@ -94,13 +92,10 @@ interface IHost : IManagedObjectRef, Parcelable {
      */
     suspend fun getProcessorSpeed(@Ksoap(type = "unsignedInt") cpuId: Int): Int
 
-    @Cacheable(get = true, put = true)
     suspend fun getProcessorDescription(@Ksoap(type = "unsignedInt") cpuId: Int): String
 
-    @Cacheable(get = true, put = true)
     suspend fun findHostDVDDrive(name: String): IMedium
 
-    @Cacheable(get = true, put = true)
     suspend fun findHostFloppyDrive(name: String): IMedium
 
     suspend fun getProcessorFeature(feature: ProcessorFeature): Boolean
@@ -111,13 +106,10 @@ interface IHost : IManagedObjectRef, Parcelable {
 
     suspend fun removeHostOnlyNetworkInterface(id: String): IProgress
 
-    @Cacheable(get = true, put = true)
     suspend fun findHostNetworkInterfaceById(id: String): IHostNetworkInterface
 
-    @Cacheable(get = true, put = true)
     suspend fun findHostNetworkInterfaceByName(name: String): IHostNetworkInterface
 
-    @Cacheable(get = true, put = true)
     suspend fun findHostNetworkInterfacesOfType(type: HostNetworkInterfaceType): List<IHostNetworkInterface>
 
     companion object {

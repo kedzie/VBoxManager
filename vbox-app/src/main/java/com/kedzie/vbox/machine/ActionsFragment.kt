@@ -197,7 +197,7 @@ class ActionsFragment(arguments: Bundle) : Fragment(), AdapterView.OnItemClickLi
                         VMAction.TAKE_SCREENSHOT -> {
                             val display = session.getConsole().getDisplay()
                             val res = display.getScreenResolution(0)
-                            val result = display.takeScreenShotToArray(0, Integer.valueOf(res["width"]!!), Integer.valueOf(res["height"]!!), BitmapFormat.PNG)
+                            val result = display.takeScreenShotToArray(0, res["width"]!!.toInt(), res["height"]!!.toInt(), BitmapFormat.PNG)
                             Utils.showDialog(activity!!.supportFragmentManager, "screenshotDialog", ScreenshotDialogFragment.getInstance(result))
                         }
                     }

@@ -23,7 +23,7 @@ interface INetworkAdapter : IManagedObjectRef, Parcelable {
     suspend fun setAdapterType(@Cacheable("adapterType") adapterType: NetworkAdapterType)
 
     @Cacheable("Slot")
-	suspend fun getSlot(): Integer;
+	suspend fun getSlot(): Int;
 
     @Cacheable("enabled")
 	suspend fun getEnabled(): Boolean
@@ -62,7 +62,7 @@ interface INetworkAdapter : IManagedObjectRef, Parcelable {
     suspend fun setCableConnected(@Cacheable("cableConnected") cableConnected: Boolean)
 
     @Cacheable("lineSpeed")
-	suspend fun getLineSpeed(): Integer;
+	suspend fun getLineSpeed(): Int;
     suspend fun setLineSpeed(@Cacheable("lineSpeed") @Ksoap(type = "unsignedInt") lineSpeed: Int)
 
     @Cacheable("promiscModePolicy")
@@ -78,7 +78,7 @@ interface INetworkAdapter : IManagedObjectRef, Parcelable {
     suspend fun setTraceFile(@Cacheable("traceFile") traceFile: String)
 
     @Cacheable("bootPriority")
-	suspend fun getBootPriority(): Integer;
+	suspend fun getBootPriority(): Int;
     suspend fun setBootPriority(@Cacheable("bootPriority") bootPriority: Int)
 
     //	@Cacheable("BandwidthGroup") suspend fun getBandwidthGroup(): IBandwidthGroup;

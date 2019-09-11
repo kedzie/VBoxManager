@@ -40,9 +40,12 @@ import com.squareup.kotlinpoet.MemberName.Companion.member
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
-    private val remainingTypeNames = mutableListOf<String>()
+    private val remainingTypes = mutableListOf<TypeElement>()
 
     private val annotation = KsoapProxy::class.java
+
+    private val roomEntities = mutableListOf<TypeSpec>()
+    private val roomDaos = mutableListOf<TypeSpec>()
 
     override fun getSupportedAnnotationTypes() = setOf(annotation.canonicalName)
 
@@ -51,9 +54,9 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
     override fun getSupportedOptions() = emptySet<String>()
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
-        remainingTypeNames.addAll(findInjectedClassNames(roundEnv))
-        messager.printMessage(Diagnostic.Kind.NOTE, "types: $remainingTypeNames")
-        val i = remainingTypeNames.iterator()
+        remainingTypes.addAll(findInjectedTypes(roundEnv))
+        messager.printMessage(Diagnostic.Kind.NOTE, "types: $remainingTypes")
+        val i = remainingTypes.iterator()
         while (i.hasNext()) {
             val injectedClass = createInjectedClass(i.next())
             // Verify that we have access to all types to be injected on this pass.
@@ -68,19 +71,50 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 i.remove()
             }
         }
-        if (roundEnv.processingOver() && !remainingTypeNames.isEmpty()) {
-            messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Could not find injection type required by $remainingTypeNames")
+        if (roundEnv.processingOver()) {
+            if(!remainingTypes.isEmpty()) {
+                messager.printMessage(Diagnostic.Kind.ERROR,
+                        "Could not find injection type required by $remainingTypes")
+            }
+
+            val entitiesStr = StringBuffer("entities = [")
+            var isFirst = true
+            for(entity in roomEntities) {
+                if(!isFirst) {
+                    entitiesStr.append(",")
+                }
+                isFirst = false
+                entitiesStr.append("\n%N::class")
+            }
+            val dbSpec = TypeSpec.classBuilder("CacheDatabase")
+                    .addModifiers(KModifier.ABSTRACT)
+                    .superclass(ClassName("androidx.room", "RoomDatabase"))
+                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Database"))
+                            .addMember("version = 1")
+                            .addMember(entitiesStr.append("]").toString(), *roomEntities.toTypedArray())
+                            .build())
+
+            for(dao in roomDaos) {
+                dbSpec.addFunction(FunSpec.builder(dao.name!!)
+                        .addModifiers(KModifier.ABSTRACT)
+                        .returns(ClassName("com.kedzie.vbox.api", dao.name!!))
+                        .build())
+            }
+
+            FileSpec.builder("com.kedzie.vbox.api", "CacheDatabase")
+                    .addType(dbSpec.build())
+                    .build()
+                    .writeTo(filer)
         }
         return false
     }
 
-    private fun findInjectedClassNames(env: RoundEnvironment): Set<String> {
+    private fun findInjectedTypes(env: RoundEnvironment): Set<TypeElement> {
         // First gather the set of classes that have @Ksoap-annotated members.
-        val injectedTypeNames = LinkedHashSet<String>()
+        val injectedTypeNames = LinkedHashSet<TypeElement>()
         for (element in env.getElementsAnnotatedWith(KsoapProxy::class.java)) {
             if (element.kind == ElementKind.INTERFACE)
-                injectedTypeNames.add(rawTypeToString(element.asType(), '.'))
+                injectedTypeNames.add(element as TypeElement)
         }
         return injectedTypeNames
     }
@@ -101,8 +135,8 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
         return true
     }
 
-    private fun createInjectedClass(injectedClassName: String): InjectedClass {
-        val type = elementUtils.getTypeElement(injectedClassName)
+//    private fun createInjectedClass(injectedClassName: String): InjectedClass {
+    private fun createInjectedClass(type: TypeElement): InjectedClass {
         val typeMetadata: KotlinMetadata? = type.kotlinMetadata
         if (typeMetadata !is KotlinClassMetadata) {
             messager.printMessage(
@@ -122,8 +156,6 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 val method = member as ExecutableElement
 
                 val ksoap = method.getAnnotation(Ksoap::class.java)
-                if(ksoap == null && ksoapProxy.methodIncludeStrategy == KsoapMethodStrategy.INCLUDE_ANNOTATED)
-                    continue;
 
                 typeMetadata.data.getFunctionOrNull(method)?. let {func ->
                     methods.add(method)
@@ -156,17 +188,22 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         val primary = FunSpec.constructorBuilder()
                 .addParameter("api", ClassName("com.kedzie.vbox.soap", "VBoxSvc"))
+                .addParameter("database", ClassName("com.kedzie.vbox.api", "CacheDatabase"))
                 .addParameter("idRef", String::class)
 
         if (injected.type.interfaces.isNotEmpty()) {
             var baseClass = "${proto.getSupertype(0).asTypeName(nameResolver, proto::getTypeParameter)}Proxy"
             baseClass = baseClass.substring(baseClass.lastIndexOf('.')+1)
             proxyType.superclass(ClassName("com.kedzie.vbox.api", baseClass))
-            proxyType.addSuperclassConstructorParameter("api, idRef")
+            proxyType.addSuperclassConstructorParameter("api, database, idRef")
         } else {
             proxyType.addProperty(PropertySpec.builder("api", ClassName("com.kedzie.vbox.soap", "VBoxSvc"))
                     .addModifiers(KModifier.OVERRIDE)
                     .initializer("api")
+                    .build())
+            proxyType.addProperty(PropertySpec.builder("database", ClassName("com.kedzie.vbox.api", "CacheDatabase"))
+                    .addModifiers(KModifier.OVERRIDE)
+                    .initializer("database")
                     .build())
             proxyType.addProperty(PropertySpec.builder("idRef", String::class)
                     .addModifiers(KModifier.OVERRIDE)
@@ -176,82 +213,141 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         proxyType.primaryConstructor(primary.build())
 
-        val clearCache = FunSpec.builder("clearCache")
-                .addModifiers(KModifier.OVERRIDE)
+        //ROOM Entity
+        val daoType = TypeSpec.interfaceBuilder("${typeName}Dao")
+                .addAnnotation(ClassName("androidx.room", "Dao"))
 
+        val entityType = TypeSpec.classBuilder("${typeName}Entity")
+                .addModifiers(KModifier.DATA)
+
+        val entityPrimary = FunSpec.constructorBuilder()
+
+        entityPrimary.addParameter("idRef", ClassName("kotlin", "String"))
+        entityType.addProperty(PropertySpec.builder("idRef",
+                ClassName("kotlin", "String"))
+                .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "PrimaryKey"))
+                        .build())
+                .initializer("idRef")
+                .build())
+
+        val fileSpec = FileSpec.builder(getPackage(injected.type).qualifiedName.toString(), "${typeName}Proxy")
+
+        val foreignKeys = mutableListOf<AnnotationSpec>()
+        val foreignKeysStr = StringBuffer("foreignKeys = [")
+
+        var isFirst = true
         for((fieldName, fieldType) in injected.cacheableFields) {
-            proxyType.addProperty(PropertySpec.builder("cache_$fieldName",
-                    fieldType.asTypeName(nameResolver, proto::getTypeParameter, false).copy(nullable = true))
-                    .mutable()
-                    .addModifiers(KModifier.PRIVATE)
-                    .initializer("null")
-                    .build())
-            clearCache.addStatement("cache_$fieldName = null")
-        }
-        proxyType.addFunction(clearCache.build())
+            val fieldTypeName = fieldType.asTypeName(nameResolver, proto::getTypeParameter, false).copy(nullable = false)
+            val type = elementUtils.getTypeElement(fieldTypeName.toString())
 
-        if (injected.type.interfaces.isNotEmpty()) {
-            //PARCELABLE
-            val writeToParcel = FunSpec.builder("writeToParcel")
-                    .addModifiers(KModifier.OVERRIDE)
-                    .addParameter("p", ClassName("android.os", "Parcel"))
-                    .addParameter("flags", Int::class)
-                    .addStatement("p.writeString(idRef)")
-                    .addStatement("p.writeParcelable(api, flags)")
-
-            val createFromParcel = FunSpec.builder("createFromParcel")
-                    .addModifiers(KModifier.OVERRIDE)
-                    .returns(ClassName(packageName, "${typeName}Proxy"))
-                    .addParameter("p", ClassName("android.os", "Parcel"))
-                    .addStatement("val obj = %1T(p.readParcelable(%1T::class.java.classLoader), p.readString())",
-                            ClassName(packageName, "${typeName}Proxy"))
-
-            for ((fieldName, fieldType) in injected.cacheableFields) {
-                writeToParcel.addStatement("p.writeValue(cache_$fieldName)")
-                createFromParcel.addStatement("obj.cache_$fieldName = p.readValue(%T::class.java.classLoader) as %T",
-                        ClassName(packageName, "${typeName}Proxy"),
-                        fieldType.asTypeName(nameResolver, proto::getTypeParameter).copy(nullable = true))
+            val cacheType = if(type != null && typeUtils.isAssignable(type.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                ClassName("kotlin", "String")
+            } else if (fieldTypeName is ParameterizedTypeName
+                    && fieldTypeName.rawType == ClassName("androidx.lifecycle", "LiveData")) {
+                fieldTypeName.typeArguments[0]
+            } else {
+                fieldType.asTypeName(nameResolver, proto::getTypeParameter, false)
             }
 
-            createFromParcel.addStatement("return obj")
+            entityPrimary.addParameter(fieldName, cacheType)
+            val property = PropertySpec.builder(fieldName, cacheType)
+                    .mutable()
+                    .initializer(fieldName)
 
-            val describeContents = FunSpec.builder("describeContents")
-                    .addModifiers(KModifier.OVERRIDE)
-                    .returns(Int::class)
-                    .addStatement("return 0")
-
-            val newArray = FunSpec.builder("newArray")
-                    .addModifiers(KModifier.OVERRIDE)
-                    .addParameter("size", Int::class)
-                    .returns(ClassName("kotlin", "Array").parameterizedBy(ClassName(packageName, "${typeName}Proxy").copy(nullable = true)))
-                    .addStatement("return %M<${typeName}Proxy>(size)", MemberName("kotlin", "arrayOfNulls"))
-
-            val creatorType = ClassName("android.os.Parcelable", "Creator").parameterizedBy(
-                    ClassName(packageName, "${typeName}Proxy"))
-
-            val creator = TypeSpec.anonymousClassBuilder()
-                    .addSuperinterface(creatorType)
-                    .addFunction(createFromParcel.build())
-                    .addFunction(newArray.build())
-                    .build()
-
-            val companion = TypeSpec.companionObjectBuilder()
-                    .addProperty(PropertySpec.builder("CREATOR", creatorType)
-                            .addAnnotation(JvmField::class)
-                            .initializer("%L", creator)
+            if(type != null) {
+                if (typeUtils.isAssignable(type.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                    if(!isFirst) {
+                        foreignKeysStr.append(",")
+                    }
+                    isFirst = false
+                    foreignKeysStr.append("\n%L")
+                    foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
+                            .addMember("entity = %T::class", ClassName(packageName, "${typeName}Entity"))
+                            .addMember("parentColumns = [%S]", "idRef")
+                            .addMember("childColumns = [%S]", fieldName)
+                            .addMember("onDelete = ForeignKey.CASCADE")
                             .build())
-                    .build()
 
-            proxyType.addType(companion)
-            proxyType.addFunction(writeToParcel.build())
-            proxyType.addFunction(describeContents.build())
+                    property.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
+                            .addMember("index = true")
+                            .build())
+                } else if(type.kind == ElementKind.ENUM) {
+                    val adapterType = TypeSpec.classBuilder("${typeName}_${fieldName}_Adapter")
+
+                    adapterType.addFunction(FunSpec.builder("toString")
+                            .returns(ClassName("kotlin", "String").copy(nullable = true))
+                            .addAnnotation(ClassName("androidx.room", "TypeConverter"))
+                            .addParameter("value", cacheType)
+                            .addStatement("return value?.name")
+                            .build())
+
+                    adapterType.addFunction(FunSpec.builder("toValue")
+                            .returns(cacheType.copy(nullable = true))
+                            .addAnnotation(ClassName("androidx.room", "TypeConverter"))
+                            .addParameter("value", ClassName("kotlin", "String").copy(nullable = true))
+                            .beginControlFlow("return value?.let")
+                            .addStatement("%M(it)", MemberName(cacheType as ClassName, "valueOf"))
+                            .endControlFlow()
+                            .build())
+
+                    fileSpec.addType(adapterType.build())
+
+                    property.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "TypeConverters"))
+                            .addMember("%N::class", adapterType.build())
+                            .build())
+                }
+            }
+
+            entityType.addProperty(property.build())
+
+            daoType.addFunction(FunSpec.builder("get${fieldName}")
+                    .addModifiers(KModifier.ABSTRACT)
+                    .returns((ClassName("androidx.lifecycle", "LiveData")).parameterizedBy(cacheType))
+                    .addParameter("idRef", ClassName("kotlin", "String"))
+                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                            .addMember("%S", "select ${fieldName} from ${typeName} where idRef = :idRef")
+                            .build())
+                    .build())
+
+            daoType.addFunction(FunSpec.builder("get${fieldName}Now")
+                    .addModifiers(KModifier.ABSTRACT)
+                    .addModifiers(KModifier.SUSPEND)
+                    .returns(cacheType)
+                    .addParameter("idRef", ClassName("kotlin", "String"))
+                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                            .addMember("%S", "select ${fieldName} from ${typeName} where idRef = :idRef")
+                            .build())
+                    .build())
+
+            daoType.addFunction(FunSpec.builder("set${fieldName}")
+                    .addModifiers(KModifier.ABSTRACT)
+                    .addParameter("idRef", ClassName("kotlin", "String"))
+                    .addParameter("value", cacheType)
+                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                            .addMember("%S", "update ${typeName} set ${fieldName} = :value where idRef = :idRef")
+                            .build())
+                    .build())
         }
+
+        entityType.primaryConstructor(entityPrimary.build())
+
+        entityType.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Entity"))
+                .addMember("tableName = %S", typeName)
+                .addMember(foreignKeysStr.append("]").toString(), *foreignKeys.toTypedArray())
+                .build())
+
+
+        fileSpec.addType(entityType.build().apply { roomEntities.add(this) })
+        fileSpec.addType(daoType.build().apply { roomDaos.add(this) })
 
         for(method in injected.methods) {
             injected.data.getFunctionOrNull(method)?. let { func ->
+                val returnTypeName = func.returnType.asTypeName(nameResolver, proto::getTypeParameter).copy(nullable = false)
+
                 val spec = FunSpec.builder(method.simpleName.toString())
                         .addModifiers(KModifier.OVERRIDE)
                         .returns(func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
+
 
                 if(func.isSuspend)
                     spec.addModifiers(KModifier.SUSPEND)
@@ -267,114 +363,151 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                     }
                 }
 
-                if(func.isSuspend) {
-                    method.getAnnotation(Cacheable::class.java)?.takeIf { it.get }?.let {
-                        spec.beginControlFlow("cache_%L?.let",
-                                if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
-                                .addStatement("return it")
-                                .endControlFlow()
-                    }
+                val isLiveData = returnTypeName is ParameterizedTypeName
+                        && returnTypeName.rawType == ClassName("androidx.lifecycle", "LiveData")
 
+                if (isLiveData) {
+                    spec.beginControlFlow("return %M", MemberName("androidx.lifecycle", "liveData"))
+                }
 
-                    val ksoap = method.getAnnotation(Ksoap::class.java)
-                            ?: injected.type.getAnnotation(Ksoap::class.java)
+                method.getAnnotation(Cacheable::class.java)?.takeIf { it.get }?.apply {
+                    val returnType = elementUtils.getTypeElement(returnTypeName.toString())
 
-                    //switch context
-                    spec.beginControlFlow("val (envelope, call) = %M(%M)",
-                            MemberName("kotlinx.coroutines", "withContext"),
-                            MemberName("kotlinx.coroutines.Dispatchers", "IO"))
-                        .addStatement("val request = %T(%S, \"%L_%L\")",
-                            ClassName("org.ksoap2.serialization", "SoapObject"),
-                            "http://www.virtualbox.org/",
-                            if (ksoap?.prefix != "") ksoap.prefix else typeName,
-                            nameResolver.getString(func.name))
-
-                    if (ksoap?.thisReference != "")
-                        spec.addStatement("request.addProperty(%S, idRef)", ksoap.thisReference)
-
-                    for (parameter in method.parameters) {
-                        injected.data.getValueParameterOrNull(func, parameter)?.let { kparam ->
-
-                            parameter.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
-                                spec.addStatement("cache_%L = %L",
-                                        if (it.value.isNotEmpty()) it.value else nameResolver.getString(kparam.name),
-                                        nameResolver.getString(kparam.name))
-                            }
-
-                            if (kparam.hasVarargElementType()) {
-                                spec.beginControlFlow("for(element in %L)", nameResolver.getString(kparam.name))
-                                marshalParameter(injected, spec, ksoap,
-                                        kparam.varargElementType,
-                                        elementUtils.getTypeElement(kparam.varargElementType.asTypeName(nameResolver, proto::getTypeParameter).toString()).asType(),
-                                        nameResolver.getString(kparam.name),
-                                        "element")
-                                spec.endControlFlow()
-                            } else {
-                                marshalParameter(injected, spec, parameter.getAnnotation(Ksoap::class.java),
-                                        kparam.type,
-                                        parameter.asType(),
-                                        nameResolver.getString(kparam.name),
-                                        nameResolver.getString(kparam.name))
-                            }
+                    if(isLiveData) {
+                        if (returnType!=null && typeUtils.isAssignable(returnType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                            spec.addStatement("emitSource(database.${typeName}Dao().get%L(idRef).%M( { ${returnTypeName}Proxy(api, database, it) } ))",
+                                    MemberName("androidx.lifecycle.Transformations", "map"),
+                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                        }
+                        else {
+                            spec.addStatement("emitSource(database.${typeName}Dao().get%L(idRef))",
+                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
                         }
                     }
+                    else {
+                        spec.beginControlFlow("database.${typeName}Dao().get%LNow(idRef)?.let",
+                                if (value.isNotEmpty()) value else nameResolver.getString(func.name))
 
-                    spec.addStatement("val envelope = %T(%T.VER11).setAddAdornments(false).setOutputSoapObject(request)",
-                            ClassName("org.ksoap2.serialization", "SoapSerializationEnvelope"),
-                            ClassName("org.ksoap2", "SoapEnvelope"))
+                        if (returnType!=null && typeUtils.isAssignable(returnType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                            spec.addStatement("return ${returnTypeName}Proxy(api, database, it)")
+                        } else {
+                            spec.addStatement("return it")
+                        }
+                        spec.endControlFlow()
+                    }
+                }
 
-                    spec.addStatement("%T(envelope, api.soapCall(%M+request.getName(), envelope))",
-                            ClassName("kotlin", "Pair"),
-                            MemberName("com.kedzie.vbox.soap.VBoxSvc.Companion", "NAMESPACE"))
+                val ksoap = method.getAnnotation(Ksoap::class.java)
+                        ?: injected.type.getAnnotation(Ksoap::class.java)
+
+                //switch context
+                spec.beginControlFlow("val (envelope, call) = %M(%M)",
+                        MemberName("kotlinx.coroutines", "withContext"),
+                        MemberName("kotlinx.coroutines.Dispatchers", "IO"))
+                        .addStatement("val request = %T(%S, \"%L_%L\")",
+                                ClassName("org.ksoap2.serialization", "SoapObject"),
+                                "http://www.virtualbox.org/",
+                                if (ksoap?.prefix != "") ksoap.prefix else typeName,
+                                nameResolver.getString(func.name))
+
+                if (ksoap?.thisReference != "")
+                    spec.addStatement("request.addProperty(%S, idRef)", ksoap.thisReference)
+
+                for (parameter in method.parameters) {
+                    injected.data.getValueParameterOrNull(func, parameter)?.let { kparam ->
+
+                        parameter.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                            spec.addStatement("database.${typeName}Dao().set%L(idRef, %L)",
+                                    if (it.value.isNotEmpty()) it.value else nameResolver.getString(kparam.name),
+                                    nameResolver.getString(kparam.name))
+                        }
+
+                        if (kparam.hasVarargElementType()) {
+                            spec.beginControlFlow("for(element in %L)", nameResolver.getString(kparam.name))
+                            marshalParameter(injected, spec, ksoap,
+                                    kparam.varargElementType,
+                                    elementUtils.getTypeElement(kparam.varargElementType.asTypeName(nameResolver, proto::getTypeParameter).toString()).asType(),
+                                    nameResolver.getString(kparam.name),
+                                    "element")
+                            spec.endControlFlow()
+                        } else {
+                            marshalParameter(injected, spec, parameter.getAnnotation(Ksoap::class.java),
+                                    kparam.type,
+                                    parameter.asType(),
+                                    nameResolver.getString(kparam.name),
+                                    nameResolver.getString(kparam.name))
+                        }
+                    }
+                }
+
+                spec.addStatement("val envelope = %T(%T.VER11).setAddAdornments(false).setOutputSoapObject(request)",
+                        ClassName("org.ksoap2.serialization", "SoapSerializationEnvelope"),
+                        ClassName("org.ksoap2", "SoapEnvelope"))
+
+                spec.addStatement("%T(envelope, api.soapCall(%M+request.getName(), envelope))",
+                        ClassName("kotlin", "Pair"),
+                        MemberName("com.kedzie.vbox.soap.VBoxSvc.Companion", "NAMESPACE"))
                         .endControlFlow()
 
 
-                    //suspend and enqueue
-                    spec.beginControlFlow("return %M<%T>",
-                                    MemberName("kotlinx.coroutines", "suspendCancellableCoroutine"),
-                                    func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
+                //suspend and enqueue
+                spec.beginControlFlow(if(isLiveData) " %M<%T>" else "return %M<%T>",
+                        MemberName("kotlinx.coroutines", "suspendCancellableCoroutine"),
+                        if(isLiveData) { func.returnType.getArgument(0).type.asTypeName(nameResolver, proto::getTypeParameter) }
+                        else { func.returnType.asTypeName(nameResolver, proto::getTypeParameter) })
+                        .beginControlFlow("it.invokeOnCancellation")
+                        .addStatement("call.cancel()")
+                        .endControlFlow()
 
-                            .beginControlFlow("it.invokeOnCancellation")
-                            .addStatement("call.cancel()")
-                            .endControlFlow()
+                val successFunc = FunSpec.builder("onResponse")
+                        .addModifiers(KModifier.OVERRIDE)
+                        .throws(ClassName("java.io", "IOException"))
+                        .addParameter("call", ClassName("okhttp3", "Call"))
+                        .addParameter("response", ClassName("okhttp3", "Response"))
+                        .beginControlFlow("if(response.isSuccessful())")
+                        .beginControlFlow("try")
+                        .addStatement("val xp = %T()",
+                                ClassName("org.kxml2.io", "KXmlParser"))
+                        .addStatement("xp.setFeature(%M, true)",
+                                MemberName("org.xmlpull.v1.XmlPullParser", "FEATURE_PROCESS_NAMESPACES"))
+                        .addStatement("xp.setInput(response.body()!!.byteStream(), null);")
+                        .addStatement("envelope.parse(xp);")
+                        .beginControlFlow("if(envelope.bodyIn is org.ksoap2.SoapFault)")
+                        .addStatement("it.%M(envelope.bodyIn as org.ksoap2.SoapFault)",
+                                MemberName("kotlin.coroutines", "resumeWithException"))
+                        .nextControlFlow("else")
 
-                    val successFunc = FunSpec.builder("onResponse")
-                            .addModifiers(KModifier.OVERRIDE)
-                            .throws(ClassName("java.io", "IOException"))
-                            .addParameter("call", ClassName("okhttp3", "Call"))
-                            .addParameter("response", ClassName("okhttp3", "Response"))
-                            .beginControlFlow("if(response.isSuccessful())")
-                            .beginControlFlow("try")
-                            .addStatement("val xp = %T()",
-                                    ClassName("org.kxml2.io", "KXmlParser"))
-                            .addStatement("xp.setFeature(%M, true)",
-                                    MemberName("org.xmlpull.v1.XmlPullParser", "FEATURE_PROCESS_NAMESPACES"))
-                            .addStatement("xp.setInput(response.body()!!.byteStream(), null);")
-                            .addStatement("envelope.parse(xp);")
-                            .beginControlFlow("if(envelope.bodyIn is org.ksoap2.SoapFault)")
-                            .addStatement("it.%M(envelope.bodyIn as org.ksoap2.SoapFault)",
-                                    MemberName("kotlin.coroutines", "resumeWithException"))
-                            .nextControlFlow("else")
+                if (returnTypeName != ClassName("kotlin", "Unit")) {
+                    successFunc.addStatement("val ks = envelope.bodyIn as %T",
+                            ClassName("org.ksoap2.serialization", "KvmSerializable"))
 
-                    val returnTypeName = func.returnType.asTypeName(nameResolver, proto::getTypeParameter).copy(nullable = false)
-                    if (returnTypeName != ClassName("kotlin", "Unit")) {
-                        successFunc.addStatement("val ks = envelope.bodyIn as %T",
-                                ClassName("org.ksoap2.serialization", "KvmSerializable"))
+                    if (func.returnType.nullable) {
+                        successFunc.beginControlFlow("if(ks.getPropertyCount()==0)")
+                                .addStatement("it.%M(null)", MemberName("kotlin.coroutines", "resume"))
+                                .endControlFlow()
+                    }
 
-                        if (func.returnType.nullable) {
-                            successFunc.beginControlFlow("if(ks.getPropertyCount()==0)")
-                                    .addStatement("it.%M(null)", MemberName("kotlin.coroutines", "resume"))
-                                    .endControlFlow()
-                        }
+                    if(returnTypeName is ParameterizedTypeName) {
+                        val componentType = func.returnType.getArgument(0)
+                        messager.printMessage(Diagnostic.Kind.WARNING, "parameter")
 
-                        val isCollection = func.returnType.argumentCount == 1
+                        val isList = returnTypeName.rawType == ClassName("kotlin.collections", "List")
                         val isMap = func.returnType.argumentCount == 2
 
-                        //Array
-                        if (returnTypeName is ParameterizedTypeName
-                                && returnTypeName.rawType == ClassName("kotlin", "Array")) {
-
-                            val componentType = func.returnType.getArgument(0)
+                        if(isLiveData) {
+                            successFunc.addStatement("val rawRet = ks.getProperty(0)")
+                            if (func.returnType.nullable) {
+                                successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
+                                        func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
+                                        .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, componentType.type, "rawRet"))
+                                        .nextControlFlow("else")
+                                        .addStatement("null")
+                                        .endControlFlow()
+                            } else {
+                                successFunc.addStatement("val ret = %L",
+                                        unmarshal(injected.data, successFunc, ksoap, componentType.type, "rawRet"))
+                            }
+                        } else if (returnTypeName.rawType == ClassName("kotlin", "Array")) {
                             successFunc.addStatement("val list = %M<%T>()",
                                     MemberName("kotlin.collections", "mutableListOf"),
                                     componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
@@ -412,8 +545,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                         .endControlFlow()
                             }
                             successFunc.addStatement("val ret = map")
-                        } else if (isCollection) {
-                            val componentType = func.returnType.getArgument(0)
+                        } else if (isList) {
                             successFunc.addStatement("val list = %M<%T>()",
                                     MemberName("kotlin.collections", "mutableListOf"),
                                     componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
@@ -423,74 +555,72 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             successFunc.endControlFlow()
                             successFunc.endControlFlow()
                             successFunc.addStatement("val ret = list")
-                        } else {
-                            successFunc.addStatement("val rawRet = ks.getProperty(0)")
-                            if (func.returnType.nullable) {
-                                successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
-                                        func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
-                                        .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
-                                        .nextControlFlow("else")
-                                        .addStatement("null")
-                                        .endControlFlow()
-                            } else {
-                                successFunc.addStatement("val ret = %L",
-                                        unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
-                            }
                         }
-
-                        method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
-                            successFunc.addStatement("cache_%L = ret",
-                                    if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
-                        }
-
-                        successFunc.addStatement("it.%M(ret)", MemberName("kotlin.coroutines", "resume"))
                     } else {
-                        successFunc.addStatement("it.%M(Unit)", MemberName("kotlin.coroutines", "resume"))
+                        successFunc.addStatement("val rawRet = ks.getProperty(0)")
+                        if (func.returnType.nullable) {
+                            successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
+                                    func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
+                                    .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
+                                    .nextControlFlow("else")
+                                    .addStatement("null")
+                                    .endControlFlow()
+                        } else {
+                            successFunc.addStatement("val ret = %L",
+                                    unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
+                        }
                     }
 
-                    successFunc.endControlFlow()
-                            .nextControlFlow("catch(e: %T)",
-                                    ClassName("org.xmlpull.v1", "XmlPullParserException"))
-                            .addStatement("it.%M(e)",
-                                    MemberName("kotlin.coroutines", "resumeWithException"))
-                            .endControlFlow()
-                            .nextControlFlow("else")
-                            .addStatement("it.%M(IOException(%S))",
-                                    MemberName("kotlin.coroutines", "resumeWithException"),
-                                    "shitniz")
-                            .endControlFlow()
-
-
-                    val failFunc = FunSpec.builder("onFailure")
-                            .addModifiers(KModifier.OVERRIDE)
-                            .addParameter("call", ClassName("okhttp3", "Call"))
-                            .addParameter("exception", IOException::class)
-                            .addStatement("it.%M(exception)",
-                                    MemberName("kotlin.coroutines", "resumeWithException"))
-
-                    val callback = TypeSpec.anonymousClassBuilder()
-                            .addSuperinterface(ClassName("okhttp3", "Callback"))
-                            .addFunction(successFunc.build())
-                            .addFunction(failFunc.build())
-
-                    spec.addStatement("call.enqueue(%L)", callback.build())
-
-                    spec.endControlFlow()
-
-                } else {
-                    //not suspending function
-                    method.getAnnotation(Cacheable::class.java)!!.takeIf { it.get }!!.let {
-                        spec.addStatement("return cache_%L",
+                    method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                        successFunc.addStatement("database.${typeName}Dao().set%L(idRef, ret)",
                                 if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
                     }
+
+                    successFunc.addStatement("it.%M(ret)", MemberName("kotlin.coroutines", "resume"))
+                } else {
+                    successFunc.addStatement("it.%M(Unit)", MemberName("kotlin.coroutines", "resume"))
                 }
+
+                successFunc.endControlFlow()
+                        .nextControlFlow("catch(e: %T)",
+                                ClassName("org.xmlpull.v1", "XmlPullParserException"))
+                        .addStatement("it.%M(e)",
+                                MemberName("kotlin.coroutines", "resumeWithException"))
+                        .endControlFlow()
+                        .nextControlFlow("else")
+                        .addStatement("it.%M(IOException(%S))",
+                                MemberName("kotlin.coroutines", "resumeWithException"),
+                                "shitniz")
+                        .endControlFlow()
+
+
+                val failFunc = FunSpec.builder("onFailure")
+                        .addModifiers(KModifier.OVERRIDE)
+                        .addParameter("call", ClassName("okhttp3", "Call"))
+                        .addParameter("exception", IOException::class)
+                        .addStatement("it.%M(exception)",
+                                MemberName("kotlin.coroutines", "resumeWithException"))
+
+                val callback = TypeSpec.anonymousClassBuilder()
+                        .addSuperinterface(ClassName("okhttp3", "Callback"))
+                        .addFunction(successFunc.build())
+                        .addFunction(failFunc.build())
+
+                spec.addStatement("call.enqueue(%L)", callback.build())
+
+                spec.endControlFlow()
+
+                if (isLiveData) {
+                    spec.endControlFlow()
+                }
+
                 proxyType.addFunction(spec.build())
             }
         }
 
-        FileSpec.builder(getPackage(injected.type).qualifiedName.toString(), "${typeName}Proxy")
-                .addType(proxyType.build())
-                .build().writeTo(filer)
+        fileSpec.addType(proxyType.build())
+                .build()
+                .writeTo(filer)
     }
 
     /**
@@ -528,7 +658,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
             spec.addStatement("request.addProperty(%S, %T(%S, %S, %L.toString()))",
                     paramName,
                     ClassName("org.ksoap2.serialization", "SoapPrimitive"),
-                   ksoap!!.namespace,
+                    ksoap!!.namespace,
                     ksoap!!.type,
                     name)
         } //Proxy
@@ -574,7 +704,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         if (typeUtils.isAssignable(returnTypeElement.asType(),
                         elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
-            return "${typeName}Proxy(api, $name.toString())"
+            return "${typeName}Proxy(api, database, $name.toString())"
         }
 
         if (returnTypeElement.kind == ElementKind.ENUM) {

@@ -60,7 +60,7 @@ interface INATNetwork : IManagedObjectRef, Parcelable {
      * mapped into loopback6 interface of the host.
      */
     @Cacheable("LoopbackIp6")
-	suspend fun getLoopbackIp6(): Integer;
+	suspend fun getLoopbackIp6(): Int;
     suspend fun setLoopbackIp6(@Cacheable("LoopbackIp6") @Ksoap(type = "int") loopbackIp6: Int)
 
     /**

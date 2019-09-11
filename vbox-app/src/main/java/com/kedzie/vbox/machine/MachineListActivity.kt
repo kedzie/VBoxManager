@@ -27,19 +27,18 @@ import com.kedzie.vbox.MachineListNavDirections
 import com.kedzie.vbox.R
 import com.kedzie.vbox.SettingsGeneralFragment
 import com.kedzie.vbox.SettingsMetricFragment
-import com.kedzie.vbox.api.IMachine
 import com.kedzie.vbox.api.IMachineStateChangedEvent
+import com.kedzie.vbox.api.IVirtualBoxProxy
 import com.kedzie.vbox.app.Utils
 import com.kedzie.vbox.machine.group.MachineGroupListFragment
 import com.kedzie.vbox.machine.group.TreeNode
-import com.kedzie.vbox.machine.group.VMGroup
 import com.kedzie.vbox.server.Server
 import com.kedzie.vbox.server.ServerListFragment
 import com.kedzie.vbox.server.login
-import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.android.synthetic.main.drawer_header.view.*
 import kotlinx.android.synthetic.main.machine_list.*
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -64,8 +63,7 @@ class MachineListActivity : AppCompatActivity(),
         else
             NotificationCompat.Builder(this)
 
-    private val model: MachineListViewModel by viewModel { intent.let {
-        parametersOf(it.getParcelableExtra(VBoxSvc.BUNDLE), it.getParcelableExtra(IMachine.BUNDLE)) } }
+    private val model: MachineListViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,9 +110,9 @@ class MachineListActivity : AppCompatActivity(),
             when(it) {
                 is IMachineStateChangedEvent -> {
                     if(sharedPreferences.getBoolean(SettingsGeneralFragment.PREF_NOTIFICATIONS, false)) {
-                        model.vmgr.value?.let { vmgr ->
+                        model.vbox.value?.let { vbox ->
                             model.viewModelScope.launch {
-                                val machine = vmgr.vbox.findMachine(it.getMachineId())
+                                val machine = vbox.findMachine(it.getMachineId())
                                 Timber.d("Got machine state changed event")
 
                                 val title = getString(R.string.notification_title, machine.getName(), machine.getState())
@@ -126,7 +124,8 @@ class MachineListActivity : AppCompatActivity(),
                                         .setLargeIcon(BitmapFactory.decodeResource(resources, machine.getState().drawable()))
                                         .setContentIntent(PendingIntent.getActivity(this@MachineListActivity, 0,
                                                 Intent(this@MachineListActivity, MachineListActivity::class.java)
-                                                        .putExtra(VBoxSvc.BUNDLE, vmgr), 0))
+                                                        .putExtra("vboxId", vbox.idRef)
+                                                        .putExtra("machineId", machine.idRef), 0))
                                         .setTicker(title)
                                         .setAutoCancel(true)
                                         .build())
@@ -180,13 +179,13 @@ class MachineListActivity : AppCompatActivity(),
             }
         })
 
-        model.vmgr.observe(this, Observer {
+        model.vbox.observe(this, Observer {
             if(it != null) {
                 Timber.d("Server changed")
                 model.viewModelScope.launch {
-                    header.hostView.update(it.vbox.getHost())
+                    header.hostView.update(it.getHost())
                 }
-                header.server_spinner.setSelection(model.servers.value?.indexOf(it.server) ?: INVALID_POSITION)
+                header.server_spinner.setSelection(model.servers.value?.indexOf(it.api.server) ?: INVALID_POSITION)
                 nav_host_fragment.findNavController().navigate(MachineListNavDirections.showHostInfo())
             } else {
                 header.server_spinner.setSelection(INVALID_POSITION)
@@ -200,9 +199,10 @@ class MachineListActivity : AppCompatActivity(),
                 Timber.i("Server selected from navigation drawer %s", server)
 
                 model.viewModelScope.launch {
-                    model.vmgr.value?.logoff()
-                    login(this@MachineListActivity, server) {
-                        model.vmgr.postValue(it)
+                    model.vbox.value?.logoff()
+                    login(this@MachineListActivity, server)?.let { server ->
+                        model.vbox.value = IVirtualBoxProxy(get { parametersOf(server) }, get(), "")
+                                .logon(server.username, server.password)
                     }
                 }
             }
@@ -236,8 +236,9 @@ class MachineListActivity : AppCompatActivity(),
 
     override fun onServerSelected(server: Server) {
         model.viewModelScope.launch {
-            login(this@MachineListActivity, server) {
-                model.vmgr.postValue(it)
+            login(this@MachineListActivity, server)?.let {
+                model.vbox.value = IVirtualBoxProxy(get { parametersOf(it) }, get(), "")
+                        .logon(server.username, server.password)
             }
         }
     }

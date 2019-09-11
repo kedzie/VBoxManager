@@ -2,11 +2,7 @@ package com.kedzie.vbox.soap
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class KsoapProxy(val methodIncludeStrategy: KsoapMethodStrategy = KsoapMethodStrategy.INCLUDE_ALL)
-
-enum class KsoapMethodStrategy {
-    INCLUDE_ALL, INCLUDE_ANNOTATED
-}
+annotation class KsoapProxy()
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)

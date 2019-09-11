@@ -1,8 +1,6 @@
 package com.kedzie.vbox.api
 
-import com.kedzie.vbox.api.jaxb.IMediumAttachment
 import com.kedzie.vbox.soap.Ksoap
-import com.kedzie.vbox.soap.KsoapMethodStrategy
 import com.kedzie.vbox.soap.KsoapProxy
 import com.kedzie.vbox.soap.VBoxSvc
 
@@ -18,7 +16,7 @@ import com.kedzie.vbox.soap.VBoxSvc
  * @apiviz.stereotype Proxy
  * @apiviz.category Proxy
  */
-@KsoapProxy(KsoapMethodStrategy.INCLUDE_ANNOTATED)
+@KsoapProxy
 interface IManagedObjectRef {
 
     /**
@@ -30,6 +28,11 @@ interface IManagedObjectRef {
      * @return VirtualBox JAXWS API
      */
     val api: VBoxSvc
+
+    /**
+     * room cache
+     */
+    val database: CacheDatabase
 
     /**
      * Returns the name of the interface that this managed object represents, for example, "IMachine", as a string.
@@ -44,6 +47,4 @@ interface IManagedObjectRef {
      */
     @Ksoap
     suspend fun release()
-
-    fun clearCache()
 }

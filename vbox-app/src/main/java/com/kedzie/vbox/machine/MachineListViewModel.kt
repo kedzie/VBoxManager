@@ -12,15 +12,13 @@ import com.kedzie.vbox.server.Server
 import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
 import timber.log.Timber
 
-class MachineListViewModel(initialVmgr: VBoxSvc?,
-                           initialMachine: IMachine?,
-                           val database: AppDatabase) : ViewModel() {
+class MachineListViewModel(val database: AppDatabase,
+                           val cacheDatabase: CacheDatabase) : ViewModel(), KoinComponent {
 
-    val vmgr = MutableLiveData<VBoxSvc>(initialVmgr)
-
-    val selectedNode = MutableLiveData<TreeNode?>(initialMachine?.let { MachineTreeNode(it) })
+    val selectedNode = MutableLiveData<TreeNode?>()
 
     val machine = selectedNode.map {
         when(it) {
@@ -38,26 +36,29 @@ class MachineListViewModel(initialVmgr: VBoxSvc?,
 
     val servers = database.serverDao().getServers()
 
-    val events = vmgr.switchMap {
+    val vbox = MutableLiveData<IVirtualBox?>()
+
+    val events = vbox.switchMap {
         liveData<IEvent>(viewModelScope.coroutineContext) {
-            it?.let { vmgr ->
-                val source = vmgr.vbox!!.getEventSource()
+            it?.let { vbox ->
+                val source = vbox.getEventSource()
                 val listener = source.createListener()
+
                 try {
                     while (true) {
                         source.getEvent(listener, 0)?.let {
                             when (it.getType()) {
                                 VBoxEventType.ON_MACHINE_STATE_CHANGED -> {
-                                    IMachineStateChangedEventProxy(vmgr, it.idRef)
+                                    IMachineStateChangedEventProxy(vbox.api, cacheDatabase, it.idRef)
                                 }
                                 VBoxEventType.ON_SESSION_STATE_CHANGED -> {
-                                    ISessionStateChangedEventProxy(vmgr, it.idRef)
+                                    ISessionStateChangedEventProxy(vbox.api, cacheDatabase, it.idRef)
                                 }
                                 VBoxEventType.ON_SNAPSHOT_DELETED -> {
-                                    ISnapshotDeletedEventProxy(vmgr, it.idRef)
+                                    ISnapshotDeletedEventProxy(vbox.api, cacheDatabase, it.idRef)
                                 }
                                 VBoxEventType.ON_SNAPSHOT_TAKEN -> {
-                                    ISnapshotTakenEventProxy(vmgr, it.idRef)
+                                    ISnapshotTakenEventProxy(vbox.api, cacheDatabase, it.idRef)
                                 }
                                 else -> {
                                     null
@@ -79,12 +80,12 @@ class MachineListViewModel(initialVmgr: VBoxSvc?,
     }
 
     suspend fun queryMetrics(target: String) =
-            vmgr.value!!.vbox!!.getPerformanceCollector().queryMetrics(target, "*:")
+            vbox.value!!.getPerformanceCollector().queryMetrics(target, "*:")
 
     //TODO enable metrics based on prefs
     fun enableMetrics(period: Int, count: Int) = viewModelScope.launch {
         Timber.i("Configuring metrics: period = %d, count = %d", period, count)
-        vmgr.value!!.vbox!!.getPerformanceCollector().apply {
+        vbox.value!!.getPerformanceCollector().apply {
             enableMetrics(arrayOf("*:"))
             setupMetrics(arrayOf("*:"), period, count)
         }

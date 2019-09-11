@@ -23,22 +23,22 @@ interface IFsObjInfo : IManagedObjectRef, Parcelable {
 	suspend fun getChangeTime(): Long
 
     @Cacheable(value = "DeviceNumber")
-	suspend fun getDeviceNumber(): Integer
+	suspend fun getDeviceNumber(): Int
 
     @Cacheable(value = "FileAttributes")
 	suspend fun getFileAttributes(): String
 
     @Cacheable(value = "GenerationId")
-	suspend fun getGenerationId(): Integer
+	suspend fun getGenerationId(): Int
 
     @Cacheable(value = "GID")
-	suspend fun getGID(): Integer
+	suspend fun getGID(): Int
 
     @Cacheable(value = "GroupName")
 	suspend fun getGroupName(): String
 
     @Cacheable(value = "HardLinks")
-	suspend fun getHardLinks(): Integer
+	suspend fun getHardLinks(): Int
 
     @Cacheable(value = "ModificationTime")
 	suspend fun getModificationTime(): Long
@@ -50,7 +50,7 @@ interface IFsObjInfo : IManagedObjectRef, Parcelable {
 	suspend fun getNodeId(): Long
 
     @Cacheable(value = "NodeIdDevice")
-	suspend fun getNodeIdDevice(): Integer
+	suspend fun getNodeIdDevice(): Int
 
     @Cacheable(value = "ObjectSize")
 	suspend fun getObjectSize(): Long
@@ -59,10 +59,10 @@ interface IFsObjInfo : IManagedObjectRef, Parcelable {
 	suspend fun getType(): FsObjType
 
     @Cacheable(value = "UID")
-	suspend fun getUID(): Integer
+	suspend fun getUID(): Int
 
     @Cacheable(value = "UserFlags")
-	suspend fun getUserFlags(): Integer
+	suspend fun getUserFlags(): Int
 
     @Cacheable(value = "UserName")
 	suspend fun getUserName(): String

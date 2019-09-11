@@ -99,7 +99,8 @@ interface IPerformanceCollector : IManagedObjectRef, Parcelable {
      */
     suspend fun queryMetricsData(
             metricNames: Array<out String>,
-            vararg objects: String): Map<String, List<String>>
+            objects: Array<out String>)
+            : Map<String, List<String>>
 }
 
 /**
@@ -109,17 +110,17 @@ interface IPerformanceCollector : IManagedObjectRef, Parcelable {
  * @return  [Map] from metric name to [MetricQuery]
  */
 suspend fun IPerformanceCollector.queryMetrics(obj: String, vararg metrics: String): Map<String, MetricQuery> {
-    val data = queryMetricsData(metrics, obj)
+    val data = queryMetricsData(metrics, arrayOf(obj))
 
     val ret = HashMap<String, MetricQuery>()
     for (i in 0 until data.get("returnMetricNames")!!.size) {
         val q = MetricQuery()
         q.name = data.get("returnMetricNames")!![i]
         q.`object` = data.get("returnObjects")!![i]
-        q.scale = Integer.valueOf(data.get("returnScales")!![i])
+        q.scale = data.get("returnScales")!![i].toInt()
         q.unit = data.get("returnUnits")!![i]
-        val start = Integer.valueOf(data.get("returnDataIndices")!![i])
-        val length = Integer.valueOf(data.get("returnDataLengths")!![i])
+        val start = data.get("returnDataIndices")!![i].toInt()
+        val length = data.get("returnDataLengths")!![i].toInt()
 
         q.values = IntArray(length)
         var j = 0

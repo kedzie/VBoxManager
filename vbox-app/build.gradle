@@ -29,6 +29,10 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
+
     buildTypes {
         debug {
         }
