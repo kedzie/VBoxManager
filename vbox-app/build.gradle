@@ -12,8 +12,8 @@ android {
         applicationId "com.kedzie.vbox"
         minSdkVersion rootProject.minSDKInt
         targetSdkVersion rootProject.targetSDKInt
-        versionCode 6000200
-        versionName '6.0.2'
+        versionCode 6000300
+        versionName '6.0.3'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -83,6 +83,8 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
     kaptAndroidTest "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
+
+    implementation "androidx.multidex:multidex:2.0.0"
     
     testImplementation 'junit:junit:4.12'
 
