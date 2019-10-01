@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.drawerlayout.widget.DrawerLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/drawer_layout">
+
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+
+		<androidx.appcompat.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				tools:title="channel title"
+				tools:subtitle="SHITSHISTHIST"/>
+
+		<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+			<fragment class="com.kedzie.vbox.machine.group.MachineGroupListFragment"
+					  android:id="@+id/machine_list_fragment"
+					  android:layout_weight="1"
+					  android:layout_width="0px"
+					  android:layout_height="match_parent" />
+
+			<FrameLayout android:id="@+id/details"
+						 android:layout_weight="2"
+						 android:layout_width="0px"
+						 android:layout_height="match_parent" />
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+	<com.google.android.material.navigation.NavigationView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="start"
+			android:id="@+id/nav"
+			app:menu="@menu/drawer"
+			android:fitsSystemWindows="false"
+			app:elevation="2dp"
+			app:itemTextColor="@color/nav_text"
+			app:itemBackground="@drawable/list_selector_color"/>
+</androidx.drawerlayout.widget.DrawerLayout>

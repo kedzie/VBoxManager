@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <PreferenceCategory app:title="@string/pref_category_general" >
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="colored_icons"
+            app:summary="@string/pref_colored_icons_summary"
+            app:title="@string/pref_colored_icons" />
+
+        <ListPreference
+            app:defaultValue="Slide"
+            app:dialogTitle="@string/pref_tab_transition_title"
+            app:entries="@array/tab_transition_entries"
+            app:entryValues="@array/tab_transition_entryValues"
+            app:key="tab_transition"
+            app:summary="@string/pref_tab_transition_summary"
+            app:title="@string/pref_tab_transition_title"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="notifications"
+            app:summary="@string/pref_notifications_summary"
+            app:title="@string/pref_notifications" />
+
+        <ListPreference
+            app:defaultValue="30000"
+            app:dialogTitle="@string/pref_widget_interval_title"
+            app:entries="@array/widget_interval_entries"
+            app:entryValues="@array/widget_interval_entryValues"
+            app:key="widget_interval"
+            app:summary="@string/pref_widget_interval_summary"
+            app:title="@string/pref_widget_interval_title"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

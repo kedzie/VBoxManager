@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+     <dimen name="screenshot_size">256dp</dimen>
+
+    <dimen name="panel_stroke_width">2dp</dimen>
+    <dimen name="panel_corner_radius">5dp</dimen>
+    <dimen name="panel_header_padding">4dp</dimen>
+    <dimen name="panel_body_padding">8dp</dimen>
+</resources>

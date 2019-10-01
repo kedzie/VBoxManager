@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    
+	<item android:state_pressed="true" >
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/yellow"/>
+            <corners android:bottomLeftRadius="@dimen/panel_corner_radius" android:bottomRightRadius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_body_padding" android:top="@dimen/panel_body_padding"
+                     android:left="@dimen/panel_body_padding" android:right="@dimen/panel_body_padding"/>
+        </shape>
+    </item>
+
+	<item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/blue"/>
+            <corners android:bottomLeftRadius="@dimen/panel_corner_radius" android:bottomRightRadius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_body_padding" android:top="@dimen/panel_body_padding"
+                     android:left="@dimen/panel_body_padding" android:right="@dimen/panel_body_padding"/>
+        </shape>
+    </item>
+
+	<item>
+        <shape>
+            <stroke android:width="@dimen/panel_stroke_width" android:color="@color/gray_light"/>
+            <corners android:bottomLeftRadius="@dimen/panel_corner_radius" android:bottomRightRadius="@dimen/panel_corner_radius"/>
+            <padding android:bottom="@dimen/panel_body_padding" android:top="@dimen/panel_body_padding"
+                     android:left="@dimen/panel_body_padding" android:right="@dimen/panel_body_padding"/>
+        </shape>
+    </item>
+</selector>

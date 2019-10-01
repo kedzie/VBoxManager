@@ -1,10 +1,11 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>virtualbox</groupId>
 	<artifactId>vbox-android-parent</artifactId>
-	<version>3.3.0</version>
+	<version>5.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>VirtualBox Manager - Parent</name>
@@ -14,7 +15,7 @@
 
 	<properties>
 		<github.global.server>github</github.global.server>
-		<android.version>4.2.2_r2</android.version>
+		<android.version>6.0_r1</android.version>
 	</properties>
 
 	<modules>
@@ -69,14 +70,12 @@
 	</dependencyManagement>
 
 	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
-		<directory>${basedir}/bin</directory>
-		<outputDirectory>${basedir}/bin/classes</outputDirectory>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -88,7 +87,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.4.1</version>
+					<version>2.5.1</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<releaseProfiles>release</releaseProfiles>
@@ -106,27 +105,23 @@
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
-                <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.7</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                </plugin>
 				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+					<groupId>com.simpligility.maven.plugins</groupId>
 					<artifactId>android-maven-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>4.3.1-SNAPSHOT</version>
 					<extensions>true</extensions>
 					<configuration>
-						<sdk><platform>17</platform></sdk>
-						<manifestVersionName />
-						<manifestVersionCodeUpdateFromVersion>true</manifestVersionCodeUpdateFromVersion>
+						<sdk>
+                            <platform>23</platform>
+                        </sdk>
+                        <androidManifestFile>${basedir}/src/main/AndroidManifest.xml</androidManifestFile>
+                        <resourceDirectory>${basedir}/src/main/res</resourceDirectory>
+                        <assetsDirectory>${basedir}/src/main/assets</assetsDirectory>
+                        <manifest>
+                            <debuggable>true</debuggable>
+                            <versionName/>
+                            <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+                        </manifest>
 						<attachSources>true</attachSources>
 					</configuration>
 					<executions>
@@ -137,58 +132,8 @@
 						</execution>
 					</executions>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.9.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-										<artifactId>android-maven-plugin</artifactId>
-										<versionRange>[3.6.0,)</versionRange>
-										<goals>
-											<goal>manifest-update</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>all</id>
-			<activation>
-				<property>
-					<name>environment</name>
-					<value>all</value>
-				</property>
-			</activation>
-			<properties>
-				<deployment.stage>Building All Projects</deployment.stage>
-			</properties>
-            <modules>
-                <module>tree-view-list-android</module>
-                <module>vbox-app</module>
-                <module>vbox-instrumentation</module>
-                <module>vbox-key</module>
-            </modules>
-		</profile>
-	</profiles>
 
 </project>

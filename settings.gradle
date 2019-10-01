@@ -1,0 +1,1 @@
+include ':metadata', ':compiler', ':tree-view-list-android', ':vbox-app'

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layoutAnimation="@anim/layout_random_slide">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/name_label"
+            style="@style/MediumText"
+            android:text="@string/server_name" />
+
+        <EditText
+            android:id="@+id/server_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Display Name"
+            android:nextFocusDown="@+id/server_host" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/host_label"
+            style="@style/MediumText"
+            android:layout_marginTop="4dp"
+            android:text="@string/server_host" />
+
+        <EditText
+            android:id="@id/server_host"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Server Host"
+            android:nextFocusDown="@+id/server_ssl"
+            android:nextFocusUp="@id/server_name" >
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/ssl_label"
+            style="@style/MediumText"
+            android:text="@string/server_ssl" />
+
+        <CheckBox
+            android:id="@id/server_ssl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:nextFocusDown="@+id/server_port"
+            android:nextFocusUp="@id/server_host"
+            android:text="SSL" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/port_label"
+            style="@style/MediumText"
+            android:text="@string/server_port" />
+
+        <EditText
+            android:id="@id/server_port"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:hint="Server Port"
+            android:nextFocusDown="@+id/server_username"
+            android:nextFocusUp="@id/server_ssl" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/username_label"
+            style="@style/MediumText"
+            android:text="@string/server_username" />
+
+        <EditText
+            android:id="@id/server_username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Login username"
+            android:nextFocusDown="@+id/server_password"
+            android:nextFocusUp="@id/server_port" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/password_label"
+            style="@style/MediumText"
+            android:text="@string/server_password" />
+
+        <EditText
+            android:id="@id/server_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Login password"
+            android:inputType="textPassword"
+            android:nextFocusUp="@id/server_username" />
+    </LinearLayout>
+
+    <TextView android:id="@+id/errors" style="@style/ErrorMessage"/>
+
+</LinearLayout>

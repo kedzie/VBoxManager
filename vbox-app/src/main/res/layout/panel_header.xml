@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+      class="com.kedzie.vbox.app.CollapsiblePanelView$ExpandableLinearLayout"
+    android:orientation="horizontal"
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content" 
+    android:background="@drawable/panel_header_shape" >
+    
+	<ImageView 
+	    	android:id="@+id/panel_icon" 
+	    	android:contentDescription="Panel Icon"
+	    	android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"  
+		android:layout_gravity="center"
+		android:layout_width="32dip" 
+		android:layout_height="32dip" />
+	
+	<TextView 
+	    	android:id="@+id/group_title" 
+		style="@style/MediumText"
+		android:layout_gravity="left"	 
+		android:layout_weight="1" />
+	
+	<ImageView 
+	    	android:id="@+id/group_collapse" 
+	    	android:clickable="true"
+		android:contentDescription="Collapse  Button"
+		android:layout_marginRight="8dp"  
+		android:src="@drawable/ic_menu_collapse"  
+		android:layout_gravity="center"
+		android:layout_width="32dip" 
+		android:layout_height="32dip" />
+	
+</view>

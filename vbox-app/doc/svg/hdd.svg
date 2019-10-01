@@ -14,11 +14,11 @@
    height="72"
    width="72"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="hdd.svg"
-   inkscape:export-filename="/home/kedzie/Development/git/VirtualBox-Manager/VBoxManager/res/drawable-mdpi/ic_button_hdd_3d_c.png"
-   inkscape:export-xdpi="40"
-   inkscape:export-ydpi="40">
+   inkscape:export-filename="/home/kedzie/Development/git/VBoxManager/vbox-app/doc/svg-xhdpi/Holo-Light/ic_button_hdd.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs11">
     <filter
@@ -2393,16 +2393,16 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1283"
-     inkscape:window-height="840"
+     inkscape:window-height="719"
      id="namedview9"
      showgrid="true"
      inkscape:snap-bbox="true"
      inkscape:snap-nodes="false"
      inkscape:zoom="9.08"
-     inkscape:cx="38.203842"
-     inkscape:cy="37.158364"
-     inkscape:window-x="94"
-     inkscape:window-y="105"
+     inkscape:cx="24.32719"
+     inkscape:cy="36.112108"
+     inkscape:window-x="355"
+     inkscape:window-y="128"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer6"
      inkscape:snap-global="false">
@@ -4309,7 +4309,7 @@
      inkscape:groupmode="layer"
      id="layer6"
      inkscape:label="Color 3D"
-     style="display:inline">
+     style="display:none">
     <path
        transform="matrix(0.1079974,0,0,0.07831646,-28.84791,-0.46909948)"
        d="m 814.18297,515.79999 a 246.47722,246.47722 0 1 1 -492.95444,0 246.47722,246.47722 0 1 1 492.95444,0 z"
@@ -4569,7 +4569,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Holo-Light"
-     style="display:none">
+     style="display:inline">
     <g
        style="fill:#333333;fill-opacity:0.6;display:inline"
        transform="matrix(3.8571429,0,0,3.8571429,-695.85715,-1722.9614)"

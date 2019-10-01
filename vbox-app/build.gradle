@@ -1,0 +1,99 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+
+    compileSdkVersion rootProject.compileSDKInt
+    buildToolsVersion rootProject.buildToolVersionString
+
+    defaultConfig {
+        applicationId "com.kedzie.vbox"
+        minSdkVersion rootProject.minSDKInt
+        targetSdkVersion rootProject.targetSDKInt
+        versionCode 6000200
+        versionName '6.0.2'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("/Users/kedzie/Dropbox/ssh/virtualbox.keystore")
+            storePassword "android"
+            keyAlias "kedzieandroid"
+            keyPassword "android"
+        }
+    }
+
+    buildTypes {
+        debug {
+        }
+        release {
+            debuggable false
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility rootProject.JavaVersionInt
+        targetCompatibility rootProject.JavaVersionInt
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/ksoap3'
+    }
+}
+
+dependencies {
+
+    api project(path: ":metadata")
+    api project(path: ":tree-view-list-android")
+    kapt project(path: ":compiler")
+
+    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "androidx.preference:preference:1.1.0-alpha01"
+    implementation "androidx.gridlayout:gridlayout:1.0.0"
+    implementation "com.google.android.material:material:1.0.0"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlin_version"
+
+    implementation "commons-validator:commons-validator:1.4.0"
+
+    implementation "nf.fr.eraasoft:objectpool:1.1.2"
+
+    implementation "com.google.guava:guava:24.1-jre"
+
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    kapt 'com.jakewharton:butterknife-compiler:10.0.0'
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    implementation "com.google.dagger:dagger-android:$rootProject.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion" // if you use the support libraries
+    kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
+    kaptAndroidTest "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    kaptAndroidTest "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
+    
+    testImplementation 'junit:junit:4.12'
+
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation "androidx.arch.core:core-testing:2.0.0";
+    androidTestImplementation "androidx.test:runner:1.1.1";
+    androidTestImplementation "androidx.test:rules:1.1.1";
+        
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.0", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    })
+    androidTestImplementation 'com.squareup:fest-android:1.0.5'
+}
