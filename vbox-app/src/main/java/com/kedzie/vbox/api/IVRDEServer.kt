@@ -9,7 +9,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IVRDEServer : IManagedObjectRef, Parcelable {
+interface IVRDEServer : IManagedObjectRef {
     companion object {
         const val BUNDLE = "vrde"
         const val PROPERTY_PORT = "TCP/Ports"

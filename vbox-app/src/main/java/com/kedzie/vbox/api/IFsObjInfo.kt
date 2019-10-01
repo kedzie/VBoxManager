@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap(prefix="IFsObjInfo")
-interface IFsObjInfo : IManagedObjectRef, Parcelable {
+interface IFsObjInfo : IManagedObjectRef {
 
     @Cacheable(value = "AccessTime")
 	suspend fun getAccessTime(): Long

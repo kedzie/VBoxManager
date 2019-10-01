@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IDHCPServer : IManagedObjectRef, Parcelable {
+interface IDHCPServer : IManagedObjectRef {
 
     companion object {
         const val BUNDLE = "dhcp"

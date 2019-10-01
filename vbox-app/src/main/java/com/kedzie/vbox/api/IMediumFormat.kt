@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IMediumFormat : IManagedObjectRef, Parcelable {
+interface IMediumFormat : IManagedObjectRef {
 
     @Cacheable("Id")
 	suspend fun getId(): String

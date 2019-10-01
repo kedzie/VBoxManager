@@ -9,7 +9,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IBIOSSettings: IManagedObjectRef, Parcelable {
+interface IBIOSSettings: IManagedObjectRef {
 
     @Cacheable(value = "LogoFadeIn")
     suspend fun getLogoFadeIn(): Boolean

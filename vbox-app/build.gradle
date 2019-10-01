@@ -79,6 +79,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.1.0-alpha09"
     implementation "androidx.drawerlayout:drawerlayout:1.1.0-alpha01"
     implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha06'
 
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha01'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-alpha01'

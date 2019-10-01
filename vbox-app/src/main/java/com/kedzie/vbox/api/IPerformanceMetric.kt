@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IPerformanceMetric : IManagedObjectRef, Parcelable {
+interface IPerformanceMetric : IManagedObjectRef {
     @Cacheable("MetricName")
 	suspend fun getMetricName(): String
     @Cacheable("Description")

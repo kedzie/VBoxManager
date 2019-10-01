@@ -19,7 +19,7 @@ import com.kedzie.vbox.soap.KsoapProxy
  */
 @KsoapProxy
 @Ksoap
-interface IHost : IManagedObjectRef, Parcelable {
+interface IHost : IManagedObjectRef {
 
     /**
      * @return    Amount of system memory in megabytes installed in the host system.

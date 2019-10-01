@@ -6,7 +6,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap(prefix = "IDirectory")
-interface IDirectory : IManagedObjectRef, Parcelable {
+interface IDirectory : IManagedObjectRef {
 
     suspend fun getDirectoryName():  String
     suspend fun getFilter():  String

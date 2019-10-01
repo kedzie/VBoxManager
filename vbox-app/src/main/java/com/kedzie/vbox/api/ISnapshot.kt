@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface ISnapshot : IManagedObjectRef, Parcelable {
+interface ISnapshot : IManagedObjectRef {
     companion object {
         const val BUNDLE = "snapshot"
     }

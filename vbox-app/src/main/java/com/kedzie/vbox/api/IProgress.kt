@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IProgress : IManagedObjectRef, Parcelable {
+interface IProgress : IManagedObjectRef {
 
     companion object {
         const val BUNDLE = "progress"

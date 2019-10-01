@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap(prefix="IMachineStateChangedEvent")
-interface IMachineStateChangedEvent : IMachineEvent, Parcelable {
+interface IMachineStateChangedEvent : IMachineEvent {
 
     @Cacheable("state")
     suspend fun getState(): MachineState

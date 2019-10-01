@@ -13,7 +13,7 @@ import java.util.*
 
 @KsoapProxy
 @Ksoap
-interface INetworkAdapter : IManagedObjectRef, Parcelable {
+interface INetworkAdapter : IManagedObjectRef {
     companion object {
         const val BUNDLE = "networkadapter"
     }

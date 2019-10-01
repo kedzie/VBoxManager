@@ -11,7 +11,7 @@ import timber.log.Timber
 
 @KsoapProxy
 @Ksoap
-interface IVirtualBox : IManagedObjectRef, Parcelable {
+interface IVirtualBox : IManagedObjectRef {
 
     companion object {
         const val BUNDLE = "vbox"

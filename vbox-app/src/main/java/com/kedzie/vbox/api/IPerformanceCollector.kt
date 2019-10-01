@@ -9,7 +9,7 @@ import java.util.HashMap
 
 @KsoapProxy
 @Ksoap
-interface IPerformanceCollector : IManagedObjectRef, Parcelable {
+interface IPerformanceCollector : IManagedObjectRef {
     companion object {
         const val CPU_LOAD_USER = "CPU/Load/User"
         const val CPU_LOAD_KERNEL = "CPU/Load/Kernel"

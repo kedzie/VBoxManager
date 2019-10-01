@@ -16,7 +16,7 @@ import com.kedzie.vbox.soap.KsoapProxy
  */
 @KsoapProxy
 @Ksoap
-interface IGuest: IManagedObjectRef, Parcelable {
+interface IGuest: IManagedObjectRef {
 
     @Cacheable(value = "MemoryBalloonSize")
 	suspend fun getMemoryBalloonSize(): Int

@@ -152,6 +152,7 @@ interface IMachine : IManagedObjectRef {
     suspend fun getMediumAttachment(name: String, @Ksoap(type = "int") controllerPort: Int, @Ksoap(type = "int") device: Int):  IMediumAttachment
     suspend fun getMediumAttachmentsOfController( name: String): List<IMediumAttachment>
 
+    @Cacheable("storageControllers")
 	suspend fun getStorageControllers(): List<IStorageController>
     suspend fun getStorageControllerByName(name: String): IStorageController
     suspend fun getStorageControllerByInstance(@Ksoap(type = "unsignedInt") instance: Int): IStorageController

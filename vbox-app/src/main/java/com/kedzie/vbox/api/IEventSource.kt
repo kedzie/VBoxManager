@@ -7,7 +7,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IEventSource : IManagedObjectRef, Parcelable {
+interface IEventSource : IManagedObjectRef {
 
     suspend fun createListener(): IEventListener
 

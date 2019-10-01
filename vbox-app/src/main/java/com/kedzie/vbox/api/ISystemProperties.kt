@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface ISystemProperties : IManagedObjectRef, Parcelable {
+interface ISystemProperties : IManagedObjectRef {
 
     @Cacheable("MinGuestRAM")
 	suspend fun getMinGuestRAM(): Int

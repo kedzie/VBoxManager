@@ -15,7 +15,7 @@ import com.kedzie.vbox.soap.KsoapProxy
  */
 @KsoapProxy
 @Ksoap
-interface IGuestSession: IManagedObjectRef, Parcelable {
+interface IGuestSession: IManagedObjectRef {
     /**
      * Returns the user name used by this session to impersonate users on the guest.
      */
@@ -60,12 +60,6 @@ interface IGuestSession: IManagedObjectRef, Parcelable {
 	suspend fun getEnvironment(): List<String>
 
     suspend fun setEnvironment(@Cacheable("Environment") environment: List<String>)
-
-    /**
-     * Returns all current guest processes.
-     */
-    @Cacheable("Processes")
-	suspend fun getProcesses(): List<IGuestProcess>
 
     /**
      * Returns all currently opened guest directories.

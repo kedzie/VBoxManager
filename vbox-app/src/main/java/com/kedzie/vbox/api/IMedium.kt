@@ -13,7 +13,7 @@ import java.util.*
 
 @KsoapProxy
 @Ksoap
-interface IMedium : IManagedObjectRef, Parcelable {
+interface IMedium : IManagedObjectRef {
     companion object {
         const val BUNDLE = "medium"
     }

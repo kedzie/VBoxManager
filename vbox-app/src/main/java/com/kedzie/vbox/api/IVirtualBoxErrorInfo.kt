@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IVirtualBoxErrorInfo : IManagedObjectRef, Parcelable {
+interface IVirtualBoxErrorInfo : IManagedObjectRef {
     @Cacheable("ResultCode")
 	suspend fun getResultCode(): Int
     @Cacheable("Text")

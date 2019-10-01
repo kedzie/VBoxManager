@@ -55,7 +55,7 @@ import com.kedzie.vbox.soap.KsoapProxy
  */
 @Ksoap(prefix = "IEvent")
 @KsoapProxy
-interface IEvent : IManagedObjectRef, Parcelable {
+interface IEvent : IManagedObjectRef {
 
     @Cacheable("type")
     suspend fun getType(): VBoxEventType

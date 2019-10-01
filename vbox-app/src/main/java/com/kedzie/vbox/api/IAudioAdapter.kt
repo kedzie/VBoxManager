@@ -9,7 +9,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IAudioAdapter : IManagedObjectRef, Parcelable {
+interface IAudioAdapter : IManagedObjectRef {
 
     @Cacheable(value = "Enabled")
 	suspend fun getEnabled(): Boolean

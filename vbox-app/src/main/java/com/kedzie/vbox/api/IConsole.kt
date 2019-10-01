@@ -15,7 +15,7 @@ import com.kedzie.vbox.soap.KsoapProxy
  */
 @KsoapProxy
 @Ksoap
-interface IConsole: IManagedObjectRef, Parcelable {
+interface IConsole: IManagedObjectRef {
 
     @Cacheable(value = "EventSource")
 	suspend fun getEventSource(): IEventSource

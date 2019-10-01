@@ -44,14 +44,19 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
     private val annotation = KsoapProxy::class.java
 
-    private val roomEntities = mutableListOf<TypeSpec>()
-    private val roomDaos = mutableListOf<TypeSpec>()
+    private val roomEntities = mutableMapOf<String, EntityInfo>()
+
+    private val roomDaos = mutableMapOf<String, TypeSpec.Builder>()
 
     override fun getSupportedAnnotationTypes() = setOf(annotation.canonicalName)
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
 
     override fun getSupportedOptions() = emptySet<String>()
+
+    data class EntityInfo(val type: TypeSpec.Builder,
+                          val foreignKeys: MutableList<AnnotationSpec>,
+                          val primary: FunSpec.Builder)
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
         remainingTypes.addAll(findInjectedTypes(roundEnv))
@@ -77,9 +82,32 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                         "Could not find injection type required by $remainingTypes")
             }
 
+            val entities = roomEntities.map {(typeName, entityInfo) ->
+                val foreignKeysStr = StringBuffer("foreignKeys = [")
+
+                var isFirst = true
+                for(key in entityInfo.foreignKeys) {
+                    if(!isFirst) {
+                        foreignKeysStr.append(",")
+                    }
+                    isFirst = false
+                    foreignKeysStr.append("\n%L")
+                }
+
+                entityInfo.type.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Entity"))
+                        .addMember("tableName = %S", typeName)
+                        .addMember(foreignKeysStr.append("]").toString(), *entityInfo.foreignKeys.toTypedArray())
+                        .build())
+
+                entityInfo.type.primaryConstructor(entityInfo.primary.build())
+
+                entityInfo.type.build()
+            }
+            val daos = roomDaos.values.map { it.build() }
+
             val entitiesStr = StringBuffer("entities = [")
             var isFirst = true
-            for(entity in roomEntities) {
+            for(entity in entities) {
                 if(!isFirst) {
                     entitiesStr.append(",")
                 }
@@ -91,10 +119,10 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                     .superclass(ClassName("androidx.room", "RoomDatabase"))
                     .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Database"))
                             .addMember("version = 1")
-                            .addMember(entitiesStr.append("]").toString(), *roomEntities.toTypedArray())
+                            .addMember(entitiesStr.append("]").toString(), *entities.toTypedArray())
                             .build())
 
-            for(dao in roomDaos) {
+            for(dao in daos) {
                 dbSpec.addFunction(FunSpec.builder(dao.name!!)
                         .addModifiers(KModifier.ABSTRACT)
                         .returns(ClassName("com.kedzie.vbox.api", dao.name!!))
@@ -103,6 +131,14 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
             FileSpec.builder("com.kedzie.vbox.api", "CacheDatabase")
                     .addType(dbSpec.build())
+                    .apply {
+                        for(dao in daos) {
+                            addType(dao)
+                        }
+                        for(entity in entities) {
+                            addType(entity)
+                        }
+                    }
                     .build()
                     .writeTo(filer)
         }
@@ -135,7 +171,6 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
         return true
     }
 
-//    private fun createInjectedClass(injectedClassName: String): InjectedClass {
     private fun createInjectedClass(type: TypeElement): InjectedClass {
         val typeMetadata: KotlinMetadata? = type.kotlinMetadata
         if (typeMetadata !is KotlinClassMetadata) {
@@ -173,6 +208,18 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                       val data: ClassData,
                                       val methods: List<ExecutableElement>,
                                       val cacheableFields: Map<String, ProtoBuf.Type>)
+
+    private fun getDao(typeName: String): TypeSpec.Builder =
+            roomDaos[typeName]?: TypeSpec.interfaceBuilder("${typeName}Dao")
+                    .addAnnotation(ClassName("androidx.room", "Dao"))
+                    .apply { roomDaos[typeName] = this }
+
+
+    private fun getEntity(typeName: String): EntityInfo =
+            roomEntities[typeName] ?: EntityInfo(TypeSpec.classBuilder("${typeName}Entity")
+                    .addModifiers(KModifier.DATA), mutableListOf<AnnotationSpec>(),
+                        FunSpec.constructorBuilder().addParameter("idRef", ClassName("kotlin", "String")))
+                    .apply { roomEntities[typeName] = this }
 
     private fun generateProxy(injected: InjectedClass) {
         val proto = injected.data.classProto
@@ -214,16 +261,20 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
         proxyType.primaryConstructor(primary.build())
 
         //ROOM Entity
-        val daoType = TypeSpec.interfaceBuilder("${typeName}Dao")
-                .addAnnotation(ClassName("androidx.room", "Dao"))
+        val daoType = getDao(typeName)
 
-        val entityType = TypeSpec.classBuilder("${typeName}Entity")
-                .addModifiers(KModifier.DATA)
+        val entityInfo = getEntity(typeName)
 
-        val entityPrimary = FunSpec.constructorBuilder()
+        //insert method
+        daoType.addFunction(FunSpec.builder("insert")
+                .addModifiers(KModifier.ABSTRACT)
+                .addParameter("value", ClassName("com.kedzie.vbox.api", "${typeName}Entity"))
+                .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Insert"))
+                        .addMember("onConflict = %M", ClassName("androidx.room", "OnConflictStrategy").member( "IGNORE"))
+                        .build())
+                .build())
 
-        entityPrimary.addParameter("idRef", ClassName("kotlin", "String"))
-        entityType.addProperty(PropertySpec.builder("idRef",
+        entityInfo.type.addProperty(PropertySpec.builder("idRef",
                 ClassName("kotlin", "String"))
                 .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "PrimaryKey"))
                         .build())
@@ -232,7 +283,6 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         val fileSpec = FileSpec.builder(getPackage(injected.type).qualifiedName.toString(), "${typeName}Proxy")
 
-        val foreignKeys = mutableListOf<AnnotationSpec>()
         val foreignKeysStr = StringBuffer("foreignKeys = [")
 
         var isFirst = true
@@ -249,96 +299,153 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 fieldType.asTypeName(nameResolver, proto::getTypeParameter, false)
             }
 
-            entityPrimary.addParameter(fieldName, cacheType)
-            val property = PropertySpec.builder(fieldName, cacheType)
-                    .mutable()
-                    .initializer(fieldName)
+            val isList = if(fieldTypeName is ParameterizedTypeName)
+                { fieldTypeName.rawType == ClassName("kotlin.collections", "List") }
+                else false
 
-            if(type != null) {
-                if (typeUtils.isAssignable(type.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
-                    if(!isFirst) {
-                        foreignKeysStr.append(",")
-                    }
-                    isFirst = false
-                    foreignKeysStr.append("\n%L")
-                    foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
+            if(isList && fieldTypeName is ParameterizedTypeName) {
+                val listTypeName = fieldTypeName.typeArguments[0]
+                val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
+                val listType = elementUtils.getTypeElement(listTypeName.toString())
+                //if list of managed object ref
+                if (listType!=null && typeUtils.isAssignable(listType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                    messager.printMessage(Diagnostic.Kind.WARNING, "${typeName} ${listTypeNameStr}")
+
+                    //get child entity
+                    val childEntityInfo = getEntity(listTypeNameStr)
+                    //add foreign key to parent in child
+                    childEntityInfo.primary.addParameter("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
+
+
+                    val property = PropertySpec.builder("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
+                            .mutable()
+                            .initializer("parent${typeName}${fieldName}")
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
+                                    .addMember("index = true")
+                                    .build())
+
+                    //add property to entity
+                    childEntityInfo.type.addProperty(property.build())
+
+                    childEntityInfo.foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
                             .addMember("entity = %T::class", ClassName(packageName, "${typeName}Entity"))
                             .addMember("parentColumns = [%S]", "idRef")
-                            .addMember("childColumns = [%S]", fieldName)
+                            .addMember("childColumns = [%S]", "parent${typeName}${fieldName}")
                             .addMember("onDelete = ForeignKey.CASCADE")
                             .build())
 
-                    property.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
-                            .addMember("index = true")
-                            .build())
-                } else if(type.kind == ElementKind.ENUM) {
-                    val adapterType = TypeSpec.classBuilder("${typeName}_${fieldName}_Adapter")
-
-                    adapterType.addFunction(FunSpec.builder("toString")
-                            .returns(ClassName("kotlin", "String").copy(nullable = true))
-                            .addAnnotation(ClassName("androidx.room", "TypeConverter"))
-                            .addParameter("value", cacheType)
-                            .addStatement("return value?.name")
-                            .build())
-
-                    adapterType.addFunction(FunSpec.builder("toValue")
-                            .returns(cacheType.copy(nullable = true))
-                            .addAnnotation(ClassName("androidx.room", "TypeConverter"))
+                    //dao method to load children
+                    daoType.addFunction(FunSpec.builder("set_${listTypeNameStr}ParentFor_${fieldName}")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .addParameter("idRef", ClassName("kotlin", "String"))
                             .addParameter("value", ClassName("kotlin", "String").copy(nullable = true))
-                            .beginControlFlow("return value?.let")
-                            .addStatement("%M(it)", MemberName(cacheType as ClassName, "valueOf"))
-                            .endControlFlow()
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "update ${listTypeNameStr} set parent${typeName}${fieldName} = :value where idRef = :idRef")
+                                    .build())
                             .build())
 
-                    fileSpec.addType(adapterType.build())
+                    daoType.addFunction(FunSpec.builder("get_ids_${fieldName}")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "String")))
+                            .addParameter("idRef", ClassName("kotlin", "String"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "select idRef from ${listTypeNameStr} where parent${typeName}${fieldName} = :idRef")
+                                    .build())
+                            .build())
 
-                    property.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "TypeConverters"))
-                            .addMember("%N::class", adapterType.build())
+                    daoType.addFunction(FunSpec.builder("get_${fieldName}")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("com.kedzie.vbox.api", "${listTypeNameStr}Entity")))
+                            .addParameter("idRef", ClassName("kotlin", "String"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "select * from ${listTypeNameStr} where parent${typeName}${fieldName} = :idRef")
+                                    .build())
                             .build())
                 }
+            } else {
+                entityInfo.primary.addParameter(fieldName, cacheType.copy(nullable = true))
+                val property = PropertySpec.builder(fieldName, cacheType.copy(nullable = true))
+                        .mutable()
+                        .initializer(fieldName)
+
+                if (type != null) {
+                    if (typeUtils.isAssignable(type.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                        if (!isFirst) {
+                            foreignKeysStr.append(",")
+                        }
+                        isFirst = false
+                        foreignKeysStr.append("\n%L")
+                        entityInfo.foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
+                                .addMember("entity = %T::class", ClassName(packageName, "${fieldTypeName}Entity"))
+                                .addMember("parentColumns = [%S]", "idRef")
+                                .addMember("childColumns = [%S]", fieldName)
+                                .addMember("onDelete = ForeignKey.CASCADE")
+                                .build())
+
+                        property.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
+                                .addMember("index = true")
+                                .build())
+                    } else if (type.kind == ElementKind.ENUM) {
+                        val adapterType = TypeSpec.classBuilder("${typeName}_${fieldName}_Adapter")
+
+                        adapterType.addFunction(FunSpec.builder("toString")
+                                .returns(ClassName("kotlin", "String").copy(nullable = true))
+                                .addAnnotation(ClassName("androidx.room", "TypeConverter"))
+                                .addParameter("value", cacheType)
+                                .addStatement("return value?.name")
+                                .build())
+
+                        adapterType.addFunction(FunSpec.builder("toValue")
+                                .returns(cacheType.copy(nullable = true))
+                                .addAnnotation(ClassName("androidx.room", "TypeConverter"))
+                                .addParameter("value", ClassName("kotlin", "String").copy(nullable = true))
+                                .beginControlFlow("return value?.let")
+                                .addStatement("%M(it)", MemberName(cacheType as ClassName, "valueOf"))
+                                .endControlFlow()
+                                .build())
+
+                        fileSpec.addType(adapterType.build())
+
+                        property.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "TypeConverters"))
+                                .addMember("%N::class", adapterType.build())
+                                .build())
+                    }
+                }
+
+                //add property to entity
+                entityInfo.type.addProperty(property.build())
+
+                //add DAO methods
+                daoType.addFunction(FunSpec.builder("get${fieldName}")
+                        .addModifiers(KModifier.ABSTRACT)
+                        .returns((ClassName("androidx.lifecycle", "LiveData")).parameterizedBy(cacheType))
+                        .addParameter("idRef", ClassName("kotlin", "String"))
+                        .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                .addMember("%S", "select ${fieldName} from ${typeName} where idRef = :idRef")
+                                .build())
+                        .build())
+
+                daoType.addFunction(FunSpec.builder("get${fieldName}Now")
+                        .addModifiers(KModifier.ABSTRACT)
+                        .addModifiers(KModifier.SUSPEND)
+                        .returns(cacheType)
+                        .addParameter("idRef", ClassName("kotlin", "String"))
+                        .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                .addMember("%S", "select ${fieldName} from ${typeName} where idRef = :idRef")
+                                .build())
+                        .build())
+
+                daoType.addFunction(FunSpec.builder("set${fieldName}")
+                        .addModifiers(KModifier.ABSTRACT)
+                        .addParameter("idRef", ClassName("kotlin", "String"))
+                        .addParameter("value", cacheType)
+                        .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                .addMember("%S", "update ${typeName} set ${fieldName} = :value where idRef = :idRef")
+                                .build())
+                        .build())
             }
-
-            entityType.addProperty(property.build())
-
-            daoType.addFunction(FunSpec.builder("get${fieldName}")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .returns((ClassName("androidx.lifecycle", "LiveData")).parameterizedBy(cacheType))
-                    .addParameter("idRef", ClassName("kotlin", "String"))
-                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
-                            .addMember("%S", "select ${fieldName} from ${typeName} where idRef = :idRef")
-                            .build())
-                    .build())
-
-            daoType.addFunction(FunSpec.builder("get${fieldName}Now")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addModifiers(KModifier.SUSPEND)
-                    .returns(cacheType)
-                    .addParameter("idRef", ClassName("kotlin", "String"))
-                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
-                            .addMember("%S", "select ${fieldName} from ${typeName} where idRef = :idRef")
-                            .build())
-                    .build())
-
-            daoType.addFunction(FunSpec.builder("set${fieldName}")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("idRef", ClassName("kotlin", "String"))
-                    .addParameter("value", cacheType)
-                    .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
-                            .addMember("%S", "update ${typeName} set ${fieldName} = :value where idRef = :idRef")
-                            .build())
-                    .build())
         }
 
-        entityType.primaryConstructor(entityPrimary.build())
-
-        entityType.addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Entity"))
-                .addMember("tableName = %S", typeName)
-                .addMember(foreignKeysStr.append("]").toString(), *foreignKeys.toTypedArray())
-                .build())
-
-
-        fileSpec.addType(entityType.build().apply { roomEntities.add(this) })
-        fileSpec.addType(daoType.build().apply { roomDaos.add(this) })
 
         for(method in injected.methods) {
             injected.data.getFunctionOrNull(method)?. let { func ->

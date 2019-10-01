@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap(prefix = "IFile")
-interface IFile : IManagedObjectRef, Parcelable {
+interface IFile : IManagedObjectRef {
     @Cacheable( "CreationMode")
 	suspend fun getCreationMode(): Int
 

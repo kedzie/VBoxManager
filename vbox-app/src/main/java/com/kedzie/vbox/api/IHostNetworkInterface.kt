@@ -10,7 +10,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IHostNetworkInterface : IManagedObjectRef, Parcelable {
+interface IHostNetworkInterface : IManagedObjectRef {
 
     companion object {
         const val BUNDLE = "hostNetwork"

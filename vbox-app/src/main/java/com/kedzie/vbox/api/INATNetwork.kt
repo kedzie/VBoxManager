@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface INATNetwork : IManagedObjectRef, Parcelable {
+interface INATNetwork : IManagedObjectRef {
     companion object {
         const val BUNDLE = "NATNetwork"
     }

@@ -8,7 +8,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface ISession : IManagedObjectRef, Parcelable {
+interface ISession : IManagedObjectRef {
     /**
      * Unlocks a machine that was previously locked for the current session.
      */

@@ -9,7 +9,7 @@ import com.kedzie.vbox.soap.KsoapProxy
 
 @KsoapProxy
 @Ksoap
-interface IStorageController : IManagedObjectRef, Parcelable {
+interface IStorageController : IManagedObjectRef {
     companion object {
         const val BUNDLE = "storageController"
     }
