@@ -363,7 +363,10 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             .build())
                 }
             } else {
-                entityInfo.primary.addParameter(fieldName, cacheType.copy(nullable = true))
+                entityInfo.primary
+                        .addParameter(ParameterSpec.builder(fieldName, cacheType.copy(nullable = true))
+                                .defaultValue("null")
+                                .build())
                 val property = PropertySpec.builder(fieldName, cacheType.copy(nullable = true))
                         .mutable()
                         .initializer(fieldName)
@@ -416,7 +419,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 entityInfo.type.addProperty(property.build())
 
                 //add DAO methods
-                daoType.addFunction(FunSpec.builder("get${fieldName}")
+                daoType.addFunction(FunSpec.builder("get_${fieldName}")
                         .addModifiers(KModifier.ABSTRACT)
                         .returns((ClassName("androidx.lifecycle", "LiveData")).parameterizedBy(cacheType))
                         .addParameter("idRef", ClassName("kotlin", "String"))
@@ -425,7 +428,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                 .build())
                         .build())
 
-                daoType.addFunction(FunSpec.builder("get${fieldName}Now")
+                daoType.addFunction(FunSpec.builder("get_${fieldName}Now")
                         .addModifiers(KModifier.ABSTRACT)
                         .addModifiers(KModifier.SUSPEND)
                         .returns(cacheType)
@@ -435,7 +438,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                 .build())
                         .build())
 
-                daoType.addFunction(FunSpec.builder("set${fieldName}")
+                daoType.addFunction(FunSpec.builder("set_${fieldName}")
                         .addModifiers(KModifier.ABSTRACT)
                         .addParameter("idRef", ClassName("kotlin", "String"))
                         .addParameter("value", cacheType)
@@ -477,25 +480,28 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                     spec.beginControlFlow("return %M", MemberName("androidx.lifecycle", "liveData"))
                 }
 
-                method.getAnnotation(Cacheable::class.java)?.takeIf { it.get }?.apply {
-                    val returnType = elementUtils.getTypeElement(returnTypeName.toString())
+                val returnType = elementUtils.getTypeElement(returnTypeName.toString())
 
+                val isRepository = returnType!=null && typeUtils.isAssignable(returnType.asType(),
+                        elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())
+
+                method.getAnnotation(Cacheable::class.java)?.takeIf { it.get }?.apply {
                     if(isLiveData) {
-                        if (returnType!=null && typeUtils.isAssignable(returnType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
-                            spec.addStatement("emitSource(database.${typeName}Dao().get%L(idRef).%M( { ${returnTypeName}Proxy(api, database, it) } ))",
+                        if (isRepository) {
+                            spec.addStatement("emitSource(database.${typeName}Dao().get_%L(idRef).%M( { ${returnTypeName}Proxy(api, database, it) } ))",
                                     MemberName("androidx.lifecycle.Transformations", "map"),
                                     if (value.isNotEmpty()) value else nameResolver.getString(func.name))
                         }
                         else {
-                            spec.addStatement("emitSource(database.${typeName}Dao().get%L(idRef))",
+                            spec.addStatement("emitSource(database.${typeName}Dao().get_%L(idRef))",
                                     if (value.isNotEmpty()) value else nameResolver.getString(func.name))
                         }
                     }
                     else {
-                        spec.beginControlFlow("database.${typeName}Dao().get%LNow(idRef)?.let",
+                        spec.beginControlFlow("database.${typeName}Dao().get_%LNow(idRef)?.let",
                                 if (value.isNotEmpty()) value else nameResolver.getString(func.name))
 
-                        if (returnType!=null && typeUtils.isAssignable(returnType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                        if (isRepository) {
                             spec.addStatement("return ${returnTypeName}Proxy(api, database, it)")
                         } else {
                             spec.addStatement("return it")
@@ -653,12 +659,22 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             }
                             successFunc.addStatement("val ret = map")
                         } else if (isList) {
+                            val listTypeName = componentType.type.asTypeName(nameResolver, proto::getTypeParameter)
+                            val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
                             successFunc.addStatement("val list = %M<%T>()",
                                     MemberName("kotlin.collections", "mutableListOf"),
-                                    componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
+                                    listTypeName)
                             successFunc.beginControlFlow("for(i in 0..ks.getPropertyCount())")
                             successFunc.beginControlFlow("if(ks.getProperty(i)!=null && !ks.getProperty(i).toString().equals(\"anyType{}\"))")
-                            successFunc.addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, componentType.type, "ks.getProperty(i)"))
+                            val unMarshalled = unmarshal(injected.data, successFunc, ksoap, componentType.type, "ks.getProperty(i)")
+                            successFunc.addStatement("list.add(%L)", unMarshalled)
+
+                            //update parent reference
+                            method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                                successFunc.addStatement("database.${typeName}Dao().set_${listTypeNameStr}ParentFor_%L(ks.getProperty(i).toString(), idRef)",
+                                        if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                            }
+
                             successFunc.endControlFlow()
                             successFunc.endControlFlow()
                             successFunc.addStatement("val ret = list")
@@ -676,11 +692,11 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             successFunc.addStatement("val ret = %L",
                                     unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
                         }
-                    }
 
-                    method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
-                        successFunc.addStatement("database.${typeName}Dao().set%L(idRef, ret)",
-                                if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                        method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                            successFunc.addStatement("database.${typeName}Dao().set_%L(idRef, ret)",
+                                    if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                        }
                     }
 
                     successFunc.addStatement("it.%M(ret)", MemberName("kotlin.coroutines", "resume"))

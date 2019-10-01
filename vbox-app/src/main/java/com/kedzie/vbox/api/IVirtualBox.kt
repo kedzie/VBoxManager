@@ -79,6 +79,7 @@ interface IVirtualBox : IManagedObjectRef {
     @Ksoap(cacheable = true, prefix = "IWebsessionManager", thisReference = "refIVirtualBox")
     suspend fun getSessionObject(): ISession
 
+    @Cacheable("machines")
     suspend fun getMachines(): List<IMachine>
 
     suspend fun findMachine(nameOrId: String): IMachine
