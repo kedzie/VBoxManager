@@ -5,10 +5,11 @@ package com.kedzie.vbox.api.jaxb;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.common.base.Objects;
 import com.kedzie.vbox.api.IMedium;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.soap.KSoapObject;
+
+import java.util.Objects;
 
 @KSoapObject("IMediumAttachment")
 public class IMediumAttachment
@@ -94,18 +95,17 @@ public class IMediumAttachment
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hashCode(port, device);
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Slot slot = (Slot) o;
+            return port == slot.port &&
+                    device == slot.device;
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null || !(obj instanceof Slot))
-                return false;
-            Slot that = (Slot) obj;
-            return Objects.equal(port, that.port) && Objects.equal(device, that.device);
+        public int hashCode() {
+            return Objects.hash(port, device);
         }
     }
 
@@ -379,17 +379,17 @@ public class IMediumAttachment
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(slot, controller);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IMediumAttachment that = (IMediumAttachment) o;
+        return Objects.equals(slot, that.slot) &&
+                Objects.equals(medium, that.medium) &&
+                Objects.equals(controller, that.controller);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || !(obj instanceof IMediumAttachment))
-            return false;
-        IMediumAttachment that = (IMediumAttachment) obj;
-        return Objects.equal(slot, that.slot) && Objects.equal(controller, that.controller) && Objects.equal(medium, that.medium);
+    public int hashCode() {
+        return Objects.hash(slot, medium, controller);
     }
 }

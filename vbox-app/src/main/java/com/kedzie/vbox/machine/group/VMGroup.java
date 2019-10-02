@@ -2,11 +2,11 @@ package com.kedzie.vbox.machine.group;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.common.base.Objects;
 import com.kedzie.vbox.api.IMachine;
 
 /**
@@ -121,7 +121,7 @@ public class VMGroup implements TreeNode {
         if(other==null || !(other instanceof VMGroup)) 
             return false;
         VMGroup that = (VMGroup)other;
-        return Objects.equal(_name, that._name);
+        return Objects.equals(_name, that._name);
     }
     
     @Override

@@ -6,10 +6,24 @@ import android.os.Parcelable;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
-import com.kedzie.vbox.BuildConfig;
-import com.kedzie.vbox.api.*;
+import com.kedzie.vbox.api.BaseProxy;
+import com.kedzie.vbox.api.IDHCPServer;
+import com.kedzie.vbox.api.IDisplay;
+import com.kedzie.vbox.api.IEvent;
+import com.kedzie.vbox.api.IHost;
+import com.kedzie.vbox.api.IHostNetworkInterface;
+import com.kedzie.vbox.api.IMachine;
+import com.kedzie.vbox.api.IMachineStateChangedEvent;
+import com.kedzie.vbox.api.IManagedObjectRef;
+import com.kedzie.vbox.api.IMedium;
+import com.kedzie.vbox.api.INetworkAdapter;
+import com.kedzie.vbox.api.IProgress;
+import com.kedzie.vbox.api.ISession;
+import com.kedzie.vbox.api.ISessionStateChangedEvent;
+import com.kedzie.vbox.api.ISnapshotDeletedEvent;
+import com.kedzie.vbox.api.ISnapshotTakenEvent;
+import com.kedzie.vbox.api.IVirtualBox;
+import com.kedzie.vbox.api.Screenshot;
 import com.kedzie.vbox.api.jaxb.BitmapFormat;
 import com.kedzie.vbox.api.jaxb.LockType;
 import com.kedzie.vbox.api.jaxb.MachineState;
@@ -23,10 +37,7 @@ import com.kedzie.vbox.soap.ssl.KeystoreTrustedHttpsTransport;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.KvmSerializable;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
@@ -35,20 +46,17 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import nf.fr.eraasoft.pool.ObjectPool;
-import nf.fr.eraasoft.pool.PoolException;
 import nf.fr.eraasoft.pool.PoolSettings;
 import nf.fr.eraasoft.pool.PoolableObjectBase;
 
@@ -154,7 +162,7 @@ public class VBoxSvc implements Parcelable, Externalizable {
             transport.call(request, envelope);
         } catch (Throwable e) {
             Log.e(TAG, "Exception", e);
-            Throwables.propagateIfPossible(e, IOException.class);
+            if(e instanceof IOException) throw (IOException)e;
         } finally {
             if(transport!=null)
                 _transportPool.returnObj(transport);
@@ -230,7 +238,8 @@ public class VBoxSvc implements Parcelable, Externalizable {
             }
             return proxy;
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+        	if(e instanceof RuntimeException) throw (RuntimeException)e;
+        	throw new RuntimeException(e);
         }
     }
 

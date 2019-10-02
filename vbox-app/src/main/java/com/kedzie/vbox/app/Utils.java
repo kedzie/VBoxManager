@@ -1,11 +1,6 @@
 
 package com.kedzie.vbox.app;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -15,14 +10,12 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -37,11 +30,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Predicate;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.kedzie.vbox.BuildConfig;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMedium;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Android Utilities
@@ -654,132 +659,9 @@ public class Utils {
 		return Bitmap.createBitmap(bitmap, 0, 0, bWidth, bHeight, matrix, true);
 	}
 
-    public static class TouchUtils {
-
-        private static Method mPointInView;
-        private static Method mHasIdentityMatrix;
-        private static Method mGetInverseMatrix;
-        private static Method mIsChildrenDrawingOrderEnabled;
-        private static Method mGetChildDrawingOrder;
-
-        static {
-            try {
-                mPointInView = View.class.getDeclaredMethod("pointInView", float.class, float.class);
-                mPointInView.setAccessible(true);
-                mHasIdentityMatrix = View.class.getDeclaredMethod("hasIdentityMatrix");
-                mHasIdentityMatrix.setAccessible(true);
-                mGetInverseMatrix = View.class.getDeclaredMethod("getInverseMatrix");
-                mGetInverseMatrix.setAccessible(true);
-                mIsChildrenDrawingOrderEnabled = ViewGroup.class.getDeclaredMethod("isChildrenDrawingOrderEnabled");
-                mIsChildrenDrawingOrderEnabled.setAccessible(true);
-                mGetChildDrawingOrder = ViewGroup.class.getDeclaredMethod("getChildDrawingOrder", int.class, int.class);
-                mGetChildDrawingOrder.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                Log.e(TAG, "Error", e);
-            }
-        }
-
-        private static boolean hasIdentityMatrix(View v) {
-            try {
-                return (Boolean) mHasIdentityMatrix.invoke(v);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private static Matrix getInverseMatrix(View v) {
-            try {
-                return (Matrix) mGetInverseMatrix.invoke(v);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private static boolean pointInView(View v, float x, float y) {
-            try {
-                return (Boolean) mPointInView.invoke(v, x, y);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private static boolean isChildrenDrawingOrderEnabled(ViewGroup v) {
-            try {
-                return (Boolean) mIsChildrenDrawingOrderEnabled.invoke(v);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private static int getChildDrawingOrder(ViewGroup v, int count, int iteration) {
-            try {
-                return (Integer) mGetChildDrawingOrder.invoke(v, count, iteration);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        /**
-         * Map point to child coordinate system
-         *
-         * @param view  target view
-         * @param point point to map
-         * @return mapped points
-         */
-        public static PointF mapPoint(View parent, View view, PointF point) {
-            PointF mapped = new PointF(point.x, point.y);
-            if (!hasIdentityMatrix(view)) {
-                float[] n = {mapped.x, mapped.y};
-                getInverseMatrix(view).mapPoints(n);
-                mapped.x = n[0];
-                mapped.y = n[1];
-            }
-            mapped.offset(parent.getScrollX() - view.getLeft(), parent.getScrollY() - view.getTop());
-            return mapped;
-        }
-
-        /**
-         * Get deepest view under point
-         *
-         * @param view View to search
-         * @param p    point in view's coordinate space
-         * @return deepest view
-         */
-        public static View getDeepestView(View view, PointF p) {
-            if (view instanceof ViewGroup) {
-                ViewGroup parent = (ViewGroup) view;
-                boolean customOrder = isChildrenDrawingOrderEnabled(parent);
-                for (int i = parent.getChildCount() - 1; i >= 0; i--) {
-                    View child = parent.getChildAt(customOrder ? getChildDrawingOrder(parent, parent.getChildCount(), i) : i);
-                    PointF mapped = mapPoint(parent, child, p);
-                    if (pointInView(view, mapped.x, mapped.y)) {
-                        return getDeepestView(child, mapped);
-                    }
-                }
-            }
-            return view;
-        }
-
-        /**
-         * Get the deepest view which satisfies a predicate
-         *
-         * @param view      View to search
-         * @param p         point in view's coordinate space
-         * @param predicate function used to evaluate view
-         * @return The deepest view which satisfies predicate
-         */
-        public static View getDeepestView(View view, PointF p, Predicate<View> predicate) {
-            View deepest = getDeepestView(view, p);
-            while (deepest != null && !predicate.apply(deepest)) {
-                if (deepest.getParent() instanceof View)
-                    deepest = (View) deepest.getParent();
-                else
-                    deepest = null;
-            }
-            return deepest;
-        }
-
-    }
+    public interface Predicate<T> {
+		boolean apply(T value);
+	}
 
     public static class StyleUtils {
 

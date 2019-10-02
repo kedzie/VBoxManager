@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.ViewFlipper;
 
-import com.google.common.base.Predicate;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IHost;
 import com.kedzie.vbox.api.IMachine;
@@ -85,7 +83,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     private Animation mSlideOutLeft = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
     private Animation mSlideOutRight = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_right);
 
-    private Dragger mDragger;
+//    private Dragger mDragger;
     private VMGroup mDraggedGroup;
     private IMachine mDraggedMachine;
     
@@ -97,7 +95,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
     public VMGroupListView(Context context, VBoxSvc vmgr) {
         super(context);
         _vmgr=vmgr;
-        mDragger = new Dragger();
+//        mDragger = new Dragger();
     }
 
     public void setRoot(VMGroup group, IHost host, String version) {
@@ -199,7 +197,7 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
             ScrollView scrollView = new ScrollView(getContext());
             scrollView.addView(mContents);
             super.addView(scrollView);
-            setOnDragListener(mDragger);
+//            setOnDragListener(mDragger);
         }
         
         @Override
@@ -370,197 +368,197 @@ public class VMGroupListView extends ViewFlipper implements OnClickListener, OnL
         }
     }
 
-    private class Dragger implements OnDragListener {
-
-        private VMGroupPanel mGroupView;
-        private GroupSection mSectionView;
-        private VMGroup mParentGroup;
-        private List<VMGroupPanel> mNewParentViews;
-
-        @Override
-        public boolean onDrag(View view, DragEvent event) {
-            mSectionView = (GroupSection)view;
-
-            final int action = event.getAction();
-            switch(action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    return true;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    mSectionView.setBackgroundColor(DRAG_ACCEPT_COLOR);
-                    mSectionView.invalidate();
-                    return true;
-                case DragEvent.ACTION_DRAG_LOCATION:
-                    VMGroupPanel current = (VMGroupPanel) Utils.TouchUtils.getDeepestView(mSectionView,
-                            new PointF(event.getX(), event.getY()),
-                            new Predicate<View>() {
-                                @Override
-                                public boolean apply(View view) {
-                                    return VMGroupPanel.class.isAssignableFrom(view.getClass());
-                                }
-                            });
-
-                    if(mGroupView!=null && current!=mGroupView) { //exited group panel
-                        Log.d(TAG, "Exited " + mGroupView.getGroup());
-                        mParentGroup=null;
-                        mGroupView.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
-                        mGroupView.invalidate();
-                    }
-                    if(current!=null && current!=mGroupView) { //entered group panel
-                        Log.d(TAG, "Entered " + current.getGroup());
-                        mParentGroup = current.getGroup();
-                        if(doAcceptDragEnter()) {
-                            current.setBackgroundColor(DRAG_ACCEPT_COLOR);
-                            current.invalidate();
-                        }
-                    }
-                    if(current==null && mGroupView!=null) { //entered root group
-                        Log.v(TAG, "Entered Root");
-                        mParentGroup = mSectionView.getGroup();
-                        if(doAcceptDragEnter()) {
-                            mSectionView.setBackgroundColor(DRAG_ACCEPT_COLOR);
-                            mSectionView.invalidate();
-                        }
-                    } else if(current!=null && mGroupView==null) { //exited root group
-                        Log.v(TAG, "Exited Root");
-                        mParentGroup=null;
-                        mSectionView.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
-                        mSectionView.invalidate();
-                    }
-                    mGroupView = current;
-                    return true;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    mParentGroup = null;
-                    view.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
-                    view.invalidate();
-                    return true;
-                case DragEvent.ACTION_DROP:
-                    if(!doAcceptDragEnter())
-                        return false;
-
-                    mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
-
-                    if(mDraggedMachine!=null)
-                        dropMachine(mDraggedMachine, mParentGroup, mDraggedMachine);
-                    else if(mDraggedGroup!=null)
-                        dropGroup(mDraggedGroup, mParentGroup, mDraggedGroup);
-                    return true;
-                case DragEvent.ACTION_DRAG_ENDED:
-                    if(mGroupView!=null) {
-                        mGroupView.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
-                        mGroupView.invalidate();
-                    }
-                    view.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
-                    view.invalidate();
-                    mGroupView = null;
-                    mDraggedGroup=null;
-                    mDraggedMachine=null;
-                    mParentGroup=null;
-                    return true;
-            }
-            return false;
-        }
-
-        private boolean doAcceptDragEnter() {
-            if(mDraggedMachine!=null) {
-                if(mDraggedMachine.getGroups().get(0).equals(mParentGroup.getName()))
-                    return false;
-            } else if(mDraggedGroup!=null) {
-                if(mDraggedGroup.equals(mParentGroup))
-                    return false;
-                String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
-                if(oldParentName.equals(mParentGroup.getName()))
-                    return false;
-            }
-            return true;
-        }
-
-        private void dropMachine(final IMachine draggedMachine, final VMGroup parent, IMachine child) {
-            List<MachineView> machineViews = mMachineViewMap.get(draggedMachine.getIdRef());
-            //move the views
-            for(MachineView mv : machineViews)
-                ((ViewGroup)mv.getParent()).removeView(mv);
-            for(int i=0; i<machineViews.size(); i++) {
-                MachineView mv = machineViews.get(i);
-                if(mNewParentViews!=null && i<mNewParentViews.size()) //in case we are dragging to root group, there are less group panels than machine views
-                    mNewParentViews.get(i).addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-                else if(mSectionView!=null)
-                    mSectionView.addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            }
-            //update the data
-            VMGroup oldParent = mGroupCache.get(draggedMachine.getGroups().get(0));
-            oldParent.removeChild(draggedMachine);
-            parent.addChild(draggedMachine);
-            _vmgr.getExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        ISession session = _vmgr.getVBox().getSessionObject();
-                        draggedMachine.lockMachine(session, LockType.WRITE);
-                        IMachine mutable = session.getMachine();
-                        mutable.setGroups(parent.getName());
-                        mutable.saveSettings();
-                        session.unlockMachine();
-                    } catch (IOException e) {
-                        Log.e(TAG, "Error", e);
-                    }
-                }
-            });
-        }
-
-        private void dropGroup(final VMGroup draggedGroup, final VMGroup parent, VMGroup child) {
-            String oldParentName = draggedGroup.getName().substring(0, draggedGroup.getName().lastIndexOf('/'));
-            //move the views
-            List<VMGroupPanel> groupViews = mGroupViewMap.get(draggedGroup.getName());
-            for(VMGroupPanel gv : groupViews)
-                ((ViewGroup)gv.getParent()).removeView(gv);
-
-            for(int i=0; i<groupViews.size(); i++) {
-                VMGroupPanel gv = groupViews.get(i);
-                if(mNewParentViews!=null && i<mNewParentViews.size()) //in case we are dragging to root group, there are less parent group panels than child views
-                    mNewParentViews.get(i).addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-                else if(mSectionView!=null)
-                    mSectionView.addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            }
-
-            //update the data
-            VMGroup oldParent = mGroupCache.get(oldParentName);
-            Log.v(TAG, String.format("Moving group [%1$s]  from %2$s --> %2$s", draggedGroup, oldParentName, parent));
-            oldParent.removeChild(draggedGroup);
-            parent.addChild(draggedGroup);
-            _vmgr.getExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        moveGroup(_vmgr.getVBox().getSessionObject(), parent, draggedGroup);
-                    } catch(IOException e) {
-                        Log.e(TAG, "Exception moving group", e);
-                    }
-                }
-            });
-        }
-
-        private void moveGroup(ISession session, VMGroup parent, VMGroup group) throws IOException {
-            Log.v(TAG, "Processing group: " + group);
-            String oldName = group.getName();
-            group.setName(parent.getName() + (parent.getName().endsWith("/") ? "" : "/") + group.getSimpleGroupName()  );
-            //update the group cache
-            mGroupCache.remove(oldName);
-            mGroupCache.put(group.getName(), group);
-            Log.v(TAG, String.format("Changed group name %1$s --> %2$s", oldName, group.getName()));
-            for(TreeNode c : group.getChildren()) {
-                if(c instanceof IMachine) {
-                    IMachine child = (IMachine)c;
-                    Log.v(TAG, "Updating Machine: " + child.getName());
-                    child.lockMachine(session, LockType.WRITE);
-                    IMachine mutable = session.getMachine();
-                    mutable.setGroups(group.getName());
-                    mutable.saveSettings();
-                    session.unlockMachine();
-                } else {
-                    VMGroup child = (VMGroup)c;
-                    moveGroup(session, group, child);
-                }
-            }
-        }
-    }
+//    private class Dragger implements OnDragListener {
+//
+//        private VMGroupPanel mGroupView;
+//        private GroupSection mSectionView;
+//        private VMGroup mParentGroup;
+//        private List<VMGroupPanel> mNewParentViews;
+//
+//        @Override
+//        public boolean onDrag(View view, DragEvent event) {
+//            mSectionView = (GroupSection)view;
+//
+//            final int action = event.getAction();
+//            switch(action) {
+//                case DragEvent.ACTION_DRAG_STARTED:
+//                    return true;
+//                case DragEvent.ACTION_DRAG_ENTERED:
+//                    mSectionView.setBackgroundColor(DRAG_ACCEPT_COLOR);
+//                    mSectionView.invalidate();
+//                    return true;
+//                case DragEvent.ACTION_DRAG_LOCATION:
+//                    VMGroupPanel current = (VMGroupPanel) Utils.TouchUtils.getDeepestView(mSectionView,
+//                            new PointF(event.getX(), event.getY()),
+//                            new Utils.Predicate<View>() {
+//                                @Override
+//                                public boolean apply(View view) {
+//                                    return VMGroupPanel.class.isAssignableFrom(view.getClass());
+//                                }
+//                            });
+//
+//                    if(mGroupView!=null && current!=mGroupView) { //exited group panel
+//                        Log.d(TAG, "Exited " + mGroupView.getGroup());
+//                        mParentGroup=null;
+//                        mGroupView.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
+//                        mGroupView.invalidate();
+//                    }
+//                    if(current!=null && current!=mGroupView) { //entered group panel
+//                        Log.d(TAG, "Entered " + current.getGroup());
+//                        mParentGroup = current.getGroup();
+//                        if(doAcceptDragEnter()) {
+//                            current.setBackgroundColor(DRAG_ACCEPT_COLOR);
+//                            current.invalidate();
+//                        }
+//                    }
+//                    if(current==null && mGroupView!=null) { //entered root group
+//                        Log.v(TAG, "Entered Root");
+//                        mParentGroup = mSectionView.getGroup();
+//                        if(doAcceptDragEnter()) {
+//                            mSectionView.setBackgroundColor(DRAG_ACCEPT_COLOR);
+//                            mSectionView.invalidate();
+//                        }
+//                    } else if(current!=null && mGroupView==null) { //exited root group
+//                        Log.v(TAG, "Exited Root");
+//                        mParentGroup=null;
+//                        mSectionView.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
+//                        mSectionView.invalidate();
+//                    }
+//                    mGroupView = current;
+//                    return true;
+//                case DragEvent.ACTION_DRAG_EXITED:
+//                    mParentGroup = null;
+//                    view.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
+//                    view.invalidate();
+//                    return true;
+//                case DragEvent.ACTION_DROP:
+//                    if(!doAcceptDragEnter())
+//                        return false;
+//
+//                    mNewParentViews = mGroupViewMap.get(mParentGroup.getName());
+//
+//                    if(mDraggedMachine!=null)
+//                        dropMachine(mDraggedMachine, mParentGroup, mDraggedMachine);
+//                    else if(mDraggedGroup!=null)
+//                        dropGroup(mDraggedGroup, mParentGroup, mDraggedGroup);
+//                    return true;
+//                case DragEvent.ACTION_DRAG_ENDED:
+//                    if(mGroupView!=null) {
+//                        mGroupView.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
+//                        mGroupView.invalidate();
+//                    }
+//                    view.setBackgroundColor(getResources().getColor(VIEW_BACKGROUND, null));
+//                    view.invalidate();
+//                    mGroupView = null;
+//                    mDraggedGroup=null;
+//                    mDraggedMachine=null;
+//                    mParentGroup=null;
+//                    return true;
+//            }
+//            return false;
+//        }
+//
+//        private boolean doAcceptDragEnter() {
+//            if(mDraggedMachine!=null) {
+//                if(mDraggedMachine.getGroups().get(0).equals(mParentGroup.getName()))
+//                    return false;
+//            } else if(mDraggedGroup!=null) {
+//                if(mDraggedGroup.equals(mParentGroup))
+//                    return false;
+//                String oldParentName = mDraggedGroup.getName().substring(0, mDraggedGroup.getName().lastIndexOf('/'));
+//                if(oldParentName.equals(mParentGroup.getName()))
+//                    return false;
+//            }
+//            return true;
+//        }
+//
+//        private void dropMachine(final IMachine draggedMachine, final VMGroup parent, IMachine child) {
+//            List<MachineView> machineViews = mMachineViewMap.get(draggedMachine.getIdRef());
+//            //move the views
+//            for(MachineView mv : machineViews)
+//                ((ViewGroup)mv.getParent()).removeView(mv);
+//            for(int i=0; i<machineViews.size(); i++) {
+//                MachineView mv = machineViews.get(i);
+//                if(mNewParentViews!=null && i<mNewParentViews.size()) //in case we are dragging to root group, there are less group panels than machine views
+//                    mNewParentViews.get(i).addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//                else if(mSectionView!=null)
+//                    mSectionView.addView(mv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//            }
+//            //update the data
+//            VMGroup oldParent = mGroupCache.get(draggedMachine.getGroups().get(0));
+//            oldParent.removeChild(draggedMachine);
+//            parent.addChild(draggedMachine);
+//            _vmgr.getExecutor().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        ISession session = _vmgr.getVBox().getSessionObject();
+//                        draggedMachine.lockMachine(session, LockType.WRITE);
+//                        IMachine mutable = session.getMachine();
+//                        mutable.setGroups(parent.getName());
+//                        mutable.saveSettings();
+//                        session.unlockMachine();
+//                    } catch (IOException e) {
+//                        Log.e(TAG, "Error", e);
+//                    }
+//                }
+//            });
+//        }
+//
+//        private void dropGroup(final VMGroup draggedGroup, final VMGroup parent, VMGroup child) {
+//            String oldParentName = draggedGroup.getName().substring(0, draggedGroup.getName().lastIndexOf('/'));
+//            //move the views
+//            List<VMGroupPanel> groupViews = mGroupViewMap.get(draggedGroup.getName());
+//            for(VMGroupPanel gv : groupViews)
+//                ((ViewGroup)gv.getParent()).removeView(gv);
+//
+//            for(int i=0; i<groupViews.size(); i++) {
+//                VMGroupPanel gv = groupViews.get(i);
+//                if(mNewParentViews!=null && i<mNewParentViews.size()) //in case we are dragging to root group, there are less parent group panels than child views
+//                    mNewParentViews.get(i).addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//                else if(mSectionView!=null)
+//                    mSectionView.addView(gv, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//            }
+//
+//            //update the data
+//            VMGroup oldParent = mGroupCache.get(oldParentName);
+//            Log.v(TAG, String.format("Moving group [%1$s]  from %2$s --> %2$s", draggedGroup, oldParentName, parent));
+//            oldParent.removeChild(draggedGroup);
+//            parent.addChild(draggedGroup);
+//            _vmgr.getExecutor().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        moveGroup(_vmgr.getVBox().getSessionObject(), parent, draggedGroup);
+//                    } catch(IOException e) {
+//                        Log.e(TAG, "Exception moving group", e);
+//                    }
+//                }
+//            });
+//        }
+//
+//        private void moveGroup(ISession session, VMGroup parent, VMGroup group) throws IOException {
+//            Log.v(TAG, "Processing group: " + group);
+//            String oldName = group.getName();
+//            group.setName(parent.getName() + (parent.getName().endsWith("/") ? "" : "/") + group.getSimpleGroupName()  );
+//            //update the group cache
+//            mGroupCache.remove(oldName);
+//            mGroupCache.put(group.getName(), group);
+//            Log.v(TAG, String.format("Changed group name %1$s --> %2$s", oldName, group.getName()));
+//            for(TreeNode c : group.getChildren()) {
+//                if(c instanceof IMachine) {
+//                    IMachine child = (IMachine)c;
+//                    Log.v(TAG, "Updating Machine: " + child.getName());
+//                    child.lockMachine(session, LockType.WRITE);
+//                    IMachine mutable = session.getMachine();
+//                    mutable.setGroups(group.getName());
+//                    mutable.saveSettings();
+//                    session.unlockMachine();
+//                } else {
+//                    VMGroup child = (VMGroup)c;
+//                    moveGroup(session, group, child);
+//                }
+//            }
+//        }
+//    }
 }

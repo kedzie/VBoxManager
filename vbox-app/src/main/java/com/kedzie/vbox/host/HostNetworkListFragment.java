@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.common.base.Throwables;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IDHCPServer;
 import com.kedzie.vbox.api.IHost;
@@ -127,7 +126,10 @@ public class HostNetworkListFragment extends Fragment {
 					_dhcpServers.add(dhcp);
 				}
 				} catch(Throwable e) {
-					Throwable cause = Throwables.getRootCause(e);
+					Throwable cause = e;
+					while(cause.getCause() != null) {
+						cause = cause.getCause();
+					}
 					if(cause instanceof SoapFault) {
 						SoapFault sf = (SoapFault) cause;
 						Timber.e( "SoapFault finding DHCP Server " + sf.detail.getText(0), e);

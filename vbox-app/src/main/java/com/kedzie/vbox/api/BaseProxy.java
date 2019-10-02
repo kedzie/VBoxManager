@@ -3,23 +3,16 @@ package com.kedzie.vbox.api;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import com.google.common.base.Objects;
-import com.kedzie.vbox.BuildConfig;
+
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.soap.KSOAP;
-import com.kedzie.vbox.soap.KSoapObject;
 import com.kedzie.vbox.soap.VBoxSvc;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.*;
-import org.ksoap2.transport.HttpTransportSE;
+
+import org.ksoap2.serialization.SoapSerializationEnvelope;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author kedzie
@@ -82,7 +75,7 @@ public abstract class BaseProxy implements IManagedObjectRef, Parcelable {
         if(o==null) return false;
         if(!(o instanceof IManagedObjectRef) || !_type.isAssignableFrom(o.getClass()))
             return false;
-        return Objects.equal(_uiud, ((IManagedObjectRef) o).getIdRef());
+        return Objects.equals(_uiud, ((IManagedObjectRef) o).getIdRef());
     }
 
     @Override

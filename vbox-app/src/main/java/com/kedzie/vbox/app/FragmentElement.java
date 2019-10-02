@@ -6,7 +6,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.fragment.app.Fragment;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 
 /**
  * Description of a fragment.  Also has methods to instantiate and track a reference.
@@ -72,10 +73,10 @@ public class FragmentElement implements Parcelable {
         if(obj==null) return false;
         if(!getClass().equals(obj.getClass())) return false;
         final FragmentElement that = (FragmentElement)obj;
-        return Objects.equal(this.name, that.name) && Objects.equal(this.clazz,that.clazz);
+        return Objects.equals(this.name, that.name) && Objects.equals(this.clazz,that.clazz);
     }
     
     public int hashCode() {
-        return Objects.hashCode(name, clazz);
+        return Objects.hash(name, clazz);
     }
 }

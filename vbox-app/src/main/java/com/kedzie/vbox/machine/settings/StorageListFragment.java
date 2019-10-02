@@ -23,8 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.VBoxApplication;
 import com.kedzie.vbox.api.IMachine;
@@ -44,8 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -90,7 +89,6 @@ public class StorageListFragment extends Fragment {
 	private IMachine _machine;
 	private ISystemProperties _systemProperties;
 	private ArrayList<IStorageController> _controllers;
-	private ListMultimap<IStorageController, IMediumAttachment> _data;
 	private Map<IStorageController, List<IMediumAttachment>> _dataListMap; 
 
 	/**
@@ -111,13 +109,11 @@ public class StorageListFragment extends Fragment {
 				_systemProperties.getDeviceTypesForStorageBus(bus);
 			}
 			_controllers = params[0].getStorageControllers();
-			_data = ArrayListMultimap.create();
 			_dataListMap = new HashMap<IStorageController, List<IMediumAttachment>>();
 			for(IStorageController c : _controllers) {
 				params[0].clearCacheNamed("getMediumAttachmentsOrController-"+c.getName());
 				c.getBus(); c.getControllerType();
 				ArrayList<IMediumAttachment> attachments = params[0].getMediumAttachmentsOfController(c.getName());
-				_data.putAll(c, attachments);
 				for(IMediumAttachment a : attachments) {
 					if(a.getMedium()!=null) {
 						a.getMedium().clearCache();
@@ -133,7 +129,7 @@ public class StorageListFragment extends Fragment {
 		@Override
 		protected void onSuccess(Void result) {
 			super.onSuccess(result);
-			_listAdapter = new ItemAdapter((AppCompatActivity)getActivity(), _controllers, _data);
+			_listAdapter = new ItemAdapter(getActivity());
 			_listView.setAdapter(_listAdapter);
 			for(int i=0; i<_controllers.size(); i++)
 			    _listView.expandGroup(i);
@@ -184,7 +180,6 @@ public class StorageListFragment extends Fragment {
 		protected void onSuccess(IStorageController result) {
 			super.onSuccess(result);
 			_controllers.remove(result);
-			_data.removeAll(result);
 			_dataListMap.remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
@@ -212,7 +207,6 @@ public class StorageListFragment extends Fragment {
 			for(IStorageController c : _controllers)
 				if(c.getName().equals(result.getController()))
 					controller=c;
-			_data.remove(controller, result);
 			_dataListMap.get(controller).remove(result);
 			_listAdapter.notifyDataSetChanged();
 		}
@@ -347,7 +341,6 @@ public class StorageListFragment extends Fragment {
 		protected void onSuccess(IMediumAttachment result) {
 			super.onSuccess(result);
 			Utils.toastShort(getContext(), "Attached medium to slot " + result.getSlot());
-			_data.put(controller, result);
 			_dataListMap.get(controller).add(result);
 			_listAdapter.notifyDataSetChanged();
 		}
@@ -356,37 +349,26 @@ public class StorageListFragment extends Fragment {
 	private class ItemAdapter extends BaseExpandableListAdapter {
 
 		private final LayoutInflater mInflater;
-		private List<IStorageController> mControllers;
-		private ListMultimap<IStorageController, IMediumAttachment> mData;
-		private Map<IStorageController, List<IMediumAttachment>> mDataListMap;
 		
-		public ItemAdapter(Context context, List<IStorageController> controllers, ListMultimap<IStorageController, IMediumAttachment> data) {
+		public ItemAdapter(Context context) {
 			mInflater = LayoutInflater.from(context);
-			mData = data;
-			mControllers = controllers;
 		}
-
-//		public ItemAdapter(Context context, List<IStorageController> controllers, Map<IStorageController, List<IMediumAttachment>> data) {
-//			mInflater = LayoutInflater.from(context);
-//			mDataListMap = data;
-//			mControllers = controllers;
-//		}
 		
 		@Override
 		public void notifyDataSetChanged() {
 			super.notifyDataSetChanged();
-			for(int i=0; i<mControllers.size(); i++)
+			for(int i=0; i<_controllers.size(); i++)
 				_listView.expandGroup(i);
 		}
 
 		@Override
 		public int getGroupCount() {
-			return mControllers.size();
+			return _controllers.size();
 		}
 
 		@Override
 		public Object getGroup(int groupPosition) {
-			return mControllers.get(groupPosition);
+			return _controllers.get(groupPosition);
 		}
 
 		@Override
@@ -396,18 +378,12 @@ public class StorageListFragment extends Fragment {
 
 		@Override
 		public int getChildrenCount(int groupPosition) {
-			if(mData!=null)
-				return mData.get(mControllers.get(groupPosition)).size();
-			else
-				return mDataListMap.get(mControllers.get(groupPosition)).size();
+			return _dataListMap.get(_controllers.get(groupPosition)).size();
 		}
 
 		@Override
 		public Object getChild(int groupPosition, int childPosition) {
-			if(mData!=null)
-				return mData.get(mControllers.get(groupPosition)).get(childPosition);
-			else
-				return mDataListMap.get(mControllers.get(groupPosition)).get(childPosition);
+			return _dataListMap.get(_controllers.get(groupPosition)).get(childPosition);
 		}
 
 		@Override
@@ -531,10 +507,10 @@ public class StorageListFragment extends Fragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		if(_dataListMap==null && _data==null)
+		if(_dataListMap==null)
 			new LoadDataTask().execute(_machine);
 		else {
-			_listAdapter = new ItemAdapter((AppCompatActivity)getActivity(), _controllers, _data);
+			_listAdapter = new ItemAdapter(getActivity());
 			_listView.setAdapter(_listAdapter);
 			for(int i=0; i<_dataListMap.keySet().size(); i++)
 				_listView.expandGroup(i);

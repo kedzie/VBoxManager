@@ -1,12 +1,12 @@
 package com.kedzie.vbox.server;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.common.base.Objects;
 import com.kedzie.vbox.app.Utils;
 
 public class Server implements Parcelable, Serializable {
@@ -133,6 +133,6 @@ public class Server implements Parcelable, Serializable {
 		if (this == obj) return true;
 		if (obj == null  || getClass() != obj.getClass()) return false;
 		Server that = (Server) obj;
-		return Objects.equal(id, that.id);
+		return Objects.equals(id, that.id);
 	}
 }

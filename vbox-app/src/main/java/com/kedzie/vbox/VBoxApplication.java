@@ -3,6 +3,7 @@ package com.kedzie.vbox;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -11,11 +12,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-
-import androidx.multidex.MultiDexApplication;
-
 import android.util.Log;
 import android.util.SparseArray;
+
+import androidx.preference.PreferenceManager;
 
 import com.kedzie.vbox.api.jaxb.MachineState;
 import com.kedzie.vbox.app.Utils;
@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import androidx.preference.PreferenceManager;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
@@ -39,7 +38,7 @@ import timber.log.Timber;
  * @author Marek Kedzierski
  * @apiviz.stereotype application
  */
-public class VBoxApplication extends MultiDexApplication implements HasServiceInjector, HasActivityInjector {
+public class VBoxApplication extends Application implements HasServiceInjector, HasActivityInjector {
 	private static final String TAG = "VBoxApplication";
 	private static final String APPLICATION_PRO_KEY_PACKAGE = "com.kedzie.vbox.pro";
 	private static final String APPLICATION_PACKAGE = "com.kedzie.vbox";

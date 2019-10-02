@@ -3,7 +3,6 @@ package com.kedzie.vbox.server;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.view.ActionMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -12,10 +11,14 @@ import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.view.ActionMode;
+
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.app.BaseActivity;
 import com.kedzie.vbox.app.Utils;
 import com.kedzie.vbox.machine.settings.ErrorSupport;
+
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +44,10 @@ public class EditServerActivity extends BaseActivity {
 
 	private Switch sslSwitch;
 	private CheckBox sslBox;
+
+	private Pattern validIpAddressRegex = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+
+	private Pattern validHostnameRegex = Pattern.compile("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
 
 	private ErrorSupport _errorSupport;
 
@@ -76,7 +83,8 @@ public class EditServerActivity extends BaseActivity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				try {
-					if (com.google.common.net.InetAddresses.isInetAddress(s.toString())) {
+					if (validIpAddressRegex.matcher(s).matches() ||
+							validHostnameRegex.matcher(s).matches()) {
 						_errorSupport.showError("host", "");
 					} else {
 						_errorSupport.showError("host", "Invalid host name or IP Address");

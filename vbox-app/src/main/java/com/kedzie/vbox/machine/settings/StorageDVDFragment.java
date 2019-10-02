@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.common.base.Objects;
 import com.kedzie.vbox.R;
 import com.kedzie.vbox.api.IMachine;
 import com.kedzie.vbox.api.IMedium;
@@ -28,6 +27,7 @@ import com.kedzie.vbox.task.DialogTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -221,7 +221,7 @@ public class StorageDVDFragment extends Fragment {
 				Slot slot = new Slot(i, j);
 				boolean isUsed=false;
 				for(IMediumAttachment a : _attachments) {
-					if(a.getSlot().equals(slot) && !Objects.equal(a.getMedium(),_attachment.getMedium())) {
+					if(a.getSlot().equals(slot) && !Objects.equals(a.getMedium(),_attachment.getMedium())) {
 						isUsed=true;
 						break;
 					}
