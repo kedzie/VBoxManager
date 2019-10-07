@@ -103,8 +103,6 @@ dependencies {
     implementation deps.kotlinCoroutine
     implementation deps.kotlinCoroutineAndroid
 
-    implementation "com.google.guava:guava:24.1-jre"
-
     implementation deps.timber
 
     implementation 'org.koin:koin-android:2.0.1'

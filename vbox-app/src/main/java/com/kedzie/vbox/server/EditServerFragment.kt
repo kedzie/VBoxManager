@@ -9,18 +9,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.kedzie.vbox.R
 import com.kedzie.vbox.app.Utils
-import com.kedzie.vbox.machine.MachineListViewModel
-import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.android.synthetic.main.server.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.util.regex.Pattern
 
 class EditServerFragment : Fragment() {
 
     private val args: EditServerFragmentArgs by navArgs()
 
     private val model: EditServerViewModel by viewModel { parametersOf(args.server) }
+
+    private val validIpAddressRegex = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
+
+    private val validHostnameRegex = Pattern.compile("^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +50,7 @@ class EditServerFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (com.google.common.net.InetAddresses.isInetAddress(s.toString())) {
+                if (validIpAddressRegex.matcher(s).matches() || validHostnameRegex.matcher(s).matches()) {
                     server_host_layout.isErrorEnabled = false
                 } else {
                     server_host_layout.isErrorEnabled = true
