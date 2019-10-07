@@ -288,34 +288,39 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
         var isFirst = true
         for((fieldName, fieldType) in injected.cacheableFields) {
             val fieldTypeName = fieldType.asTypeName(nameResolver, proto::getTypeParameter, false).copy(nullable = false)
-            val type = elementUtils.getTypeElement(fieldTypeName.toString())
+
+            val actualFieldTypeName = if (fieldTypeName is ParameterizedTypeName
+                    && fieldTypeName.rawType == ClassName("androidx.lifecycle", "LiveData"))
+                fieldTypeName.typeArguments[0]
+            else fieldTypeName
+
+
+            val type = elementUtils.getTypeElement(actualFieldTypeName.toString())
 
             val cacheType = if(type != null && typeUtils.isAssignable(type.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
                 ClassName("kotlin", "String")
-            } else if (fieldTypeName is ParameterizedTypeName
-                    && fieldTypeName.rawType == ClassName("androidx.lifecycle", "LiveData")) {
-                fieldTypeName.typeArguments[0]
             } else {
-                fieldType.asTypeName(nameResolver, proto::getTypeParameter, false)
+                actualFieldTypeName
             }
 
-            val isList = if(fieldTypeName is ParameterizedTypeName)
-                { fieldTypeName.rawType == ClassName("kotlin.collections", "List") }
+            val isList = if(actualFieldTypeName is ParameterizedTypeName)
+                { actualFieldTypeName.rawType == ClassName("kotlin.collections", "List") }
                 else false
 
-            if(isList && fieldTypeName is ParameterizedTypeName) {
-                val listTypeName = fieldTypeName.typeArguments[0]
+            if(isList && actualFieldTypeName is ParameterizedTypeName) {
+                val listTypeName = actualFieldTypeName.typeArguments[0]
                 val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
                 val listType = elementUtils.getTypeElement(listTypeName.toString())
                 //if list of managed object ref
                 if (listType!=null && typeUtils.isAssignable(listType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
-                    messager.printMessage(Diagnostic.Kind.WARNING, "${typeName} ${listTypeNameStr}")
 
                     //get child entity
                     val childEntityInfo = getEntity(listTypeNameStr)
                     //add foreign key to parent in child
-                    childEntityInfo.primary.addParameter("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
-
+                    childEntityInfo.primary.addParameter(ParameterSpec
+                            .builder("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
+                            .defaultValue("null")
+                            .build())
 
                     val property = PropertySpec.builder("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
                             .mutable()
@@ -346,6 +351,15 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
                     daoType.addFunction(FunSpec.builder("get_ids_${fieldName}")
                             .addModifiers(KModifier.ABSTRACT)
+                            .returns(ClassName("androidx.lifecycle", "LiveData").parameterizedBy(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "String"))))
+                            .addParameter("idRef", ClassName("kotlin", "String"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "select idRef from ${listTypeNameStr} where parent${typeName}${fieldName} = :idRef")
+                                    .build())
+                            .build())
+
+                    daoType.addFunction(FunSpec.builder("get_ids_${fieldName}Now")
+                            .addModifiers(KModifier.ABSTRACT)
                             .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "String")))
                             .addParameter("idRef", ClassName("kotlin", "String"))
                             .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
@@ -354,6 +368,15 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             .build())
 
                     daoType.addFunction(FunSpec.builder("get_${fieldName}")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .returns(ClassName("androidx.lifecycle", "LiveData").parameterizedBy(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("com.kedzie.vbox.api", "${listTypeNameStr}Entity"))))
+                            .addParameter("idRef", ClassName("kotlin", "String"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "select * from ${listTypeNameStr} where parent${typeName}${fieldName} = :idRef")
+                                    .build())
+                            .build())
+
+                    daoType.addFunction(FunSpec.builder("get_${fieldName}Now")
                             .addModifiers(KModifier.ABSTRACT)
                             .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("com.kedzie.vbox.api", "${listTypeNameStr}Entity")))
                             .addParameter("idRef", ClassName("kotlin", "String"))
@@ -379,7 +402,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                         isFirst = false
                         foreignKeysStr.append("\n%L")
                         entityInfo.foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
-                                .addMember("entity = %T::class", ClassName(packageName, "${fieldTypeName}Entity"))
+                                .addMember("entity = %T::class", ClassName(packageName, "${actualFieldTypeName}Entity"))
                                 .addMember("parentColumns = [%S]", "idRef")
                                 .addMember("childColumns = [%S]", fieldName)
                                 .addMember("onDelete = ForeignKey.CASCADE")
@@ -476,37 +499,74 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 val isLiveData = returnTypeName is ParameterizedTypeName
                         && returnTypeName.rawType == ClassName("androidx.lifecycle", "LiveData")
 
+                val actualReturnTypeName = if(isLiveData && returnTypeName is ParameterizedTypeName) {
+                    returnTypeName.typeArguments[0]
+                } else {
+                    returnTypeName
+                }
+
                 if (isLiveData) {
                     spec.beginControlFlow("return %M", MemberName("androidx.lifecycle", "liveData"))
                 }
 
-                val returnType = elementUtils.getTypeElement(returnTypeName.toString())
-
-                val isRepository = returnType!=null && typeUtils.isAssignable(returnType.asType(),
-                        elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())
+                val returnType = elementUtils.getTypeElement(actualReturnTypeName.toString())
 
                 method.getAnnotation(Cacheable::class.java)?.takeIf { it.get }?.apply {
                     if(isLiveData) {
-                        if (isRepository) {
-                            spec.addStatement("emitSource(database.${typeName}Dao().get_%L(idRef).%M( { ${returnTypeName}Proxy(api, database, it) } ))",
-                                    MemberName("androidx.lifecycle.Transformations", "map"),
+                        if(actualReturnTypeName is ParameterizedTypeName) {
+                            val listTypeName = actualReturnTypeName.typeArguments[0]
+                            val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.') + 1)
+
+                            val isList = actualReturnTypeName.rawType == ClassName("kotlin.collections", "List")
+
+                            messager.printMessage(Diagnostic.Kind.WARNING, "livedata list component ${actualReturnTypeName} - ${listTypeNameStr}")
+
+                            spec.addStatement("emitSource(%M(database.${typeName}Dao().get_ids_%L(idRef)) { it.map { ${listTypeNameStr}Proxy(api, database, it)} })",
+                                    ClassName("androidx.lifecycle", "Transformations").member("map"),
                                     if (value.isNotEmpty()) value else nameResolver.getString(func.name))
-                        }
-                        else {
-                            spec.addStatement("emitSource(database.${typeName}Dao().get_%L(idRef))",
-                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                        } else {
+                            val componentTypeElement = elementUtils.getTypeElement(actualReturnTypeName.toString())
+                            messager.printMessage(Diagnostic.Kind.WARNING, "livedata component ${actualReturnTypeName} - ${componentTypeElement}")
+
+                            if (componentTypeElement!=null && typeUtils.isAssignable(componentTypeElement.asType(),
+                                            elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                                messager.printMessage(Diagnostic.Kind.WARNING, "repository")
+                                spec.addStatement("emitSource(%M(database.${typeName}Dao().get_%L(idRef)) { ${actualReturnTypeName}Proxy(api, database, it) } )",
+                                       ClassName("androidx.lifecycle", "Transformations").member("map"),
+                                        if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                            } else {
+                                spec.addStatement("emitSource(database.${typeName}Dao().get_%L(idRef))",
+                                        if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                            }
                         }
                     }
                     else {
-                        spec.beginControlFlow("database.${typeName}Dao().get_%LNow(idRef)?.let",
-                                if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                        if(actualReturnTypeName is ParameterizedTypeName) {
+                            val componentType = func.returnType.getArgument(0)
+                            val listTypeName = componentType.type.asTypeName(nameResolver, proto::getTypeParameter)
+                            val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.') + 1)
 
-                        if (isRepository) {
-                            spec.addStatement("return ${returnTypeName}Proxy(api, database, it)")
+                            val isList = actualReturnTypeName.rawType == ClassName("kotlin.collections", "List")
+
+                            spec.beginControlFlow("database.${typeName}Dao().get_ids_%LNow(idRef)?.let",
+                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+
+                            spec.addStatement("return it.%M { ${listTypeNameStr}Proxy(api, database, it) }",
+                                    MemberName("kotlin.collections", "map"))
+
+                            spec.endControlFlow()
                         } else {
-                            spec.addStatement("return it")
+                            spec.beginControlFlow("database.${typeName}Dao().get_%LNow(idRef)?.let",
+                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+
+                            if (returnType!=null && typeUtils.isAssignable(returnType.asType(),
+                                            elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                                spec.addStatement("return ${actualReturnTypeName}Proxy(api, database, it)")
+                            } else {
+                                spec.addStatement("return it")
+                            }
+                            spec.endControlFlow()
                         }
-                        spec.endControlFlow()
                     }
                 }
 
@@ -530,7 +590,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                     injected.data.getValueParameterOrNull(func, parameter)?.let { kparam ->
 
                         parameter.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
-                            spec.addStatement("database.${typeName}Dao().set%L(idRef, %L)",
+                            spec.addStatement("database.${typeName}Dao().set_%L(idRef, %L)",
                                     if (it.value.isNotEmpty()) it.value else nameResolver.getString(kparam.name),
                                     nameResolver.getString(kparam.name))
                         }
@@ -564,7 +624,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
 
                 //suspend and enqueue
-                spec.beginControlFlow(if(isLiveData) " %M<%T>" else "return %M<%T>",
+                spec.beginControlFlow("val result = %M<%T>",
                         MemberName("kotlinx.coroutines", "suspendCancellableCoroutine"),
                         if(isLiveData) { func.returnType.getArgument(0).type.asTypeName(nameResolver, proto::getTypeParameter) }
                         else { func.returnType.asTypeName(nameResolver, proto::getTypeParameter) })
@@ -600,34 +660,21 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                 .endControlFlow()
                     }
 
-                    if(returnTypeName is ParameterizedTypeName) {
-                        val componentType = func.returnType.getArgument(0)
-                        messager.printMessage(Diagnostic.Kind.WARNING, "parameter")
+                    if(actualReturnTypeName is ParameterizedTypeName) {
+                        val listTypeName = actualReturnTypeName.typeArguments[0]
+                        val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
 
-                        val isList = returnTypeName.rawType == ClassName("kotlin.collections", "List")
+                        val isList = actualReturnTypeName.rawType == ClassName("kotlin.collections", "List")
                         val isMap = func.returnType.argumentCount == 2
 
-                        if(isLiveData) {
-                            successFunc.addStatement("val rawRet = ks.getProperty(0)")
-                            if (func.returnType.nullable) {
-                                successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
-                                        func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
-                                        .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, componentType.type, "rawRet"))
-                                        .nextControlFlow("else")
-                                        .addStatement("null")
-                                        .endControlFlow()
-                            } else {
-                                successFunc.addStatement("val ret = %L",
-                                        unmarshal(injected.data, successFunc, ksoap, componentType.type, "rawRet"))
-                            }
-                        } else if (returnTypeName.rawType == ClassName("kotlin", "Array")) {
+                        if (actualReturnTypeName.rawType == ClassName("kotlin", "Array")) {
                             successFunc.addStatement("val list = %M<%T>()",
                                     MemberName("kotlin.collections", "mutableListOf"),
-                                    componentType.type.asTypeName(nameResolver, proto::getTypeParameter))
+                                    listTypeName)
                                     .beginControlFlow("for(i in 0..ks.getPropertyCount())")
                                     .beginControlFlow("ks.getProperty(i)?.let")
                                     .beginControlFlow("if(!it.toString().equals(\"anyType{}\"))")
-                                    .addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, componentType.type, "it"))
+                                    .addStatement("list.add(%L)", unmarshal(injected.data, successFunc, ksoap, listTypeName, "it"))
                                     .endControlFlow()
                                     .endControlFlow()
                                     .endControlFlow()
@@ -659,14 +706,12 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             }
                             successFunc.addStatement("val ret = map")
                         } else if (isList) {
-                            val listTypeName = componentType.type.asTypeName(nameResolver, proto::getTypeParameter)
-                            val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
                             successFunc.addStatement("val list = %M<%T>()",
                                     MemberName("kotlin.collections", "mutableListOf"),
                                     listTypeName)
                             successFunc.beginControlFlow("for(i in 0..ks.getPropertyCount())")
                             successFunc.beginControlFlow("if(ks.getProperty(i)!=null && !ks.getProperty(i).toString().equals(\"anyType{}\"))")
-                            val unMarshalled = unmarshal(injected.data, successFunc, ksoap, componentType.type, "ks.getProperty(i)")
+                            val unMarshalled = unmarshal(injected.data, successFunc, ksoap, listTypeName, "ks.getProperty(i)")
                             successFunc.addStatement("list.add(%L)", unMarshalled)
 
                             //update parent reference
@@ -684,16 +729,18 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                         if (func.returnType.nullable) {
                             successFunc.beginControlFlow("val ret: %T = if(rawRet!=null && !rawRet.toString().equals(\"anyType{}\"))",
                                     func.returnType.asTypeName(nameResolver, proto::getTypeParameter))
-                                    .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
+                                    .addStatement("%L", unmarshal(injected.data, successFunc, ksoap, actualReturnTypeName, "rawRet"))
                                     .nextControlFlow("else")
                                     .addStatement("null")
                                     .endControlFlow()
                         } else {
                             successFunc.addStatement("val ret = %L",
-                                    unmarshal(injected.data, successFunc, ksoap, func.returnType, "rawRet"))
+                                    unmarshal(injected.data, successFunc, ksoap, actualReturnTypeName, "rawRet"))
                         }
 
                         method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+
+
                             successFunc.addStatement("database.${typeName}Dao().set_%L(idRef, ret)",
                                     if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
                         }
@@ -732,6 +779,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 spec.addStatement("call.enqueue(%L)", callback.build())
 
                 spec.endControlFlow()
+                spec.addStatement(if(isLiveData) "emit(result)" else "return result")
 
                 if (isLiveData) {
                     spec.endControlFlow()
@@ -807,11 +855,12 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
             spec.endControlFlow()
     }
 
-    private fun unmarshal(classData: ClassData, spec: FunSpec.Builder, ksoap: Ksoap, returnType: ProtoBuf.Type, name: String): String {
+    private fun unmarshal(classData: ClassData, spec: FunSpec.Builder, ksoap: Ksoap, returnTypeName: TypeName, name: String): String {
         val proto = classData.classProto
         val nameResolver = classData.nameResolver
 
-        val typeName = returnType.asTypeName(nameResolver, proto::getTypeParameter).copy(nullable = false)
+        val typeName = returnTypeName.copy(nullable = false)
+        val typeNameStr = typeName.toString().substring(typeName.toString().lastIndexOf('.')+1)
 
         when(typeName) {
             ClassName("kotlin", "Int") -> "if($name is Int) $name as Int else $name.toString().toInt()"
@@ -827,6 +876,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         if (typeUtils.isAssignable(returnTypeElement.asType(),
                         elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+            spec.addStatement("database.${typeNameStr}Dao().insert(${typeNameStr}Entity($name.toString()))")
             return "${typeName}Proxy(api, database, $name.toString())"
         }
 
@@ -858,7 +908,8 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                 field,
                                 unmarshal(typeMetadata.data, spec,
                                         ksoap,
-                                        p.returnType,
+                                        p.returnType.asTypeName(typeMetadata.data.nameResolver,
+                                                typeMetadata.data.proto::getTypeParameter),
                                         "raw_$field"))
                         spec.endControlFlow()
                     } else {
@@ -866,7 +917,8 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                 field,
                                 unmarshal(typeMetadata.data, spec,
                                         ksoap,
-                                        p.returnType,
+                                        p.returnType.asTypeName(typeMetadata.data.nameResolver,
+                                                typeMetadata.data.proto::getTypeParameter),
                                         "raw_$field"))
                     }
                 }
