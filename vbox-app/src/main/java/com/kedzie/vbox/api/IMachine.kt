@@ -84,6 +84,7 @@ interface IMachine : IManagedObjectRef {
      */
     @Cacheable("accelerate3DEnabled")
     fun getAccelerate3DEnabled(): LiveData<Boolean>
+    suspend fun getAccelerate3DEnabledNow(): Boolean
     suspend fun setAccelerate3DEnabled(@Cacheable("accelerate3DEnabled") @Ksoap(type = "Boolean") accelerate3DEnabled: Boolean)
 
     /**
@@ -91,6 +92,7 @@ interface IMachine : IManagedObjectRef {
      */
     @Cacheable("accelerate2DVideoEnabled")
     fun getAccelerate2DVideoEnabled(): LiveData<Boolean>
+    suspend fun getAccelerate2DVideoEnabledNow(): Boolean
     suspend fun setAccelerate2DVideoEnabled(@Cacheable("accelerate2DVideoEnabled") @Ksoap(type = "Boolean") accelerate2DVideoEnabled: Boolean)
 
     /**
@@ -127,7 +129,7 @@ interface IMachine : IManagedObjectRef {
      * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and
      * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
      */
-    suspend fun getGroups(): List<String>
+    fun getGroups(): LiveData<List<String>>
     suspend fun setGroups(group: List<String>)
 
     @Cacheable("biosSettings")
@@ -153,9 +155,10 @@ interface IMachine : IManagedObjectRef {
     suspend fun getMediumAttachmentsOfController( name: String): List<IMediumAttachment>
 
     @Cacheable("storageControllers")
-	suspend fun getStorageControllers(): List<IStorageController>
+	suspend fun getStorageControllersNow(): List<IStorageController>
     suspend fun getStorageControllerByName(name: String): IStorageController
     suspend fun getStorageControllerByInstance(@Ksoap(type = "unsignedInt") instance: Int): IStorageController
+
     suspend fun removeStorageController(name: String)
     suspend fun addStorageController(name: String, connectionType: StorageBus): IStorageController
     suspend fun setStorageControllerBootable(name: String, bootable: Boolean)
@@ -193,7 +196,7 @@ interface IMachine : IManagedObjectRef {
     @Cacheable("snapshotFolder")
 	suspend fun getSnapshotFolder(): String
 
-    suspend fun  getNetworkAdapter(@Ksoap(type="unsignedInt") slot: Int): INetworkAdapter
+    suspend fun getNetworkAdapter(@Ksoap(type="unsignedInt") slot: Int): INetworkAdapter
 
     /**
      * @return  VirtualBox Remote Desktop Extension (VRDE) server object.

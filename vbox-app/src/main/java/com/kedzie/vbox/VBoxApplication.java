@@ -1,32 +1,17 @@
 package com.kedzie.vbox;
 
 
-import android.app.Activity;
-import android.app.Service;
+import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.util.SparseArray;
 
-import androidx.fragment.app.Fragment;
-import androidx.multidex.MultiDexApplication;
 import androidx.preference.PreferenceManager;
 
 import com.kedzie.vbox.app.Utils;
-import com.kedzie.vbox.dagger.AndroidServicesModule;
-import com.kedzie.vbox.dagger.AppComponent;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
-import dagger.android.HasServiceInjector;
-import dagger.android.support.HasSupportFragmentInjector;
 import timber.log.Timber;
 
 /**
@@ -34,47 +19,14 @@ import timber.log.Timber;
  * @author Marek Kedzierski
  * @apiviz.stereotype application
  */
-public class VBoxApplication extends MultiDexApplication implements HasServiceInjector, HasActivityInjector, HasSupportFragmentInjector {
+public class VBoxApplication extends Application {
 
 	private Map<String, Integer> metricColor = new HashMap<String, Integer>();
-
-	@Inject
-	DispatchingAndroidInjector<Service> dispatchingServiceInjector;
-
-	@Inject
-	DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
-
-	@Inject
-	DispatchingAndroidInjector<Fragment> dispatchingFragmentInjector;
-
-	@Override
-	public AndroidInjector<Activity> activityInjector() {
-		return dispatchingActivityInjector;
-	}
-
-	@Override
-	public AndroidInjector<Service> serviceInjector() {
-		return dispatchingServiceInjector;
-	}
-
-	@Override
-	public AndroidInjector<Fragment> supportFragmentInjector() {
-		return dispatchingFragmentInjector;
-	}
 
 	private static VBoxApplication _instance;
 	
 	public static VBoxApplication getInstance() {
 	    return _instance;
-	}
-
-	private AppComponent appComponent;
-
-	public AppComponent getAppComponent() { return appComponent; }
-
-	public void setAppComponent(AppComponent ap) {
-		appComponent = ap;
-		appComponent.inject(this);
 	}
 
 	@Override

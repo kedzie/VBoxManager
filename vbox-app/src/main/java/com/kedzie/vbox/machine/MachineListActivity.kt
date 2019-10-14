@@ -202,7 +202,9 @@ class MachineListActivity : AppCompatActivity(),
                     model.vbox.value?.logoff()
                     login(this@MachineListActivity, server)?.let { server ->
                         model.vbox.value = IVirtualBoxProxy(get { parametersOf(server) }, get(), "")
-                                .logon(server.username, server.password)
+                                .logon(server.username, server.password).apply {
+                                    model.saveVbox(this.idRef)
+                                }
                     }
                 }
             }
@@ -238,7 +240,9 @@ class MachineListActivity : AppCompatActivity(),
         model.viewModelScope.launch {
             login(this@MachineListActivity, server)?.let {
                 model.vbox.value = IVirtualBoxProxy(get { parametersOf(it) }, get(), "")
-                        .logon(server.username, server.password)
+                        .logon(server.username, server.password).apply {
+                            model.saveVbox(this.idRef)
+                        }
             }
         }
     }

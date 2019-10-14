@@ -5,8 +5,8 @@ import android.content.Context
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import com.kedzie.vbox.api.CacheDatabase
-import com.kedzie.vbox.api.IMachine
+import com.kedzie.vbox.api.*
+import com.kedzie.vbox.machine.InfoViewModel
 import com.kedzie.vbox.machine.MachineListActivity
 import com.kedzie.vbox.machine.MachineListViewModel
 import com.kedzie.vbox.server.AppDatabase
@@ -17,6 +17,7 @@ import com.kedzie.vbox.soap.VBoxSvc
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.parameter.parametersOf
@@ -61,8 +62,13 @@ val appModule = module {
 
     factory { (server: Server) -> VBoxSvc(server, get { parametersOf(server) })}
 
+    factory<IVirtualBox> { (server: Server, id: String) -> IVirtualBoxProxy(get { parametersOf(server) }, get(), id) }
+
+    factory<IMachine> { (server: Server, id: String) -> IMachineProxy(get { parametersOf(server) }, get(), id)}
+
     viewModel{ (server: Server) -> EditServerViewModel(server, get()) }
 
     viewModel{ MachineListViewModel(get(), get()) }
 
+    viewModel{ (server: Server, vboxId: String, id: String) -> InfoViewModel(androidApplication(), get{ parametersOf(server, vboxId) }, get{ parametersOf(server, id) }) }
 }

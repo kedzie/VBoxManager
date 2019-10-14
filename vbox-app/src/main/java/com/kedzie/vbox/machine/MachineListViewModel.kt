@@ -12,11 +12,13 @@ import com.kedzie.vbox.server.Server
 import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.core.KoinComponent
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 class MachineListViewModel(val database: AppDatabase,
-                           val cacheDatabase: CacheDatabase) : ViewModel(), KoinComponent {
+                           val cacheDatabase: CacheDatabase) : ViewModel() {
 
     val selectedNode = MutableLiveData<TreeNode?>()
 
@@ -89,6 +91,10 @@ class MachineListViewModel(val database: AppDatabase,
             enableMetrics(arrayOf("*:"))
             setupMetrics(arrayOf("*:"), period, count)
         }
+    }
+
+    fun saveVbox(id: String) {
+        cacheDatabase.IVirtualBoxDao().insert(IVirtualBoxEntity(idRef = id))
     }
 
     fun deleteServer(server: Server) = database.serverDao().delete(server)

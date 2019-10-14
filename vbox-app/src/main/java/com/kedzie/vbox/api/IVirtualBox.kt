@@ -1,6 +1,7 @@
 package com.kedzie.vbox.api
 
 import android.os.Parcelable
+import androidx.lifecycle.LiveData
 import com.kedzie.vbox.api.jaxb.*
 import com.kedzie.vbox.soap.Cacheable
 import com.kedzie.vbox.soap.Ksoap
@@ -42,7 +43,7 @@ interface IVirtualBox : IManagedObjectRef {
     }
 
     @Cacheable("Version")
-	suspend fun getVersion(): String
+    fun getVersion(): LiveData<String>
     @Cacheable("VersionNormalized")
 	suspend fun getVersionNormalized(): String
     @Cacheable("Revision")
@@ -76,11 +77,15 @@ interface IVirtualBox : IManagedObjectRef {
     @Ksoap(prefix = "IWebsessionManager", thisReference = "refIVirtualBox")
     suspend fun logoff()
 
-    @Ksoap(cacheable = true, prefix = "IWebsessionManager", thisReference = "refIVirtualBox")
+    @Ksoap(prefix = "IWebsessionManager", thisReference = "refIVirtualBox")
+    @Cacheable("session")
     suspend fun getSessionObject(): ISession
 
     @Cacheable("machines")
-    suspend fun getMachines(): List<IMachine>
+    fun getMachines(): LiveData<List<IMachine>>
+
+    @Cacheable("machines")
+    suspend fun getMachinesNow(): List<IMachine>
 
     suspend fun findMachine(nameOrId: String): IMachine
 

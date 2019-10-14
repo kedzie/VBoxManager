@@ -10,10 +10,12 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.kedzie.vbox.R
+import com.kedzie.vbox.VBoxApplication
 import com.kedzie.vbox.api.IMachine
 import com.kedzie.vbox.api.IMachineStateChangedEvent
 import com.kedzie.vbox.soap.VBoxSvc
 import kotlinx.android.synthetic.main.machine_fragment.*
+import kotlinx.android.synthetic.main.machine_view.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
@@ -22,14 +24,6 @@ import timber.log.Timber
 class MachineFragment : Fragment() {
 
     private val model: MachineListViewModel by sharedViewModel()
-
-    private fun loadData() {
-        model.machine.value?.let {
-            model.viewModelScope.launch {
-                machine_view.update(it)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,19 +60,15 @@ class MachineFragment : Fragment() {
         }
         pager_tabs.setupWithViewPager(pager)
 
-        model.events.observe(this, Observer {
-            when(it) {
-                is IMachineStateChangedEvent -> {
-                    Timber.d("got event loading data %s", it)
-                    loadData()
-                }
-            }
-        })
-
-        model.vmgr.observe(this, Observer {
-            it?.let { vmgr ->
-                loadData()
-            }
+        model.machine.observe(viewLifecycleOwner, Observer {
+            machine_view.contentDescription = "Virtual Machine: " + it.getNameNow()
+            machine_list_item_ostype.setImageResource(VBoxApplication.getOSDrawable(context, m.getOSTypeId()))
+            machine_list_item_name.text = m.getName()
+            machine_list_item_state.setImageResource(m.getStateNoCache().drawable())
+            machine_list_item_state_text.text = m.getState().value()
+            machine_list_item_snapshot.text = m.getCurrentSnapshotNoCache()?.let {
+                StringBuffer("(").append(it.getName()).append(")").append(if (m.getCurrentStateModifiedNoCache()) "*" else "").toString()
+            } ?: ""
         })
     }
 }

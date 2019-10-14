@@ -37,6 +37,12 @@
         android:name="com.kedzie.vbox.machine.InfoFragment"
         tools:layout="@layout/machine_info">
 
+        <argument android:name="server"
+            app:argType="com.kedzie.vbox.server.Server" />
+
+        <argument android:name="machineId"
+            app:argType="string" />
+
     </fragment>
 
     <fragment

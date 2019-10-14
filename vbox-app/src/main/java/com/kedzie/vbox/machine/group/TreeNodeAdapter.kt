@@ -34,7 +34,8 @@ class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeS
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TreeNodeAdapterViewHolder {
         return when (viewType) {
             TYPE_MACHINE -> TreeNodeAdapterViewHolder(TreeNodeAdapterCategoryItemView(parent.context))
-            TYPE_MERCHANT -> TreeNodeAdapterViewHolder(TreeNodeAdapterMerchantItemView(parent.context))
+            TYPE_GROUP
+            -> TreeNodeAdapterViewHolder(TreeNodeAdapterMerchantItemView(parent.context))
             else -> TreeNodeAdapterViewHolder(ProgressBar(parent.context))
         }
     }
