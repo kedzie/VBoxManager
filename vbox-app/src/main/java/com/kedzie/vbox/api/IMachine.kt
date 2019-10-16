@@ -439,8 +439,7 @@ enum class LaunchMode(val value: String) {
     }
 }
 
-@Parcelize
-data class MachineInfo(val machine: IMachine, var screenshot: Screenshot?) : Parcelable
+data class MachineInfo(val machine: IMachine, var screenshot: Screenshot?)
 
 suspend fun IMachine.readSavedScreenshot(screenId: Int): Screenshot {
     val info = querySavedScreenshotInfo(screenId)
