@@ -42,13 +42,14 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
     private val remainingTypes = mutableListOf<TypeElement>()
 
-    private val annotation = KsoapProxy::class.java
-
     private val roomEntities = mutableMapOf<String, EntityInfo>()
 
     private val roomDaos = mutableMapOf<String, TypeSpec.Builder>()
 
-    override fun getSupportedAnnotationTypes() = setOf(annotation.canonicalName)
+    private val roomCustomDaos = mutableMapOf<String, TypeElement>()
+
+    override fun getSupportedAnnotationTypes() = setOf(KsoapProxy::class.java.canonicalName,
+             Dao::class.java.canonicalName)
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
 
@@ -60,7 +61,7 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
         remainingTypes.addAll(findInjectedTypes(roundEnv))
-        messager.printMessage(Diagnostic.Kind.NOTE, "types: $remainingTypes")
+        messager.printMessage(Diagnostic.Kind.WARNING, "types: $remainingTypes")
         val i = remainingTypes.iterator()
         while (i.hasNext()) {
             val injectedClass = createInjectedClass(i.next())
@@ -74,6 +75,13 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 }
 
                 i.remove()
+            }
+        }
+
+        for (element in roundEnv.getElementsAnnotatedWith(Dao::class.java)) {
+            if (element.kind == ElementKind.INTERFACE) {
+                val te = element as TypeElement
+                roomCustomDaos.put(te.simpleName.toString(), te)
             }
         }
         if (roundEnv.processingOver()) {
@@ -126,6 +134,13 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                 dbSpec.addFunction(FunSpec.builder(dao.name!!)
                         .addModifiers(KModifier.ABSTRACT)
                         .returns(ClassName("com.kedzie.vbox.api", dao.name!!))
+                        .build())
+            }
+
+            for (element in roomCustomDaos.values) {
+                dbSpec.addFunction(FunSpec.builder(element.simpleName.toString())
+                        .addModifiers(KModifier.ABSTRACT)
+                        .returns(element.asClassName())
                         .build())
             }
 
@@ -283,9 +298,6 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
         val fileSpec = FileSpec.builder(getPackage(injected.type).qualifiedName.toString(), "${typeName}Proxy")
 
-        val foreignKeysStr = StringBuffer("foreignKeys = [")
-
-        var isFirst = true
         for((fieldName, fieldType) in injected.cacheableFields) {
             val fieldTypeName = fieldType.asTypeName(nameResolver, proto::getTypeParameter, false).copy(nullable = false)
 
@@ -309,10 +321,10 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
             if(isList && actualFieldTypeName is ParameterizedTypeName) {
                 val listTypeName = actualFieldTypeName.typeArguments[0]
-                val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
                 val listType = elementUtils.getTypeElement(listTypeName.toString())
                 //if list of managed object ref
                 if (listType!=null && typeUtils.isAssignable(listType.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                    val listTypeNameStr = listTypeName.toString().substring(listTypeName.toString().lastIndexOf('.')+1)
 
                     //get child entity
                     val childEntityInfo = getEntity(listTypeNameStr)
@@ -322,15 +334,13 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             .defaultValue("null")
                             .build())
 
-                    val property = PropertySpec.builder("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
+                    //add property to entity
+                    childEntityInfo.type.addProperty(PropertySpec.builder("parent${typeName}${fieldName}", ClassName("kotlin", "String").copy(nullable = true))
                             .mutable()
                             .initializer("parent${typeName}${fieldName}")
                             .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
                                     .addMember("index = true")
-                                    .build())
-
-                    //add property to entity
-                    childEntityInfo.type.addProperty(property.build())
+                                    .build()).build())
 
                     childEntityInfo.foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
                             .addMember("entity = %T::class", ClassName(packageName, "${typeName}Entity"))
@@ -384,6 +394,76 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                                     .addMember("%S", "select * from ${listTypeNameStr} where parent${typeName}${fieldName} = :idRef")
                                     .build())
                             .build())
+                } else if(listTypeName == ClassName("kotlin", "String")) {
+                    //list of string
+
+                    //make child entity
+                    val childEntityInfo = getEntity("${typeName}_${fieldName}")
+
+                    //add auto generated primary key
+                    childEntityInfo.type.addProperty(PropertySpec.builder("id",
+                            ClassName("kotlin", "Long"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "PrimaryKey"))
+                                    .addMember("autoGenerate = true")
+                                    .build())
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
+                                    .addMember("index = true")
+                                    .build())
+                            .mutable(true)
+                            .initializer("0")
+                            .build())
+
+                    //add foreign key to parent in child
+                    childEntityInfo.type.addProperty(PropertySpec.builder("idRef",
+                            ClassName("kotlin", "String"))
+                            .initializer("idRef")
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "ColumnInfo"))
+                                    .addMember("index = true")
+                                    .build())
+                            .build())
+
+                    //add value
+                    childEntityInfo.type.addProperty(PropertySpec.builder("value",
+                            ClassName("kotlin", "String"))
+                            .initializer("value")
+                            .build())
+
+                    childEntityInfo.primary.addParameter("value", ClassName("kotlin", "String"))
+
+                    //insert method
+                    daoType.addFunction(FunSpec.builder("insert")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .addParameter("value", ClassName("com.kedzie.vbox.api", "${typeName}_${fieldName}Entity"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Insert"))
+                                    .addMember("onConflict = %M", ClassName("androidx.room", "OnConflictStrategy").member( "IGNORE"))
+                                    .build())
+                            .build())
+
+                    childEntityInfo.foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
+                            .addMember("entity = %T::class", ClassName(packageName, "${typeName}Entity"))
+                            .addMember("parentColumns = [%S]", "idRef")
+                            .addMember("childColumns = [%S]", "idRef")
+                            .addMember("onDelete = ForeignKey.CASCADE")
+                            .build())
+
+                    //dao method to load children
+                    daoType.addFunction(FunSpec.builder("get_${fieldName}")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .returns(ClassName("androidx.lifecycle", "LiveData").parameterizedBy(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "String"))))
+                            .addParameter("idRef", ClassName("kotlin", "String"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "select value from ${typeName}_${fieldName}Entity where idRef = :idRef")
+                                    .build())
+                            .build())
+
+                    daoType.addFunction(FunSpec.builder("get_${fieldName}Now")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "String")))
+                            .addParameter("idRef", ClassName("kotlin", "String"))
+                            .addAnnotation(AnnotationSpec.builder(ClassName("androidx.room", "Query"))
+                                    .addMember("%S", "select value from ${typeName}_${fieldName}Entity where idRef = :idRef")
+                                    .build())
+                            .build())
                 }
             } else {
                 entityInfo.primary
@@ -396,11 +476,6 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
                 if (type != null) {
                     if (typeUtils.isAssignable(type.asType(), elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
-                        if (!isFirst) {
-                            foreignKeysStr.append(",")
-                        }
-                        isFirst = false
-                        foreignKeysStr.append("\n%L")
                         entityInfo.foreignKeys.add(AnnotationSpec.builder(ClassName("androidx.room", "ForeignKey"))
                                 .addMember("entity = %T::class", ClassName(packageName, "${actualFieldTypeName}Entity"))
                                 .addMember("parentColumns = [%S]", "idRef")
@@ -519,18 +594,25 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
                             val isList = actualReturnTypeName.rawType == ClassName("kotlin.collections", "List")
 
-                            messager.printMessage(Diagnostic.Kind.WARNING, "livedata list component ${actualReturnTypeName} - ${listTypeNameStr}")
+                            val listTypeElement = elementUtils.getTypeElement(listTypeName.toString())
 
-                            spec.addStatement("emitSource(%M(database.${typeName}Dao().get_ids_%L(idRef)) { it.map { ${listTypeNameStr}Proxy(api, database, it)} })",
-                                    ClassName("androidx.lifecycle", "Transformations").member("map"),
-                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                            if (listTypeElement!=null && typeUtils.isAssignable(listTypeElement.asType(),
+                                            elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                                // List<IManagedObjectRef>
+                                spec.addStatement("emitSource(%M(database.${typeName}Dao().get_ids_%L(idRef)) { it.map { ${listTypeNameStr}Proxy(api, database, it)} })",
+                                        ClassName("androidx.lifecycle", "Transformations").member("map"),
+                                        if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                            } else {
+                                // List<String>
+                                spec.addStatement("emitSource(database.${typeName}Dao().get_%L(idRef))",
+                                        if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                            }
                         } else {
                             val componentTypeElement = elementUtils.getTypeElement(actualReturnTypeName.toString())
                             messager.printMessage(Diagnostic.Kind.WARNING, "livedata component ${actualReturnTypeName} - ${componentTypeElement}")
 
                             if (componentTypeElement!=null && typeUtils.isAssignable(componentTypeElement.asType(),
                                             elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
-                                messager.printMessage(Diagnostic.Kind.WARNING, "repository")
                                 spec.addStatement("emitSource(%M(database.${typeName}Dao().get_%L(idRef)) { ${actualReturnTypeName}Proxy(api, database, it) } )",
                                        ClassName("androidx.lifecycle", "Transformations").member("map"),
                                         if (value.isNotEmpty()) value else nameResolver.getString(func.name))
@@ -548,13 +630,21 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
 
                             val isList = actualReturnTypeName.rawType == ClassName("kotlin.collections", "List")
 
-                            spec.beginControlFlow("database.${typeName}Dao().get_ids_%LNow(idRef)?.let",
-                                    if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                            val listTypeElement = elementUtils.getTypeElement(listTypeName.toString())
 
-                            spec.addStatement("return it.%M { ${listTypeNameStr}Proxy(api, database, it) }",
-                                    MemberName("kotlin.collections", "map"))
-
-                            spec.endControlFlow()
+                            if (listTypeElement!=null && typeUtils.isAssignable(listTypeElement.asType(),
+                                            elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                                spec.beginControlFlow("database.${typeName}Dao().get_ids_%LNow(idRef)?.let",
+                                        if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                                        .addStatement("return it.map { ${listTypeNameStr}Proxy(api, database, it) }")
+                                        .endControlFlow()
+                            }
+                            else {
+                                spec.beginControlFlow("database.${typeName}Dao().get_%LNow(idRef)?.let",
+                                        if (value.isNotEmpty()) value else nameResolver.getString(func.name))
+                                        .addStatement("return it")
+                                        .endControlFlow()
+                            }
                         } else {
                             spec.beginControlFlow("database.${typeName}Dao().get_%LNow(idRef)?.let",
                                     if (value.isNotEmpty()) value else nameResolver.getString(func.name))
@@ -713,11 +803,21 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                             successFunc.beginControlFlow("if(ks.getProperty(i)!=null && !ks.getProperty(i).toString().equals(\"anyType{}\"))")
                             val unMarshalled = unmarshal(injected.data, successFunc, ksoap, listTypeName, "ks.getProperty(i)")
                             successFunc.addStatement("list.add(%L)", unMarshalled)
-
-                            //update parent reference
                             method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
-                                successFunc.addStatement("database.${typeName}Dao().set_${listTypeNameStr}ParentFor_%L(ks.getProperty(i).toString(), idRef)",
-                                        if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                                val listTypeElement = elementUtils.getTypeElement(listTypeName.toString())
+
+                                if (listTypeElement != null && typeUtils.isAssignable(listTypeElement.asType(),
+                                                elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                                    //if repo
+                                    //update parent reference
+                                    successFunc.addStatement("database.${typeName}Dao().set_${listTypeNameStr}ParentFor_%L(ks.getProperty(i).toString(), idRef)",
+                                            if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+
+                                } else {
+                                    //if string
+                                    successFunc.addStatement("database.${typeName}Dao().insert(${typeName}_%LEntity(idRef, ks.getProperty(i).toString()))",
+                                            if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                                }
                             }
 
                             successFunc.endControlFlow()
@@ -739,10 +839,16 @@ class ProxyGenerator : KotlinAbstractProcessor(), KotlinMetadataUtils {
                         }
 
                         method.getAnnotation(Cacheable::class.java)?.takeIf { it.put }?.let {
+                            val returnTypeElement = elementUtils.getTypeElement(actualReturnTypeName.toString())
 
-
-                            successFunc.addStatement("database.${typeName}Dao().set_%L(idRef, ret)",
-                                    if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                            if (returnTypeElement != null && typeUtils.isAssignable(returnTypeElement.asType(),
+                                            elementUtils.getTypeElement("com.kedzie.vbox.api.IManagedObjectRef").asType())) {
+                                successFunc.addStatement("database.${typeName}Dao().set_%L(idRef, ret.idRef)",
+                                        if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                            } else {
+                                successFunc.addStatement("database.${typeName}Dao().set_%L(idRef, ret)",
+                                        if (it.value.isNotEmpty()) it.value else nameResolver.getString(func.name))
+                            }
                         }
                     }
 

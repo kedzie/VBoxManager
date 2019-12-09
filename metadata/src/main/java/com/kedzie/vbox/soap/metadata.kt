@@ -6,6 +6,10 @@ annotation class KsoapProxy()
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
+annotation class Dao()
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
 annotation class KsoapObject(val value: String, val namespace : String = "http://www.virtualbox.org")
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER)

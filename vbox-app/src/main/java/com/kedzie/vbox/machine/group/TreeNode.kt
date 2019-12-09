@@ -5,6 +5,7 @@ import java.security.acl.Group
 import android.os.Parcelable
 
 import com.kedzie.vbox.api.IMachine
+import com.kedzie.vbox.api.IMachineEntity
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -12,10 +13,8 @@ import kotlinx.android.parcel.Parcelize
  * Can be either a [Group] or [IMachine]
  * @author Marek Kędzierski
  */
-sealed class TreeNode : Parcelable
+sealed class TreeNode
 
-@Parcelize
-class MachineTreeNode(val machine: IMachine): TreeNode()
+class MachineTreeNode(val machine: IMachineEntity): TreeNode()
 
-@Parcelize
 class GroupTreeNode(val group: VMGroup): TreeNode()

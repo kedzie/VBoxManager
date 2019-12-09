@@ -1,12 +1,15 @@
 package com.spoton.mobile.android.discovery.search
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.kedzie.vbox.R
 import com.kedzie.vbox.api.IMachine
+import com.kedzie.vbox.machine.MachineView
 import com.kedzie.vbox.machine.group.*
 
 class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeSelectListener) :
@@ -15,16 +18,16 @@ class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeS
     override fun areItemsTheSame(first: TreeNode, second: TreeNode): Boolean {
         return first == second::class && when (first) {
             is GroupTreeNode -> first.group.name == (second as GroupTreeNode).group.name
-            is MachineTreeNode -> (first as IMachine).idRef == (second as MachineTreeNode).idRef
+            is MachineTreeNode -> first.machine.idRef == (second as MachineTreeNode).machine.idRef
         }
     }
 
     override fun areContentsTheSame(first: TreeNode, second: TreeNode): Boolean {
         return first::class == second::class && when (first) {
             is MachineTreeNode ->  {
-                (first as IMachine) == (second as MachineTreeNode)
+                first.machine == (second as MachineTreeNode).machine
             }
-            is GroupTreeNode -> (first as VMGroup) == (second as VMGroup)
+            is GroupTreeNode -> first.group == (second as GroupTreeNode).group
         }
     }
 }) {
@@ -33,9 +36,8 @@ class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeS
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TreeNodeAdapterViewHolder {
         return when (viewType) {
-            TYPE_MACHINE -> TreeNodeAdapterViewHolder(TreeNodeAdapterCategoryItemView(parent.context))
-            TYPE_GROUP
-            -> TreeNodeAdapterViewHolder(TreeNodeAdapterMerchantItemView(parent.context))
+            TYPE_MACHINE -> TreeNodeAdapterViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.machine_view, parent, false))
+            TYPE_GROUP -> TreeNodeAdapterViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.vmgroup_title, parent, false))
             else -> TreeNodeAdapterViewHolder(ProgressBar(parent.context))
         }
     }
@@ -43,14 +45,15 @@ class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeS
     override fun onBindViewHolder(holder: TreeNodeAdapterViewHolder, position: Int) {
         getItem(position)?.let { item ->
             when (item) {
-                is IMachine -> {
-                    (holder.itemView as TreeNodeAdapterMerchantItemView).configureViewForMerchant(item.merchant)
-                    holder.itemView.setOnClickListener { v -> searchResultSelectedListener.onMerchantSelected(item.merchant) }
+                is MachineTreeNode -> {
+
+
+                    holder.itemView.setOnClickListener { v -> listener.onTreeNodeSelect(item) }
                 }
-                is VMGroup -> {
+                is GroupTreeNode -> {
                     (holder.itemView as TreeNodeAdapterCategoryItemView).configureViewWithCategory(
                             item.category, false)
-                    holder.itemView.setOnClickListener { _ -> searchResultSelectedListener.onCategorySelected(item.category) }
+                    holder.itemView.setOnClickListener { v -> listener.onTreeNodeSelect(item) }
                 }
             }
         }
@@ -58,9 +61,8 @@ class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeS
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is IMachine -> TYPE_MERCHANT
-            is VMGroup -> TYPE_CATEGORY
-            null -> TYPE_NULL
+            is MachineTreeNode -> TYPE_MACHINE
+            else -> TYPE_GROUP
         }
     }
 

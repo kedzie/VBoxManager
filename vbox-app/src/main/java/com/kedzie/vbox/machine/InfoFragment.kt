@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.machine_info_column_1.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class InfoFragment(arguments: Bundle) : Fragment() {
+class InfoFragment(arguments: Bundle) : Fragment(R.layout.machine_info) {
 
     init {
         this.arguments = arguments
@@ -24,15 +24,6 @@ class InfoFragment(arguments: Bundle) : Fragment() {
     private val args by navArgs<InfoFragmentArgs>()
 
     private val model by viewModel<InfoViewModel> { parametersOf(args.server, args.machineId) }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = SwipeRefreshLayout(activity!!)
-        view.setOnRefreshListener {
-            //TODO refresh
-        }
-        inflater.inflate(R.layout.machine_info, view, true)
-        return view
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,5 +58,14 @@ class InfoFragment(arguments: Bundle) : Fragment() {
             } else
                 previewPanel.collapse(false)
         })
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = SwipeRefreshLayout(activity!!)
+        view.setOnRefreshListener {
+            //TODO refresh
+        }
+        inflater.inflate(R.layout.machine_info, view, true)
+        return view
     }
 }

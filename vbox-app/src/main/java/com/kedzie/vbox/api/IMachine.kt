@@ -15,16 +15,18 @@ import java.util.*
 @Ksoap
 interface IMachine : IManagedObjectRef {
 
-    /**
-     * @return UUID of the virtual machine.
-     */
+    @Cacheable("name")
+    fun getName(): LiveData<String>
+
+    @Cacheable("name")
+    suspend fun getNameNow(someArg: String): String
+
+    suspend fun setName(
+            @Cacheable("name") name: String)
+
     @Cacheable("id")
     fun getId(): LiveData<String>
 
-    @Cacheable("name")
-    fun getName(): LiveData<String>
-    suspend fun setName(@Cacheable("name") name: String)
-    @Cacheable("name", get = false) suspend fun getNameNoCache(): String
 
     @Cacheable("description")
     fun getDescription(): LiveData<String>
@@ -129,6 +131,7 @@ interface IMachine : IManagedObjectRef {
      * <p><code>""</code> and <code>"/"</code> are synonyms for the toplevel group. Each group is only listed once, however they are listed in no particular order and
      * there is no guarantee that there are no gaps in the group hierarchy (i.e. <code>"/group"</code>, <code>"/group/subgroup/subsubgroup"</code> is a valid result). </p>
      */
+    @Cacheable("groups")
     fun getGroups(): LiveData<List<String>>
     suspend fun setGroups(group: List<String>)
 

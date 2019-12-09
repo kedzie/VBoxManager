@@ -10,9 +10,9 @@
 
         <argument android:id="@+id/group"
             android:name="group"
-            app:argType="com.kedzie.vbox.machine.group.VMGroup"
-            android:defaultValue="@null"
-            app:nullable="true"/>
+            app:argType="string"
+            android:defaultValue="/"
+            app:nullable="false"/>
 
         <action android:id="@+id/drillDown"
             app:destination="@id/machineListFragment"

@@ -63,8 +63,10 @@ interface IVirtualBox : IManagedObjectRef {
 
     @Cacheable("EventSource")
 	suspend fun getEventSource(): IEventSource
+
     @Cacheable("PerformanceCollector")
 	suspend fun getPerformanceCollector(): IPerformanceCollector
+
     @Cacheable("Host")
 	suspend fun getHost(): IHost
     @Cacheable("SystemProperties")
@@ -95,7 +97,11 @@ interface IVirtualBox : IManagedObjectRef {
      *
      * Each group is only listed once, however they are listed in no particular order and there is no guarantee that there are no gaps in the group hierarchy (i.e. `"/"`, `"/group/subgroup"` is a valid result).
      */
-    suspend fun getMachineGroups(): List<String>
+    @Cacheable("groups")
+    suspend fun getMachineGroupsNow(): List<String>
+
+    @Cacheable("groups")
+    suspend fun getMachineGroups(): LiveData<List<String>>
 
     /**
      * Gets all machine references which are in one of the specified groups.
@@ -156,7 +162,6 @@ interface IVirtualBox : IManagedObjectRef {
      */
     suspend fun registerMachine(machine: IMachine)
 
-    @Cacheable("GuestOSTypes")
 	suspend fun getGuestOSTypes(): List<IGuestOSType>
 
     /**

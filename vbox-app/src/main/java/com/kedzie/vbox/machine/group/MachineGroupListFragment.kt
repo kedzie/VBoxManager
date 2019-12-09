@@ -14,13 +14,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kedzie.vbox.R
-import com.kedzie.vbox.api.IHost
 import com.kedzie.vbox.api.IMachine
 import com.kedzie.vbox.api.IMachineStateChangedEvent
 import com.kedzie.vbox.app.Utils
 import com.kedzie.vbox.machine.MachineListViewModel
 import com.kedzie.vbox.machine.MachineView
-import kotlinx.android.synthetic.main.vmgroup_list_header.view.*
+import kotlinx.android.synthetic.main.vmgroup_list.view.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
@@ -191,7 +190,7 @@ class MachineGroupListFragment : Fragment(),
         suspend fun setGroup(group: VMGroup): GroupSection {
             val lp = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             if (this.group.name != "/") {
-                val header = LayoutInflater.from(context).inflate(R.layout.vmgroup_list_header, this, false) as LinearLayout
+                val header = LayoutInflater.from(context).inflate(R.layout.vmgroup_list, this, false) as LinearLayout
                 header.group_back.setOnClickListener { drillOut() }
                 header.group_title.setText(group.name)
                 header.group_num_groups.setText("${group.numGroups}")
