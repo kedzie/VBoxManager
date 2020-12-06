@@ -8,9 +8,12 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kedzie.vbox.R
+import com.kedzie.vbox.VBoxApplication
 import com.kedzie.vbox.api.IMachine
 import com.kedzie.vbox.machine.MachineView
 import com.kedzie.vbox.machine.group.*
+import kotlinx.android.synthetic.main.machine_view.view.*
+import kotlinx.android.synthetic.main.vmgroup_title.view.*
 
 class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeSelectListener) :
         PagedListAdapter<TreeNode, TreeNodeAdapter.TreeNodeAdapterViewHolder>(object : DiffUtil.ItemCallback<TreeNode>() {
@@ -46,13 +49,20 @@ class TreeNodeAdapter(private val listener: MachineGroupListFragment.OnTreeNodeS
         getItem(position)?.let { item ->
             when (item) {
                 is MachineTreeNode -> {
-
-
+                    val machineView = holder.itemView as MachineView
+                    machineView.machine_list_item_ostype.setImageResource(VBoxApplication.getOSDrawable(machineView.context, item.machine.osTypeId))
+                    machineView.machine_list_item_name.text = item.machine.name
+                    item.machine.state?.let {
+                        machineView.machine_list_item_state.setImageResource(it.drawable())
+                        machineView.machine_list_item_state_text.text = it.value()
+                    }
+                    machineView.machine_list_item_snapshot.text = item.machine.currentSnapshot?.let {
+                        "($it) ${if (item.machine.currentStateModified == true) "*" else ""}"
+                    } ?: ""
                     holder.itemView.setOnClickListener { v -> listener.onTreeNodeSelect(item) }
                 }
                 is GroupTreeNode -> {
-                    (holder.itemView as TreeNodeAdapterCategoryItemView).configureViewWithCategory(
-                            item.category, false)
+                    holder.itemView.group_title.text = item.group.simpleGroupName
                     holder.itemView.setOnClickListener { v -> listener.onTreeNodeSelect(item) }
                 }
             }

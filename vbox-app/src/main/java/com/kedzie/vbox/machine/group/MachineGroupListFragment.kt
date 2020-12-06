@@ -25,8 +25,7 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 
 class MachineGroupListFragment : Fragment(),
-        View.OnClickListener,
-        OnDrillDownListener {
+        View.OnClickListener {
 
     private val model: MachineListViewModel by sharedViewModel()
 

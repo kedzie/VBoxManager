@@ -15,7 +15,7 @@ class MachineView(context: Context) : FrameLayout(context) {
         LayoutInflater.from(context).inflate(R.layout.machine_view, this, true)
     }
 
-    suspend fun update(m: IMachineEntity) {
+    fun update(m: IMachineEntity) {
         this.contentDescription = "Virtual Machine: " + m.name
         machine_list_item_ostype.setImageResource(VBoxApplication.getOSDrawable(context, m.osTypeId))
         machine_list_item_name.text = m.name

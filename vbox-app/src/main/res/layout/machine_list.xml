@@ -29,11 +29,6 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/machine_list" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/machine_list_bottom_nav"/>
     </LinearLayout>
 
     <LinearLayout

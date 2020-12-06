@@ -5,15 +5,7 @@
     android:layout_height="wrap_content"
 	android:orientation="horizontal"
 	android:padding="4dp">
-    
-	<ImageView android:id="@+id/group_collapse" 
-		android:layout_marginRight="8dp"  
-		android:src="@drawable/ic_menu_collapse"  
-		android:clickable="true"
-		android:layout_gravity="center"
-		android:layout_width="32dip" 
-		android:layout_height="32dip" />
-	
+
 	<androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -33,17 +25,11 @@
 	
 	<androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/group_num_machine"
+                android:layout_height="wrap_content"
+		android:id="@+id/group_num_machine"
 	    	android:drawableLeft="@drawable/ic_context_machine"  
 	    	android:drawablePadding="4dp"
 		style="?attr/textAppearanceBody2"
 		android:layout_gravity="center" />
-	
-	<ImageView android:id="@+id/group_enter" 
-	    	android:clickable="true"
-		android:src="@drawable/ic_navigation_forward"  
-		android:layout_marginLeft="8dp"
-		android:layout_gravity="center"
-		android:layout_width="32dip" 
-		android:layout_height="32dip" />
+
 </LinearLayout>
